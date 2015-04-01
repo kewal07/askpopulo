@@ -3,9 +3,6 @@ from django.views import generic
 from polls.models import Question,Choice,Vote,Subscriber
 # Create your views here.
 
-def index(request):
-	return render(request,'polls/index.html')
-
 class IndexView(generic.ListView):
 	template_name = 'polls/index.html'
 	context_object_name = 'data'
@@ -16,12 +13,12 @@ class IndexView(generic.ListView):
 		for mainquestion in latest_questions:
 			data = {}
 			data ['question'] = mainquestion
-			subscribers = len(Subscriber.objects.filter(question=mainquestion.id))
+			subscribers = mainquestion.subscriber_set.count()
 			totalVotes = 0
 			choices = Choice.objects.filter(question=mainquestion.id)
 			for qchoice in choices:
-				votes = Vote.objects.filter(choice=qchoice.id)
-				totalVotes += len(votes)
+				votes = qchoice.vote_set.count()
+				totalVotes += votes
 			data['votes'] = totalVotes
 			data['subscribers'] = subscribers
 			mainData.append(data)
