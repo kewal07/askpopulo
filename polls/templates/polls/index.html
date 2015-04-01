@@ -65,22 +65,22 @@
 
 				
 				
-				{% if latest_questions %}
-						{% for question in latest_questions %}
+				{% if data %}
+						{% for question in data %}
 						<div class="questions">
 							<div class="userInfo">
 								<div class="userImage">
-									<img src="{{question.user.imageurl}}" alt="{{question.user.first_name}}">
+									<img src="{{question.question.user.imageurl}}" alt="{{question.question.user.first_name}}">
 								</div>
 								<div class="userBrief">
-									<p>{{question.user.first_name}}<br/>Student<br/>UK<br/></p>
+									<p>{{question.question.user.first_name}}<br/>Student<br/>UK<br/></p>
 								</div>
 							</div> 
 							<div class="mainPoll">
-								<p><a href="#">{{question.question_text}}</a></p>
+								<p><a href="#">{{question.question.question_text}}</a></p>
 								<form class="optionsForm">
 									{% csrf_token %}
-									{% for choice in question.choice_set.all %}
+									{% for choice in question.question.choice_set.all %}
 										<p>
 											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
 											<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
@@ -90,9 +90,9 @@
 								</form>
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
-										<li class="firstInfo">{{question.pub_date}} <br />1500opinions</li>
-										<li>Expires by {{question.expiry}} <br />300 interested</li>
-										<li class="thirdInfo">Help {{question.user.first_name}} Decide <br />10 credits on offer</li>
+										<li class="firstInfo">{{question.question.pub_date}} <br />{{question.votes}} opinion{{question.votes|pluralize}}</li>
+										<li>Expires by {{question.question.expiry}} <br />{{question.subscribers}} interested</li>
+										<li class="thirdInfo">Help {{question.question.user.first_name}} Decide <br />10 credits on offer</li>
 										<li class="lastInfo">Share it <br />Mail it</li>
 									</ul>
 								</div>

@@ -22,11 +22,17 @@ class Question(models.Model):
 class Choice(models.Model):
 	question = models.ForeignKey(Question)
 	choice_text = models.CharField(max_length=200)
+	def __str__(self):
+		return self.choice_text
 
 class Vote(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	choice = models.ForeignKey(Choice)
+	def __str__(self):
+		return self.choice.choice_text+" : "+self.user.username
 
 class Subscriber(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
+	def __str__(self):
+		return self.question.question_text+" : "+self.user.username
