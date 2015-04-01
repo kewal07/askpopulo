@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		{% load staticfiles %}
+		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}" />
+	</head>
+	<body>
+		<section id="header">
+			<div class="logo">
+				<img src="{% static 'askpopulologo.png' %}" alt="myPolls" />
+			</div>
+			<div class="menu">
+				<ul class="menu-nav">
+					<li><a href="#">myPolls</a></li>
+					<li><a href="#">Trending</a></l1>
+					<li><a href="#">Featured</a></li>
+					<li><a href="#">Login</a></li>
+				</ul>
+			</div>
+			<div class="search">
+				<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
+			</div>
+		</section>
+		<section id="content">
+			<!-- <div class="questions"> -->
+				<!-- <div class="userInfo">
+					<div class="userImage">
+						<img src="katy.jpg" alt="Katy P.">
+					</div>
+					<div class="userBrief">
+						<p>Katy P<br/>Student<br/>UK<br/></p>
+					</div>
+				</div> -->
+				
+					<!--<p>What technology should i learn?</p>
+					<form class="optionsForm">
+						<p>
+							<input id="html" type="radio" name="choice" value="HTML">
+							<label for="html">HTML & CSS</label>
+						</p>
+						<p>
+							<input id="ios" type="radio" name="choice" value="IOS">
+							<label for="ios">IOS</label>
+						</p>
+						<p>
+							<input id="jquery" type="radio" name="choice" value="jQuery">
+							<label for="jquery">jQuery</label>
+						</p>
+						<p>
+							<input id="android" type="radio" name="choice" value="android">
+							<label for="android">ANDROID</label>
+						</p>
+					</form>
+					<div class="pollInfo clearfix">
+						<ul class="pollInfoUl clearfix">
+							<li class="firstInfo">Today 12.20 pm <br />1500 opinions</li>
+							<li>Expires by 8pm <br />300 interested</li>
+							<li class="thirdInfo">Help Katy Decide <br />10 credits on offer</li>
+							<li class="lastInfo">Share it <br />Mail it</li>
+						</ul>
+					</div>
+				</div>-->
+				
+
+				
+				
+				{% if latest_questions %}
+						{% for question in latest_questions %}
+						<div class="questions">
+							<div class="userInfo">
+								<div class="userImage">
+									<img src="{{question.user.imageurl}}" alt="{{question.user.first_name}}">
+								</div>
+								<div class="userBrief">
+									<p>{{question.user.first_name}}<br/>Student<br/>UK<br/></p>
+								</div>
+							</div> 
+							<div class="mainPoll">
+								<p><a href="#">{{question.question_text}}</a></p>
+								<form class="optionsForm">
+									{% csrf_token %}
+									{% for choice in question.choice_set.all %}
+										<p>
+											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+											<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
+										</p>
+									{% endfor %}
+									<input type="submit" value="Vote" />
+								</form>
+								<div class="pollInfo clearfix">
+									<ul class="pollInfoUl clearfix">
+										<li class="firstInfo">{{question.pub_date}} <br />1500opinions</li>
+										<li>Expires by {{question.expiry}} <br />300 interested</li>
+										<li class="thirdInfo">Help {{question.user.first_name}} Decide <br />10 credits on offer</li>
+										<li class="lastInfo">Share it <br />Mail it</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+				{% else %}
+						<p>No polls are available</p>
+				{% endif %}
+			<!-- </div> -->
+			
+		</section>
+	</body>
+</html>

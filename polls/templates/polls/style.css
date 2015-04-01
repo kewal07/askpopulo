@@ -1,0 +1,257 @@
+@font-face{
+	font-family:"capture";
+	src:url('Capture_it.ttf');
+}
+*{
+	margin:0;
+	padding:0;
+	outline:0;
+	font-family: 'capture',sans-serif;
+}
+html{
+	background:url('bg2.jpg') no-repeat center center fixed;
+	background-size:cover;
+}
+::-webkit-input-placeholder {
+   text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-align: center;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: center;  
+}
+
+:-ms-input-placeholder {  
+   text-align: center; 
+}
+
+#header{
+	background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -ms-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -moz-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	width:100%;
+	margin:2em 0em;
+	padding:4em 0em;
+	opacity:0.8;
+}
+.logo,.menu,.search{
+	float:left;
+}
+.logo{
+	margin-top:-2em;
+	margin-right:8em;
+	margin-left:5em;
+}
+.logo img{
+	width:100%;
+}
+.menu{
+	font-size: 2em;
+  	margin-top:-0.5em;
+}
+ul.menu-nav li{
+	list-style-type: none;
+	float:left;
+	padding-left:1em;
+}
+ul.menu-nav li a{
+	color:black;
+  	text-decoration:none;
+}
+ul.menu-nav li a:hover{
+	color:red;
+}
+.search{
+	margin-top:-1em;
+	margin-left:1em;
+}
+.searchBox{
+	width:200%;
+	height:2em;
+	color:#000;
+	font-size:1em;
+	border: 3px solid #000;
+    border-radius: 25px;
+	text-align:center;
+	padding:0 1em;
+}
+#content{
+	margin: 0 10em;
+}
+.questions{
+	border: 3px solid #000;
+  	border-radius: 25px;
+  	background-color: white;
+  	opacity: 0.8;
+  	padding: 3em 3em;
+  	margin-bottom:2em;
+  	display: -ms-flex; 
+  	display: -webkit-flex; 
+  	display: flex;
+}
+.questions>div{
+	flex:1;
+}
+.userInfo{
+	margin-right: 1em;
+	flex:0.2 !important;
+ 	padding-top: 1em;
+}
+.userImage img{
+	border-radius:50%;
+	padding:0 2em;
+	width:10em;
+}
+.userBrief p{
+	padding: 1em 2em;
+  	font-size: 1.5em;
+}
+.mainPoll{
+	padding:1em;
+}
+.mainPoll p{
+	font-size: 2em;
+}
+.mainPoll .optionsForm{
+	padding:2em 2em;
+}
+.optionsForm p {
+	padding-left:0.5em;
+	padding-bottom:0.5em;
+	font-size:1.25em;
+}
+ul.pollInfoUl li {
+	list-style-type: none;
+	float:left;
+	margin-right:8em;
+	font-size:1.15em;
+}
+.clearfix:after { 
+   content: "."; 
+   visibility: hidden; 
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+@media only screen and (max-width: 419px){
+	ul.pollInfoUl li{
+  		margin-left: 0em !important;
+		margin-right:1em !important;
+		font-size: 0.85em !important;
+	}
+}
+@media only screen and (max-width: 372px){
+	ul.pollInfoUl li{
+		font-size: 0.85em !important;
+		width: 100% !important;
+  		margin: 0 auto!important;
+	}
+}
+@media only screen and (max-width: 480px){
+	#header,.menu,.search{
+		float:none;
+	}
+	#header{
+		width:90%;
+		margin:0 auto;
+	}
+	.logo{
+		width:100%;
+		margin-left: 1em;
+	}
+	.logo img{
+		width:90%;
+	}
+	.menu{
+		margin-top:2em;
+		width:100%;
+	}
+	ul.menu-nav li{
+		float:none;
+		padding: 0;
+		text-align:center;
+		background: #fff;
+		border: 3px solid #000;
+    	border-radius: 25px;
+    	margin-bottom:1em;
+	}
+	.search{
+		margin:0;
+		width:100%;
+	}
+	.searchBox{
+		width:100%;
+	    margin:0 auto;
+	    font-size:1em;
+	    height:2.7em;
+	}
+	#content{
+		margin: 2em 0.5em;
+	}
+	.questions{
+		padding: 1em 0em;
+  		margin: 0em;
+  		margin-bottom:2em;
+	}
+	.userInfo{
+		margin:1em;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+	}
+	.userBrief p{
+		padding: 1em 0em;
+  		font-size: 1em;
+	}
+	.mainPoll{
+		padding:1em;
+		margin-bottom: -1em;
+	}
+	.mainPoll p{
+		font-size: 1em;
+	}
+	.mainPoll .optionsForm{
+		padding:1em 1em;
+		font-size:1em;
+	}
+	ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0em;
+		 margin-right:1em;
+		 font-size: 1em;
+	}
+}
+@media only screen and (max-width: 700px and min-width: 481px){
+	#header{
+		margin:0;
+		margin-bottom: 5em;
+		padding:0;
+	}
+	.logo,.menu,.search{
+		float:none;
+	}
+	.logo{
+		width: 100%;
+  		margin: 0 auto;
+	}
+	.menu{
+		width: 100%;
+  		margin: 0 auto;
+  		padding:0;
+	}
+	.search{
+		padding-bottom: 1em;
+		margin-left:0;
+	}
+	.searchBox{
+		width:100%;
+	}
+}
