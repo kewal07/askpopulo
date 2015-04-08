@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		{% load staticfiles %}
+		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
+	</head>
+	<body>
+	{% if user %}
+	<section id="header">
+			<div class="logo">
+				<img src="{% static 'askpopulologo.png' %}" alt="myPolls" />
+			</div>
+			<div class="menu">
+				<ul class="menu-nav">
+					<li><a href="#">Home</a></li>
+					<li><a href="#">Trending</a></l1>
+					<li><a href="#">Featured</a></li>
+					<li><a href="#">MyPolls</a></li>
+					<li><div class="search">
+							<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
+						</div>
+					</li>
+					<li class="userInNav"><a href="#"><img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}"></a></li>
+				</ul>
+			</div>
+		</section>
+		<section id="profile">
+				<div class="profilePic">
+					<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
+				</div>
+				<div class="profileContent">
+					<ul class="tabs">
+						<li>
+							<input type="radio" name="tabs" id="tab1" checked />
+							<label class="tabsLabel" for="tab1">About Me</label>
+							<div id="tabContent1" class="tabContent">
+								<form class="profileForm">
+									<p>
+										<label for="name">Name</label>
+										<input id="name" type="text" name="name" placeholder="{{ user.first_name}} {{ user.last_name }}" readonly>
+									</p>
+									<p>
+										<label for="userName">User Name</label>
+										<input id="userName" type="text" name="userName" placeholder="{{ user.username }}" readonly>							
+									</p>
+									<p>
+										<label for="email">Email</label>
+										<input id="email" type="text" name="email" placeholder="{{ user.email }}" readonly>							
+									</p>
+									<p>
+										<label for="bio">Bio</label>
+										<textarea id ="bio" cols="40" rows="5" name="bio" placeholder="{{ user.extendeduser.bio }}" readonly></textarea>
+									</p>
+									<p>
+										<label for="gender">Gender</label>
+										<input id="gender" type="text" name="gender" placeholder="{{ user.extendeduser.gender }}" readonly>							
+									</p>
+									<p>
+										<label for="dob">DOB</label>
+										<input id="dob" type="text" name="dob" placeholder="{{ user.extendeduser.birthDay }}" readonly>
+									</p>
+									<p>
+										<label for="prof">Profession</label>
+										<input id="prof" type="text" name="prof" placeholder="{{ user.extendeduser.profession }}" readonly>
+									</p>
+									<p>
+										<label for="country">Country</label>
+										<input id="country" type="text" name="country" placeholder="{{ user.extendeduser.country }}" readonly>
+									</p>
+									<p>
+										<label for="state">State</label>
+										<input id="state" type="text" name="state" placeholder="{{ user.extendeduser.state }}" readonly>
+									</p>	
+									<p>
+										<label for="city">City</label>
+										<input id="city" type="text" name="city" placeholder="{{ user.extendeduser.city }}" readonly>
+									</p>		
+								</form>
+							</div>
+						</li>
+					<li>
+						<input type="radio" name="tabs" id="tab2" unchecked />
+						<label class="tabsLabel" for="tab2">Stats</label>
+						<div id="tabContent2" class="tabContent">
+							<div class="stats">
+								<div class="stat">
+									<input type="radio" id="stat-1" name="stat-group-1" checked>
+										<label for="stat-1">Polls</label>
+											<div class="content">
+												<p>Total Polls posted by you till date : 539</p>
+												<div id="questionsAskedDaily">
+													<p> Polls per category </p>
+													<div class="graphContainer">
+														<div class="record">
+														<div class="bar" style="width:55%;"><div class="barColor"></div><div><span>Mozilla</span></div><div class="p"><span>55%</span></div></div></div>
+														<div class="record"><div class="bar" style="width:30%;"><div class="barColor"></div><span>IE</span></div><div class="p"><span>30%</span></div></div>
+														<div class="record"><div class="bar" style="width:22%;"><div class="barColor"></div><span>Safari</span></div><div class="p"><span>22%</span></div></div>
+														<div class="record"><div class="bar" style="width:20%;"><div class="barColor"></div><span>Opera</span></div><div class="p"><span>20%</span></div></div>
+													</div>
+												</div>
+												<div id="questionAskedPerDay">
+												</div> 
+											</div>
+								<div class="stat">
+									<input type="radio" id="stat-2" name="stat-group-1">
+										<label for="stat-2">Recent Activity</label>           
+											<div class="content">
+												<p>Stuff for Tab Two</p>
+											</div> 
+								</div>
+								<div class="stat">
+									<input type="radio" id="stat-3" name="stat-group-1">
+										<label for="stat-3">Comments</label>
+											<div class="content">
+												<p>Stuff for Tab Three</p>
+											</div> 
+								</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<input type="radio" name="tabs" id="tab3" unchecked />
+						<label class="tabsLabel" for="tab3">Settings</label>
+						<div id="tabContent3" class="tabContent">
+							<ul>
+								<li>
+									<div id="changePassword">
+										<p>Change Password</p>
+										<form class="changePasswordForm">
+											<p>
+												<label for="oldP">Current Password</label>
+												<input id="oldP" type="password" name="oldP" placeholder="********">
+											</p>
+											<p>
+												<label for="newP">New Password</label>
+												<input id="newP" type="password" name="newP" placeholder="********">							
+											</p>
+											<p>
+												<label for="confirmNewP">Confirm Password</label>
+												<input id="confirmNewP" type="password" name="confirmNewP" placeholder="********">	
+											</p>	
+											<input type="submit" value="Set New Password">		
+										</form>
+									</div>
+								</li>
+								<li>
+									<div id="deleteAccount">
+										<p>Delete Account</p>
+										<input type="submit" value="Delete Account">
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+		</section>
+	{% endif %}
+	</body>
+	
+</html>
