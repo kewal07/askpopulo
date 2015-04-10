@@ -1,4 +1,5 @@
-<!DOCTYPE HTML>
+{% extends "polls/header.html" %}
+<!-- <!DOCTYPE HTML>
 <html>
 	<head>
 		{% load staticfiles %}
@@ -6,7 +7,6 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 	</head>
 	<body>
-	{% if user %}
 	<section id="header">
 			<div class="logo">
 				<img src="{% static 'askpopulologo.png' %}" alt="myPolls" />
@@ -24,7 +24,10 @@
 					<li class="userInNav"><a href="#"><img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}"></a></li>
 				</ul>
 			</div>
-		</section>
+		</section> -->
+		{% block content %}
+		{% if user %}
+		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 		<section id="profile">
 				<div class="profilePic">
 					<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
@@ -156,6 +159,7 @@
 				</ul>
 		</section>
 	{% endif %}
-	</body>
+	{% endblock %}
+	<!-- </body>
 	
-</html>
+</html> -->

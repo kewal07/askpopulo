@@ -1,15 +1,12 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
+{% extends "polls/header.html" %}
+<!-- <html> -->
+	<!-- <head>
 		{% load staticfiles %}
-		<!-- {% load disqus_tags %}
-		{% disqus_show_comments %}
-		{% set_disqus_url object.get_absolute_url %} -->
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}" />
-	</head>
-	<body>
-		<section id="header">
+	</head> -->
+	<!-- <body> -->
+		<!-- <section id="header">
 			<div class="logo">
 				<img src="{% static 'askpopulologo.png' %}" alt="myPolls" />
 			</div>
@@ -24,7 +21,8 @@
 			<div class="search">
 				<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
 			</div>
-		</section>
+		</section> -->
+	{% block content %}
 		<section id="content">
 				{% if data %}
 						{% for question in data %}
@@ -79,6 +77,6 @@
 			<!-- </div> -->
 			
 		</section>
-		
-	</body>
-</html>
+	{% endblock %}
+	<!-- </body>
+</html> -->
