@@ -37,11 +37,12 @@
 							</div> 
 							<div class="mainPoll">
 								<p><a href="#">{{question.question.question_text}}</a></p>
-								<form class="optionsForm">
+								<form class="optionsForm" action="{% url 'polls:polls_vote' %}">
 									{% csrf_token %}
 									{% for choice in question.question.choice_set.all %}
 										<p>
-											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+											<input type="hidden" name="question" value="{{ question.question.id }}" />
+											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked="checked"/>
 											<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
 										</p>
 									{% endfor %}
