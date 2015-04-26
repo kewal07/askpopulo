@@ -4,3 +4,5 @@ db.sqlite3
 *.pyc
 *.pyc
 *.pyc
+*.pyc
+askpopulo/__pycache__/settings.cpython-34.pyc
