@@ -1,0 +1,94 @@
+<!-- <!DOCTYPE HTML> -->
+{% extends "polls/header.html" %}
+{% load static %}
+<!-- <html>
+	<head>
+		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="createPoll.css">
+		<script src="http://code.jquery.com/jquery.min.js"></script>
+		<script src="js/scriptIE.js"></script>
+		<script src="js/script.js"></script>
+	</head>
+	<body>
+		<section id="header">
+			<div id="headerContent">	
+				<div class="logo">
+					<img src="pollsLogo.png" alt="myPolls" />
+				</div>
+				<div class="menu">
+					<ul class="menu-nav">
+						<li><a href="#">Home</a></li>
+						<li><a href="#">Trending</a></l1>
+						<li><a href="#">Featured</a></li>
+						<li><a href="#">Login</a></li>
+						<li class="searchLi"><div class="search">
+								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
+							</div>
+						</li>
+						<li class="userInNav"><a href="#"><img src="katy.jpg" alt="Katy P"></a></li>
+					</ul>
+				</div>
+			</div> 
+		</section> -->
+	{% block extra_css %}
+		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
+	{% endblock %}
+	{% block content %}
+		<section id="createPoll">
+			<div class="createPoll">
+				<div class="createPollContent">
+				<form class="createPollContentForm" method="POST" action="{% url 'polls:polls_create' %}">
+					{% csrf_token %}
+					<p>
+						<label for="qText">Question</label>
+						<textarea id ="qText" name="qText" placeholder="Ask the people"></textarea>
+						{% if data.qTextError %}
+							<br>{{ data.qTextError }}
+						{% endif %}
+					</p>
+					<p>
+						<label for="qDesc">Description</label>
+						<textarea id ="qDesc" name="qDesc" placeholder="Description"></textarea>
+					</p>
+					<p>
+						<label for="qExpiry">Expires On</label>
+						<input id="qExpiry" type="date" name="qExpiry">
+					</p>
+					<p>
+						<label for="choice1">Choice 1</label>
+						<input id="choice1" type="text" name="choice1" placeholder="First Choice">
+						<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
+						{% if data.choiceError %}
+							<br>{{ data.choiceError }}
+						{% endif %}
+					</p>
+					<p>
+						<label for="choice2">Choice 2</label>
+						<input id="choice2" type="text" name="choice2" placeholder="Second Choice">
+						<input id="choice2" class="fileButtonClass" type="file" name="choice2" accept="image/*">
+						{% if data.choiceError %}
+							<br>{{ data.choiceError }}
+						{% endif %}
+					</p>
+					<p>
+						<label for="choice3">Choice 3</label>
+						<input id="choice3" type="text" name="choice3" placeholder="Third Choice">
+						<input id="choice3" class="fileButtonClass" type="file" name="choice3" accept="image/*">
+					</p>
+					<p>
+						<label for="choice4">Choice 4</label>
+						<input id="choice4" type="text" name="choice4" placeholder="Fourth Choice">
+						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
+					</p>
+					<p>
+					<input id="submit" type="submit" value="Create" />
+					</p>
+				</form>
+				</div>
+			</div>
+		</section>
+	{% endblock %}
+	<!-- </body>
+	
+</html> -->

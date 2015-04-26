@@ -9,5 +9,6 @@ urlpatterns = patterns('',
     #url(r'^', views.index),
 	url(r'^$',views.IndexView.as_view(),name='index'),
 	url(r'^vote$',views.VoteView.as_view(),name='polls_vote'),
+	url(r'^createpoll$',views.CreatePollView.as_view(),name='polls_create'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

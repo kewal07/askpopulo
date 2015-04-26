@@ -25,6 +25,9 @@
 				</ul>
 			</div>
 		</section> -->
+		{% block extra_css %}
+			<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
+		{% endblock %}
 		{% block content %}
 		{% if user %}
 		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />

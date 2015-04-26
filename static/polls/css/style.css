@@ -1,3 +1,51 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
 @font-face{
 	font-family:"capture";
 	src:url('/static/fonts/Capture_it.ttf');
@@ -6,11 +54,17 @@
 	margin:0;
 	padding:0;
 	outline:0;
-	font-family: 'capture',sans-serif;
+	
 }
 html{
-	background:url('../images/bg2.jpg') no-repeat center center fixed;
-	background-size:cover;
+	background:url('/static/polls/images/bg2.jpg') no-repeat center center fixed;
+	background-size:cover;/*font-family: 'capture',sans-serif;*/
+	/*max-width: 1200px;
+  	margin: 0 auto;
+  	position: relative; /* Fix for absolute positioning */*/
+  	max-width: 1800px;
+  	margin: 0 auto;
+  	position: relative;
 }
 ::-webkit-input-placeholder {
    text-align: center;
@@ -27,7 +81,12 @@ html{
 :-ms-input-placeholder {  
    text-align: center; 
 }
-
+body{
+  	margin: 0 auto;
+}
+a:hover{
+	letter-spacing: 5px;
+}
 #header{
 	background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -35,29 +94,64 @@ html{
 	background: -moz-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	width:100%;
-	margin:2em 0em;
-	padding:4em 0em;
-	opacity:0.8;
+	margin:2rem 0rem;
+	opacity:0.93;
+	position:initial;
 }
-.logo,.menu,.search{
+#headerScroll{
+	background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -ms-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: -moz-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	width:100%;
+	margin:0 0 3rem 0;
+  	padding: 0;
+  	opacity: 0.95;
+  	z-index: 10;
+  	position: fixed;
+}
+#headerContent{
+	width:95%;
+	margin:0 auto;
+}
+/*#headerContent>div{*/
+	/*flex:1;
+}*/
+/*.logo,.menu,.search{
 	float:left;
-}
+}*/
 .logo{
-	margin-top:-2em;
-	margin-right:8em;
-	margin-left:5em;
+	/*margin: -2rem 0;*/
+  	width: 25%;
 }
 .logo img{
-	width:100%;
+	width:30%;
+}
+.logo img.imgScroll{
+	width:10%;
 }
 .menu{
-	font-size: 2em;
-  	margin-top:-0.5em;
+	font-size: 2rem;
+  	margin-top: -5rem;
+  	float: right;
+}
+.menuScroll{
+	font-size:1.5rem;
+	margin-top:-2rem;
 }
 ul.menu-nav li{
 	list-style-type: none;
 	float:left;
-	padding-left:1em;
+	padding-left:1rem;
+}
+ul.menu-nav li.userInNav{
+	/* margin-left: 10rem; */
+  	margin-top: -1.2rem;
+}
+ul.menu-nav li.userInNav img{
+	width: 30%;
+  	border-radius: 50%;
 }
 ul.menu-nav li a{
 	color:black;
@@ -67,69 +161,86 @@ ul.menu-nav li a:hover{
 	color:red;
 }
 .search{
-	margin-top:-1em;
-	margin-left:1em;
+	margin-top:-0.65rem;
+	/*margin-left:1rem;*/
+}
+.searchScroll{
+	margin-top: -0.3rem;
 }
 .searchBox{
-	width:200%;
-	height:2em;
+	/*width:200%;*/
+	height:3rem;
 	color:#000;
-	font-size:1em;
+	font-size:1rem;
 	border: 3px solid #000;
     border-radius: 25px;
 	text-align:center;
-	padding:0 1em;
+	padding:0 1rem;
+}
+.searchBoxScroll{
+	height:2rem;
 }
 #content{
-	margin: 0 10em;
+	margin: 0 5rem;
 }
 .questions{
 	border: 3px solid #000;
   	border-radius: 25px;
   	background-color: white;
-  	opacity: 0.8;
-  	padding: 3em 3em;
-  	margin-bottom:2em;
+  	opacity: 0.93;
+  	padding: 3rem 3rem;
+  	margin-bottom:2rem;
   	display: -ms-flex; 
   	display: -webkit-flex; 
   	display: flex;
 }
-.questions>div{
+/*.questions>div{
+	flex:1;
+}*/
+.questionContent{
+	width:90%;
+	margin:0 auto;
+	display:flex;
+}
+.questionContent>div{
 	flex:1;
 }
 .userInfo{
-	margin-right: 1em;
+	margin-right: 1rem;
 	flex:0.2 !important;
- 	padding-top: 1em;
+ 	padding-top: 1rem;
 }
 .userImage img{
 	border-radius:50%;
-	padding:0 2em;
-	width:10em;
+	padding:0;
+	width:100%;
 }
 .userBrief p{
-	padding: 1em 2em;
-  	font-size: 1.5em;
+	padding: 1rem 0rem;
+  	font-size: 1.5rem;
+  	text-align: center;
+  	overflow: hidden;
+  	width: 100%;
 }
 .mainPoll{
-	padding:1em;
+	padding:1rem;
 }
 .mainPoll p{
-	font-size: 2em;
+	font-size: 2rem;
 }
 .mainPoll .optionsForm{
-	padding:2em 2em;
+	padding:2rem 2rem;
 }
 .optionsForm p {
-	padding-left:0.5em;
-	padding-bottom:0.5em;
-	font-size:1.25em;
+	padding-left:0.5rem;
+	padding-bottom:0.5rem;
+	font-size:1.25rem;
 }
 ul.pollInfoUl li {
 	list-style-type: none;
 	float:left;
-	margin-right:8em;
-	font-size:1.15em;
+	margin-right:4%;
+	font-size:1.15rem;
 }
 .clearfix:after { 
    content: "."; 
@@ -138,37 +249,33 @@ ul.pollInfoUl li {
    height: 0; 
    clear: both;
 }
-@media only screen and (max-width: 419px){
-	ul.pollInfoUl li{
-  		margin-left: 0em !important;
-		margin-right:1em !important;
-		font-size: 0.85em !important;
+/*@media only screen and (max-width: 419px){
+	.pollInfo{
+		display:none;
 	}
 }
 @media only screen and (max-width: 372px){
 	ul.pollInfoUl li{
-		font-size: 0.85em !important;
+		font-size: 0.85rem !important;
 		width: 100% !important;
   		margin: 0 auto!important;
 	}
-}
-@media only screen and (max-width: 480px){
-	#header,.menu,.search{
-		float:none;
-	}
+}*/
+@media only screen and (min-width:481px) and (max-width: 960px){
 	#header{
-		width:90%;
-		margin:0 auto;
-	}
+		 padding: 1rem 0rem 20rem 0rem;
+  	     margin-bottom: 3rem;
+		}
 	.logo{
 		width:100%;
-		margin-left: 1em;
+		margin:0;
 	}
 	.logo img{
-		width:90%;
+		display: block;
+  		margin:0 auto;
 	}
 	.menu{
-		margin-top:2em;
+		margin-top:1rem;
 		width:100%;
 	}
 	ul.menu-nav li{
@@ -178,7 +285,10 @@ ul.pollInfoUl li {
 		background: #fff;
 		border: 3px solid #000;
     	border-radius: 25px;
-    	margin-bottom:1em;
+    	margin-bottom:1rem;
+	}
+	.searchLi{
+		border:none !important;
 	}
 	.search{
 		margin:0;
@@ -187,19 +297,19 @@ ul.pollInfoUl li {
 	.searchBox{
 		width:100%;
 	    margin:0 auto;
-	    font-size:1em;
-	    height:2.7em;
+	    font-size:1rem;
+	    height:2.7rem;
 	}
 	#content{
-		margin: 2em 0.5em;
+		margin: 2rem 0.5rem;
 	}
 	.questions{
-		padding: 1em 0em;
-  		margin: 0em;
-  		margin-bottom:2em;
+		padding: 1rem 0rem;
+  		margin: 0rem;
+  		margin-bottom:2rem;
 	}
 	.userInfo{
-		margin:1em;
+		margin:1rem;
 		padding:0;
 	}
 	.userImage img{
@@ -207,51 +317,126 @@ ul.pollInfoUl li {
 		width:100%;
 	}
 	.userBrief p{
-		padding: 1em 0em;
-  		font-size: 1em;
+		padding: 1rem 0rem 0rem 0rem;
+  		font-size: 1rem;
 	}
 	.mainPoll{
-		padding:1em;
-		margin-bottom: -1em;
+		padding:1rem;
+		margin-bottom: -1rem;
 	}
 	.mainPoll p{
-		font-size: 1em;
+		font-size: 1rem;
 	}
 	.mainPoll .optionsForm{
-		padding:1em 1em;
-		font-size:1em;
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	.pollInfo{
+		margin-top:1rem;
 	}
 	ul.pollInfoUl li{
 		 list-style-type: none;
 		 float: left;
-		 margin-left: 0em;
-		 margin-right:1em;
-		 font-size: 1em;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
 	}
 }
-@media only screen and (max-width: 700px and min-width: 481px){
-	#header{
-		margin:0;
-		margin-bottom: 5em;
-		padding:0;
+@media only screen and (min-width:481px) and (max-width: 645px){
+	.pollInfo{
+		display:none;
 	}
-	.logo,.menu,.search{
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+}
+@media only screen and (max-width: 480px){
+	#header,.menu,.search{
 		float:none;
 	}
+	#header{
+		width:90%;
+		margin:0 auto;
+		padding:3rem 0rem 1rem 0rem;
+	}
 	.logo{
-		width: 100%;
-  		margin: 0 auto;
+		width:100%;
+		margin:-2rem 1rem;
+	}
+	.logo img{
+		margin: 0 auto;
+  		display: block;
 	}
 	.menu{
-		width: 100%;
-  		margin: 0 auto;
-  		padding:0;
+		margin-top:3rem;
+		width:100%;
+	}
+	ul.menu-nav li{
+		float:none;
+		padding: 0;
+		text-align:center;
+		background: #fff;
+		border: 3px solid #000;
+    	border-radius: 25px;
+    	margin-bottom:1rem;
+	}
+	.searchLi{
+		border:none !important;
 	}
 	.search{
-		padding-bottom: 1em;
-		margin-left:0;
+		margin:0;
+		width:100%;
 	}
 	.searchBox{
 		width:100%;
+	    margin:0 auto;
+	    font-size:1rem;
+	    height:2.7rem;
+	}
+	#content{
+		margin: 2rem 0.5rem;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+  		margin: 0rem;
+  		margin-bottom:2rem;
+	}
+	.userInfo{
+		margin:1rem;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+	}
+	.userBrief p{
+		padding: 1rem 1rem 0rem 0rem;
+  		font-size: 1rem;
+  		width: 50px;
+  		overflow: hidden;
+	}
+	.mainPoll{
+		padding:1rem;
+		margin-bottom: -1rem;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.mainPoll .optionsForm{
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	/*ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
+	}*/
+	.pollInfo{
+		display:none;
 	}
 }

@@ -1,4 +1,5 @@
 {% extends "polls/header.html" %}
+{% load static %}
 <!-- <html> -->
 	<!-- <head>
 		{% load staticfiles %}
@@ -27,34 +28,36 @@
 				{% if data %}
 						{% for question in data %}
 						<div class="questions">
-							<div class="userInfo">
-								<div class="userImage">
-									<img src="{{question.question.user.imageurl}}" alt="{{question.question.user.first_name}}">
-								</div>
-								<div class="userBrief">
-									<p>{{question.question.user.first_name}}<br/>Student<br/>UK<br/></p>
-								</div>
-							</div> 
-							<div class="mainPoll">
-								<p><a href="#">{{question.question.question_text}}</a></p>
-								<form class="optionsForm" action="{% url 'polls:polls_vote' %}">
-									{% csrf_token %}
-									{% for choice in question.question.choice_set.all %}
-										<p>
-											<input type="hidden" name="question" value="{{ question.question.id }}" />
-											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked="checked"/>
-											<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
-										</p>
-									{% endfor %}
-									<input type="submit" value="Vote" />
-								</form>
-								<div class="pollInfo clearfix">
-									<ul class="pollInfoUl clearfix">
-										<li class="firstInfo">{{question.question.pub_date}} <br />{{question.votes}} opinion{{question.votes|pluralize}}</li>
-										<li>Expires by {{question.question.expiry}} <br />{{question.subscribers}} interested</li>
-										<li class="thirdInfo">Help {{question.question.user.first_name}} Decide <br />10 credits on offer</li>
-										<li class="lastInfo">Share it <br />Mail it</li>
-									</ul>
+							<div class="questionContent">
+								<div class="userInfo">
+									<div class="userImage">
+										<img src="{{question.question.user.imageurl}}" alt="{{question.question.user.first_name}}">
+									</div>
+									<div class="userBrief">
+										<p>{{question.question.user.first_name}}</p>
+									</div>
+								</div> 
+								<div class="mainPoll">
+									<p><a href="#">{{question.question.question_text}}</a></p>
+									<form class="optionsForm" action="{% url 'polls:polls_vote' %}" method="POST">
+										{% csrf_token %}
+										{% for choice in question.question.choice_set.all %}
+											<p>
+												<input type="hidden" name="question" value="{{ question.question.id }}" />
+												<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked="checked"/>
+												<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
+											</p>
+										{% endfor %}
+										<input type="submit" value="Vote" />
+									</form>
+									<div class="pollInfo clearfix">
+										<ul class="pollInfoUl clearfix">
+											<li class="firstInfo">{{question.votes}} opinion{{question.votes|pluralize}}</li>
+											<li>{{question.subscribers}} interested</li>
+											<li class="thirdInfo">10 credits on offer</li>
+											<li class="lastInfo">Mail it</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 							<!-- <div id="disqus_thread"></div>
