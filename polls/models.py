@@ -36,3 +36,9 @@ class Subscriber(models.Model):
 	question = models.ForeignKey(Question)
 	def __str__(self):
 		return self.question.question_text+" : "+self.user.username
+		
+class Voted(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	question = models.ForeignKey(Question)
+	def __str__(self):
+		return self.question.question_text+" : "+self.user.username
