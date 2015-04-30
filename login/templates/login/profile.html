@@ -33,7 +33,9 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 		<section id="profile">
 				<div class="profilePic">
-					<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
+					{% if user.extendeduser.imageUrl %}
+						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
+					{% endif %}
 				</div>
 				<div class="profileContent">
 					<ul class="tabs">

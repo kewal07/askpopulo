@@ -2,9 +2,6 @@
 <html>
     <head>
 		{% load staticfiles %}
-		{% load disqus_tags %}
-		{% disqus_show_comments %}
-		{% set_disqus_url object.get_absolute_url %} 
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}" />
 		<script src="http://code.jquery.com/jquery.min.js"></script>

@@ -1,11 +1,7 @@
-html{
-	background:url('/static/polls/images/question.jpg') no-repeat center center fixed;
-	background-size:cover;/*font-family: 'capture',sans-serif;*/
-}
-#createPoll{
+#signup{
 	margin: 0 5rem;
 }
-.createPoll{
+.signup{
 	font-size: 1.5rem;
 	border: 3px solid #000;
 	border-radius: 25px;
@@ -16,31 +12,42 @@ html{
 	/* width: 75%; */
 	margin: 0 auto;
 }
-.createPoll p{
-	margin-bottom:2rem;
+.signup p{
+	/* margin-bottom: 2rem; */
+	margin-left: 19rem;
+	margin-top: 2rem;
 }
-.createPollContent{
+
+.upImg{
+	width:140px;
+	height:140px;
+	border-radius:50%;
+	display:block;
+	margin:auto;
+}
+
+.signupContent{
 	margin: 0 auto;
 }
-.createPollContentForm textarea{
+.signupContentForm textarea{
     vertical-align: top;
 }
-form.createPollContentForm{
+form.signupContentForm{
 	/* width:60%; */
-	padding: 4rem 4rem 0 4rem;
+	padding: 2rem 4rem 2rem 4rem;
 	margin:0 auto;
 	/* margin-left:21rem; */
 }
-form.createPollContentForm label{
+form.signupContentForm label{
 	display: inline-block;
 	width:20%;
 	color: #666;
     font-size: 1.5rem;
 }
-form.createPollContentForm input{
+form.signupContentForm input{
 	margin-left: 0rem;
 }
-.createPollContentForm input[type="text"]{
+.signupContentForm input[type="text"],.signupContentForm input[type="email"],.signupContentForm input[type="password"]{
 		height: 3rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
@@ -48,31 +55,32 @@ form.createPollContentForm input{
 		font-size:2rem;
 		overflow:hidden;
 }
-.createPollContentForm textarea{
+.signupContentForm textarea{
 	border-radius: 10px;
     border: 1px solid #666;
     background: transparent;
     font-size: 2rem;
     overflow: hidden;
-	margin-top: -2rem;
+	/* margin-top: -2rem; */
 	width: 45rem;
+	height: 8rem;
 	/*margin-left:11rem;*/
 }
 #qText{
 	margin-bottom:2rem;
 }
-.createPollContentForm input[type="date"]{
+.signupContentForm input[type="date"]{
 	border-radius: 10px;
     border: 2px solid #666;
     background: transparent;
     font-size: 2rem;
 }
-.createPollContentForm p{
+.signupContentForm p{
 	width:90%;
 	margin:0 auto;
 	margin-bottom:2rem;
 }
-.createPollContentForm input[type="file"] {
+.signupContentForm input[type="file"] {
    /*  margin-left: 2rem;
 	width:25%;
 	background: #3e9cbf; */ /*the colour of the button*/
@@ -85,7 +93,7 @@ form.createPollContentForm input{
 	visibility:hidden;
 	background:url('question.jpg') no-repeat center center fixed; */
 }
-/*.createPollContentForm input[type="submit"]  */#submit{
+/*.signupContentForm input[type="submit"]  */#submit{
 	margin-left: 18rem;
 	margin-top:1rem;
 	width:28%;
@@ -106,7 +114,7 @@ form.createPollContentForm input{
 	border-radius: 25px;
 }
 /***SET THE BUTTON'S HOVER AND FOCUS STATES***/
-/*.createPollContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{
+/*.signupContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{
 	/* color:#dfe7ea; */
 	letter-spacing:.05rem;
 	/*reduce the size of the shadow to give a pushed effect*/
@@ -123,13 +131,6 @@ height: 28px;
 background: url('question1.jpg') 0 0 no-repeat;
 border:none;
 overflow:hidden; */
-}
-.upImg{
-	width:140px;
-	height:140px;
-	border-radius:50%;
-	display:block;
-	margin:auto;
 }
 
 .fileLabel {

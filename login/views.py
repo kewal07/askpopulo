@@ -2,6 +2,15 @@ from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
 from login.models import ExtendedUser
+import allauth
+from django.http import HttpResponseRedirect,HttpResponse
+from django.core.urlresolvers import resolve,reverse
+
+# class MySignupView(generic.ListView):
+
+	# def post(self, request, *args, **kwargs):
+		# # SignupView.as_view()
+		# allauth.account.views.signup
 
 class LoggedInView(generic.ListView):
 	template_name = 'login/profile.html'
@@ -34,6 +43,8 @@ class LoggedInView(generic.ListView):
 					city_data = twitter_data.get('location','')
 					extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 					extendedUser.save()
+		print(dir(user.extendeduser.imageUrl))
+		print(user.extendeduser.imageUrl)
 		
 # class DetailView(generic.DetailView):
 	# template_name = 'polls/index.html'
