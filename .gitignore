@@ -1,6 +1,6 @@
 askpopulo/settings.py
 db.sqlite3
 *.pyc
-*.pyc
-*.pyc
-*.pyc
+media*
+*migrations*
+*pycache*
