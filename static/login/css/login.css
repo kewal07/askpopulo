@@ -1,0 +1,178 @@
+#login{
+	margin: 0 5rem;
+}
+.login{
+	font-size: 1.5rem;
+	border: 3px solid #000;
+	border-radius: 25px;
+	background-color: white;
+	opacity: 0.93;
+	/* padding: 1rem 1rem;
+	margin-bottom: 2rem; */
+	/* width: 75%; */
+	margin: 0 auto;
+}
+.login p{
+	/* margin-bottom: 2rem; */
+	  /* margin-bottom: 2rem; */
+  /* margin-left: 19rem; */
+  margin-top: 2rem;
+  text-align: center;
+  /* margin: 0 auto; */
+}
+
+.upImg{
+	width:140px;
+	height:140px;
+	border-radius:50%;
+	display:block;
+	margin:auto;
+}
+
+.loginContent{
+	margin: 0 auto;
+}
+.loginContentForm textarea{
+    vertical-align: top;
+}
+form.loginContentForm{
+	/* width:60%; */
+	flex: .6;
+	/* padding: 2rem 4rem 2rem 4rem; */
+	/* margin:0 auto; */
+	/* margin-left:21rem; */
+}
+form.loginContentForm label{
+	display: inline-block;
+	/* width:20%; */
+	color: #666;
+    font-size: 1.5rem;
+	padding-right: 1rem;
+}
+form.loginContentForm label[for=id_remember]{
+    font-size: 1rem;
+}
+form.loginContentForm input{
+	margin-left: 0rem;
+}
+.loginContentForm input[type="text"],.loginContentForm input[type="email"],.loginContentForm input[type="password"]{
+		height: 3rem;
+		border-radius: 10px;
+		border: 1px solid #4c4c4c;
+		background: transparent;
+		font-size:2rem;
+		overflow:hidden;
+}
+.loginContentForm textarea{
+	border-radius: 10px;
+    border: 1px solid #666;
+    background: transparent;
+    font-size: 2rem;
+    overflow: hidden;
+	/* margin-top: -2rem; */
+	width: 45rem;
+	height: 8rem;
+	/*margin-left:11rem;*/
+}
+#qText{
+	margin-bottom:2rem;
+}
+.loginContentForm input[type="date"]{
+	border-radius: 10px;
+    border: 2px solid #666;
+    background: transparent;
+    font-size: 2rem;
+}
+.loginContentForm p{
+	width:90%;
+	margin:0 auto;
+	margin-bottom:2rem;
+}
+.loginContentForm input[type="file"] {
+   /*  margin-left: 2rem;
+	width:25%;
+	background: #3e9cbf; */ /*the colour of the button*/
+	/* border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/ */
+	/* cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/ */
+	/* -moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+	font-size: 1rem;
+	visibility:hidden;
+	background:url('question.jpg') no-repeat center center fixed; */
+}
+/*.loginContentForm input[type="submit"]  */#submit{
+	/* margin-left: 18rem; */
+	margin-top:1rem;
+	width:28%;
+	background: #3e9cbf; /*the colour of the button*/
+	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
+	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+	/*style the text*/
+	font-size:1.5rem;
+	letter-spacing:.1rem;
+	color: #fff;
+	/*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	/*give the corners a small curve*/
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+}
+/***SET THE BUTTON'S HOVER AND FOCUS STATES***/
+/*.loginContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{
+	/* color:#dfe7ea; */
+	letter-spacing:.05rem;
+	/*reduce the size of the shadow to give a pushed effect*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+}
+.fileButtonClass{
+	/* opacity: 0; */
+}
+.browseButton {
+/* width: 93px;
+height: 28px;
+background: url('question1.jpg') 0 0 no-repeat;
+border:none;
+overflow:hidden; */
+}
+
+.fileLabel {
+    text-align:center;
+    display:inline-block;
+    width:20%;
+    margin:0 0 0 2rem;
+    background: #fff;
+	border: 1px solid #3e9cbf;
+	cursor: pointer;
+	font-size: 1.5rem;
+	/* letter-spacing: .1rem; */
+	color: #3e9cbf;
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+}
+
+.loginContentTable{
+	display: flex;
+	padding: 4rem 2rem 2rem 2rem;
+}
+
+.socialaccount_ballot{
+	flex: .4;
+}
+
+.forgotPass{
+	font-size : 1rem;
+}
+.login_or{
+	font-size : 1rem;
+	margin-top: 7rem;
+}

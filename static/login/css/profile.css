@@ -273,7 +273,7 @@ ul.menu-nav li a:hover{
 	text-align: left;
 	box-sizing:border-box;
 }
-.tabs input[type="radio"] {
+.tabs input[name="tabs"] {
     position: absolute;
     top: -9999px;
     left: -9999px;
@@ -333,11 +333,12 @@ ul.menu-nav li a:hover{
   }
 .tabs [id^="tab"]:checked ~ [id^="tabContent"] {
     display: block;
+	/* margin: 0 5rem; */
 }
 form.profileForm{
-	width:60%;
-	/*margin:0 auto;*/
-	margin-left:21rem;
+	width:90%;
+	/* margin:0 auto; */
+	/* margin-left:21rem; */
 }
 form.profileForm label{
 	display: inline-block;
@@ -552,3 +553,33 @@ form.profileForm input{
     padding-left: 10rem;
 }
 */
+
+#submit{
+	margin-left: 18rem;
+	margin-top:1rem;
+	width:28%;
+	background: #3e9cbf; /*the colour of the button*/
+	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
+	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+	/*style the text*/
+	font-size:2.5rem;
+	letter-spacing:.1rem;
+	color: #fff;
+	/*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	/*give the corners a small curve*/
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+}
+/***SET THE BUTTON'S HOVER AND FOCUS STATES***/
+/*.createPollContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{
+	/* color:#dfe7ea; */
+	letter-spacing:.05rem;
+	/*reduce the size of the shadow to give a pushed effect*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+}

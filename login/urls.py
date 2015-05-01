@@ -8,6 +8,6 @@ urlpatterns = patterns('',
 
     #url(r'^', views.index),
 	url(r'^$',views.LoggedInView.as_view(),name='loggedIn'),
-	# url(r'^signup$',views.MySignupView.as_view(),name='mySignup'),
+	url(r'^editprofile$',views.EditProfileView.as_view(),name='edit_profile'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

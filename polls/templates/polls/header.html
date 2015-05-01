@@ -26,7 +26,17 @@
 							<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
 						</div>
 					</li>
-					<li class="userInNav"><a href="#"><img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}"></a></li>
+					<li class="userInNav"><a href="#">
+					{% if user.socialaccount_set.all %}
+					  {% if user.extendeduser.imageUrl %}
+						<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
+					  {% endif %}
+					{% else %}
+					  {% if user.extendeduser.imageUrl %}
+						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_nam}}">
+					  {% endif %}
+					{% endif %}
+					</a></li>
 				</ul>
 			</div>
 		</section>

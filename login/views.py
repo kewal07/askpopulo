@@ -6,11 +6,34 @@ import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
 
-# class MySignupView(generic.ListView):
+# from allauth.account.signals import user_signed_up
+# from django.dispatch import receiver
 
-	# def post(self, request, *args, **kwargs):
-		# # SignupView.as_view()
-		# allauth.account.views.signup
+# @receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
+# def user_signed_up_(request, user, **kwargs):
+    # # user signed up now send email
+    # # send email part - do your self
+	
+class EditProfileView(generic.ListView):
+	
+	def post(self, request, *args, **kwargs):
+		url = reverse('login:loggedIn')
+		user = request.user
+		extendeduser = user.extendeduser
+		print(request.POST)
+		print(request.POST.get('name'))
+		user.first_name = request.POST.get('name').split()[0]
+		user.last_name = request.POST.get('name').split()[1]
+		extendeduser.city=request.POST.get('city','')
+		extendeduser.birthDay=request.POST.get('dob','')
+		extendeduser.state=request.POST.get('state','')
+		extendeduser.country=request.POST.get('country','')
+		extendeduser.profession=request.POST.get('prof','')
+		extendeduser.gender=request.POST.get('gender','')
+		extendeduser.bio=request.POST.get('bio','')
+		user.save()
+		extendeduser.save()
+		return HttpResponseRedirect(url)
 
 class LoggedInView(generic.ListView):
 	template_name = 'login/profile.html'

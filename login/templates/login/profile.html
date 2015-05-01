@@ -33,8 +33,14 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 		<section id="profile">
 				<div class="profilePic">
-					{% if user.extendeduser.imageUrl %}
-						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
+					{% if user.socialaccount_set.all %}
+					  {% if user.extendeduser.imageUrl %}
+						<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
+					  {% endif %}
+					{% else %}
+					  {% if user.extendeduser.imageUrl %}
+						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_nam}}">
+					  {% endif %}
 					{% endif %}
 				</div>
 				<div class="profileContent">
@@ -43,47 +49,52 @@
 							<input type="radio" name="tabs" id="tab1" checked />
 							<label class="tabsLabel" for="tab1">About Me</label>
 							<div id="tabContent1" class="tabContent">
-								<form class="profileForm">
+								<form class="profileForm" method="POST" action="{% url 'login:edit_profile' %}">
+									<!-- <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"> -->
+									{% csrf_token %}
 									<p>
 										<label for="name">Name</label>
-										<input id="name" type="text" name="name" placeholder="{{ user.first_name}} {{ user.last_name }}" readonly>
+										<input id="name" type="text" name="name" value="{{ user.first_name}} {{ user.last_name }}">
 									</p>
 									<p>
 										<label for="userName">User Name</label>
-										<input id="userName" type="text" name="userName" placeholder="{{ user.username }}" readonly>							
+										<input id="userName" type="text" name="userName" value="{{ user.username }}" readonly>							
 									</p>
 									<p>
 										<label for="email">Email</label>
-										<input id="email" type="text" name="email" placeholder="{{ user.email }}" readonly>							
+										<input id="email" type="text" name="email" value="{{ user.email }}" readonly>							
 									</p>
 									<p>
 										<label for="bio">Bio</label>
-										<textarea id ="bio" cols="40" rows="5" name="bio" placeholder="{{ user.extendeduser.bio }}" readonly></textarea>
+										<!-- {{ user.extendeduser.bio }} -->
+										<textarea id ="bio" cols="40" rows="5" name="bio" value="{{ user.extendeduser.bio }}" >{{ user.extendeduser.bio }}</textarea>
 									</p>
 									<p>
 										<label for="gender">Gender</label>
-										<input id="gender" type="text" name="gender" placeholder="{{ user.extendeduser.gender }}" readonly>							
+										<input type="radio" id="gender" name="gender" value="M" {% ifequal user.extendeduser.gender "M"%} checked="checked"{% endifequal %}>Male <input type="radio" id="gender" name="gender" value="F" {% ifequal user.extendeduser.gender "F"%} checked="checked"{% endifequal %}>Female
+										<!-- <input id="gender" type="text" name="gender" value="{{ user.extendeduser.gender }}" > -->
 									</p>
 									<p>
 										<label for="dob">DOB</label>
-										<input id="dob" type="text" name="dob" placeholder="{{ user.extendeduser.birthDay }}" readonly>
+										<input id="dob" type="date" name="dob" value="{{ user.extendeduser.birthDay|date:'Y-m-d' }}" >
 									</p>
 									<p>
 										<label for="prof">Profession</label>
-										<input id="prof" type="text" name="prof" placeholder="{{ user.extendeduser.profession }}" readonly>
+										<input id="prof" type="text" name="prof" value="{{ user.extendeduser.profession }}" >
 									</p>
 									<p>
 										<label for="country">Country</label>
-										<input id="country" type="text" name="country" placeholder="{{ user.extendeduser.country }}" readonly>
+										<input id="country" type="text" name="country" value="{{ user.extendeduser.country }}" >
 									</p>
 									<p>
 										<label for="state">State</label>
-										<input id="state" type="text" name="state" placeholder="{{ user.extendeduser.state }}" readonly>
+										<input id="state" type="text" name="state" value="{{ user.extendeduser.state }}" >
 									</p>	
 									<p>
 										<label for="city">City</label>
-										<input id="city" type="text" name="city" placeholder="{{ user.extendeduser.city }}" readonly>
-									</p>		
+										<input id="city" type="text" name="city" value="{{ user.extendeduser.city }}" >
+									</p>
+									<input id="submit" type="submit" value="Save Changes" />
 								</form>
 							</div>
 						</li>
@@ -136,6 +147,7 @@
 									<div id="changePassword">
 										<p>Change Password</p>
 										<form class="changePasswordForm">
+											{% csrf_token %}
 											<p>
 												<label for="oldP">Current Password</label>
 												<input id="oldP" type="password" name="oldP" placeholder="********">
