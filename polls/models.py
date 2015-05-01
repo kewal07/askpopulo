@@ -2,8 +2,14 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+import os
 # Create your models here.
 
+def get_file_path(instance, filename):
+	ext = filename.split('.')[-1]
+	filename = "choice%s_%s.%s" % (instance.question.id,instance.id, ext)
+	profilePath = (os.path.join(settings.BASE_DIR,'media/choices/'))
+	return os.path.join(profilePath,filename)
 
 class Question(models.Model):
 	question_text = models.CharField(max_length=200)
@@ -22,8 +28,11 @@ class Question(models.Model):
 class Choice(models.Model):
 	question = models.ForeignKey(Question)
 	choice_text = models.CharField(max_length=200)
+	choice_image = models.ImageField(upload_to=get_file_path,blank=True,null=True)
 	def __str__(self):
 		return self.choice_text
+	def get_file_name(self):
+		return self.choice_image.path.split("\\")[-1]
 
 class Vote(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)

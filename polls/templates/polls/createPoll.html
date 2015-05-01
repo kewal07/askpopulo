@@ -38,7 +38,7 @@
 		<section id="createPoll">
 			<div class="createPoll">
 				<div class="createPollContent">
-				<form class="createPollContentForm" method="POST" action="{% url 'polls:polls_create' %}">
+				<form class="createPollContentForm" method="POST" action="{% url 'polls:polls_create' %}"  enctype="multipart/form-data">
 					{% csrf_token %}
 					<p>
 						<label for="qText">Question</label>

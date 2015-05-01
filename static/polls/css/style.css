@@ -87,6 +87,9 @@ body{
 a:hover{
 	letter-spacing: 5px;
 }
+.choice_image{
+	width: 300px;
+}
 #header{
 	background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);

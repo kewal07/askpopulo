@@ -82,6 +82,7 @@ class CreatePollView(generic.ListView):
 		# print(user.is_authenticated())
 		print(dir(request), *args, **kwargs)
 		print(request.POST)
+		print(request.FILES)
 		print(self.errors)
 		# self.errors = {}
 		print(self.errors)
@@ -101,14 +102,18 @@ class CreatePollView(generic.ListView):
 			qExpiry = request.POST.get('qExpiry')
 			print(qExpiry)
 			choice1 = request.POST.get('choice1')
+			choice1Image = request.FILES.get('choice1')
 			print(choice1)
 			choice2 = request.POST.get('choice2')
+			choice2Image = request.FILES.get('choice2')
 			print(choice2)
-			if not choice1 or not choice2:
+			if (not choice1 or not choice2) and (not choice1Image or not choice2Image):
 				self.errors['choiceError'] = "At least 2 choices should be provided"
 			choice3 = request.POST.get('choice3')
+			choice3Image = request.FILES.get('choice3')
 			print(choice3)
 			choice4 = request.POST.get('choice4')
+			choice4Image = request.FILES.get('choice4')
 			print(choice4)
 			print(self.errors)
 			if self.errors:
@@ -118,10 +123,10 @@ class CreatePollView(generic.ListView):
 			else:
 				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now())
 				question.save()
-				choice1 = Choice(question=question,choice_text=choice1)
-				choice2 = Choice(question=question,choice_text=choice2)
-				choice3 = Choice(question=question,choice_text=choice3)
-				choice4 = Choice(question=question,choice_text=choice4)
+				choice1 = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
+				choice2 = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
+				choice3 = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
+				choice4 = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice1.save()
 				choice2.save()
 				choice3.save()

@@ -8,7 +8,18 @@
 							<div class="questionContent">
 								<div class="userInfo">
 									<div class="userImage">
-										<img src="{{question.question.user.extendeduser.imageurl}}" alt="{{question.question.user.first_name}}">
+										{% if question.question.user.socialaccount_set.all %}
+										  {% if question.question.user.extendeduser.imageUrl %}
+											<img src="{{ question.question.user.extendeduser.imageUrl }}" alt="User {{ question.question.user.first_name }}">
+										  {% endif %}
+										{% else %}
+										  {% if question.question.user.extendeduser.imageUrl %}
+											<img src="/media/profile/{{ question.question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.question.user.first_name }}">
+										  {% else %}
+											<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
+										  {% endif %}
+										{% endif %}
+										<!-- <img src="{{question.question.user.extendeduser.imageurl}}" alt="{{question.question.user.first_name}}"> -->
 									</div>
 									<div class="userBrief">
 										<p>{{question.question.user.first_name}}</p>
@@ -22,7 +33,12 @@
 											<p>
 												<input type="hidden" name="question" value="{{ question.question.id }}" />
 												<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked="checked"/>
-												<label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label>
+												<label for="choice{{ forloop.counter }}">
+												{% if choice.choice_image %}
+													<img class="choice_image" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}"><br>
+												{% endif %}
+												{{choice.choice_text}}
+												</label>
 											</p>
 										{% endfor %}
 										<input type="submit" value="Vote" />
