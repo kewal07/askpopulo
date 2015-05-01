@@ -33,7 +33,9 @@
 					  {% endif %}
 					{% else %}
 					  {% if user.extendeduser.imageUrl %}
-						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_nam}}">
+						<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
+					  {% else %}
+						<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
 					  {% endif %}
 					{% endif %}
 					</a></li>
