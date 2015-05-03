@@ -35,12 +35,16 @@
 									{% for choice in question.question.choice_set.all %}
 										<p>
 											<input type="hidden" name="question" value="{{ question.question.id }}" />
-											<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked="checked"/>
-											<label for="choice{{ forloop.counter }}">
-											{% if choice.choice_image %}
-												<img class="choice_image" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}"><br>
-											{% endif %}
-											{{choice.choice_text}}
+											<input type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" checked="checked"/>
+											<label for="choice{{ choice.id }}">
+												{% if choice.choice_image %}
+												<script>
+													$("#choice{{ choice.id }}").hide();
+												</script>
+													<img class="choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}"><br>
+												{% else %}
+													{{ choice.choice_text }}
+												{% endif %}
 											</label>
 										</p>
 									{% endfor %}
@@ -48,10 +52,11 @@
 								</form>
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
-										<li class="firstInfo">{{question.votes}} opinion{{question.votes|pluralize}}</li>
-										<li>{{question.subscribers}} interested</li>
-										<li class="thirdInfo">10 credits on offer</li>
-										<li class="lastInfo">Mail it</li>
+										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
+										<li><span class="pollInfoNum">{{question.subscribers}}</span> interested</li>
+										<li ><i class="fa fa-facebook"></i></li>
+										<li><i class="fa fa-twitter"></i></li>
+										<li><i class="fa fa-google-plus"></i></li>
 									</ul>
 								</div>
 							</div>

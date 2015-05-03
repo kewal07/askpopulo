@@ -57,7 +57,6 @@
 #submit{
 	  /* margin-left: 18rem; */
   margin-top: 1rem;
-  width: 15%;
   background: #3e9cbf;
   border: 1px solid #3e9cbf;
   cursor: pointer;
@@ -70,6 +69,7 @@
   -moz-border-radius: 25px;
   -webkit-border-radius: 25px;
   border-radius: 25px;
+  padding: 0 1rem;
 }
 #submit:hover{
 	/* color:#dfe7ea; */
@@ -85,7 +85,15 @@ ul.pollInfoUl li {
 	margin-right:4%;
 	font-size:1.15rem;
 }
-.choice_image{width:200px;}
+.choice_image{
+	width: 200px;
+  	height: 150px;
+  	border: 5px solid #666;
+}
+
+.pollInfoNum{
+	color:#990099;
+}
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
 		margin: 2rem 0.5rem;

@@ -88,7 +88,6 @@ form.createPollContentForm input{
 /*.createPollContentForm input[type="submit"]  */#submit{
 	margin-left: 18rem;
 	margin-top:1rem;
-	width:28%;
 	background: #3e9cbf; /*the colour of the button*/
 	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
 	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
@@ -104,6 +103,7 @@ form.createPollContentForm input{
 	-moz-border-radius: 25px;
 	-webkit-border-radius: 25px;
 	border-radius: 25px;
+	padding: 0 1rem;
 }
 /***SET THE BUTTON'S HOVER AND FOCUS STATES***/
 /*.createPollContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{

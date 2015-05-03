@@ -34,5 +34,13 @@ $(document).ready(function(){
 	    $(this).prev().children().first().click();
 	});
 	/* End of file browse*/
+
+	/* For changing border color of the selected radio image */
+	$(".choice_image").click(function(){
+		// console.log($(this));
+		$(".choice_image").css({"border-color":"#666"});
+		($(this)[0]).style.borderColor="#00FF00";
+	});
+	/* End of changing image border color */
 });
 
