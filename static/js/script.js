@@ -1,37 +1,4 @@
-// $(window).scroll(function() {   
-//    if($(window).scrollTop() + $(window).innerHeight() == scrollHeight) {
-//        alert("bottom!");
-//    }
-// });
-/* For Fixed Header */
 $(document).ready(function(){
-	if ( $(window).width() > 960) {
-		$(window).on('scroll', function() {
-		    scrollPosition = $(this).scrollTop();
-		    console.log(scrollPosition);
-		    if (scrollPosition >= 10) {
-		        // If the function is only supposed to fire once
-		        //$(this).off('scroll');
-		        //alert("bottom");
-		        //check if too heavy...always detecting while scroll...maybe some way to detect once above ???
-		        $("#header").attr("id","headerScroll");
-		        $( ".logo img" ).addClass( "imgScroll" );
-		        $( ".menu" ).addClass( "menuScroll" );
-		        $( ".search" ).addClass( "searchScroll" );
-		        $( ".searchBox" ).addClass( "searchBoxScroll" );
-		        // Other function stuff here...
-		    }
-		    else{
-		    	$("#headerScroll").attr("id","header");
-		        $( ".logo img" ).removeClass( "imgScroll" );
-		        $( ".menu" ).removeClass( "menuScroll" );
-		        $( ".search" ).removeClass( "searchScroll" );
-		        $( ".searchBox" ).removeClass( "searchBoxScroll" );
-		    }
-		});
-	}
-	/* End */
-
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
 	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Chose file</span></div>');
@@ -66,6 +33,6 @@ $(document).ready(function(){
 	$('.fileLabel').click(function(){
 	    $(this).prev().children().first().click();
 	});
-	/* End */
+	/* End of file browse*/
 });
 

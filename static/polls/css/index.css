@@ -1,0 +1,187 @@
+#content{
+	margin: 7rem 5rem 0rem 5rem;
+}
+.questions{
+	border: 3px solid #000;
+  	border-radius: 25px;
+  	background-color: white;
+  	opacity: 0.93;
+  	padding: 3rem 3rem;
+  	margin-bottom:2rem;
+  	display: -ms-flex; 
+  	display: -webkit-flex; 
+  	display: flex;
+}
+/*.questions>div{
+	flex:1;
+}*/
+.questionContent{
+	width:90%;
+	margin:0 auto;
+	display:flex;
+}
+.questionContent>div{
+	flex:1;
+}
+.userInfo{
+	margin-right: 1rem;
+	flex:0.2 !important;
+ 	padding-top: 1rem;
+}
+.userImage img{
+	border-radius:50%;
+	padding:0;
+	width:100%;
+}
+.userBrief p{
+	padding: 1rem 0rem;
+  	font-size: 1.5rem;
+  	text-align: center;
+  	overflow: hidden;
+  	width: 100%;
+}
+.mainPoll{
+	padding:1rem;
+}
+.mainPoll p{
+	font-size: 2rem;
+}
+.mainPoll .optionsForm{
+	padding:2rem 2rem;
+}
+.optionsForm p {
+	padding-left:0.5rem;
+	padding-bottom:0.5rem;
+	font-size:1.25rem;
+}
+#submit{
+	  /* margin-left: 18rem; */
+  margin-top: 1rem;
+  width: 15%;
+  background: #3e9cbf;
+  border: 1px solid #3e9cbf;
+  cursor: pointer;
+  font-size: 1.5rem;
+  letter-spacing: .1rem;
+  color: #fff;
+  -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+}
+#submit:hover{
+	/* color:#dfe7ea; */
+	letter-spacing:.05rem;
+	/*reduce the size of the shadow to give a pushed effect*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+}
+ul.pollInfoUl li {
+	list-style-type: none;
+	float:left;
+	margin-right:4%;
+	font-size:1.15rem;
+}
+.choice_image{width:200px;}
+@media only screen and (min-width:481px) and (max-width: 960px){
+	#content{
+		margin: 2rem 0.5rem;
+	}
+	.questions{
+		padding: 1rem 0rem;
+  		margin: 0rem;
+  		margin-bottom:2rem;
+	}
+	.userInfo{
+		margin:1rem;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+	}
+	.userBrief p{
+		padding: 1rem 0rem 0rem 0rem;
+  		font-size: 1rem;
+	}
+	.mainPoll{
+		padding:1rem;
+		margin-bottom: -1rem;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.mainPoll .optionsForm{
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	.pollInfo{
+		margin-top:1rem;
+	}
+	ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
+	}
+}
+@media only screen and (min-width:481px) and (max-width: 645px){
+	.pollInfo{
+		display:none;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+}
+@media only screen and (max-width: 480px){
+	#content{
+		margin: 2rem 0.5rem;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+  		margin: 0rem;
+  		margin-bottom:2rem;
+	}
+	.userInfo{
+		margin:1rem;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+	}
+	.userBrief p{
+		padding: 1rem 1rem 0rem 0rem;
+  		font-size: 1rem;
+  		width: 50px;
+  		overflow: hidden;
+	}
+	.mainPoll{
+		padding:1rem;
+		margin-bottom: -1rem;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.mainPoll .optionsForm{
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	/*ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
+	}*/
+	.pollInfo{
+		display:none;
+	}
+}

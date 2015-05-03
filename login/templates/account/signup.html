@@ -1,4 +1,4 @@
-{% extends "polls/header.html" %}
+{% extends "polls/common.html" %}
 {% load static %}
 
 {% load url from future %}
@@ -17,22 +17,6 @@
 			<form class="signupContentForm" id="signup_form" method="post" action="{% url 'account_signup' %}" enctype="multipart/form-data">
 			  {% csrf_token %}
 			  {{ form.as_p }}
-			  <!-- <p>
-			  <label>{{ form.username.label }}</label>
-			  {{ form.username }}
-			  </p>
-			  <p>
-			  <label>{{ form.email.label }}</label>
-			  {{ form.email }}
-			  </p>
-			  <p>
-			  <label>{{ form.password1.label }}</label>
-			  {{ form.password1 }}
-			  </p>
-			  <p>
-			  <label>{{ form.password2.label }}</label>
-			  {{ form.password2 }}
-			  </p> -->
 			  {% if redirect_field_value %}
 			  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 			  {% endif %}
