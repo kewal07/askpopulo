@@ -1,5 +1,5 @@
 #login{
-	margin: 0 5rem;
+	  margin: 7rem 5rem 0rem 5rem;
 }
 .login{
 	font-size: 1.5rem;
@@ -16,7 +16,7 @@
 	/* margin-bottom: 2rem; */
 	  /* margin-bottom: 2rem; */
   /* margin-left: 19rem; */
-  margin-top: 2rem;
+  margin:1rem 0;
   text-align: center;
   /* margin: 0 auto; */
 }
@@ -37,7 +37,8 @@
 }
 form.loginContentForm{
 	/* width:60%; */
-	flex: .6;
+	flex:1;
+	margin:1rem 0;
 	/* padding: 2rem 4rem 2rem 4rem; */
 	/* margin:0 auto; */
 	/* margin-left:21rem; */
@@ -162,11 +163,12 @@ overflow:hidden; */
 
 .loginContentTable{
 	display: flex;
-	padding: 4rem 2rem 2rem 2rem;
+	padding: 1rem 2rem 2rem 2rem;
 }
 
 .socialaccount_ballot{
-	flex: .4;
+	flex: 1;
+	border-right: 4px solid #666;
 }
 
 .forgotPass{
@@ -176,3 +178,5 @@ overflow:hidden; */
 	font-size : 1rem;
 	margin-top: 7rem;
 }
+label[for="id_login"] { display:none !important; }
+label[for="id_password"] { display:none !important; }

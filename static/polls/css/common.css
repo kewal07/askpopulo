@@ -206,6 +206,11 @@ ul.menu-nav li a:hover{
 		display:none;
 	}
 }
+.anchorSpan{
+	font-size: 2rem;
+  	color: orange;
+  	font-weight: bold;
+}
 /*@media only screen and (max-width: 480px){
 	#header{
 		 position: relative;

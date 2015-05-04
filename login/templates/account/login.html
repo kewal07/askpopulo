@@ -13,7 +13,7 @@
 			<!-- <h1>{% trans "Sign In" %}</h1> -->
 
 			{% if socialaccount.providers  %}
-			<p>Please sign in with one of your existing third party accounts. Or, <a href="{% url 'account_signup' %}">sign up</a> for <a href="/"> {{ site.name }}</a> account and sign in below:</p>
+			<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
 
 			<div class="loginContentTable">
 			<div class="socialaccount_ballot">
@@ -22,7 +22,8 @@
 				{% include "socialaccount/snippets/provider_list.html" with process="login" %}
 			  <!-- </ul> -->
 			</div>
-			<div class="login_or"> OR </div>
+			<!-- <div class="login_or"> OR </div> -->
+
 			  <!-- <div class="login-or">{% trans 'or' %}</div> -->
 
 			<!-- <div class="login-or">{% trans 'or' %}</div> -->

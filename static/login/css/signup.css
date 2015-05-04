@@ -1,5 +1,5 @@
 #signup{
-	margin: 0 5rem;
+	margin: 7rem 5rem 0rem 5rem;
 }
 .signup{
 	font-size: 1.5rem;
@@ -62,7 +62,7 @@ form.signupContentForm input{
     font-size: 2rem;
     overflow: hidden;
 	/* margin-top: -2rem; */
-	width: 45rem;
+	/*width: 45rem;*/
 	height: 8rem;
 	/*margin-left:11rem;*/
 }
@@ -134,9 +134,10 @@ overflow:hidden; */
 }
 
 .fileLabel {
+	padding:0.5rem 1rem;
     text-align:center;
     display:inline-block;
-    width:20%;
+    /*width:20%;*/
     margin:0 0 0 2rem;
     background: #fff;
 	border: 1px solid #3e9cbf;

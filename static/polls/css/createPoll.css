@@ -3,7 +3,7 @@ html{
 	background-size:cover;/*font-family: 'capture',sans-serif;*/
 }
 #createPoll{
-	margin: 0 5rem;
+	margin: 7rem 5rem 0rem 5rem;
 }
 .createPoll{
 	font-size: 1.5rem;
@@ -21,9 +21,6 @@ html{
 }
 .createPollContent{
 	margin: 0 auto;
-}
-.createPollContentForm textarea{
-    vertical-align: top;
 }
 form.createPollContentForm{
 	/* width:60%; */
@@ -49,13 +46,15 @@ form.createPollContentForm input{
 		overflow:hidden;
 }
 .createPollContentForm textarea{
+	vertical-align: top;
 	border-radius: 10px;
     border: 1px solid #666;
     background: transparent;
     font-size: 2rem;
     overflow: hidden;
 	margin-top: -2rem;
-	width: 45rem;
+	width:75%;
+	/*width: 45rem;*/
 	/*margin-left:11rem;*/
 }
 #qText{

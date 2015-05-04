@@ -32,16 +32,20 @@
 								<p><a href="#">{{question.question.question_text}}</a></p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' %}" method="POST">
 									{% csrf_token %}
+									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									{% for choice in question.question.choice_set.all %}
 										<p>
-											<input type="hidden" name="question" value="{{ question.question.id }}" />
-											<input type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" checked="checked"/>
+											<input type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
 											<label for="choice{{ choice.id }}">
 												{% if choice.choice_image %}
 												<script>
 													$("#choice{{ choice.id }}").hide();
+													var item = $("#choice{{ choice.id}}");
+													item.parent().css({"display":"inline-block"});
+													// console.log($this.parent().next().children().first().show());
 												</script>
-													<img class="choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}"><br>
+													<img class="choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+													<!-- {{ choice.choice_text }} -->
 												{% else %}
 													{{ choice.choice_text }}
 												{% endif %}

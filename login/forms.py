@@ -19,7 +19,7 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
 class MySignupForm(forms.Form):
 
 	curyear = datetime.now().year
-	image = forms.ImageField(required=False)
+	image = forms.ImageField(required=False,label='Profile Image')
 	first_name = forms.CharField(max_length=30, label='First Name', widget=forms.TextInput(attrs={'placeholder': 'First Name','autofocus': 'autofocus'}))
 	last_name = forms.CharField(max_length=30, label='Last Name', widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
 	gender = forms.ChoiceField(choices=[('M','Male'),('F','Female')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)

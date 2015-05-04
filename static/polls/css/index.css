@@ -70,6 +70,7 @@
   -webkit-border-radius: 25px;
   border-radius: 25px;
   padding: 0 1rem;
+  display: block;
 }
 #submit:hover{
 	/* color:#dfe7ea; */
@@ -89,8 +90,12 @@ ul.pollInfoUl li {
 	width: 200px;
   	height: 150px;
   	border: 5px solid #666;
+  	margin-right: 2rem;
+  	cursor:pointer;
 }
-
+.choice_image:hover{
+	border-color: #00ff00;
+}
 .pollInfoNum{
 	color:#990099;
 }

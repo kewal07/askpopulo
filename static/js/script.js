@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Chose file</span></div>');
+	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Upload Image</span></div>');
 	// var upImg = $('<img id="upImg" width=>')
 	var fileInput = $(":file").after(label).wrap(invisible);
 	$(".upImg").hide();
