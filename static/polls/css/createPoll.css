@@ -210,3 +210,14 @@ overflow:hidden; */
   background-image: url('/static/polls/images/ui-icons_ef8c08_256x240.png') !important;
 }
 /*end*/
+.anonymous{
+	text-align: center;
+}
+.anonymous input[type="checkbox"]{
+	width:30px;
+	height:30px;
+}
+.anonymous label{
+	vertical-align: super;
+	width:initial !important;
+}
