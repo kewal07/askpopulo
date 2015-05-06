@@ -11,21 +11,31 @@
 						<div class="questionContent">
 							<div class="userInfo">
 								<div class="userImage">
-									{% if question.question.user.socialaccount_set.all %}
-									  {% if question.question.user.extendeduser.imageUrl %}
-										<img src="{{ question.question.user.extendeduser.imageUrl }}" alt="User {{ question.question.user.first_name }}">
-									  {% endif %}
-									{% else %}
-									  {% if question.question.user.extendeduser.imageUrl %}
-										<img src="/media/profile/{{ question.question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.question.user.first_name }}">
-									  {% else %}
+									{% if question.question.isAnonymous %}
 										<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
-									  {% endif %}
+									{% else %}
+										{% if question.question.user.socialaccount_set.all %}
+										  {% if question.question.user.extendeduser.imageUrl %}
+											<img src="{{ question.question.user.extendeduser.imageUrl }}" alt="User {{ question.question.user.first_name }}">
+										  {% endif %}
+										{% else %}
+										  {% if question.question.user.extendeduser.imageUrl %}
+											<img src="/media/profile/{{ question.question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.question.user.first_name }}">
+										  {% else %}
+											<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
+										  {% endif %}
+										{% endif %}
 									{% endif %}
 									<!-- <img src="{{question.question.user.extendeduser.imageurl}}" alt="{{question.question.user.first_name}}"> -->
 								</div>
 								<div class="userBrief">
-									<p>{{question.question.user.first_name}}</p>
+									<p>
+										{% if question.question.isAnonymous %}
+											Anonymous
+										{% else %}
+											{{question.question.user.first_name}}
+										{% endif %}
+									</p>
 								</div>
 							</div> 
 							<div class="mainPoll">
@@ -35,7 +45,7 @@
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									{% for choice in question.question.choice_set.all %}
 										<p>
-											<input type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+											<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
 											<label for="choice{{ choice.id }}">
 												{% if choice.choice_image %}
 												<script>
@@ -44,7 +54,7 @@
 													item.parent().css({"display":"inline-block"});
 													// console.log($this.parent().next().children().first().show());
 												</script>
-													<img class="choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+													<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
 													<!-- {{ choice.choice_text }} -->
 												{% else %}
 													{{ choice.choice_text }}
@@ -54,6 +64,7 @@
 									{% endfor %}
 									<input id="submit" type="submit" value="Vote" />
 								</form>
+								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
 										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>

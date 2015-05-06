@@ -36,10 +36,10 @@ $(document).ready(function(){
 	/* End of file browse*/
 
 	/* For changing border color of the selected radio image */
-	$(".choice_image").click(function(){
-		// console.log($(this));
+	$(".choices").click(function(){
+		// console.log($(".choices.choice_image#"+$(this)[0].id)[0]);
 		$(".choice_image").css({"border-color":"#666"});
-		($(this)[0]).style.borderColor="#00FF00";
+		($(".choice_image#"+$(this)[0].id)[0]).style.borderColor="#00FF00";
 	});
 	/* End of changing image border color */
 });

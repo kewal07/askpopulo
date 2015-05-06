@@ -5,10 +5,10 @@
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/common.css' %}" />
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+		{% block extra_css %}{% endblock %}
 		<script src="http://code.jquery.com/jquery.min.js"></script>
 		<script src="{% static 'js/scriptIE.js' %}"></script>
 		<script src="{% static 'js/script.js' %}"></script>
-		{% block extra_css %}{% endblock %}
 		{% block extra_js %}{% endblock %}
 	</head>
 	<body>

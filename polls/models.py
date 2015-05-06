@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 import os
+from categories.models import Category
 # Create your models here.
 
 def get_file_path(instance, filename):
@@ -17,6 +18,7 @@ class Question(models.Model):
 	pub_date = models.DateTimeField('Date Published')
 	expiry =  models.DateTimeField(null=True,blank=True)
 	description = models.CharField(max_length=400,null=True,blank=True)
+	isAnonymous = models.BooleanField(default=0)
 	def __str__(self):
 		return self.question_text
 	def was_published_recently(self):
@@ -51,3 +53,10 @@ class Voted(models.Model):
 	question = models.ForeignKey(Question)
 	def __str__(self):
 		return self.question.question_text+" : "+self.user.username
+
+class QuestionWithCategory(models.Model):
+	question = models.ForeignKey(Question)
+	category = models.ForeignKey(Category)
+	def __str__(self):
+		return self.category.category_title
+	

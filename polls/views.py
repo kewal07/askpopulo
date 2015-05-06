@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
-from polls.models import Question,Choice,Vote,Subscriber,Voted
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
+from categories.models import Category
 import datetime
 # Create your views here.
 
@@ -63,66 +64,46 @@ class VoteView(generic.ListView):
 class CreatePollView(generic.ListView):
 	template_name = 'polls/createPoll.html'
 	context_object_name = 'data'
-	errors = {}
 	
 	def get_queryset(self):
-		print(self.request)
-		print(self.errors)
-		errors = self.errors
-		self.errors = {}
-		print(self.errors)
-		return errors;
+		return Category.objects.all()
 	
 	def post(self, request, *args, **kwargs):
-		# print(reverse('polls:index'))
 		url = reverse('polls:index')
 		user = request.user
-		# print ('voting')
-		# print(dir(user))
-		# print(user.is_authenticated())
-		print(dir(request), *args, **kwargs)
-		print(request.POST)
-		print(request.FILES)
-		print(self.errors)
-		# self.errors = {}
-		print(self.errors)
-		# print(request.GET.get('question'))
 		if not user.is_authenticated():
-			# url = 'account/login.html'
 			url = reverse('account_login')
 		elif request.POST:
-			# validate and save poll
-			# self.errors = {}
 			qText = request.POST.get('qText')
-			print (qText)
 			if not qText:
 				self.errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
-			print (qDesc)
 			qExpiry = request.POST.get('qExpiry')
-			print(qExpiry)
+			if not qExpiry:
+				qExpiry = None
 			choice1 = request.POST.getlist('choice1')[0].strip()
 			choice1Image = request.FILES.get('choice1')
-			print(choice1)
 			choice2 = request.POST.getlist('choice2')[0].strip()
 			choice2Image = request.FILES.get('choice2')
-			print(choice2)
 			if (not choice1 or not choice2) and (not choice1Image or not choice2Image):
 				self.errors['choiceError'] = "At least 2 choices should be provided"
 			choice3 = request.POST.getlist('choice3')[0].strip()
 			choice3Image = request.FILES.get('choice3')
-			print(choice3)
 			choice4 = request.POST.getlist('choice4')[0].strip()
 			choice4Image = request.FILES.get('choice4')
-			print(choice4)
-			print(self.errors)
-			# if self.errors:
-			# 	url = reverse('polls:polls_create')
-			# 	print("url----",url,request)
-			# 	# return request
-			# else:
-			question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now())
+			selectedCats = request.POST.get('selectedCategories','').split(",")
+			isAnon = request.POST.get('anonymous')
+			if isAnon:
+				anonymous = 1
+			else:
+				anonymous = 0
+			question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous)
 			question.save()
+			for cat in selectedCats:
+				if cat:
+					category = Category.objects.filter(category_title=cat)[0]
+					qWcat = QuestionWithCategory(question=question,category=category)
+					qWcat.save()
 			if choice1 or choice1Image:
 				choice1 = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
 				choice1.save()
