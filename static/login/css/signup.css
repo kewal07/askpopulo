@@ -47,7 +47,7 @@ form.signupContentForm label{
 form.signupContentForm input{
 	margin-left: 0rem;
 }
-.signupContentForm input[type="text"],.signupContentForm input[type="email"],.signupContentForm input[type="password"]{
+.signupContentForm input[type="text"],.signupContentForm input[type="email"],.signupContentForm input[type="password"],.signupContentForm select{
 		height: 3rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
@@ -55,6 +55,11 @@ form.signupContentForm input{
 		font-size:2rem;
 		overflow:hidden;
 }
+
+.signupContentForm select{
+	font-size:1rem;
+}
+
 .signupContentForm textarea{
 	border-radius: 10px;
     border: 1px solid #666;
