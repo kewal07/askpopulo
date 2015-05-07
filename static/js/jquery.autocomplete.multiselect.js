@@ -73,7 +73,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                 }
                 else if(o.maxselection <= 0)
                 {
-                    alert("max");
+                    alert("Maximum number of categories selected");
                 }
                 self.selectedItems[ui.item.label] = ui.item;
                 self._value("");
