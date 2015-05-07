@@ -8,6 +8,7 @@ from datetime import date
 from django.conf import settings
 from django.forms import widgets
 import os
+import pymysql
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -17,7 +18,6 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
     return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
 
 class MySignupForm(forms.Form):
-
 	curyear = datetime.now().year
 	image = forms.ImageField(required=False,label='Profile Image')
 	first_name = forms.CharField(max_length=30, label='First Name', widget=forms.TextInput(attrs={'placeholder': 'First Name','autofocus': 'autofocus'}))
@@ -26,9 +26,9 @@ class MySignupForm(forms.Form):
 	birthDay = forms.DateField(widget=CustomDateInput)
 	bio = forms.CharField( max_length=1024, widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
 	profession = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Profession'}),required=False)
+	country = forms.ChoiceField('')
+	state = forms.ChoiceField('')#forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'State'}),required=False)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
-	state = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'State'}),required=False)
-	country = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Country'}),required=False)
 
 	def signup(self, request, user):
 		# print(dir(request))
