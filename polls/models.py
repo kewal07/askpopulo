@@ -19,6 +19,11 @@ class Question(models.Model):
 	expiry =  models.DateTimeField(null=True,blank=True)
 	description = models.CharField(max_length=400,null=True,blank=True)
 	isAnonymous = models.BooleanField(default=0)
+	# slug = models.SlugField(unique=True)
+
+ #    @models.permalink
+ #    def get_absolute_url(self):
+ #        return 'polls:post', (self.slug,)
 	def __str__(self):
 		return self.question_text
 	def was_published_recently(self):

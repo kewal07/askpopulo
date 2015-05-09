@@ -69,7 +69,6 @@
 			{% for categories in data %}
 				availableTags.push("{{ categories.category_title }}");
 			{% endfor %}
-			console.log(availableTags);
 			$( "#categories" ).autocomplete({
 				source: availableTags,
 				multiselect: true,

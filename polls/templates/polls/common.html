@@ -20,10 +20,10 @@
 				</div>
 				<div class="menu">
 					<ul class="menu-nav">
-						<li><a href="#">Home</a></li>
-						<li><a href="#">Trending</a></l1>
-						<li><a href="#">Featured</a></li>
-						<li><a href="#">MyPolls</a></li>
+						<li><a href="{% url 'polls:index' %}">Home</a></li>
+						<li><a href="{% url 'polls:index' %}">Trending</a></l1>
+						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+						<li><a href="{% url 'polls:index' %}">MyPolls</a></li>
 						<li><div class="search">
 								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
 							</div>
@@ -53,9 +53,9 @@
 				</div>
 				<div class="menu">
 					<ul class="menu-nav">
-						<li><a href="#">Home</a></li>
-						<li><a href="#">Trending</a></li>
-						<li><a href="#">Featured</a></li>
+						<li><a href="{% url 'polls:index' %}">Home</a></li>
+						<li><a href="{% url 'polls:index' %}">Trending</a></li>
+						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
 						<li><a href="{% url 'account_login' %}">Login</a></li>
 						<li><div class="search">
 								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">

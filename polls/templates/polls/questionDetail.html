@@ -1,0 +1,479 @@
+{% extends "polls/common.html" %}
+{% load disqus_tags %}
+{% disqus_show_comments %}
+{% set_disqus_url object.get_absolute_url %} 
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
+{% endblock %}
+{% block extra_js %}
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<!-- <script src="{% static 'js/pollsGraph.js' %}"></script> -->
+{% endblock %}
+{% block content %}
+	<section id="content">
+			<div class="questions">
+				<div class="questionContent">
+					<div class="userInfo">
+						<div class="userImage">
+							{% if question.isAnonymous %}
+								<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
+							{% else %}
+								{% if question.user.socialaccount_set.all %}
+								  {% if question.user.extendeduser.imageUrl %}
+									<img src="{{ question.user.extendeduser.imageUrl }}" alt="User {{ question.user.first_name }}">
+								  {% endif %}
+								{% else %}
+								  {% if question.user.extendeduser.imageUrl %}
+									<img src="/media/profile/{{ question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.user.first_name }}">
+								  {% else %}
+									<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
+								  {% endif %}
+								{% endif %}
+							{% endif %}
+							<!-- <img src="{{question.question.user.extendeduser.imageurl}}" alt="{{question.question.user.first_name}}"> -->
+						</div>
+						<div class="userBrief">
+							<p>
+								{% if question.isAnonymous %}
+									Anonymous
+								{% else %}
+									{{question.user.first_name}}
+								{% endif %}
+							</p>
+						</div>
+					</div> 
+					<div class="mainPoll">
+						<p>{{ question.question_text }}
+						</p>
+						<div id="pollsChart">
+						</div>
+						<div class="analyzeAndShare">
+							<input id="submit" type="submit" value="Analyse" />
+							<ul class="share-buttons">
+								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
+								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
+								<li ><i class="fa fa-facebook"></i></li>
+								<li><i class="fa fa-twitter"></i></li>
+								<li><i class="fa fa-google-plus"></i></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="analysis">
+					<div class="gender">
+						<div class="graphContainer">
+							<p> Gender </p>
+							<div id="genderChart">
+							</div>
+						</div>
+					</div>
+					<div class="age">
+						<div class="graphContainer">
+							<p> Age </p>
+							<div id="ageChart">
+							</div>
+						</div>
+					</div>
+					<div class="location">
+						<div class="graphContainer">
+							<p> Location </p><div class="back" onClick="back()"><i class="fa fa-arrow-left"></i></div>
+							<div id="locationChart">
+							</div>
+						</div>
+					</div>
+					<div class="others">
+						<div class="graphContainer">
+							<p> Others </p>
+							<div id="othersChart">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="comments">
+				</div>
+			</div>
+		</section>
+		<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = 'askpopulo';
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
+			$(document).ready(function(){
+			 //  var disqus_shortname = 'askpopulo';
+			    
+			 //    /* * * DON'T EDIT BELOW THIS LINE * * */
+			 //    // (function() {
+			 //    //     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			 //    //     dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			 //    //     console.log(document.getElementById('comments'));
+			 //    //     (document.getElementById('comments')).appendChild(dsq);
+			 //    // })();
+				// (function() {
+    //     			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    //     			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    //     			(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    // 			})();
+			  drawPollsChart();
+			  window.addEventListener("resize", resizeEventHandler);
+
+			  function resizeEventHandler() {
+				drawPollsChart();
+				if($('.analysis').is(':visible')){
+				  drawGenderChart();
+			      drawAgeChart();
+			      drawOthersChart();
+			      drawLocationChart();
+				 }
+			  }
+			  
+			  $('#submit').click(function(){
+			      $('.analysis').toggle("slow");
+				  $('#mapBackButton').removeClass("back");
+				  $("#mapBackButton").css("display", "inline-block");
+			      var delay=1000; //1 seconds
+			      setTimeout(function(){
+			      //your code to be executed after 1 seconds
+			        if($('.analysis').is(':visible')){
+			          drawGenderChart();
+			          drawAgeChart();
+			          drawOthersChart();
+			          drawLocationChart();
+			        }
+			      }, delay); 
+			    });    
+			});
+
+			function drawPollsChart() {
+				console.log("{{question.choice_set.all}}");
+				var pollsData = [];
+				var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
+				var colCount = 0;
+				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+				{% for choice in question.choice_set.all %}
+					var inData = [];
+					inData.push("{{ choice.choice_text }}");
+					inData.push({{ choice.vote_set.count }});
+					inData.push(pollsColors[colCount++]);
+					var percent = {{ choice.vote_set.count }}/{{ question.voted_set.count }}*100;
+					inData.push(percent+"%");
+					console.log(inData);
+					pollsData.push(inData);
+				{% endfor %}
+				var data = google.visualization.arrayToDataTable(pollsData);
+				var options = {
+			          chartArea: {width: '60%'},
+			          fontSize:20,
+			          bars: {
+			            groupWidth: 100
+			          },
+			          annotations:{
+			          	textStyle: {
+					      opacity: 0         // The transparency of the text.
+					    }	        
+			          },
+			          hAxis: {
+			            title: '',
+			            minValue: 0,
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			            textPosition: 'none',
+			            baselineColor: 'transparent'
+			          },
+			          vAxis: {
+			            title: '',
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			          },
+			          legend:{
+			              position:'none'
+			          },
+			           animation:{
+			              startup:true,
+			              duration: 3000,
+			              easing: 'inAndOut',
+			         },
+			        };
+
+			        var chart = new google.visualization.BarChart(document.getElementById('pollsChart'));
+			        chart.draw(data, options);
+			        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
+
+			        function displayAnnotation(e){
+			        data = google.visualization.arrayToDataTable(pollsData);
+			        options = {
+			          chartArea: {width: '60%'},
+			          fontSize:20,
+			          bars: {
+			            groupWidth: 100
+			          },
+			          annotations:{
+			          	textStyle: {
+					      opacity: 1         // The transparency of the text.
+					    }	        
+			          },
+			          hAxis: {
+			            title: '',
+			            minValue: 0,
+			            gridlines: {
+			              color: 'transparent'
+			            },
+			            textPosition: 'none',
+			            baselineColor: 'transparent'
+			          },
+			          vAxis: {
+			            title: '',
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			          },
+			          legend:{
+			              position:'none'
+			          },
+			           animation:{
+			              startup:true,
+			              duration: 1,
+			              easing: 'inAndOut',
+			         },
+			        };
+
+			        chart.draw(data,options);
+			      }
+			  }
+
+			function drawGenderChart() {
+			  var genderData = [['Gender', 'Votes']];
+			  var m = 0;
+			  var f = 0;
+			  {% for voted in question.voted_set.all %}
+			  	{% if voted.user.extendeduser.gender == "M" %}
+			  		m++;
+			  	{% else %}
+			  		f++;
+			  	{% endif %}
+			  {% endfor %}
+			  genderData.push(['Male',m]);
+			  genderData.push(['Female',f]);
+			  var data = google.visualization.arrayToDataTable(genderData);
+			  var options = {
+			    pieHole: 0.4,
+			    legend:'bottom'
+			  };
+			  var chart = new google.visualization.PieChart(document.getElementById('genderChart'));
+			  chart.draw(data, options);
+			}
+
+			function drawAgeChart() {
+			  var data = google.visualization.arrayToDataTable([
+			    ['Age Group', 'Votes'],
+			    ['Upto 19',     350],
+			    ['20-35',   435],
+			    ['36-50',     350],
+			    ['50+',   435]
+			  ]);
+			  var options = {
+			    pieHole: 0.4,
+			    legend:'bottom'
+			  };
+			  var chart = new google.visualization.PieChart(document.getElementById('ageChart'));
+			  chart.draw(data, options);
+			}
+
+			function drawOthersChart() {
+			  var data = google.visualization.arrayToDataTable([
+			    ['Users', 'Votes'],
+			    ['Windows', 1350],
+			    ['Android', 435],
+			    ['Apple', 350],
+			    ['Linux', 45]
+			  ]);
+			  var options = {
+			    pieHole: 0.4,
+			    legend:'bottom'
+			  };
+			  var chart = new google.visualization.PieChart(document.getElementById('othersChart'));
+			  chart.draw(data, options);
+			}
+
+			function drawLocationChart() {
+			    $('#mapBackButton').removeClass('back');
+			    var data = google.visualization.arrayToDataTable([
+			      ['Country', 'Votes'],
+			      ['Germany', 20000],
+			      ['United States', 30000],
+			      ['Brazil', 4000],
+			      ['Canada', 5000],
+			      ['France', 6000],
+			      ['RU', 7000],
+			      ['India', 9990],
+				  ['China', 10000]
+			    ]);
+			    var options = {};
+			    var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
+			    chart.draw(data, options);
+			    google.visualization.events.addListener(chart, 'regionClick', selectHandler);
+			}
+			function selectHandler(e) {
+			  if(e.region == 'IN'){
+				$("#mapBackButton").css("display", "inline-block");
+				$('#mapBackButton').addClass("back");
+			    drawIndiaMap()
+			  } else if(e.region == 'US'){
+				$("#mapBackButton").css("display", "inline-block");
+				$('#mapBackButton').addClass("back");
+			    drawUSMap()
+			  }
+			} 
+			  
+			  /* India Start */
+			function drawIndiaMap() {
+			  var data = google.visualization.arrayToDataTable([
+			            ['State', 'Votes'],
+			            ['West Bengal', 5],
+			            ['Karnataka', 22],
+			            ['Jharkhand', 37],
+			            ['Andhra Pradesh', 15],
+			            ['Assam',7],
+			            ['Rajasthan',102],
+			            ['Gujarat',112],
+			            ['Haryana',3],
+			            ['Goa',76],
+			            ['Arunachal Pradesh',13],
+			            ['Bihar',47],
+			            ['Chhattisgarh',39],
+			            ['Himachal Pradesh',20],
+			            ['Kerala',33],
+			            ['Madhya Pradesh',21],
+			            ['Maharashtra',45],
+			            ['Manipur',77],
+			            ['Meghalaya',67],
+			            ['Mizoram',1],
+			            ['Nagaland',4],
+			            ['Punjab',65],
+			            ['Sikkim',8],
+			            ['Telangana',21],
+			            ['Tripura',3],
+			            ['Uttar Pradesh',143],
+			            ['Jammu and Kashmir',17],
+			            ['Tamil Nadu',33],
+			            ['Orissa',99],
+			            ['Puducherry',11],
+			            ['Lakshadweep',1],
+			            ['Chandigarh',44],
+			            ['Delhi',175],
+			            ['Andaman and Nicobar Islands',3],
+			            ['IN-UT',11]
+			  ]);
+			  var options = {
+			      region: 'IN',
+			      displayMode: 'regions',
+			      resolution: 'provinces',
+			      datalessRegionColor: '#666',
+			      colorAxis: {colors: ['#FF9900', '#FFFFFF', '#00CC00']},
+			      backgroundColor: '#81d4fa',
+			      domain: 'IN'
+			  };
+			  var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
+			  chart.draw(data, options);
+			};
+			/* India End */
+			    
+			/*US Starts*/
+			function drawUSMap() {
+			  var data = google.visualization.arrayToDataTable([
+			            ['State', 'Data'],
+			            ['California', 5],
+			            ['Texas', 22],
+			            ['Florida', 37],
+			            ['New York', 15],
+			            ['Illinois',7],
+			            ['Pennsylvania',102],
+			            ['Ohio',112],
+			            ['Georgia',3],
+			            ['North Carolina',76],
+			            ['Michigan',13],
+			            ['New Jersey',47],
+			            ['Virginia',39],
+			            ['Washington',20],
+			            ['Massachusetts',33],
+			            ['Arizona',21],
+			            ['Indiana',45],
+			            ['Tennessee',77],
+			            ['Missouri',67],
+			            ['Maryland',1],
+			            ['Wisconsin',4],
+			            ['Minnesota',65],
+			            ['Colorado',8],
+			            ['Alabama',21],
+			            ['South Carolina',3],
+			            ['Louisiana',143],
+			            ['Kentucky',17],
+			            ['Oregon',33],
+			            ['Oklahoma',99],
+			            ['Puerto Rico',11],
+			            ['Connecticut',1],
+			            ['Iowa',44],
+			            ['Mississippi',175],
+			            ['Arkansas',3],
+			            ['Utah',11],
+			            ['Kansas',4],
+			            ['Nevada',65],
+			            ['New Mexico',8],
+			            ['Alabama',21],
+			            ['Nebraska',3],
+			            ['West Virginia',143],
+			            ['Idaho',17],
+			            ['Hawaii',33],
+			            ['Maine',99],
+			            ['New Hampshire',11],
+			            ['Rhode Island',1],
+			            ['Montana',44],
+			            ['Delaware',175],
+			            ['South Dakota',3],
+			            ['North Dakota',11],
+			            ['Alaska',33],
+			            ['District of Columbia',99],
+			            ['Vermont',11],
+			            ['Rhode Island',1],
+			            ['Wyoming',44],
+			            ['Guam',175],
+			            ['U.S. Virgin Islands',3],
+			            ['American Samoa',11],
+			            ['Northern Mariana Islands',11]
+			  ]);
+			var options = {
+			    region: 'US',
+			    displayMode: 'regions',
+			    resolution: 'provinces',
+			    datalessRegionColor: '#666',
+			    colorAxis: {colors: ['#B22234', '#FFFFFF', '#3C3B6E']},
+			    backgroundColor: '#81d4fa',
+			    domain: 'IN',
+			    width: '100%'
+			  };
+
+			  var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
+			  chart.draw(data, options);
+			};
+			/*US Ends*/
+
+			function back(){  
+				$("#mapBackButton").css("display", "none");  
+			    drawLocationChart();
+			}
+   
+
+
+		</script>
+		<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+{% endblock %}

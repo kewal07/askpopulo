@@ -10,5 +10,7 @@ urlpatterns = patterns('',
 	url(r'^$',views.IndexView.as_view(),name='index'),
 	url(r'^vote$',views.VoteView.as_view(),name='polls_vote'),
 	url(r'^createpoll$',views.CreatePollView.as_view(),name='polls_create'),
+	url(r'^polls/FeaturedPolls$',views.FeaturedPollView.as_view(),name='featured'),
+	url(r'^polls/(?P<pk>\d+)/$',views.DetailView.as_view(),name='polls_detail'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

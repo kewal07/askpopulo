@@ -27,7 +27,34 @@ class IndexView(generic.ListView):
 			data['subscribers'] = subscribers
 			mainData.append(data)
 		return mainData
-		
+
+class FeaturedPollView(generic.ListView):
+	template_name = 'polls/index.html'
+	context_object_name = 'data'
+	
+	def get_queryset(self):
+		mainData = []
+		latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
+		for mainquestion in latest_questions:
+			data = {}
+			data ['question'] = mainquestion
+			subscribers = mainquestion.subscriber_set.count()
+			# totalVotes = 0
+			# choices = Choice.objects.filter(question=mainquestion.id)
+			# for qchoice in choices:
+				# votes = qchoice.vote_set.count()
+				# totalVotes += votes
+			data['votes'] = mainquestion.voted_set.count()
+			data['subscribers'] = subscribers
+			mainData.append(data)
+		return mainData
+	
+class DetailView(generic.DetailView):
+	model = Question
+	template_name = 'polls/questionDetail.html'
+	
+
+
 class VoteView(generic.ListView):
 	
 	# context_object_name = 'data'

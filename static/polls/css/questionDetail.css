@@ -1,0 +1,277 @@
+@font-face {
+  font-family: 'entypo';
+  font-style: normal;
+  font-weight: normal;
+  src: url('http://weloveiconfonts.com/api/fonts/entypo/entypo.eot');
+  src: url('http://weloveiconfonts.com/api/fonts/entypo/entypo.eot?#iefix') format('eot'), 
+  url('http://weloveiconfonts.com/api/fonts/entypo/entypo.woff') format('woff'), 
+  url('http://weloveiconfonts.com/api/fonts/entypo/entypo.ttf') format('truetype'), 
+  url('http://weloveiconfonts.com/api/fonts/entypo/entypo.svg#entypo') format('svg');
+}
+
+html{
+	background:url('/static/polls/images/questionDetailbg.jpg') no-repeat center center fixed;
+	background-size:cover;/*font-family: 'capture',sans-serif;*/
+	max-width: 1200px;
+  	margin: 0 auto;
+  	position: relative;
+}
+.questions{
+	display:block;
+}
+.userImage img {
+  border-radius: 50%;
+  padding: 0;
+  width: 100%;
+  z-index: 99999;
+  position: relative;
+}
+#pollsChart{
+  height: 200px;
+  position: relative;
+  left: -3%;
+  text-transform: capitalize;
+}
+#submit{
+	display: inline-block;
+	padding: 0 2rem 0 2rem;
+	background: #3e9cbf; /*the colour of the button*/
+	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
+	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+	/*style the text*/
+	font-size:2.5rem;
+	letter-spacing:.1rem;
+	color: #fff;
+	/*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
+	/*give the corners a small curve*/
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+}
+ul.share-buttons{
+  display: inline-block;
+  list-style: none;
+  padding: 0;
+  font-size: 1.6rem;
+  margin-left:40%;
+}
+
+/* .shareButtonsDiv{
+	width: 25%;
+	display: inline-block;
+	margin-left: 40%;
+} */
+
+ul.share-buttons li{
+  display: inline;
+}
+.analysis{
+	display:none;
+	margin-top: 5rem;
+}
+.graphContainer{
+	width:94%;
+	margin:0 auto;
+}
+.graphContainer p{
+	text-align: center;
+	font-size: 2rem;
+	z-index: 10;
+  	position: relative;
+  	margin-top:1rem;
+}
+.gender,.age,.location,.others{
+	border:#666 solid;
+	margin-bottom: 5rem;
+}
+
+.location{
+	height: 30%;
+}
+
+#genderChart,#ageChart,#othersChart{
+  height: 500px;
+  overflow: hidden;
+  width: 46%;
+  margin: 0 auto;
+  margin-top:-47px;
+  position:relative;
+}
+
+#locationChart{
+	height: 500px;
+}
+
+.shareButtonsDiv {
+	width: 25%;
+	display: inline-block;
+	margin-left: 40%;
+}
+
+.shareList{
+	display:inline;
+}
+
+.fa{
+	font-size:25px !important;
+}
+
+@media only screen and (max-width: 480px){
+	#pollsChart{
+		height: 180px;
+		position: relative;
+		left: -9%;
+	}
+
+	#submit{
+		padding: 0 1rem 0 1rem;
+		font-size:1rem;
+		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		-moz-border-radius: 20px;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+	}
+	
+	.graphContainer{
+		width:60%;
+		margin:0 auto;
+	}
+	
+	#genderChart,#ageChart,#othersChart{
+		height: 250px;
+		overflow: hidden;
+		width: 100%;
+		margin: 0 auto;
+		margin-top:-47px;
+		position:relative;
+	}
+	
+	#locationChart{
+		height: 200px;
+		overflow: hidden;
+		width: 100%;
+		margin: 0 auto;
+		margin-top:-47px;
+		position:relative;
+	}
+	
+	.shareButtonsDiv{
+		width: 35%;
+		display: inline-block;
+		margin-left: 0%;
+		padding-left: 15%;
+	}
+	
+	ul.share-buttons{
+		padding-left:24%;
+	}
+	.fa-2x {
+		font-size: 1em !important;
+	}
+	.gender,.age,.location,.others{
+		border:#666 solid;
+		margin-bottom: 5rem;
+		margin-left:1rem;
+		margin-right:1rem;
+	}
+	
+	.analyzeAndShare{
+		margin-left:-10%;
+		display:flex;
+	}
+	
+	.fa{
+		font-size:15px !important;
+	}
+	
+	.back {
+		width: 5%;
+		height: 10%;
+		position: relative;
+		margin-left: -25%;
+	}
+}
+
+@media only screen and (min-width:481px) and (max-width: 960px){
+
+#pollsChart{
+		height: 180px;
+		position: relative;
+		left: -3%;
+	}
+
+	#submit{
+		padding: 0 1rem 0 1rem;
+		font-size:1rem;
+		-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		box-shadow: inset 0px 1px 0px #3e9cbf, 0px 4px 0px 0px #205c73, 0px 8px 4px #999;
+		-moz-border-radius: 20px;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+	}
+	
+	.graphContainer{
+		width:60%;
+		margin:0 auto;
+	}
+	
+	#genderChart,#ageChart,#othersChart{
+		height: 250px;
+		overflow: hidden;
+		width: 100%;
+		margin: 0 auto;
+		margin-top:-47px;
+		position:relative;
+	}
+	
+	#locationChart{
+		height: 300px;
+		overflow: hidden;
+		width: 100%;
+		margin: 0 auto;
+		margin-top:-47px;
+		position:relative;
+	}
+	
+	.shareButtonsDiv{
+		width: 35%;
+		display: inline-block;
+		margin-left: 10%;
+		padding-left: 15%;
+	}
+	
+	ul.share-buttons{
+		padding-left:24%;
+	}
+	.fa-2x {
+		font-size: 1em !important;
+	}
+	.gender,.age,.location,.others{
+		border:#666 solid;
+		margin-bottom: 5rem;
+		margin-left:1rem;
+		margin-right:1rem;
+	}
+	
+	.analyzeAndShare{
+		margin-left:-2%;
+		display:flex;
+	}
+	
+	.fa{
+		font-size:15px !important;
+	}
+	
+	.back {
+		width: 5%;
+		height: 10%;
+		position: relative;
+		margin-left: -25%;
+	}
+}

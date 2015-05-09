@@ -1,4 +1,7 @@
 {% extends "polls/common.html" %}
+{% load disqus_tags %}
+{% disqus_show_comments %}
+{% set_disqus_url object.get_absolute_url %} 
 {% load static %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
@@ -39,7 +42,7 @@
 								</div>
 							</div> 
 							<div class="mainPoll">
-								<p><a href="#">{{question.question.question_text}}</a></p>
+								<p><a href="{% url 'polls:polls_detail' question.question.id %}">{{question.question.question_text}}</a></p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' %}" method="POST">
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
@@ -77,7 +80,7 @@
 							</div>
 						</div>
 						<div id="disqus_thread"></div>  
-<!-- <script type="text/javascript">
+<script type="text/javascript">
 /* * * CONFIGURATION VARIABLES * * */
 var disqus_shortname = 'askpopulo';
 
@@ -88,7 +91,7 @@ var disqus_shortname = 'askpopulo';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript> -->
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 					</div>
 					{% endfor %}
 			{% else %}
