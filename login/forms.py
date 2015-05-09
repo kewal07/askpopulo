@@ -7,6 +7,7 @@ from datetime import datetime
 from datetime import date
 from django.conf import settings
 from django.forms import widgets
+from . import countryAndStateList
 import os
 import pymysql
 
@@ -26,8 +27,8 @@ class MySignupForm(forms.Form):
 	birthDay = forms.DateField(widget=CustomDateInput)
 	bio = forms.CharField( max_length=1024, widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
 	profession = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Profession'}),required=False)
-	country = forms.ChoiceField('')
-	state = forms.ChoiceField('')#forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'State'}),required=False)
+	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
+	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
 
 	def signup(self, request, user):
