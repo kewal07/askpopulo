@@ -36,8 +36,8 @@
 					</div>
 				</div> 
 				<div class="mainPoll">
-					<p>{{ question }}{{ question.question_text }}</p>
-					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id %}" method="POST">
+					<p>{{ question.question_text }}</p>
+					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST">
 						{% csrf_token %}
 						<input type="hidden" name="question" value="{{ question.id }}" />
 						{% for choice in question.choice_set.all %}
@@ -63,8 +63,8 @@
 					</form>
 					<div class="pollInfo clearfix">
 						<ul class="pollInfoUl clearfix">
-							<li><span class="pollInfoNum">{{ question.votes_set.count }}</span> opinion{{ question.votes_set.count|pluralize }}</li>
-							<li><span class="pollInfoNum">{{ question.subscribers_set.count }}</span> interested</li>
+							<li><span class="pollInfoNum">{{ question.voted_set.count }}</span> opinion{{ question.voted_set.count|pluralize }}</li>
+							<li><span class="pollInfoNum">{{ question.subscriber_set.count }}</span> interested</li>
 							<li ><i class="fa fa-facebook"></i></li>
 							<li><i class="fa fa-twitter"></i></li>
 							<li><i class="fa fa-google-plus"></i></li>

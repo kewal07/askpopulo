@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.conf import settings
 import os
 from categories.models import Category
+from django.template.defaultfilters import slugify
 # Create your models here.
 
 def get_file_path(instance, filename):
@@ -19,11 +20,11 @@ class Question(models.Model):
 	expiry =  models.DateTimeField(null=True,blank=True)
 	description = models.CharField(max_length=400,null=True,blank=True)
 	isAnonymous = models.BooleanField(default=0)
-	# slug = models.SlugField(unique=True)
-
- #    @models.permalink
- #    def get_absolute_url(self):
- #        return 'polls:post', (self.slug,)
+	que_slug = models.SlugField(null=True,blank=True)
+	
+	def save(self, *args, **kwargs):
+		self.que_slug = slugify(self.question_text)
+		super(Question, self).save(*args, **kwargs)
 	def __str__(self):
 		return self.question_text
 	def was_published_recently(self):

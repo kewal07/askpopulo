@@ -51,26 +51,32 @@ class FeaturedPollView(generic.ListView):
 	
 class DetailView(generic.DetailView):
 	model = Question
-	template_name = 'polls/questionDetail.html'
+	
+	def get_template_names(self):
+		template_name = 'polls/voteQuestion.html'
+		question = self.get_object()
+		user = self.request.user
+		print(user.is_authenticated())
+		if user.is_authenticated():
+			voted = Voted.objects.filter(question = question, user=user)
+			if voted:
+				template_name = 'polls/questionDetail.html'
+		return [template_name]
 
 class VoteView(generic.DetailView):
 	model = Question
 	template_name = 'polls/voteQuestion.html'
 
 	def post(self, request, *args, **kwargs):
-		print(kwargs)
 		user = request.user
-		# print ('voting')
-		# print(dir(user))
-		# print(user.is_authenticated())
-		# print(request.GET.get('choice'))
-		# print(request.GET.get('question'))
 		questionId = -1
+		queSlug = "None"
 		if request.POST.get('choice'):
 			choiceId = request.POST.get('choice')
 			choice = Choice.objects.get(pk=choiceId)
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
+			queSlug = question.que_slug
 			# if user.is_authenticated():
 			voted_questions = user.voted_set.filter(user=user,question=question)
 			if not voted_questions:
@@ -81,7 +87,7 @@ class VoteView(generic.DetailView):
 		else:
 			# error to show no choice selected
 			pass
-		url = reverse('polls:polls_detail', kwargs={'pk':questionId})
+		url = reverse('polls:polls_detail', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 
 class CreatePollView(generic.ListView):
