@@ -1,0 +1,77 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="questions">
+			<div class="questionContent">
+				<div class="userInfo">
+					<div class="userImage">
+						{% if question.isAnonymous %}
+							<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
+						{% else %}
+							{% if question.user.socialaccount_set.all %}
+							   {% if question.user.extendeduser.imageUrl %}
+									<img src="{{ question.user.extendeduser.imageUrl }}" alt="User {{ question.user.first_name }}">
+								{% endif %}
+							{% else %}
+								{% if question.user.extendeduser.imageUrl %}
+									<img src="/media/profile/{{ question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.user.first_name }}">
+								{% else %}
+									<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
+								{% endif %}
+							{% endif %}
+						{% endif %}
+					</div>
+					<div class="userBrief">
+						<p>
+							{% if question.isAnonymous %}
+								Anonymous
+							{% else %}
+								{{ question.user.first_name }}
+							{% endif %}
+						</p>
+					</div>
+				</div> 
+				<div class="mainPoll">
+					<p>{{ question }}{{ question.question_text }}</p>
+					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id %}" method="POST">
+						{% csrf_token %}
+						<input type="hidden" name="question" value="{{ question.id }}" />
+						{% for choice in question.choice_set.all %}
+							<p>
+								<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+								<label for="choice{{ choice.id }}">
+									{% if choice.choice_image %}
+									<script>
+										$("#choice{{ choice.id }}").hide();
+										var item = $("#choice{{ choice.id}}");
+										item.parent().css({"display":"inline-block"});
+										// console.log($this.parent().next().children().first().show());
+									</script>
+										<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+										<!-- {{ choice.choice_text }} -->
+									{% else %}
+										{{ choice.choice_text }}
+									{% endif %}
+								</label>
+							</p>
+						{% endfor %}
+						<input id="submit" type="submit" value="Vote" />
+					</form>
+					<div class="pollInfo clearfix">
+						<ul class="pollInfoUl clearfix">
+							<li><span class="pollInfoNum">{{ question.votes_set.count }}</span> opinion{{ question.votes_set.count|pluralize }}</li>
+							<li><span class="pollInfoNum">{{ question.subscribers_set.count }}</span> interested</li>
+							<li ><i class="fa fa-facebook"></i></li>
+							<li><i class="fa fa-twitter"></i></li>
+							<li><i class="fa fa-google-plus"></i></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}

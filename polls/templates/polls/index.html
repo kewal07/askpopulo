@@ -40,7 +40,7 @@
 							</div> 
 							<div class="mainPoll">
 								<p><a href="{% url 'polls:polls_detail' question.question.id %}">{{question.question.question_text}}</a></p>
-								<form class="optionsForm" action="{% url 'polls:polls_vote' %}" method="POST">
+								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id %}" method="POST">
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									{% for choice in question.question.choice_set.all %}

@@ -52,26 +52,21 @@ class FeaturedPollView(generic.ListView):
 class DetailView(generic.DetailView):
 	model = Question
 	template_name = 'polls/questionDetail.html'
-	
 
-
-class VoteView(generic.ListView):
-	
-	# context_object_name = 'data'
+class VoteView(generic.DetailView):
+	model = Question
+	template_name = 'polls/voteQuestion.html'
 
 	def post(self, request, *args, **kwargs):
-		# print(reverse('polls:index'))
-		url = reverse('polls:index')
+		print(kwargs)
 		user = request.user
 		# print ('voting')
 		# print(dir(user))
 		# print(user.is_authenticated())
 		# print(request.GET.get('choice'))
 		# print(request.GET.get('question'))
-		if not user.is_authenticated():
-			# url = 'account/login.html'
-			url = reverse('account_login')
-		elif request.POST.get('choice'):
+		questionId = -1
+		if request.POST.get('choice'):
 			choiceId = request.POST.get('choice')
 			choice = Choice.objects.get(pk=choiceId)
 			questionId = request.POST.get('question')
@@ -86,6 +81,7 @@ class VoteView(generic.ListView):
 		else:
 			# error to show no choice selected
 			pass
+		url = reverse('polls:polls_detail', kwargs={'pk':questionId})
 		return HttpResponseRedirect(url)
 
 class CreatePollView(generic.ListView):

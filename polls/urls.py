@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.contrib.auth.decorators import login_required
 from polls import views
 
 urlpatterns = patterns('',
@@ -8,8 +9,8 @@ urlpatterns = patterns('',
 
     #url(r'^', views.index),
 	url(r'^$',views.IndexView.as_view(),name='index'),
-	url(r'^vote$',views.VoteView.as_view(),name='polls_vote'),
-	url(r'^createpoll$',views.CreatePollView.as_view(),name='polls_create'),
+	url(r'^vote/(?P<pk>\d+)/$',login_required(views.VoteView.as_view()),name='polls_vote'),
+	url(r'^createpoll$',login_required(views.CreatePollView.as_view()),name='polls_create'),
 	url(r'^polls/FeaturedPolls$',views.FeaturedPollView.as_view(),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/$',views.DetailView.as_view(),name='polls_detail'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
