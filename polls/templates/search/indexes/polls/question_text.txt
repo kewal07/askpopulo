@@ -1,0 +1,3 @@
+{{ object.question_text }}
+{{ object.user.extended_user.get_full_name }}
+{{ object.pub_date }}

@@ -5,6 +5,8 @@ from django.views import generic
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
 from categories.models import Category
 import datetime
+import simplejson as json
+from haystack.query import SearchQuerySet
 # Create your views here.
 
 class IndexView(generic.ListView):
@@ -146,3 +148,13 @@ class CreatePollView(generic.ListView):
 				choice4 = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice4.save()
 		return HttpResponseRedirect(url)
+
+def autocomplete(request):
+    sqs = SearchQuerySet().autocomplete(question_auto=request.POST.get('q', ''))[:5]
+    suggestions = [result.question_text for result in sqs]
+    # Make sure you return a JSON object, not a bare list.
+    # Otherwise, you could be vulnerable to an XSS attack.
+    the_data = json.dumps({
+        'results': suggestions
+    })
+    return HttpResponse(the_data, content_type='application/json')
