@@ -28,20 +28,26 @@
 								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
 							</div>
 						</li>
-						<li class="userInNav"><a href="#">
-						{% if user.socialaccount_set.all %}
-						  {% if user.extendeduser.imageUrl %}
-							<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
-						  {% endif %}
-						{% else %}
-						  {% if user.extendeduser.imageUrl %}
-							<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
-						  {% else %}
-							<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
-						  {% endif %}
-						{% endif %}
-						</a></li>
+						<li class="userInNav">
+								{% if user.socialaccount_set.all %}
+								  {% if user.extendeduser.imageUrl %}
+									<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
+								  {% endif %}
+								{% else %}
+								  {% if user.extendeduser.imageUrl %}
+									<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
+								  {% else %}
+									<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
+								  {% endif %}
+								{% endif %}
+						</li>
 					</ul>
+					<div class="dropDownBox">
+						<ul class="dropDownUL">
+							<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+							<li><a href="{% url 'login:logout' %}">Log Out</a></li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</section>

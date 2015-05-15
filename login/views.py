@@ -5,7 +5,9 @@ from login.models import ExtendedUser
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
-
+from django.contrib.auth import logout
+from django.template.defaultfilters import slugify
+# from django.template.defaultfilters import slugify
 # from allauth.account.signals import user_signed_up
 # from django.dispatch import receiver
 
@@ -33,6 +35,12 @@ class EditProfileView(generic.ListView):
 		extendeduser.bio=request.POST.get('bio','')
 		user.save()
 		extendeduser.save()
+		return HttpResponseRedirect(url)
+
+class RedirectLoginView(generic.ListView):
+
+	def get(self,request,*args,**kwargs):
+		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
 		return HttpResponseRedirect(url)
 
 class LoggedInView(generic.ListView):
@@ -71,3 +79,8 @@ class LoggedInView(generic.ListView):
 		
 # class DetailView(generic.DetailView):
 	# template_name = 'polls/index.html'
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')

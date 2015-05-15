@@ -42,5 +42,11 @@ $(document).ready(function(){
 		($(".choice_image#"+$(this)[0].id)[0]).style.borderColor="#00FF00";
 	});
 	/* End of changing image border color */
+
+	/* Dropdownbox on click of user image in nav */
+	$('.userInNav').click(function(){
+		$('.dropDownBox').slideToggle("slow");
+	});
+	/* end of Dropdownbox on click of user image in nav */
 });
 

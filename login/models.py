@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 import os
 import uuid
+from django.template.defaultfilters import slugify
 #from django.contrib.auth.models import User
 # Create your models here.
 
@@ -21,7 +22,12 @@ class ExtendedUser(models.Model):
 	country = models.CharField(max_length=512,blank=True,null=True)
 	bio = models.CharField(max_length=1024,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
+	user_slug = models.SlugField(null=True,blank=True)
 	
+	def save(self, *args, **kwargs):
+		self.user_slug = slugify(self.user.username)
+		super(ExtendedUser, self).save(*args, **kwargs)
+
 	def get_profile_pic_name(self):
 		return self.imageUrl.path.split("\\")[-1]
 

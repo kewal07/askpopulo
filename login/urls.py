@@ -7,7 +7,9 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     #url(r'^', views.index),
-	url(r'^$',views.LoggedInView.as_view(),name='loggedIn'),
+    url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/$',views.LoggedInView.as_view(),name='loggedIn'),
+	url(r'^$',views.RedirectLoginView.as_view(),name='loginRedirect'),
 	url(r'^editprofile$',views.EditProfileView.as_view(),name='edit_profile'),
+	url(r'^logout$',views.logout_view,name="logout"),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

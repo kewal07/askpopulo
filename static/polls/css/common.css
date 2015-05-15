@@ -154,6 +154,27 @@ ul.menu-nav li a:hover{
 	text-align:center;
 	padding:0 1rem;
 }
+.dropDownBox{
+	display: none;
+	position: absolute;
+	z-index: 98;
+	top: 57px;
+	right: -11px;
+	padding: 10px;
+	color: #333;
+	background: white;
+	opacity: 1;
+	border: 1px solid #ccc;
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+	text-align: center;
+	font-size: 1.5rem;
+	color: black;
+}
+/*.dropDownBoxClick{
+	display:block;
+	background: #666;
+}*/
 .clearfix:after { 
    content: "."; 
    visibility: hidden; 
