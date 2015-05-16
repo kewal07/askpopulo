@@ -14,5 +14,5 @@ urlpatterns = patterns('',
 	url(r'^polls/FeaturedPolls$',views.FeaturedPollView.as_view(),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)/$',views.DetailView.as_view(),name='polls_detail'),
 	url(r'^polls/autocomplete', views.autocomplete,name="polls_autocomplete"),
-	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
+	url(r'^search/?$', views.PollsSearchView(), name='search_view'),
 )

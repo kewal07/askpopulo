@@ -25,7 +25,13 @@
 						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
 						<li><a href="{% url 'polls:index' %}">MyPolls</a></li>
 						<li><div class="search">
-								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
+								<form method="get" action="/search" class="autocomplete-me">
+						            <!-- {% csrf_token %} -->
+						            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
+						            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
+						            <input type="submit" value="Search!" style="display:none">
+						        </form>
+								
 							</div>
 						</li>
 						<li class="userInNav">
@@ -64,7 +70,12 @@
 						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
 						<li><a href="{% url 'account_login' %}">Login</a></li>
 						<li><div class="search">
-								<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
+								<form method="get" action="/search" class="autocomplete-me">
+						            <!-- {% csrf_token %} -->
+						            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
+						            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
+						            <input type="submit" value="Search!" style="display:none">
+						        </form>
 							</div>
 						</li>
 					</ul>

@@ -23,7 +23,8 @@ class Question(models.Model):
 	que_slug = models.SlugField(null=True,blank=True)
 	
 	def save(self, *args, **kwargs):
-		self.que_slug = slugify(self.question_text)
+		short_q_text = self.question_text[:50]
+		self.que_slug = slugify(short_q_text)
 		super(Question, self).save(*args, **kwargs)
 	def __str__(self):
 		return self.question_text

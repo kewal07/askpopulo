@@ -61,7 +61,6 @@ class DetailView(generic.DetailView):
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
 		user = self.request.user
-		print(user.is_authenticated())
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
 			if voted:
@@ -152,41 +151,23 @@ class CreatePollView(generic.ListView):
 				choice4.save()
 		return HttpResponseRedirect(url)
 
-# class AutocompleteModelSearchForm(ModelSearchForm):
-
-#     def search(self):
-#         if not self.is_valid():
-#             return self.no_query_found()
-#         if not self.cleaned_data.get('q')
-#             return self.no_query_found()
-#         sqs = self.searchqueryset.filter(first_name_auto=self.cleaned_data['q'])[:5]
-
-#         if self.load_all
-#             sqs = sqs.load_all()
-
-#         return sqs
-# class SearchWithRequest(SearchView):
-#     __name__ = 'SearchWithRequest'
-#     #template_name = 'search/search.html'
-
-#     def build_form(self, form_kwargs=None):
-#         if form_kwargs is None:
-#             form_kwargs = {}
-
-#         if self.searchqueryset is None:
-#             sqs = SearchQuerySet().filter(question_auto=self.request.GET.get('q', ''))
-#             form_kwargs['searchqueryset'] = sqs
-
-#         return super(SearchWithRequest, self).build_form(form_kwargs)
+class PollsSearchView(SearchView):
+    
+    def extra_context(self):
+        queryset = super(PollsSearchView, self).get_results()
+        # further filter queryset based on some set of criteria
+        # return queryset
+        return {
+            'query': queryset,
+        }
 
 
 def autocomplete(request):
-    sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('q', ''))[:5]
-    suggestions = [result.question_text for result in sqs]
+    sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
+    suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs]
     # Make sure you return a JSON object, not a bare list.
     # Otherwise, you could be vulnerable to an XSS attack.
     the_data = json.dumps({
         'results': suggestions
     })
-    print(suggestions)
     return HttpResponse(the_data, content_type='application/json')
