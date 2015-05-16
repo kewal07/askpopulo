@@ -45,8 +45,8 @@
             <input type="text" id="q" name="q">
             <input type="submit" value="Search!">
         </form>
-        <div class="ac-results">
-        </div>
+        <!-- <div class="ac-results">
+        </div> -->
         <script type="text/javascript">
         
             // In a perfect world, this would be its own library file that got included
@@ -54,7 +54,7 @@
             // But this is an example.
             var Autocomplete = function(options) {
               this.form_selector = options.form_selector;
-              this.url = options.url || '/search/autocomplete/';
+              this.url = options.url || '/polls/autocomplete';
               this.delay = parseInt(options.delay || 300);
               this.minimum_length = parseInt(options.minimum_length || 3);
               this.form_elem = null;
@@ -69,7 +69,10 @@
 
               // Watch the input box.
               this.query_box.on('keyup', function() {
+                console.log("keyup is called");
                 var query = self.query_box.val();
+                console.log(query);
+                console.log(self.minimum_length);
 
                 if(query.length < self.minimum_length) {
                   return false;
@@ -88,6 +91,8 @@
 
             Autocomplete.prototype.fetch = function(query) {
               var self = this;
+              console.log("fetch called");
+              console.log(this.url);
 
               $.ajax({
                 url: this.url
@@ -101,10 +106,13 @@
             }
 
             Autocomplete.prototype.show_results = function(data) {
+              console.log("show results called");
               // Remove any existing results.
               $('.ac-results').remove();
 
-              var results = data.results || []
+              var results = data.results || [];
+              console.log(results);
+              console.log(data.results);
               var results_wrapper = $('<div class="ac-results"></div>');
               var base_elem = $('<div class="result-wrapper"><a href="#" class="ac-result"></a></div>');
 

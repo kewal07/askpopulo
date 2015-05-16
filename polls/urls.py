@@ -13,5 +13,6 @@ urlpatterns = patterns('',
 	url(r'^createpoll$',login_required(views.CreatePollView.as_view()),name='polls_create'),
 	url(r'^polls/FeaturedPolls$',views.FeaturedPollView.as_view(),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)/$',views.DetailView.as_view(),name='polls_detail'),
+	url(r'^polls/autocomplete', views.autocomplete,name="polls_autocomplete"),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

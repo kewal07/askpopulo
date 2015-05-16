@@ -7,6 +7,9 @@ from categories.models import Category
 import datetime
 import simplejson as json
 from haystack.query import SearchQuerySet
+from haystack.views import SearchView
+from haystack.forms import ModelSearchForm
+
 # Create your views here.
 
 class IndexView(generic.ListView):
@@ -149,12 +152,41 @@ class CreatePollView(generic.ListView):
 				choice4.save()
 		return HttpResponseRedirect(url)
 
+# class AutocompleteModelSearchForm(ModelSearchForm):
+
+#     def search(self):
+#         if not self.is_valid():
+#             return self.no_query_found()
+#         if not self.cleaned_data.get('q')
+#             return self.no_query_found()
+#         sqs = self.searchqueryset.filter(first_name_auto=self.cleaned_data['q'])[:5]
+
+#         if self.load_all
+#             sqs = sqs.load_all()
+
+#         return sqs
+# class SearchWithRequest(SearchView):
+#     __name__ = 'SearchWithRequest'
+#     #template_name = 'search/search.html'
+
+#     def build_form(self, form_kwargs=None):
+#         if form_kwargs is None:
+#             form_kwargs = {}
+
+#         if self.searchqueryset is None:
+#             sqs = SearchQuerySet().filter(question_auto=self.request.GET.get('q', ''))
+#             form_kwargs['searchqueryset'] = sqs
+
+#         return super(SearchWithRequest, self).build_form(form_kwargs)
+
+
 def autocomplete(request):
-    sqs = SearchQuerySet().autocomplete(question_auto=request.POST.get('q', ''))[:5]
+    sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('q', ''))[:5]
     suggestions = [result.question_text for result in sqs]
     # Make sure you return a JSON object, not a bare list.
     # Otherwise, you could be vulnerable to an XSS attack.
     the_data = json.dumps({
         'results': suggestions
     })
+    print(suggestions)
     return HttpResponse(the_data, content_type='application/json')
