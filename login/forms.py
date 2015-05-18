@@ -46,4 +46,3 @@ class MySignupForm(forms.Form):
 		bio=request.POST.get('bio','')
 		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''))
 		extendeduser.save()
-		

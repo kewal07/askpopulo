@@ -1,5 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
+
 <!-- <!DOCTYPE HTML>
 <html>
 	<head>
@@ -149,21 +150,11 @@
 								<li>
 									<div id="changePassword">
 										<p>Change Password</p>
-										<form class="changePasswordForm">
-											{% csrf_token %}
-											<p>
-												<label for="oldP">Current Password</label>
-												<input id="oldP" type="password" name="oldP" placeholder="********">
-											</p>
-											<p>
-												<label for="newP">New Password</label>
-												<input id="newP" type="password" name="newP" placeholder="********">							
-											</p>
-											<p>
-												<label for="confirmNewP">Confirm Password</label>
-												<input id="confirmNewP" type="password" name="confirmNewP" placeholder="********">	
-											</p>	
-											<input type="submit" value="Set New Password">		
+										<form action="{% url 'account_login' %}" method="get" class="password_change" id="password_change_form">
+										    {% csrf_token %}
+										    {{ data.as_p }}
+										    <button type="submit" name="action">Change Password</button>
+										    <!-- <input type="submit" value="Submit" /> -->
 										</form>
 									</div>
 								</li>
@@ -178,6 +169,47 @@
 					</li>
 				</ul>
 		</section>
+		<script type="text/javascript">
+			$(document).ready(function()
+		    {
+		  		$('#password_change_form').bind('submit', function()
+	            {     
+
+	                // e.preventDefault();
+	                $.ajax(
+	                    {
+	                    type: 'POST',
+	                    url:'/loggedin/changepassword',
+	                    data:$('#password_change_form').serialize(),
+	                    success:function(response)
+	                    {
+	                    	var form_errors = response.form_errors;
+	                    	console.log(response.form_errors);
+	                    	console.log(typeof form_errors === 'undefined');
+
+	                    	if(typeof form_errors === 'undefined'){
+	                        	 $('#password_change_form').unbind('submit').submit();
+	                        }else{
+	                        	console.log(form_errors.oldpassword);
+		                    	console.log(form_errors.password1);
+		                    	console.log(form_errors.password2);
+		                    	if(typeof form_errors.oldpassword === 'undefined')
+	                        	 	form_errors.oldpassword = "";
+	                        	 if(typeof form_errors.password1 === 'undefined')
+	                        	 	form_errors.password1 = "";
+	                        	 if(typeof form_errors.password2 === 'undefined')
+	                        	 	form_errors.password2 = "";
+		                    	$(".password_form_errors").remove();
+		                        $("#id_oldpassword").parent().append('<span class="password_form_errors"><br>'+form_errors.oldpassword+'</span>');
+		                        $("#id_password1").parent().append('<span class="password_form_errors"><br>'+form_errors.password1+'</span>');
+		                        $("#id_password2").parent().append('<span class="password_form_errors"><br>'+form_errors.password2+'</span>');
+	                    	}
+	                    }
+	                });     
+				return false;
+	            });
+		    });
+		</script>
 	{% endif %}
 	{% endblock %}
 	<!-- </body>

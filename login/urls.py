@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 	url(r'^$',views.RedirectLoginView.as_view(),name='loginRedirect'),
 	url(r'^editprofile$',views.EditProfileView.as_view(),name='edit_profile'),
 	url(r'^logout$',views.logout_view,name="logout"),
+	url(r'^changepassword$',views.MyChangePasswordView.as_view(),name="change_password"),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )
