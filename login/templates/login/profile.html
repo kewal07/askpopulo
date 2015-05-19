@@ -1,32 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
 
-<!-- <!DOCTYPE HTML>
-<html>
-	<head>
-		{% load staticfiles %}
-		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
-		<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
-	</head>
-	<body>
-	<section id="header">
-			<div class="logo">
-				<img src="{% static 'askpopulologo.png' %}" alt="myPolls" />
-			</div>
-			<div class="menu">
-				<ul class="menu-nav">
-					<li><a href="#">Home</a></li>
-					<li><a href="#">Trending</a></l1>
-					<li><a href="#">Featured</a></li>
-					<li><a href="#">MyPolls</a></li>
-					<li><div class="search">
-							<input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions">
-						</div>
-					</li>
-					<li class="userInNav"><a href="#"><img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}"></a></li>
-				</ul>
-			</div>
-		</section> -->
 		{% block extra_css %}
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 		{% endblock %}
@@ -206,6 +180,3 @@
 		</script>
 	{% endif %}
 	{% endblock %}
-	<!-- </body>
-	
-</html> -->
