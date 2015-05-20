@@ -1,4 +1,12 @@
 $(document).ready(function(){
+
+	/* Gender based background image in profile.html */
+	var gender = $("input[type='radio'][name='gender']:checked").val();
+	if(gender == 'M'){
+		$('html').css({"background":"url('http://localhost:8000/static/login/images/profile-m.jpg') no-repeat center center fixed","background-size":"cover"});
+	}
+	/* end of Gender based background image in profile.html */
+
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
 	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Upload Image</span></div>');
@@ -48,5 +56,6 @@ $(document).ready(function(){
 		$('.dropDownBox').slideToggle("slow");
 	});
 	/* end of Dropdownbox on click of user image in nav */
+
 });
 

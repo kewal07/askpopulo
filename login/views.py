@@ -12,6 +12,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
+from polls.models import Question
 import json
 # from django.template.defaultfilters import slugify
 # from allauth.account.signals import user_signed_up
@@ -53,12 +54,28 @@ class LoggedInView(generic.ListView):
 	template_name = 'login/profile.html'
 	#model = settings.AUTH_USER_MODEL
 	
+	def get_queryset(self):
+		mainData = []
+		user_asked_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
+		for mainquestion in latest_questions:
+			data = {}
+			data ['question'] = mainquestion
+			subscribers = mainquestion.subscriber_set.count()
+			data['votes'] = mainquestion.voted_set.count()
+			data['subscribers'] = subscribers
+			mainData.append(data)
+		return mainData
+
 	context_object_name = 'data'
 	# print(request.path)
 	# template_name=request.path
 	def get_queryset(self):
 		user = self.request.user
 		form = ChangePasswordForm(UserForm(user))
+		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
+		mainData = {}
+		mainData['form'] = form
+		mainData['questions'] = user_asked_questions
 		if not user.is_anonymous():
 			if user.socialaccount_set.all():
 				social_set = user.socialaccount_set.all()[0]
@@ -83,7 +100,7 @@ class LoggedInView(generic.ListView):
 						city_data = twitter_data.get('location','')
 						extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 						extendedUser.save()
-		return form
+		return mainData
 		
 # class DetailView(generic.DetailView):
 	# template_name = 'polls/index.html'

@@ -1,3 +1,4 @@
+/*Vertical css tabs taken from http://codepen.io/nik-savchenko/pen/xDIAe*/
 html{
 	background:url('/static/login/images/profile-f.jpg') no-repeat center center fixed;
 	background-size:cover;
@@ -20,9 +21,9 @@ html{
 .profileContent{
 	font-size:2rem;
 }
-.profileContent p{
+/*.profileContent p{
 	margin-bottom:2rem;
-}
+}*/
 .tabs{
 	/*width: 100%;  */
 	top:10px;
@@ -38,16 +39,35 @@ html{
     top: -9999px;
     left: -9999px;
   }
+.insideTabs{
+  margin:0 auto;
+  width:62%;
+}
 .tabs li{
     float: left;
+    /*margin-left:11.7%;*/
+    width:33%;
 }
+/*.firstChild{
+  margin-left: 6% !important;
+}
+.secondChild{
+  margin-left:10% !important;
+}
+.thirdChild{
+  float: right !important;
+  margin-right: 6% !important;
+  margin-left: 0 !important;
+}*/
 /*.tabs li:first-child{
 	margin-left: 27%;
 }*/
 .tabs label.tabsLabel{
 	cursor: pointer;
   	display: block;
-  	padding: 15px 45px;
+  	/*padding: 15px 45px;*/
+    padding: 10px 0px;
+  margin-top: 10px;
   	background: -webkit-linear-gradient(23deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
     background: -o-linear-gradient(23deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
     background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -58,7 +78,7 @@ html{
     -o-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
     text-align: center;
-    width:200px;
+    width:163px;
 }
 .tabs label.tabsLabel:hover{
 	background: #b2b2b2;
@@ -97,18 +117,22 @@ html{
 }
 form.profileForm{
 	width:90%;
-	/* margin:0 auto; */
-	/* margin-left:21rem; */
+	margin:0 auto;
+}
+.profileForm p{
+/*  width:60%;
+  margin:0 auto;*/
+  margin-bottom:2rem;
 }
 form.profileForm label{
 	display: inline-block;
-	width:25%;
+	width:24%;
 	color: #666;
     font-size: 1.5rem;
 }
-form.profileForm input{
+/*form.profileForm input{
 	margin-left: 0rem;
-}
+}*/
 .profileForm input[type="text"]{
 		height: 3rem;
 		border-radius: 10px;
@@ -116,6 +140,11 @@ form.profileForm input{
 		background: transparent;
 		font-size:2rem;
 		overflow:hidden;
+    box-sizing: border-box;
+    padding-left: 4px;
+}
+.bioCss{
+  margin-bottom:10rem;
 }
 .profileForm textarea{
 	border-radius: 10px;
@@ -123,8 +152,10 @@ form.profileForm input{
     background: transparent;
     font-size: 2rem;
     overflow: hidden;
-	margin-top: -2rem;
-	margin-left:11rem;
+	/*margin-top: -2rem;*/
+	float:right;
+  width:75%;
+  padding-left:4px;
 }
 .profileForm input[type="date"]{
 	border-radius: 10px;
@@ -132,40 +163,41 @@ form.profileForm input{
     background: transparent;
     font-size: 2rem;
 }
-.profileForm p{
-	width:60%;
-	margin:0 auto;
-	margin-bottom:2rem;
-}
+
 
 /* css for stats content */
 .stats {
-    position: relative;   
-    min-height: 200px; /* This part sucks */
+  position: relative;   
+    /*min-height: 200px;  This part sucks */
     clear: both;
     margin: 25px 0;      
 }
 .stat {   
-    height: 1%; 
+   /* height: 1%; */
 }
 .stat label {
-	background: #eee; 
+    background: #eee; 
     padding: 10px; 
     border: 1px solid #ccc; 
     margin-left: -1px; 
     position: relative;
     left: 1px;        
     display: block;
-	width: 20%;
+    width: 20%;
+    cursor: pointer;
+}
+.stat label:hover{
+  background:#666;
 }
 
 .stat [type=radio] {
 	display: none;   
 }
 .content {
-	left: 22%;
+    display: none;
+	  left: 22%;
     position: absolute;
-    top: 0px;
+    top: 0;
     background: white;
     right: 0;
     bottom: 0;
@@ -178,8 +210,24 @@ form.profileForm input{
 }
 .stats [type=radio]:checked ~ label ~ .content {
     z-index: 1;
+    display: block;
 }
-
+.searchResults{
+  font-size: 2rem;
+  border: 3px solid #000;
+    border-radius: 25px;
+    background-color: white;
+    opacity: 0.93;
+    padding: 1rem 3rem;
+    margin-bottom:2rem;
+    display: -ms-flex; 
+    display: -webkit-flex; 
+    display: flex;
+}
+.result{
+  width:90%;
+  margin:0 auto;
+}
 .graphContainer{
  font-family: Arial;
  }
