@@ -65,7 +65,13 @@ class DetailView(generic.DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(DetailView, self).get_context_data(**kwargs)
 		user = self.request.user
-		data = '{"id":"'+str(user.id)+'","username":"'+user.username+'","email":"'+user.email+'","user-avatar":"'+user.extendeduser.get_profile_pic_url()+'"}'
+		data = {
+			"id":user.id,
+			"username":user.username,
+			"email":user.email,
+			"avatar":user.extendeduser.get_profile_pic_url()
+		}
+		data = json.dumps(data)
 		print(data)
 		message = base64.b64encode(data.encode('utf-8'))
 		timestamp = int(time.time())
