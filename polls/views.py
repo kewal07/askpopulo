@@ -9,6 +9,11 @@ import simplejson as json
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 from haystack.forms import ModelSearchForm
+import hmac
+import hashlib
+import base64
+import time
+from django.conf import settings
 
 # Create your views here.
 
@@ -23,11 +28,6 @@ class IndexView(generic.ListView):
 			data = {}
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
-			# totalVotes = 0
-			# choices = Choice.objects.filter(question=mainquestion.id)
-			# for qchoice in choices:
-				# votes = qchoice.vote_set.count()
-				# totalVotes += votes
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			mainData.append(data)
@@ -44,11 +44,6 @@ class FeaturedPollView(generic.ListView):
 			data = {}
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
-			# totalVotes = 0
-			# choices = Choice.objects.filter(question=mainquestion.id)
-			# for qchoice in choices:
-				# votes = qchoice.vote_set.count()
-				# totalVotes += votes
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			mainData.append(data)
@@ -66,6 +61,26 @@ class DetailView(generic.DetailView):
 			if voted:
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
+		
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		user = self.request.user
+		data = '{"id":"'+str(user.id)+'","username":"'+user.username+'","email":"'+user.email+'","user-avatar":"'+user.extendeduser.get_profile_pic_url()+'"}'
+		print(data)
+		message = base64.b64encode(data.encode('utf-8'))
+		timestamp = int(time.time())
+		key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+		msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+		digestmod = hashlib.sha1
+		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+		ssoData = dict(
+			message=message,
+			timestamp=timestamp,
+			sig=sig,
+			pub_key=settings.DISQUS_API_KEY,
+		)
+		context['ssoData'] = ssoData
+		return context
 
 class VoteView(generic.DetailView):
 	model = Question
@@ -81,7 +96,6 @@ class VoteView(generic.DetailView):
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
 			queSlug = question.que_slug
-			# if user.is_authenticated():
 			voted_questions = user.voted_set.filter(user=user,question=question)
 			if not voted_questions:
 				vote = Vote(user=user, choice=choice)
@@ -155,8 +169,6 @@ class PollsSearchView(SearchView):
     
     def extra_context(self):
         queryset = super(PollsSearchView, self).get_results()
-        # further filter queryset based on some set of criteria
-        # return queryset
         return {
             'query': queryset,
         }
@@ -165,8 +177,6 @@ class PollsSearchView(SearchView):
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
     suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs]
-    # Make sure you return a JSON object, not a bare list.
-    # Otherwise, you could be vulnerable to an XSS attack.
     the_data = json.dumps({
         'results': suggestions
     })

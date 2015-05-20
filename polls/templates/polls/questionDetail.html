@@ -108,43 +108,19 @@ var disqus_shortname = 'askpopulo';
     dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 })();
-var DISQUS_SECRET = "ZTskBN8JxsMjATD0PXjn3oupBleYNyp9W6V8WK7Nui9da5xPemHW5i4YeKFHBKpa";
-var DISQUS_PUBLIC = "edOQPsw6Z2Ysj6djnxvGTNFCOBQQeAXEeZ4r5pmVqSBKIT9bTYexxToWmvI44K26";
-var disqus_developer = 1;
-
-function disqusSignon() {
-	var disqusData = {
-	  id: "{{ user.id }}",
-	  username: "{{ user.username }}",
-	  email: "{{ user.email }}"
-	};
-
-	var disqusStr = JSON.stringify(disqusData);
-	var timestamp = Math.round(+new Date() / 1000);
-	var message = window.btoa(disqusStr);//new Buffer(disqusStr).toString('base64');
-	var result = CryptoJS.HmacSHA1(message + " " + timestamp, DISQUS_SECRET);
-	var hexsig = CryptoJS.enc.Hex.stringify(result);
-
-	return {
-	  pubKey: DISQUS_PUBLIC,
-	  auth: message + " " + hexsig + " " + timestamp
-	};
-}
-var data = disqusSignon();
-
 var disqus_config = function() {
-	this.page.remote_auth_s3 = data.auth;
-	this.page.api_key = data.pubKey;
+	this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
+	this.page.api_key = "{{ ssoData.pub_key }}";
 	/*this.sso = {
           name:   "AskPopulo",
-          button:  "http://127.0.0.1:8000/static/askpopulologo.png",
-          icon:     "http://127.0.0.1:8000/static/askpopulologo.png",
-          url:        "http://127.0.0.1:8000/accounts/login",
-          logout:  "http://127.0.0.1:8000/accounts/logout",
-          width:   "800",
-          height:  "400"
+          button: "http://127.0.0.1:8000/static/askpopulologo.png",
+          icon:   "http://127.0.0.1:8000/static/askpopulologo.png",
+          url:    "http://127.0.0.1:8000/accounts/login",
+          logout: "http://127.0.0.1:8000/accounts/logout",
+          width:  "800",
+          height: "400"
     };
-	console.log("disqus_config called");
+	console.log("disqus_config called")
 	console.log(this.page.remote_auth_s3);
 	console.log(this.page.api_key);*/
 };
@@ -182,7 +158,7 @@ var disqus_config = function() {
 			});
 
 			function drawPollsChart() {
-				console.log("{{question.choice_set.all}}");
+				// console.log("{{question.choice_set.all}}");
 				var pollsData = [];
 				var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
 				var colCount = 0;
@@ -194,7 +170,7 @@ var disqus_config = function() {
 					inData.push(pollsColors[colCount++]);
 					var percent = {{ choice.vote_set.count }}/{{ question.voted_set.count }}*100;
 					inData.push(percent+"%");
-					console.log(inData);
+					//console.log(inData);
 					pollsData.push(inData);
 				{% endfor %}
 				var data = google.visualization.arrayToDataTable(pollsData);
