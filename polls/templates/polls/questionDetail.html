@@ -277,13 +277,29 @@ var disqus_config = function() {
 			}
 
 			function drawAgeChart() {
-			  var data = google.visualization.arrayToDataTable([
-			    ['Age Group', 'Votes'],
-			    ['Upto 19',     350],
-			    ['20-35',   435],
-			    ['36-50',     350],
-			    ['50+',   435]
-			  ]);
+			  var ageData = [['Age Group', 'Votes']];
+			  var under_19 = 0;
+			  var bet_20_35 = 0;
+			  var bet_36_50 = 0;
+			  var over_50 = 0;
+			  {% for voted in question.voted_set.all %}
+				{% if voted.user.extendeduser.calculate_age > 50 %}
+			  		over_50++;
+			  	{% elif voted.user.extendeduser.calculate_age > 35 %}
+			  		bet_36_50++;
+				{% elif voted.user.extendeduser.calculate_age > 19 %}
+			  		bet_20_35++;
+				{% elif voted.user.extendeduser.calculate_age > 0 %}
+			  		under_19++;
+				{% else %}
+			  		console.log("Age wrong");
+			  	{% endif %}
+			  {% endfor %}
+			  ageData.push(['Upto 19',under_19]);
+			  ageData.push(['20-35',bet_20_35]);
+			  ageData.push(['36-50',bet_36_50]);
+			  ageData.push(['50+',over_50]);
+			  var data = google.visualization.arrayToDataTable(ageData);
 			  var options = {
 			    pieHole: 0.4,
 			    legend:'bottom'
@@ -307,27 +323,31 @@ var disqus_config = function() {
 			  var chart = new google.visualization.PieChart(document.getElementById('othersChart'));
 			  chart.draw(data, options);
 			}
-
+			
 			function drawLocationChart() {
 			    $('#mapBackButton').removeClass('back');
-			    var data = google.visualization.arrayToDataTable([
-			      ['Country', 'Votes'],
-			      ['Germany', 20000],
-			      ['United States', 30000],
-			      ['Brazil', 4000],
-			      ['Canada', 5000],
-			      ['France', 6000],
-			      ['RU', 7000],
-			      ['India', 9990],
-				  ['China', 10000]
-			    ]);
+				var conData = [['Country', 'Votes']];
+				var conDict = {};
+				{% for voted in question.voted_set.all %}
+					{% if voted.user.extendeduser.country %}
+						var country = "{{ voted.user.extendeduser.country }}";
+						if(country in conDict)
+							conDict[country] = conDict[country]+1;
+						else
+							conDict[country] = 1;
+					{% endif %}
+				{% endfor %}
+				for(con in conDict){
+					conData.push([con,conDict[con]]);
+				}
+			    var data = google.visualization.arrayToDataTable(conData);
 			    var options = {};
 			    var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
 			    chart.draw(data, options);
 			    google.visualization.events.addListener(chart, 'regionClick', selectHandler);
 			}
 			function selectHandler(e) {
-			  if(e.region == 'IN'){
+			  /*if(e.region == 'IN'){
 				$("#mapBackButton").css("display", "inline-block");
 				$('#mapBackButton').addClass("back");
 			    drawIndiaMap()
@@ -335,50 +355,19 @@ var disqus_config = function() {
 				$("#mapBackButton").css("display", "inline-block");
 				$('#mapBackButton').addClass("back");
 			    drawUSMap()
-			  }
-			} 
-			  
-			  /* India Start */
-			function drawIndiaMap() {
-			  var data = google.visualization.arrayToDataTable([
-			            ['State', 'Votes'],
-			            ['West Bengal', 5],
-			            ['Karnataka', 22],
-			            ['Jharkhand', 37],
-			            ['Andhra Pradesh', 15],
-			            ['Assam',7],
-			            ['Rajasthan',102],
-			            ['Gujarat',112],
-			            ['Haryana',3],
-			            ['Goa',76],
-			            ['Arunachal Pradesh',13],
-			            ['Bihar',47],
-			            ['Chhattisgarh',39],
-			            ['Himachal Pradesh',20],
-			            ['Kerala',33],
-			            ['Madhya Pradesh',21],
-			            ['Maharashtra',45],
-			            ['Manipur',77],
-			            ['Meghalaya',67],
-			            ['Mizoram',1],
-			            ['Nagaland',4],
-			            ['Punjab',65],
-			            ['Sikkim',8],
-			            ['Telangana',21],
-			            ['Tripura',3],
-			            ['Uttar Pradesh',143],
-			            ['Jammu and Kashmir',17],
-			            ['Tamil Nadu',33],
-			            ['Orissa',99],
-			            ['Puducherry',11],
-			            ['Lakshadweep',1],
-			            ['Chandigarh',44],
-			            ['Delhi',175],
-			            ['Andaman and Nicobar Islands',3],
-			            ['IN-UT',11]
-			  ]);
-			  var options = {
-			      region: 'IN',
+			  }*/
+				$("#mapBackButton").css("display", "inline-block");
+				$('#mapBackButton').addClass("back");
+				drawStateMap(e.region);
+			}
+			
+			var regionDict = {
+				"IN" :"India","AZ":"Azerbaijan"
+			}
+				
+			function drawStateMap(region){
+				var options = {
+			      region: region,
 			      displayMode: 'regions',
 			      resolution: 'provinces',
 			      datalessRegionColor: '#666',
@@ -386,10 +375,28 @@ var disqus_config = function() {
 			      backgroundColor: '#81d4fa',
 			      domain: 'IN'
 			  };
-			  var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
-			  chart.draw(data, options);
-			};
-			/* India End */
+				var stateContry = regionDict[region];
+				var stateData = [['State', 'Votes']];
+				var stateDict = {};
+				{% for voted in question.voted_set.all %}
+					{% if voted.user.extendeduser.country %}
+						var country = "{{ voted.user.extendeduser.country }}";
+						if(country == stateContry){
+							var state = "{{ voted.user.extendeduser.state }}";
+							if(state in stateDict)
+								stateDict[state] = stateDict[state]+1;
+							else
+								stateDict[state] = 1;
+						}
+					{% endif %}
+				{% endfor %}
+				for(state in stateDict){
+					stateData.push([state,stateDict[state]]);
+				}
+				var data = google.visualization.arrayToDataTable(stateData);
+				var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
+				chart.draw(data, options);
+			}
 			    
 			/*US Starts*/
 			function drawUSMap() {

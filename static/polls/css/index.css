@@ -54,7 +54,7 @@
 	padding-bottom:0.5rem;
 	font-size:1.25rem;
 }
-#submit{
+.submit{
 	  /* margin-left: 18rem; */
   margin-top: 1rem;
   background: #3e9cbf;
@@ -72,7 +72,7 @@
   padding: 0 1rem;
   display: block;
 }
-#submit:hover{
+.submit:hover{
 	/* color:#dfe7ea; */
 	letter-spacing:.05rem;
 	/*reduce the size of the shadow to give a pushed effect*/

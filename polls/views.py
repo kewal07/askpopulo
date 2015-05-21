@@ -110,7 +110,10 @@ class VoteView(generic.DetailView):
 				voted.save()
 		else:
 			# error to show no choice selected
-			pass
+			data={}
+			data['form_errors'] = "No choice selected"
+			return HttpResponse(json.dumps(data),
+                            content_type='application/json')
 		url = reverse('polls:polls_detail', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 

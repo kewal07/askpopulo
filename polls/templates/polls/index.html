@@ -11,22 +11,15 @@
 						<div class="questionContent">
 							<div class="userInfo">
 								<div class="userImage">
-									{% if question.question.isAnonymous %}
-										<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
-									{% else %}
-										{% if question.question.user.socialaccount_set.all %}
-										  {% if question.question.user.extendeduser.imageUrl %}
-											<img src="{{ question.question.user.extendeduser.imageUrl }}" alt="User {{ question.question.user.first_name }}">
-										  {% endif %}
+									{% if question.question.user.extendeduser %}
+										{% if question.question.isAnonymous %}
+											<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
 										{% else %}
-										  {% if question.question.user.extendeduser.imageUrl %}
-											<img src="/media/profile/{{ question.question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.question.user.first_name }}">
-										  {% else %}
-											<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
-										  {% endif %}
+											<img src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
 										{% endif %}
+									{% else %}
+										<img src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
 									{% endif %}
-									<!-- <img src="{{question.question.user.extendeduser.imageurl}}" alt="{{question.question.user.first_name}}"> -->
 								</div>
 								<div class="userBrief">
 									<p>
@@ -40,7 +33,7 @@
 							</div> 
 							<div class="mainPoll">
 								<p><a href="{% url 'polls:polls_detail' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a></p>
-								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST">
+								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									{% for choice in question.question.choice_set.all %}
@@ -62,7 +55,7 @@
 											</label>
 										</p>
 									{% endfor %}
-									<input id="submit" type="submit" value="Vote" />
+									<input class="submit" type="submit" value="Vote" id="{{ question.question.id }}:::{{ question.question.que_slug }}"/>
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
@@ -80,8 +73,43 @@
 					{% endfor %}
 			{% else %}
 					<p>No polls are available</p>
-			{% endif %}
-		<!-- </div> -->
-		
+			{% endif %}		
 	</section>
+	<script type="text/javascript">
+			$(document).ready(function()
+		    {
+		  		$('.submit').bind('click', function()
+	            {
+					console.log("click called..........");
+					var queid = $(this)[0].id.split(":::")[0];
+					var queslug = $(this)[0].id.split(":::")[1];
+					var elemid = "#optionsForm"+queid;//$(this)[0].id
+					console.log($(elemid)); 
+					//val
+					$(elemid).bind('submit', function()
+					{
+						console.log("submit called....");
+						$.ajax(
+	                    {
+							type: 'POST',
+							url:'vote/'+queid+"/"+queslug+"/",
+							data:$(elemid).serialize(),
+							success:function(response)
+							{
+								var form_errors = response.form_errors;
+								console.log(response.form_errors);
+								console.log(typeof form_errors === 'undefined');
+
+								if(typeof form_errors === 'undefined'){
+									 $(elemid).unbind('submit').submit();
+								}else{
+									openOverlay("#overlay-inAbox");
+								}
+							}
+						});     
+						return false;
+					});
+	            });
+		    });
+		</script>
 {% endblock %}
