@@ -6,23 +6,15 @@ import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
 from django.contrib.auth.views import logout
-# ,password_change
-# from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
 from polls.models import Question
 import json
-# from django.template.defaultfilters import slugify
-# from allauth.account.signals import user_signed_up
-# from django.dispatch import receiver
+from login.forms import MySignupForm
+from django.contrib.auth.models import User
 
-# @receiver(user_signed_up, dispatch_uid="some.unique.string.id.for.allauth.user_signed_up")
-# def user_signed_up_(request, user, **kwargs):
-    # # user signed up now send email
-    # # send email part - do your self
-	
 class EditProfileView(generic.ListView):
 	
 	def post(self, request, *args, **kwargs):
@@ -30,16 +22,18 @@ class EditProfileView(generic.ListView):
 		user = request.user
 		extendeduser = user.extendeduser
 		print(request.POST)
-		print(request.POST.get('name'))
-		user.first_name = request.POST.get('name').split()[0]
-		user.last_name = request.POST.get('name').split()[1]
+		# print(request.POST.get('name'))
+		user.first_name = request.POST.get('first_name')
+		user.last_name = request.POST.get('last_name')
 		extendeduser.city=request.POST.get('city','')
-		extendeduser.birthDay=request.POST.get('dob','')
+		extendeduser.birthDay=request.POST.get('birthDay','')
 		extendeduser.state=request.POST.get('state','')
 		extendeduser.country=request.POST.get('country','')
-		extendeduser.profession=request.POST.get('prof','')
+		extendeduser.profession=request.POST.get('profession','')
 		extendeduser.gender=request.POST.get('gender','')
 		extendeduser.bio=request.POST.get('bio','')
+		if request.FILES.get('image',''):
+			extendeduser.imageUrl=request.FILES.get('image','')
 		user.save()
 		extendeduser.save()
 		return HttpResponseRedirect(url)
@@ -50,32 +44,21 @@ class RedirectLoginView(generic.ListView):
 		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
 		return HttpResponseRedirect(url)
 
-class LoggedInView(generic.ListView):
+class LoggedInView(generic.DetailView):
 	template_name = 'login/profile.html'
-	#model = settings.AUTH_USER_MODEL
-	
-	def get_queryset(self):
-		mainData = []
-		user_asked_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
-		for mainquestion in latest_questions:
-			data = {}
-			data ['question'] = mainquestion
-			subscribers = mainquestion.subscriber_set.count()
-			data['votes'] = mainquestion.voted_set.count()
-			data['subscribers'] = subscribers
-			mainData.append(data)
-		return mainData
-
-	context_object_name = 'data'
+	model = User
+	print(model)
+	# context_object_name = 'data'
 	# print(request.path)
 	# template_name=request.path
-	def get_queryset(self):
+	def get_context_data(self, **kwargs):
+		context = super(LoggedInView, self).get_context_data(**kwargs)
 		user = self.request.user
 		form = ChangePasswordForm(UserForm(user))
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
 		mainData = {}
-		mainData['form'] = form
-		mainData['questions'] = user_asked_questions
+		context['form'] = form
+		context['questions'] = user_asked_questions
 		if not user.is_anonymous():
 			if user.socialaccount_set.all():
 				social_set = user.socialaccount_set.all()[0]
@@ -100,7 +83,9 @@ class LoggedInView(generic.ListView):
 						city_data = twitter_data.get('location','')
 						extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 						extendedUser.save()
-		return mainData
+		userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city}
+		context["loggedInForm"] = MySignupForm(userFormData)
+		return context
 		
 # class DetailView(generic.DetailView):
 	# template_name = 'polls/index.html'

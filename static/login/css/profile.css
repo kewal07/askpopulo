@@ -115,13 +115,11 @@ html{
     display: block;
 	/* margin: 0 5rem; */
 }
-form.profileForm{
+/* form.profileForm{
 	width:90%;
 	margin:0 auto;
 }
 .profileForm p{
-/*  width:60%;
-  margin:0 auto;*/
   margin-bottom:2rem;
 }
 form.profileForm label{
@@ -130,9 +128,6 @@ form.profileForm label{
 	color: #666;
     font-size: 1.5rem;
 }
-/*form.profileForm input{
-	margin-left: 0rem;
-}*/
 .profileForm input[type="text"]{
 		height: 3rem;
 		border-radius: 10px;
@@ -152,7 +147,6 @@ form.profileForm label{
     background: transparent;
     font-size: 2rem;
     overflow: hidden;
-	/*margin-top: -2rem;*/
 	float:right;
   width:75%;
   padding-left:4px;
@@ -163,7 +157,7 @@ form.profileForm label{
     background: transparent;
     font-size: 2rem;
 }
-
+*/
 
 /* css for stats content */
 .stats {

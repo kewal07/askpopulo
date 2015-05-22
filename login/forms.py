@@ -26,7 +26,8 @@ class MySignupForm(forms.Form):
 	gender = forms.ChoiceField(choices=[('M','Male'),('F','Female')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)
 	birthDay = forms.DateField(widget=CustomDateInput)
 	bio = forms.CharField( max_length=1024, widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
-	profession = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Profession'}),required=False)
+	professionList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"]
+	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)#( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Profession'}),required=False)
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)

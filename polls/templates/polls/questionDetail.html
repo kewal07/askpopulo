@@ -309,13 +309,20 @@ var disqus_config = function() {
 			}
 
 			function drawOthersChart() {
-			  var data = google.visualization.arrayToDataTable([
-			    ['Users', 'Votes'],
-			    ['Windows', 1350],
-			    ['Android', 435],
-			    ['Apple', 350],
-			    ['Linux', 45]
-			  ]);
+				var profDict = {};
+				var profData = [['Profession','Votes']];
+				{% for voted in question.voted_set.all %}
+					{% if voted.user.extendeduser.profession %}
+						var prof = "{{ voted.user.extendeduser.profession }}";
+						if(prof in profData)
+							profDict[prof] = profDict[prof]+1;
+						else
+							profDict[prof] = 1;
+					{% endif %}
+				{% endfor %}
+				for(prof in profDict)
+					profData.push([prof,profDict[prof]]);
+			  var data = google.visualization.arrayToDataTable(profData);
 			  var options = {
 			    pieHole: 0.4,
 			    legend:'bottom'
