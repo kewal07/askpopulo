@@ -3,6 +3,7 @@ from django.conf import settings
 import os
 import uuid
 from django.template.defaultfilters import slugify
+from datetime import date
 #from django.contrib.auth.models import User
 # Create your models here.
 
@@ -42,5 +43,19 @@ class ExtendedUser(models.Model):
 		else:
 			if self.imageUrl:
 				return "http://localhost:8000/media/profile/"+self.get_profile_pic_name()
-		return default_pic_url
+		return default_pic_url	
+
+	def calculate_age(self):
+		today = date.today()
+		born = self.birthDay
+		try: 
+			birthday = born.replace(year=today.year)
+		except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+			birthday = born.replace(year=today.year, month=born.month+1, day=1)
+		if birthday > today:
+			print(today.year - born.year - 1)
+			return today.year - born.year - 1
+		else:
+			print(today.year - born.year)
+			return today.year - born.year
 			

@@ -12,12 +12,12 @@
 		{% block extra_js %}{% endblock %}
 	</head>
 	<body>
-		{% if user.is_authenticated %}
 		<section id="header">
 			<div id="headerContent">
 				<div class="logo">
 					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
 				</div>
+				{% if user.is_authenticated %}
 				<div class="menu">
 					<ul class="menu-nav">
 						<li><a href="{% url 'polls:index' %}">Home</a></li>
@@ -35,17 +35,7 @@
 							</div>
 						</li>
 						<li class="userInNav">
-								{% if user.socialaccount_set.all %}
-								  {% if user.extendeduser.imageUrl %}
-									<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
-								  {% endif %}
-								{% else %}
-								  {% if user.extendeduser.imageUrl %}
-									<img src="/media/profile/{{ user.extendeduser.get_profile_pic_name }}" alt="User {{ user.first_name }}">
-								  {% else %}
-									<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
-								  {% endif %}
-								{% endif %}
+							<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 						</li>
 					</ul>
 					<div class="dropDownBox">
@@ -55,14 +45,7 @@
 						</ul>
 					</div>
 				</div>
-			</div>
-		</section>
-		{% else %}
-		<section id="header">
-			<div id="headerContent">
-				<div class="logo">
-					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-				</div>
+				{% else %}
 				<div class="menu">
 					<ul class="menu-nav">
 						<li><a href="{% url 'polls:index' %}">Home</a></li>
@@ -80,9 +63,15 @@
 						</li>
 					</ul>
 				</div>
+				{% endif %}
+			</div>
+			<div id="overlay-inAbox" class="overlay">
+				<div class="wrapper">
+					<h1 id="overlaytext">Please select a Choice!!</h1>
+					<button id = "okay" class="push_button">Okay</button>
+				</div>
 			</div>
 		</section>
-		{% endif %}
 		{% block content %}
 		{% endblock %}
 	</body>

@@ -107,23 +107,16 @@ def logout_view(request):
 class MyChangePasswordView(PasswordChangeView):
 
 	def post(self,request,*args,**kwargs):
-		print("post being called")
 		form_class = super(MyChangePasswordView, self).get_form_class()
 		form = self.get_form(form_class)
-		print(form.is_valid())
-		# print(self.form_invalid(form))
-		print(form.non_field_errors())
 		# print(form.save())
 		if form.is_valid():
 			super(MyChangePasswordView, self).form_valid(form)
 		else:
 			# response = self.form_invalid(form)
 			# response.template_name = "login/profile.html"
-			print(form._errors)
 			data={}
 			data['form_errors'] = form._errors
-			print(data)
-			print(json.dumps(data))
 			return HttpResponse(json.dumps(data),
                             content_type='application/json')
 		url = reverse('account_login')
