@@ -22,8 +22,13 @@ class IndexView(generic.ListView):
 	context_object_name = 'data'
 	
 	def get_queryset(self):
+		context = {}
 		mainData = []
 		latest_questions = Question.objects.order_by('-pub_date')[:10]
+		subscribed_questions = Subscriber.objects.filter(user=self.request.user)
+		sub_que = []
+		for sub in subscribed_questions:
+			sub_que.append(sub.question.id)
 		for mainquestion in latest_questions:
 			data = {}
 			data ['question'] = mainquestion
@@ -31,7 +36,9 @@ class IndexView(generic.ListView):
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			mainData.append(data)
-		return mainData
+		context['data'] = mainData
+		context['subscribed'] = sub_que
+		return context
 
 class FeaturedPollView(generic.ListView):
 	template_name = 'polls/index.html'
@@ -72,7 +79,6 @@ class DetailView(generic.DetailView):
 			"avatar":user.extendeduser.get_profile_pic_url()
 		}
 		data = json.dumps(data)
-		print(data)
 		message = base64.b64encode(data.encode('utf-8'))
 		timestamp = int(time.time())
 		key = settings.DISQUS_SECRET_KEY.encode('utf-8')
@@ -182,6 +188,19 @@ class PollsSearchView(SearchView):
             'query': queryset,
         }
 
+class FollowPollView(generic.ListView):
+
+	def post(self,request,*args,**kwargs):
+		follow = request.POST.get('follow')
+		qId = request.POST.get('question').replace("follow","")
+		question = Question.objects.get(pk=qId)
+		if follow == "true":
+			sub = Subscriber(user=request.user,question=question)
+			sub.save()
+		elif follow == "false":
+			sub = Subscriber.objects.filter(user=request.user,question=question)[0]
+			sub.delete()
+		return HttpResponse()
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]

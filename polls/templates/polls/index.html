@@ -5,8 +5,8 @@
 {% endblock %}
 {% block content %}
 	<section id="content">
-			{% if data %}
-					{% for question in data %}
+			{% if data.data %}
+					{% for question in data.data %}
 					<div class="questions">
 						<div class="questionContent">
 							<div class="userInfo">
@@ -56,6 +56,11 @@
 										</p>
 									{% endfor %}
 									<input class="submit" type="submit" value="Vote" id="{{ question.question.id }}:::{{ question.question.que_slug }}"/>
+									{% if question.question.id in data.subscribed %}
+										<button class="btn followButton following" id="follow{{ question.question.id }}">Following</button>
+									{% else %}
+										<button class="btn followButton" id="follow{{ question.question.id }}">Follow</button>
+									{% endif %}
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
@@ -110,6 +115,63 @@
 						return false;
 					});
 	            });
+				$('.followButton').bind('click', function(e){
+					// e.preventDefault();
+					$button = $("#"+$(this)[0].id);
+					console.log()
+					console.log($button);
+					var qid = $(this)[0].id;
+					if($button.hasClass('following')){
+						
+						//$.ajax(); Do Unfollow
+						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+						console.log(data);
+						$.ajax(
+	                    {
+							type: 'POST',
+							url:'follow/',
+							data:data,
+							success:function(response)
+							{
+							}
+						});  
+						
+						$button.removeClass('following');
+						$button.removeClass('unfollow');
+						$button.text('Follow');
+					} else {
+						
+						// $.ajax(); Do Follow
+						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+						console.log(data);
+						$.ajax(
+	                    {
+							type: 'POST',
+							url:'follow/',
+							data:data,
+							success:function(response)
+							{
+							}
+						});  
+						
+						$button.addClass('following');
+						$button.text('Following');
+					}
+					return false;
+				});
+
+				$('.followButton').hover(function(){
+					$button = $("#"+$(this)[0].id);
+					if($button.hasClass('following')){
+						$button.addClass('unfollow');
+						$button.text('Unfollow');
+					}
+				}, function(){
+					if($button.hasClass('following')){
+						$button.removeClass('unfollow');
+						$button.text('Following');
+					}
+				});
 		    });
 		</script>
 {% endblock %}
