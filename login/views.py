@@ -10,7 +10,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question
+from polls.models import Question,Voted
 import json
 from login.forms import MySignupForm
 from django.contrib.auth.models import User
@@ -47,7 +47,7 @@ class RedirectLoginView(generic.ListView):
 class LoggedInView(generic.DetailView):
 	template_name = 'login/profile.html'
 	model = User
-	print(model)
+	#model = settings.AUTH_USER_MODEL
 	# context_object_name = 'data'
 	# print(request.path)
 	# template_name=request.path
@@ -56,9 +56,12 @@ class LoggedInView(generic.DetailView):
 		user = self.request.user
 		form = ChangePasswordForm(UserForm(user))
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('user_id').filter(user_id = user.id))
 		mainData = {}
 		context['form'] = form
 		context['questions'] = user_asked_questions
+		context['voted'] = user_voted_questions
+		print(user_voted_questions)
 		if not user.is_anonymous():
 			if user.socialaccount_set.all():
 				social_set = user.socialaccount_set.all()[0]

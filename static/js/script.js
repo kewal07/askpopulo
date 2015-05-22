@@ -56,41 +56,41 @@ $(document).ready(function(){
 		$('.dropDownBox').slideToggle("slow");
 	});
 	/* end of Dropdownbox on click of user image in nav */
-
+	
 	/* close overlay call */
 	$("#okay").click(function(){
 		closeOverlay();
 	});
 	/* close overlay call end */
+
+	function openOverlay(olEl) {
+		$oLay = $(olEl);
+		if ($('#overlay-shade').length == 0)
+			$('body').prepend('<div id="overlay-shade"></div>');
+		$('#overlay-shade').fadeTo(300, 0.6, function() {
+			// var props = {
+				// //oLayWidth       : $oLay.width(),
+				// scrTop          : $(window).scrollTop(),
+				// viewPortWidth   : $(window).width()
+			// };
+		$oLay.css({
+				display : 'block',
+				opacity : 0,
+				});
+		$oLay.animate({
+				top : 130,
+				opacity : 1
+				}, 600);
+		});
+	}
+
+	function closeOverlay() {
+		$('.overlay').animate({
+			top : '-=300',
+			opacity : 0
+		}, 400, function() {
+			$('#overlay-shade').fadeOut(300);
+			$(this).css('display','none');
+		});
+	}
 });
-
-function openOverlay(olEl) {
-	$oLay = $(olEl);
-	if ($('#overlay-shade').length == 0)
-		$('body').prepend('<div id="overlay-shade"></div>');
-	$('#overlay-shade').fadeTo(300, 0.6, function() {
-		// var props = {
-			// //oLayWidth       : $oLay.width(),
-			// scrTop          : $(window).scrollTop(),
-			// viewPortWidth   : $(window).width()
-		// };
-	$oLay.css({
-			display : 'block',
-			opacity : 0,
-			});
-	$oLay.animate({
-			top : 130,
-			opacity : 1
-			}, 600);
-	});
-}
-
-function closeOverlay() {
-	$('.overlay').animate({
-		top : '-=300',
-		opacity : 0
-	}, 400, function() {
-		$('#overlay-shade').fadeOut(300);
-		$(this).css('display','none');
-	});
-}
