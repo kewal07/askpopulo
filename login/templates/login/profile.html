@@ -3,6 +3,10 @@
 
 		{% block extra_css %}
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
+			<link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" />
+		{% endblock %}
+		{% block extra_js %}
+			<script type="text/javascript" src="{% static 'login/js/easy-responsive-tabs.js' %}"></script>
 		{% endblock %}
 		{% block content %}
 		{% if user %}
@@ -79,12 +83,17 @@
 							<li class="secondChild">
 								<input type="radio" name="tabs" id="tab2" unchecked />
 								<label class="tabsLabel" for="tab2">Stats</label>
-								<div id="tabContent2" class="tabContent">
-									<div class="stats">
-										<div class="stat">
-											<input type="radio" id="stat-1" name="stat-group-1" checked>
-												<label for="stat-1">Asked Polls</label>
-													<div class="content">
+									<div id="tabContent2" class="tabContent">
+										<div id="verticalTab">
+											<ul class="resp-tabs-list ul-easy-tabs-polls">
+												<li>Asked Polls</li>
+												<li>Voted Polls</li>
+												<li>Recent Activity</li>
+												<li>Statistics</li>
+											</ul>
+											<div class="resp-tabs-container polls-resp-tabs-container">
+												<div>
+												    <div class="content">
 														{% for question in data.questions %}
 														<div class="searchResults">
 	          												<div class="result">
@@ -95,27 +104,31 @@
 														</div>
 														{% endfor %}
 													</div>
-										</div>
-										<div class="stat">
-											<input type="radio" id="stat-2" name="stat-group-1">
-												<label for="stat-2">Voted Polls</label>           
+												</div>
+												<div>
 													<div class="content">
-													</div> 
+														{% for question in data.voted %}
+														<div class="searchResults">
+	          												<div class="result">
+	            												<p>
+																	<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
+																</p>
+															</div>
+														</div>
+														{% endfor %}
+													</div>
+												</div>
+												<div>
+											    	<p>Suspendisse blandit velit Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis urna gravid urna gravid eget erat suscipit in malesuada odio venenatis.
+											    	</p>
+												</div>
+												<div>
+													<p>d ut ornare non, volutpat vel tortor. Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis urna gravida mollis.Suspendisse blandit velit eget erat suscipit in malesuada odio venenatis.
+													</p>
+												</div>
+											</div>
 										</div>
-										<div class="stat">
-											<input type="radio" id="stat-3" name="stat-group-1">
-												<label for="stat-3">Recent Activity</label>
-													<div class="content">
-													</div> 
-										</div>
-										<div class="stat">
-											<input type="radio" id="stat-4" name="stat-group-1">
-												<label for="stat-4">Statistics</label>
-													<div class="content">
-													</div> 
-										</div>
-									</div>
-								</div>
+									</div>	
 							</li>
 							<li class="thirdChild">
 								<input type="radio" name="tabs" id="tab3" unchecked />
@@ -143,6 +156,11 @@
 		<script type="text/javascript">
 			$(document).ready(function()
 		    {
+		    	$('#verticalTab').easyResponsiveTabs({
+					type: 'vertical',
+					width: 'auto',
+					fit: true
+				});
 		  		$('#password_change_form').bind('submit', function()
 	            {     
 

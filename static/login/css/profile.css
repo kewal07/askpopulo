@@ -21,11 +21,8 @@ html{
 .profileContent{
 	font-size:2rem;
 }
-/*.profileContent p{
-	margin-bottom:2rem;
-}*/
+
 .tabs{
-	/*width: 100%;  */
 	top:10px;
 	float: none;
 	list-style: none;
@@ -45,27 +42,12 @@ html{
 }
 .tabs li{
     float: left;
-    /*margin-left:11.7%;*/
     width:33%;
 }
-/*.firstChild{
-  margin-left: 6% !important;
-}
-.secondChild{
-  margin-left:10% !important;
-}
-.thirdChild{
-  float: right !important;
-  margin-right: 6% !important;
-  margin-left: 0 !important;
-}*/
-/*.tabs li:first-child{
-	margin-left: 27%;
-}*/
+
 .tabs label.tabsLabel{
 	cursor: pointer;
   	display: block;
-  	/*padding: 15px 45px;*/
     padding: 10px 0px;
   margin-top: 10px;
   	background: -webkit-linear-gradient(23deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -84,7 +66,7 @@ html{
 	background: #b2b2b2;
 }
 .tabs .tabContent{
-	z-index: 2;
+	  z-index: 2;
     display: none; 
     overflow: hidden;
     width: 99%;
@@ -128,17 +110,17 @@ form.profileForm label{
 	display: inline-block;
 	width:24%;
 	color: #666;
-    font-size: 1.5rem;
+  font-size: 1rem;
 }
 /*form.profileForm input{
 	margin-left: 0rem;
 }*/
 .profileForm input[type="text"]{
-		height: 3rem;
+		height: 2rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
 		background: transparent;
-		font-size:2rem;
+		font-size:1rem;
 		overflow:hidden;
     box-sizing: border-box;
     padding-left: 4px;
@@ -148,14 +130,25 @@ form.profileForm label{
 }
 .profileForm textarea{
 	border-radius: 10px;
-    border: 1px solid #666;
-    background: transparent;
-    font-size: 2rem;
-    overflow: hidden;
-	/*margin-top: -2rem;*/
+  border: 1px solid #666;
+  background: transparent;
+  font-size: 1.25rem;
+  overflow: hidden;
 	float:right;
   width:75%;
   padding-left:4px;
+}
+ul.resp-tabs-list, p {
+  font-size: 1rem;
+}
+ul.ul-easy-tabs-polls{
+  width:initial !important;
+}
+ul.ul-easy-tabs-polls li{
+  width:initial !important;
+}
+.polls-resp-tabs-container{
+  width:80% !important;
 }
 .profileForm input[type="date"]{
 	border-radius: 10px;
@@ -164,54 +157,6 @@ form.profileForm label{
     font-size: 2rem;
 }
 
-
-/* css for stats content */
-.stats {
-  position: relative;   
-    /*min-height: 200px;  This part sucks */
-    clear: both;
-    margin: 25px 0;      
-}
-.stat {   
-   /* height: 1%; */
-}
-.stat label {
-    background: #eee; 
-    padding: 10px; 
-    border: 1px solid #ccc; 
-    margin-left: -1px; 
-    position: relative;
-    left: 1px;        
-    display: block;
-    width: 20%;
-    cursor: pointer;
-}
-.stat label:hover{
-  background:#666;
-}
-
-.stat [type=radio] {
-	display: none;   
-}
-.content {
-    display: none;
-	  left: 22%;
-    position: absolute;
-    top: 0;
-    background: white;
-    right: 0;
-    bottom: 0;
-    padding: 20px;    
-}
-.stats [type=radio]:checked ~ label {
-    background: white;
-    border-bottom: 1px solid white;
-    z-index: 2;
-}
-.stats [type=radio]:checked ~ label ~ .content {
-    z-index: 1;
-    display: block;
-}
 .searchResults{
   font-size: 2rem;
   border: 3px solid #000;
@@ -228,49 +173,18 @@ form.profileForm label{
   width:90%;
   margin:0 auto;
 }
-.graphContainer{
- font-family: Arial;
- }
 
-.record{
+/*.record{
  float: left;
  width: 60%;
  border: 1px solid #ccc;
  background-color: #f0f0f0;
  margin-bottom: 5px;
  -moz-border-radius: 0px 10px 10px 0px;
- -moz-border-radius: 0px 10px 10px 0px;
+ -moz-border-radius: 0px 10px 10px 0px;*/
  
- }
-
-.bar {
- float: left;
- clear: left;
- height: 30px;
- }
-
- .bar .barColor{
- height:100%;
- animation-name: resize;
- animation-duration: 3s;
- animation-timing-function: moz-linear-gradient;
- animation-fill-mode: forwards;
-
- -webkit-animation-name: resize;
- -webkit-animation-duration: 3s;
- -webkit-animation-timing-function: step-starts;
- -webkit-animation-fill-mode: forwards;
- }
-
-.bar span{
- font-size: 12px;
- font-weight: bold;
- color: #fff;
- float: left;
- margin-left: 5px;
- margin-top: -20px;
- }
-
+ /*}*/
+/*
 .p{
  padding-top: 3px;
  float: right;
@@ -286,7 +200,7 @@ form.profileForm label{
  float: left;
  margin-right: 5px;
  margin-top: 5px;
- }
+ }*/
 
  @keyframes resize {
   0% {
@@ -318,49 +232,6 @@ form.profileForm label{
     background-color:rgba(255,0,0,0.9);
   }
 }
-/*changePasswordForm css*/
-/*
-#changePassword{
-	width: 50%;
-    margin-left: 30rem;
-}
-.changePasswordForm{
-	margin-left: -14rem;
-}
-.changePasswordForm + p {
-	font-size: 2rem;
-}
-.changePasswordForm label{
-	display: inline-block;
-	width:25%;
-	color: #666;
-    font-size: 1.5rem;
-}
-.changePasswordForm input{
-	margin-left: 0rem;
-}
-.changePasswordForm input[type="text"]{
-		height: 2rem;
-		border-radius: 10px;
-		border: 2px solid #4c4c4c;
-		background: transparent;
-		font-size:2rem;
-		overflow:hidden;
-}
-.changePasswordForm input[type="submit"]{
-	margin-left:14rem;
-}
-.changePasswordForm p{
-	width:60%;
-	margin:0 auto;
-	margin-bottom:2rem;
-}
-#deleteAccount{
-	margin-left: -25rem;
-    border-left: 2px solid #666;
-    padding-left: 10rem;
-}
-*/
 
 #submit{
 	margin-left: 18rem;

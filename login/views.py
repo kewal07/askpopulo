@@ -12,7 +12,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question
+from polls.models import Question,Voted
 import json
 # from django.template.defaultfilters import slugify
 # from allauth.account.signals import user_signed_up
@@ -54,18 +54,6 @@ class LoggedInView(generic.ListView):
 	template_name = 'login/profile.html'
 	#model = settings.AUTH_USER_MODEL
 	
-	def get_queryset(self):
-		mainData = []
-		user_asked_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
-		for mainquestion in latest_questions:
-			data = {}
-			data ['question'] = mainquestion
-			subscribers = mainquestion.subscriber_set.count()
-			data['votes'] = mainquestion.voted_set.count()
-			data['subscribers'] = subscribers
-			mainData.append(data)
-		return mainData
-
 	context_object_name = 'data'
 	# print(request.path)
 	# template_name=request.path
@@ -73,9 +61,12 @@ class LoggedInView(generic.ListView):
 		user = self.request.user
 		form = ChangePasswordForm(UserForm(user))
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('user_id').filter(user_id = user.id))
 		mainData = {}
 		mainData['form'] = form
 		mainData['questions'] = user_asked_questions
+		mainData['voted'] = user_voted_questions
+
 		if not user.is_anonymous():
 			if user.socialaccount_set.all():
 				social_set = user.socialaccount_set.all()[0]

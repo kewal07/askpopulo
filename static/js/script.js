@@ -56,6 +56,5 @@ $(document).ready(function(){
 		$('.dropDownBox').slideToggle("slow");
 	});
 	/* end of Dropdownbox on click of user image in nav */
-
 });
 
