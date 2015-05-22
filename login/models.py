@@ -24,6 +24,7 @@ class ExtendedUser(models.Model):
 	bio = models.CharField(max_length=1024,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
 	user_slug = models.SlugField(null=True,blank=True)
+	categories = models.CharField(max_length=100,blank=True,null=True)
 	
 	def save(self, *args, **kwargs):
 		self.user_slug = slugify(self.user.username)
