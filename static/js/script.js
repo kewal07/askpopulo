@@ -15,6 +15,7 @@ $(document).ready(function(){
 	$(".upImg").hide();
 
 	fileInput.change(function(){
+		$('#upImgText').hide();
 	    $this = $(this);
 	    var fileVal = $this.val();
     	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;

@@ -35,47 +35,7 @@
 									<form class="profileForm" method="POST" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
 										{% csrf_token %}
 										{{ loggedInForm.as_p }}
-										<!-- <p>
-											<label for="name">Name</label>
-											<input id="name" type="text" name="name" value=" {{ user.first_name}} {{ user.last_name }}">
-										</p>
-										<p>
-											<label for="userName">User Name</label>
-											<input id="userName" type="text" name="userName" value=" {{ user.username }}" readonly>							
-										</p>
-										<p>
-											<label for="email">Email</label>
-											<input id="email" type="text" name="email" value=" {{ user.email }}" readonly>							
-										</p>
-										<p class="bioCss clearfix">
-											<label for="bio">Bio</label>
-											<textarea id ="bio" cols="40" rows="5" name="bio" value=" {{ user.extendeduser.bio }}" >{{ user.extendeduser.bio }}</textarea>
-										</p>
-										<p>
-											<label for="gender">Gender</label>
-											<input type="radio" id="gender" name="gender" value="M" {% ifequal user.extendeduser.gender "M"%} checked="checked"{% endifequal %}>Male <input type="radio" id="gender" name="gender" value="F" {% ifequal user.extendeduser.gender "F"%} checked="checked"{% endifequal %}>Female
-										</p>
-										<p>
-											<label for="dob">DOB</label>
-											<input id="dob" type="date" name="dob" value="{{ user.extendeduser.birthDay|date:'Y-m-d' }}" >
-										</p>
-										<p>
-											<label for="prof">Profession</label>
-											<input id="prof" type="text" name="prof" value="{{ user.extendeduser.profession }}" >
-										</p>
-										<p>
-											<label for="country">Country</label>
-											<input id="country" type="text" name="country" value="{{ user.extendeduser.country }}" >
-										</p>
-										<p>
-											<label for="state">State</label>
-											<input id="state" type="text" name="state" value="{{ user.extendeduser.state }}" >
-										</p>	
-										<p>
-											<label for="city">City</label>
-											<input id="city" type="text" name="city" value="{{ user.extendeduser.city }}" >
-										</p> -->
-										<input id="submit" type="submit" value="Save Changes" />
+										<input class="submit" id="submit" type="submit" value="Save Changes" />
 									</form>
 								</div>
 							</li>
@@ -122,8 +82,9 @@
 											    	</p>
 												</div>
 												<div>
-													<p>d ut ornare non, volutpat vel tortor. Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis urna gravida mollis.Suspendisse blandit velit eget erat suscipit in malesuada odio venenatis.
-													</p>
+													<div class="circle"><p class="circleP">{{ questions.count }}<br/>Questions Asked</p></div>
+													<div class="circle"><p class="circleP">{{ voted.count }}<br/>Questions Voted</p></div>
+													<div class="circle"><p class="circleP">120<br/>Questions Subscribed</p></div>
 												</div>
 											</div>
 										</div>
@@ -133,19 +94,15 @@
 								<input type="radio" name="tabs" id="tab3" unchecked />
 								<label class="tabsLabel" for="tab3">Settings</label>
 								<div id="tabContent3" class="tabContent">
-									<ul>
-										<li>
-											<div id="changePassword">
+									<div id="changePassword">
 												<p>Change Password</p>
 												<form action="{% url 'account_login' %}" method="get" class="password_change" id="password_change_form">
 										    		{% csrf_token %}
 										    		{{ form.as_p }}
-										    		<button type="submit" name="action">Change Password</button>
+										    		<button class="submit" type="submit" name="action">Change Password</button>
 										    		<!-- <input type="submit" value="Submit" /> -->
 												</form>
-											</div>
-										</li>
-									</ul>
+									</div>
 								</div>
 							</li>
 					    </ul>
