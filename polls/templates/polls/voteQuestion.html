@@ -64,8 +64,8 @@
 					<div class="pollInfo clearfix">
 						<ul class="pollInfoUl clearfix">
 							<li><span class="pollInfoNum">{{ question.voted_set.count }}</span> opinion{{ question.voted_set.count|pluralize }}</li>
-							<li><span class="pollInfoNum">{{ question.subscriber_set.count }}</span> interested</li>
-							<li>{% if question.question.id in data.subscribed %}
+							<li><span class="pollInfoNum" id="sub_num{{ question.id }}">{{ question.subscriber_set.count }}</span> interested</li>
+							<li>{% if question.id in subscribed %}
 									<button class="btn followButton following" id="follow{{ question.id }}---{{ question.que_slug }}">Following</button>
 								{% else %}
 									<button class="btn followButton" id="follow{{ question.id }}---{{ question.que_slug }}" >Follow</button>
@@ -94,13 +94,13 @@
 				$(elemid).bind('submit', function()
 				{
 					console.log("submit called....");
-					url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
+					var vote_url = "http://{{ request.META.HTTP_HOST }}"+'/polls/'+queid+'/'+queslug
 					{% if user.is_authenticated %}
 					console.log("call ajax");
 					$.ajax(
 					{
 						type: 'POST',
-						url:url,
+						url:vote_url,
 						data:$(elemid).serialize(),
 						success:function(response)
 						{
@@ -116,9 +116,9 @@
 						}
 					});
 					{% else %}
-						url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
-						console.log(url);
-						$(location).attr('href',url);
+						//url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
+						//console.log(vote_url);
+						$(location).attr('href',vote_url);
 					{% endif %}
 					return false;
 				});
@@ -130,6 +130,7 @@
 				console.log($button);
 				var qid = $(this)[0].id.split("---")[0].replace("follow","");
 				var qslug = $(this)[0].id.split("---")[1];
+				var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 				{% if user.is_authenticated %}
 					if($button.hasClass('following')){
 						
@@ -139,10 +140,11 @@
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url:follow_url,
 							data:data,
 							success:function(response)
 							{
+								$("#sub_num"+qid).text(response.sub_count);
 							}
 						});  
 						
@@ -157,10 +159,11 @@
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url:follow_url,
 							data:data,
 							success:function(response)
 							{
+								$("#sub_num"+qid).text(response.sub_count);
 							}
 						});  
 						
@@ -168,7 +171,7 @@
 						$button.text('Following');
 					}
 				{% else %}
-					url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+qid+'/'+qslug
+					url = "http://{{ request.META.HTTP_HOST }}"+'/polls/'+qid+'/'+qslug
 					console.log(url);
 					$(location).attr('href',url);
 				{% endif %}

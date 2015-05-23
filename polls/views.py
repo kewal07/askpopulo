@@ -59,7 +59,46 @@ class FeaturedPollView(generic.ListView):
 			mainData.append(data)
 		return mainData
 	
-class DetailView(generic.DetailView):
+# class DetailView(generic.DetailView):
+	# model = Question
+	
+	# def get_template_names(self):
+		# template_name = 'polls/voteQuestion.html'
+		# question = self.get_object()
+		# user = self.request.user
+		# if user.is_authenticated():
+			# voted = Voted.objects.filter(question = question, user=user)
+			# if voted:
+				# template_name = 'polls/questionDetail.html'
+		# return [template_name]
+		
+	# def get_context_data(self, **kwargs):
+		# context = super(DetailView, self).get_context_data(**kwargs)
+		# user = self.request.user
+		# if user.is_authenticated():
+			# data = {
+				# "id":user.id,
+				# "username":user.username,
+				# "email":user.email,
+				# "avatar":user.extendeduser.get_profile_pic_url()
+			# }
+			# data = json.dumps(data)
+			# message = base64.b64encode(data.encode('utf-8'))
+			# timestamp = int(time.time())
+			# key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+			# msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+			# digestmod = hashlib.sha1
+			# sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+			# ssoData = dict(
+				# message=message,
+				# timestamp=timestamp,
+				# sig=sig,
+				# pub_key=settings.DISQUS_API_KEY,
+			# )
+			# context['ssoData'] = ssoData
+		# return context
+
+class VoteView(generic.DetailView):
 	model = Question
 	
 	def get_template_names(self):
@@ -71,11 +110,13 @@ class DetailView(generic.DetailView):
 			if voted:
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
-		
+	
 	def get_context_data(self, **kwargs):
-		context = super(DetailView, self).get_context_data(**kwargs)
+		context = super(VoteView, self).get_context_data(**kwargs)
 		user = self.request.user
+		subscribed_questions = []
 		if user.is_authenticated():
+			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
 				"id":user.id,
 				"username":user.username,
@@ -96,11 +137,11 @@ class DetailView(generic.DetailView):
 				pub_key=settings.DISQUS_API_KEY,
 			)
 			context['ssoData'] = ssoData
+		sub_que = []
+		for sub in subscribed_questions:
+			sub_que.append(sub.question.id)
+		context['subscribed'] = sub_que
 		return context
-
-class VoteView(generic.DetailView):
-	model = Question
-	template_name = 'polls/voteQuestion.html'
 
 	def post(self, request, *args, **kwargs):
 		user = request.user
@@ -124,7 +165,7 @@ class VoteView(generic.DetailView):
 			data['form_errors'] = "No choice selected"
 			return HttpResponse(json.dumps(data),
                             content_type='application/json')
-		url = reverse('polls:polls_detail', kwargs={'pk':questionId,'que_slug':queSlug})
+		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 
 class CreatePollView(generic.ListView):
@@ -204,7 +245,9 @@ class FollowPollView(generic.ListView):
 		elif follow == "false":
 			sub = Subscriber.objects.filter(user=request.user,question=question)[0]
 			sub.delete()
-		return HttpResponse()
+		data = {}
+		data['sub_count'] = question.subscriber_set.count()
+		return HttpResponse(json.dumps(data),content_type='application/json')
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]

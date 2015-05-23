@@ -32,7 +32,7 @@
 								</div>
 							</div> 
 							<div class="mainPoll">
-								<p><a href="{% url 'polls:polls_detail' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a></p>
+								<p><a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a></p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
@@ -61,7 +61,7 @@
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
 										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
-										<li><span class="pollInfoNum">{{question.subscribers}}</span> interested</li>
+										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> interested</li>
 										<li>{% if question.question.id in data.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
@@ -98,7 +98,7 @@
 					$.ajax(
 					{
 						type: 'POST',
-						url:'vote/'+queid+"/"+queslug,
+						url:'polls/'+queid+"/"+queslug,
 						data:$(elemid).serialize(),
 						success:function(response)
 						{
@@ -136,6 +136,7 @@
 							data:data,
 							success:function(response)
 							{
+								$("#sub_num"+qid).text(response.sub_count);
 							}
 						});  
 						
@@ -154,6 +155,7 @@
 							data:data,
 							success:function(response)
 							{
+								$("#sub_num"+qid).text(response.sub_count);
 							}
 						});  
 						
@@ -161,7 +163,7 @@
 						$button.text('Following');
 					}
 				{% else %}
-					url = 'vote/'+qid+'/'+qslug
+					url = 'polls/'+qid+'/'+qslug
 					console.log(url);
 					$(location).attr('href',url);
 				{% endif %}
