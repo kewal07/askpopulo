@@ -94,10 +94,13 @@
 				$(elemid).bind('submit', function()
 				{
 					console.log("submit called....");
+					url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
+					{% if user.is_authenticated %}
+					console.log("call ajax");
 					$.ajax(
 					{
 						type: 'POST',
-						//url:'vote/'+queid+"/"+queslug+"/",
+						url:url,
 						data:$(elemid).serialize(),
 						success:function(response)
 						{
@@ -111,7 +114,12 @@
 								openOverlay("#overlay-inAbox");
 							}
 						}
-					});     
+					});
+					{% else %}
+						url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
+						console.log(url);
+						$(location).attr('href',url);
+					{% endif %}
 					return false;
 				});
 			});
