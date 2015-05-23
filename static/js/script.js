@@ -65,41 +65,41 @@ $(document).ready(function(){
 	});
 	/* close overlay call end */
 
-	function openOverlay(olEl) {
-		$oLay = $(olEl);
-		if ($('#overlay-shade').length == 0)
-			$('body').prepend('<div id="overlay-shade"></div>');
-		$('#overlay-shade').fadeTo(300, 0.6, function() {
-			// var props = {
-				// //oLayWidth       : $oLay.width(),
-				// scrTop          : $(window).scrollTop(),
-				// viewPortWidth   : $(window).width()
-			// };
-		$oLay.css({
-				display : 'block',
-				opacity : 0,
-				});
-		$oLay.animate({
-				top : 130,
-				opacity : 1
-				}, 600);
-		});
-	}
-
-	function closeOverlay() {
-		$('.overlay').animate({
-			top : '-=300',
-			opacity : 0
-		}, 400, function() {
-			$('#overlay-shade').fadeOut(300);
-			$(this).css('display','none');
-		});
-	}
-	/* End Overlay */
-
 	$('#id_categories').hide();
 	$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
 	$('#id_categories').prev().on('click', '#cats', function() {
     	$('#id_categories').toggle();
   	});
 });
+function openOverlay(olEl) {
+	console.log("In overlay");
+	$oLay = $(olEl);
+	if ($('#overlay-shade').length == 0)
+		$('body').prepend('<div id="overlay-shade"></div>');
+	$('#overlay-shade').fadeTo(300, 0.6, function() {
+		// var props = {
+			// //oLayWidth       : $oLay.width(),
+			// scrTop          : $(window).scrollTop(),
+			// viewPortWidth   : $(window).width()
+		// };
+	$oLay.css({
+			display : 'block',
+			opacity : 0,
+			});
+	$oLay.animate({
+			top : 130,
+			opacity : 1
+			}, 600);
+	});
+}
+
+function closeOverlay() {
+	$('.overlay').animate({
+		top : '-=300',
+		opacity : 0
+	}, 400, function() {
+		$('#overlay-shade').fadeOut(300);
+		$(this).css('display','none');
+	});
+}
+/* End Overlay */

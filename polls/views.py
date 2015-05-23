@@ -75,26 +75,27 @@ class DetailView(generic.DetailView):
 	def get_context_data(self, **kwargs):
 		context = super(DetailView, self).get_context_data(**kwargs)
 		user = self.request.user
-		data = {
-			"id":user.id,
-			"username":user.username,
-			"email":user.email,
-			"avatar":user.extendeduser.get_profile_pic_url()
-		}
-		data = json.dumps(data)
-		message = base64.b64encode(data.encode('utf-8'))
-		timestamp = int(time.time())
-		key = settings.DISQUS_SECRET_KEY.encode('utf-8')
-		msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
-		digestmod = hashlib.sha1
-		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
-		ssoData = dict(
-			message=message,
-			timestamp=timestamp,
-			sig=sig,
-			pub_key=settings.DISQUS_API_KEY,
-		)
-		context['ssoData'] = ssoData
+		if user.is_authenticated():
+			data = {
+				"id":user.id,
+				"username":user.username,
+				"email":user.email,
+				"avatar":user.extendeduser.get_profile_pic_url()
+			}
+			data = json.dumps(data)
+			message = base64.b64encode(data.encode('utf-8'))
+			timestamp = int(time.time())
+			key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+			msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+			digestmod = hashlib.sha1
+			sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+			ssoData = dict(
+				message=message,
+				timestamp=timestamp,
+				sig=sig,
+				pub_key=settings.DISQUS_API_KEY,
+			)
+			context['ssoData'] = ssoData
 		return context
 
 class VoteView(generic.DetailView):

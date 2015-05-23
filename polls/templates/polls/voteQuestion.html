@@ -37,7 +37,7 @@
 				</div> 
 				<div class="mainPoll">
 					<p>{{ question.question_text }}</p>
-					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST">
+					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST" id="optionsForm{{ question.id }}">
 						{% csrf_token %}
 						<input type="hidden" name="question" value="{{ question.id }}" />
 						{% for choice in question.choice_set.all %}
@@ -59,7 +59,12 @@
 								</label>
 							</p>
 						{% endfor %}
-						<input id="submit" type="submit" value="Vote" />
+						<input class="submit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+									{% if question.question.id in data.subscribed %}
+										<button class="btn followButton following" id="follow{{ question.id }}---{{ question.que_slug }}">Following</button>
+									{% else %}
+										<button class="btn followButton" id="follow{{ question.id }}---{{ question.que_slug }}" >Follow</button>
+									{% endif %}
 					</form>
 					<div class="pollInfo clearfix">
 						<ul class="pollInfoUl clearfix">
@@ -74,4 +79,105 @@
 			</div>
 		</div>
 	</section>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$('.submit').bind('click', function()
+			{
+				console.log("click called..........");
+				var queid = $(this)[0].id.split("---")[0];
+				var queslug = $(this)[0].id.split("---")[1];
+				var elemid = "#optionsForm"+queid;//$(this)[0].id
+				console.log($(elemid)); 
+				//val
+				$(elemid).bind('submit', function()
+				{
+					console.log("submit called....");
+					$.ajax(
+					{
+						type: 'POST',
+						//url:'vote/'+queid+"/"+queslug+"/",
+						data:$(elemid).serialize(),
+						success:function(response)
+						{
+							var form_errors = response.form_errors;
+							console.log(response.form_errors);
+							console.log(typeof form_errors === 'undefined');
+
+							if(typeof form_errors === 'undefined'){
+								 $(elemid).unbind('submit').submit();
+							}else{
+								openOverlay("#overlay-inAbox");
+							}
+						}
+					});     
+					return false;
+				});
+			});
+			$('.followButton').bind('click', function(e){
+				// e.preventDefault();
+				console.log($(this)[0].id)
+				$button = $("#"+$(this)[0].id);
+				console.log($button);
+				var qid = $(this)[0].id.split("---")[0].replace("follow","");
+				var qslug = $(this)[0].id.split("---")[1];
+				{% if user.is_authenticated %}
+					if($button.hasClass('following')){
+						
+						//$.ajax(); Do Unfollow
+						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+						console.log(data);
+						$.ajax(
+						{
+							type: 'POST',
+							url:'follow/'+qid+'/'+qslug,
+							data:data,
+							success:function(response)
+							{
+							}
+						});  
+						
+						$button.removeClass('following');
+						$button.removeClass('unfollow');
+						$button.text('Follow');
+					} else {
+						
+						// $.ajax(); Do Follow
+						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+						console.log(data);
+						$.ajax(
+						{
+							type: 'POST',
+							url:'follow/'+qid+'/'+qslug,
+							data:data,
+							success:function(response)
+							{
+							}
+						});  
+						
+						$button.addClass('following');
+						$button.text('Following');
+					}
+				{% else %}
+					url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+qid+'/'+qslug
+					console.log(url);
+					$(location).attr('href',url);
+				{% endif %}
+				return false;
+			});
+
+			$('.followButton').hover(function(){
+				$button = $("#"+$(this)[0].id);
+				if($button.hasClass('following')){
+					$button.addClass('unfollow');
+					$button.text('Unfollow');
+				}
+			}, function(){
+				if($button.hasClass('following')){
+					$button.removeClass('unfollow');
+					$button.text('Following');
+				}
+			});
+		});
+	</script>
 {% endblock %}
