@@ -58,6 +58,7 @@ $(document).ready(function(){
 	});
 	/* end of Dropdownbox on click of user image in nav */
 	
+	/* Overlay */
 	/* close overlay call */
 	$("#okay").click(function(){
 		closeOverlay();
@@ -94,4 +95,11 @@ $(document).ready(function(){
 			$(this).css('display','none');
 		});
 	}
+	/* End Overlay */
+
+	$('#id_categories').hide();
+	$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
+	$('#id_categories').prev().on('click', '#cats', function() {
+    	$('#id_categories').toggle();
+  	});
 });

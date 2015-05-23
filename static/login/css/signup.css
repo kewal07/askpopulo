@@ -18,14 +18,6 @@
 	margin-top: 2rem;
 }
 
-.upImg{
-	width:140px;
-	height:140px;
-	border-radius:50%;
-	display:block;
-	margin:auto;
-}
-
 .signupContent{
 	margin: 0 auto;
 }
@@ -42,17 +34,17 @@ form.signupContentForm label{
 	display: inline-block;
 	width:20%;
 	color: #666;
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
 form.signupContentForm input{
 	margin-left: 0rem;
 }
 .signupContentForm input[type="text"],.signupContentForm input[type="email"],.signupContentForm input[type="password"],.signupContentForm select{
-		height: 3rem;
+		height: 2rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
 		background: transparent;
-		font-size:2rem;
+		font-size:1rem;
 		overflow:hidden;
 }
 
@@ -64,11 +56,11 @@ form.signupContentForm input{
 	border-radius: 10px;
     border: 1px solid #666;
     background: transparent;
-    font-size: 2rem;
+    font-size: 1rem;
     overflow: hidden;
 	/* margin-top: -2rem; */
 	/*width: 45rem;*/
-	height: 8rem;
+	height: 5rem;
 	/*margin-left:11rem;*/
 }
 #qText{
@@ -78,7 +70,7 @@ form.signupContentForm input{
 	border-radius: 10px;
     border: 2px solid #666;
     background: transparent;
-    font-size: 2rem;
+    font-size: 1rem;
 }
 .signupContentForm p{
 	width:90%;
@@ -105,7 +97,7 @@ form.signupContentForm input{
 	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
 	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 	/*style the text*/
-	font-size:2.5rem;
+	font-size:2rem;
 	letter-spacing:.1rem;
 	color: #fff;
 	/*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
@@ -123,9 +115,9 @@ form.signupContentForm input{
 	/* color:#dfe7ea; */
 	letter-spacing:.05rem;
 	/*reduce the size of the shadow to give a pushed effect*/
-	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
+	-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
 }
 .fileButtonClass{
 	/* opacity: 0; */
@@ -137,23 +129,40 @@ background: url('question1.jpg') 0 0 no-repeat;
 border:none;
 overflow:hidden; */
 }
-
-.fileLabel {
-	padding:0.5rem 1rem;
-    text-align:center;
-    display:inline-block;
-    /*width:20%;*/
-    margin:0 0 0 2rem;
-    background: #fff;
-	border: 1px solid #3e9cbf;
-	cursor: pointer;
-	font-size: 1.5rem;
-	/* letter-spacing: .1rem; */
-	color: #3e9cbf;
-	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999;
-	-moz-border-radius: 25px;
-	-webkit-border-radius: 25px;
-	border-radius: 25px;
+.fileLabel{
+  padding: 0.2rem;
+  text-align: center;
+  display: inline-block;
+  background: #fff;
+  border: 1px solid;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #000000;
+  -webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+}
+.upImg{
+    width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+}
+#upImgText{
+  padding:1.3rem;
+}
+#id_categories{
+	width: 125%;
+  margin-left: 3rem;
+}
+#id_categories li{
+	display:inline;
+}
+span#cats{
+  cursor:pointer;
+  font-size:1rem;
 }

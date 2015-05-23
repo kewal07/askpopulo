@@ -20,7 +20,6 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
     return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
 
 class MySignupForm(forms.Form):
-	category_list=["Technology","Health"]
 	curyear = datetime.now().year
 	image = forms.ImageField(required=False,label='Profile Image')
 	first_name = forms.CharField(max_length=30, label='First Name', widget=forms.TextInput(attrs={'placeholder': 'First Name','autofocus': 'autofocus'}))
@@ -33,12 +32,9 @@ class MySignupForm(forms.Form):
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
-	categories =  forms.MultipleChoiceField(required=False,widget=forms.CheckboxSelectMultiple, choices=category_list)
+	categories =  forms.MultipleChoiceField(required=False,widget=forms.CheckboxSelectMultiple(attrs={'checked' : 'checked'}), choices=[(i,i) for i in Category.objects.all()])
 
 	def signup(self, request, user):
-		# print(dir(request))
-		# print(request.FILES.get('image'))
-		print(request.POST)
 		user.first_name = self.cleaned_data['first_name']
 		user.last_name = self.cleaned_data['last_name']
 		city=request.POST.get('city','')
@@ -47,6 +43,9 @@ class MySignupForm(forms.Form):
 		country=request.POST.get('country','')
 		profession=request.POST.get('profession','')
 		gender=request.POST.get('gender','')
-		bio=request.POST.get('bio','')
-		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''))
+		bio=request.POST.get('bio','').strip()
+		categories=request.POST.getlist('categories','')
+		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
+		user_categories = ",".join(str(x) for x in categories_list)
+		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''),categories=user_categories)
 		extendeduser.save()
