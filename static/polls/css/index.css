@@ -210,10 +210,10 @@ ul.pollInfoUl li {
     border-top-color:#bdbdbd;
     border-bottom-color:#8b8a8b;
     
-    padding:9px 14px 9px;
+    padding:0px 14px;
     
     color:#666666;
-    font-size:11px;
+    font-size:13px;
     background-position:0px 0px;
     
     text-shadow: 0 1px 0 #fff;
@@ -260,9 +260,6 @@ ul.pollInfoUl li {
 
 /* Follow Button Styles */
 
-button.followButton{
-    width:160px;
-}
 button.followButton.following{
     background-color: #57A957;
     background-repeat: repeat-x;
