@@ -121,42 +121,46 @@
 					console.log()
 					console.log($button);
 					var qid = $(this)[0].id;
-					if($button.hasClass('following')){
-						
-						//$.ajax(); Do Unfollow
-						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						console.log(data);
-						$.ajax(
-	                    {
-							type: 'POST',
-							url:'follow/',
-							data:data,
-							success:function(response)
-							{
-							}
-						});  
-						
-						$button.removeClass('following');
-						$button.removeClass('unfollow');
-						$button.text('Follow');
-					} else {
-						
-						// $.ajax(); Do Follow
-						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						console.log(data);
-						$.ajax(
-	                    {
-							type: 'POST',
-							url:'follow/',
-							data:data,
-							success:function(response)
-							{
-							}
-						});  
-						
-						$button.addClass('following');
-						$button.text('Following');
-					}
+					{% if user.is_authenticated %}
+						if($button.hasClass('following')){
+							
+							//$.ajax(); Do Unfollow
+							var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+							console.log(data);
+							$.ajax(
+		                    {
+								type: 'POST',
+								url:'follow/',
+								data:data,
+								success:function(response)
+								{
+								}
+							});  
+							
+							$button.removeClass('following');
+							$button.removeClass('unfollow');
+							$button.text('Follow');
+						} else {
+							
+							// $.ajax(); Do Follow
+							var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
+							console.log(data);
+							$.ajax(
+		                    {
+								type: 'POST',
+								url:'follow/',
+								data:data,
+								success:function(response)
+								{
+								}
+							});  
+							
+							$button.addClass('following');
+							$button.text('Following');
+						}
+					{% else %}
+						openOverlay("#overlay-inAbox");
+					{% endif %}
 					return false;
 				});
 

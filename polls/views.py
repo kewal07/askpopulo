@@ -22,10 +22,13 @@ class IndexView(generic.ListView):
 	context_object_name = 'data'
 	
 	def get_queryset(self):
+		user = self.request.user
 		context = {}
 		mainData = []
 		latest_questions = Question.objects.order_by('-pub_date')[:10]
-		subscribed_questions = Subscriber.objects.filter(user=self.request.user)
+		subscribed_questions = []
+		if user.is_authenticated():
+			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
