@@ -47,44 +47,56 @@
 											<ul class="resp-tabs-list ul-easy-tabs-polls">
 												<li>Asked Polls</li>
 												<li>Voted Polls</li>
-												<li>Recent Activity</li>
+												<li>Categories</li>
 												<li>Statistics</li>
 											</ul>
 											<div class="resp-tabs-container polls-resp-tabs-container">
 												<div>
 												    <div class="content">
-														{% for question in questions %}
-														<div class="searchResults">
-	          												<div class="result">
-	            												<p>
-																	<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
-																</p>
+												    	{% if questions.count %}
+															{% for question in questions %}
+															<div class="searchResults">
+		          												<div class="result">
+		            												<p>
+																		<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
+																	</p>
+																</div>
 															</div>
-														</div>
-														{% endfor %}
+															{% endfor %}
+														{% else %}
+															<p class="profilePageZeroQuestions"> You have not created any polls yet. <a class="anchorSpan" href="{% url 'polls:polls_create' %}"> Create</a> one now </p>
+														{% endif %}
 													</div>
 												</div>
 												<div>
 													<div class="content">
-														{% for question in voted %}
-														<div class="searchResults">
-	          												<div class="result">
-	            												<p>
-																	<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
-																</p>
+														{% if voted.count %}
+															{% for question in voted %}
+															<div class="searchResults">
+		          												<div class="result">
+		            												<p>
+																		<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
+																	</p>
+																</div>
 															</div>
-														</div>
-														{% endfor %}
+															{% endfor %}
+														{% else %}
+															<p class="profilePageZeroQuestions"> You have not voted on any polls yet. <a class="anchorSpan" href="{% url 'polls:index' %}"> Vote</a> now </p>
+														{% endif %}
 													</div>
 												</div>
 												<div>
-											    	<p>Suspendisse blandit velit Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis Integer laoreet placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis urna gravid urna gravid eget erat suscipit in malesuada odio venenatis.
-											    	</p>
+											    	{% for category in categories %}
+											    		<figure class="category_figure">
+															<img class="category_imagethumbnails" src="{{ category.category_image }}" alt="{{ category.category_title }}">
+															<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
+														</figure>
+											    	{% endfor %}
 												</div>
 												<div>
 													<div class="circle"><p class="circleP">{{ questions.count }}<br/>Questions Asked</p></div>
 													<div class="circle"><p class="circleP">{{ voted.count }}<br/>Questions Voted</p></div>
-													<div class="circle"><p class="circleP">120<br/>Questions Subscribed</p></div>
+													<div class="circle"><p class="circleP">{{ subscribed }}<br/>Questions Subscribed</p></div>
 												</div>
 											</div>
 										</div>

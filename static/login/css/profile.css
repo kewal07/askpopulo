@@ -261,3 +261,30 @@ ul.ul-easy-tabs-polls li{
 .circleP{
     margin-top:5rem;
 }
+.category_figure{
+    display:inline-block;
+    margin:1rem;
+}
+.category_figurecaption{
+    font-size: 1rem;
+    text-align: center;
+}
+.category_imagethumbnails{
+    height:96px;
+    width:128px;
+}
+.profilePageZeroQuestions{
+    text-align:center;
+}
+#id_categories{
+  width: 125%;
+  margin-left: 3rem;
+}
+#id_categories li{
+  display:inline;
+  width:45%;
+}
+span#cats{
+  cursor:pointer;
+  font-size:1rem;
+}
