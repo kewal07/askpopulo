@@ -56,17 +56,18 @@
 										</p>
 									{% endfor %}
 									<input class="submit" type="submit" value="Vote" id="{{ question.question.id }}:::{{ question.question.que_slug }}"/>
-									{% if question.question.id in data.subscribed %}
-										<button class="btn followButton following" id="follow{{ question.question.id }}">Following</button>
-									{% else %}
-										<button class="btn followButton" id="follow{{ question.question.id }}">Follow</button>
-									{% endif %}
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
 										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
 										<li><span class="pollInfoNum">{{question.subscribers}}</span> interested</li>
+										<li>{% if question.question.id in data.subscribed %}
+												<button class="btn followButton following" id="follow{{ question.question.id }}">Following</button>
+											{% else %}
+												<button class="btn followButton" id="follow{{ question.question.id }}">Follow</button>
+											{% endif %}
+										</li>
 										<li ><i class="fa fa-facebook"></i></li>
 										<li><i class="fa fa-twitter"></i></li>
 										<li><i class="fa fa-google-plus"></i></li>
