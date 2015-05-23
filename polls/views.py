@@ -171,8 +171,10 @@ class VoteView(generic.DetailView):
 			if not voted_questions:
 				vote = Vote(user=user, choice=choice)
 				voted = Voted(user=user, question=question)
+				subscribed = Subscriber(user=user, question=question)
 				vote.save()
 				voted.save()
+				subscribed.save()
 		else:
 			# error to show no choice selected
 			data={}
