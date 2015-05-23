@@ -236,6 +236,7 @@ ul.menu-nav li a:hover{
 	color: red;
   	display: inline-block;
   	float: right;
+  	font-size: 1rem;
 }
 #overlay-inAbox .wrapper {
     text-align: center;
