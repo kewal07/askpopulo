@@ -58,7 +58,7 @@
 															<div class="searchResults">
 		          												<div class="result">
 		            												<p>
-																		<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
+																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
 																	</p>
 																</div>
 															</div>
@@ -75,7 +75,7 @@
 															<div class="searchResults">
 		          												<div class="result">
 		            												<p>
-																		<a href="{% url 'polls:polls_detail' question.id question.que_slug %}">{{ question.question_text }}</a>
+																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
 																	</p>
 																</div>
 															</div>

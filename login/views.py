@@ -35,6 +35,10 @@ class EditProfileView(generic.ListView):
 		extendeduser.bio=request.POST.get('bio','')
 		if request.FILES.get('image',''):
 			extendeduser.imageUrl=request.FILES.get('image','')
+		categories=request.POST.getlist('categories','')
+		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
+		user_categories = ",".join(str(x) for x in categories_list)
+		extendeduser.categories=user_categories
 		user.save()
 		extendeduser.save()
 		return HttpResponseRedirect(url)
@@ -42,7 +46,11 @@ class EditProfileView(generic.ListView):
 class RedirectLoginView(generic.ListView):
 
 	def get(self,request,*args,**kwargs):
-		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
+		user_slug = None
+		print(request.user)
+		if hasattr(request.user,'extendeduser'):
+			user_slug = request.user.extendeduser.user_slug
+		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':user_slug})
 		return HttpResponseRedirect(url)
 
 class LoggedInView(generic.DetailView):
@@ -59,9 +67,14 @@ class LoggedInView(generic.DetailView):
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
 		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('user_id').filter(user_id = user.id))
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
-		user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
-		user_categories = Category.objects.all().filter(pk__in=user_categories_list)
-		print(user_categories)
+		user_categories = []
+		cat_list = []
+		if hasattr(user,'extendeduser'):
+			if user.extendeduser.categories:
+				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
+				user_categories = Category.objects.all().filter(pk__in=user_categories_list)
+				for cat in user.extendeduser.categories.split(","):
+					cat_list.append(Category.objects.get(pk=cat).category_title)
 		mainData = {}
 		context['form'] = form
 		context['questions'] = user_asked_questions
@@ -91,9 +104,10 @@ class LoggedInView(generic.DetailView):
 						img_url = twitter_data.get('profile_image_url')
 						city_data = twitter_data.get('location','')
 						extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
-						extendedUser.save()
-		userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city}
-		context["loggedInForm"] = MySignupForm(userFormData)
+						extendedUser.save()	
+		userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city,'categories':cat_list}
+		loggedInForm = MySignupForm(userFormData)
+		context["loggedInForm"] = loggedInForm
 		return context
 		
 # class DetailView(generic.DetailView):

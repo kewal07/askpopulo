@@ -23,7 +23,7 @@
 						<li><a href="{% url 'polls:index' %}">Home</a></li>
 						<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
 						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-						<li><a href="{% url 'polls:index' %}">MyPolls</a></li>
+						<li><a href="{% url 'polls:mypolls' user.username %}">MyPolls</a></li>
 						<li><div class="search">
 								<form method="get" action="/search" class="autocomplete-me">
 						            <!-- {% csrf_token %} -->

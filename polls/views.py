@@ -14,6 +14,7 @@ import hashlib
 import base64
 import time
 from django.conf import settings
+from collections import OrderedDict
 
 # Create your views here.
 
@@ -22,13 +23,26 @@ class IndexView(generic.ListView):
 	context_object_name = 'data'
 	
 	def get_queryset(self):
-		user = self.request.user
+		request = self.request
+		user = request.user
 		context = {}
 		mainData = []
-		latest_questions = Question.objects.order_by('-pub_date')[:10]
+		latest_questions = []
+		if user.is_authenticated() and request.path.endswith(user.username):
+			if user.extendeduser.categories:
+				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
+				user_categories = Category.objects.filter(pk__in=user_categories_list)
+				que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
+				followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
+				latest_questions = [x.question for x in que_cat_list]
+				latest_questions.extend(followed_questions)
+				latest_questions = list(OrderedDict.fromkeys(latest_questions))
+				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
+		else:
+			latest_questions = Question.objects.order_by('-pub_date')[:10]
 		subscribed_questions = []
 		if user.is_authenticated():
-			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
+			subscribed_questions = Subscriber.objects.filter(user=request.user)
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)

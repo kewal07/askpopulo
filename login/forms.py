@@ -28,11 +28,11 @@ class MySignupForm(forms.Form):
 	birthDay = forms.DateField(widget=CustomDateInput)
 	bio = forms.CharField( max_length=1024, widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
 	professionList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"]
-	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)#( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'Profession'}),required=False)
+	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
-	categories =  forms.MultipleChoiceField(required=False,widget=forms.CheckboxSelectMultiple(attrs={'checked' : 'checked'}), choices=[(i,i) for i in Category.objects.all()])
+	categories =  forms.MultipleChoiceField(required=True,widget=forms.CheckboxSelectMultiple(attrs={'class':'category_checkbox'}), choices=[(i,i) for i in Category.objects.all()])
 
 	def signup(self, request, user):
 		user.first_name = self.cleaned_data['first_name']
