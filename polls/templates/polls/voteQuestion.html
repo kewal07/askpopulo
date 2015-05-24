@@ -36,7 +36,14 @@
 					</div>
 				</div> 
 				<div class="mainPoll">
-					<p>{{ question.question_text }}</p>
+					<p>{{ question.question_text }}
+					{% if user.is_authenticated %}
+					{% if user == question.user %}
+					<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+					<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
+					{% endif %}
+					{% endif %}
+					</p>
 					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST" id="optionsForm{{ question.id }}">
 						{% csrf_token %}
 						<input type="hidden" name="question" value="{{ question.id }}" />

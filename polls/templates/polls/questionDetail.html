@@ -46,6 +46,12 @@
 					</div> 
 					<div class="mainPoll">
 						<p>{{ question.question_text }}
+						{% if user.is_authenticated %}
+						{% if user == question.user %}
+						<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+						<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
+						{% endif %}
+						{% endif %}
 						</p>
 						<div id="pollsChart">
 						</div>

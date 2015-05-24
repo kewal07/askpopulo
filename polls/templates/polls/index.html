@@ -32,7 +32,15 @@
 								</div>
 							</div> 
 							<div class="mainPoll">
-								<p><a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a></p>
+								<p>
+								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a>
+								{% if user.is_authenticated %}
+								{% if user == question.question.user %}
+								<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+								<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o"></i></a>
+								{% endif %}
+								{% endif %}
+								</p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />

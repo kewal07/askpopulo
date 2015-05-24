@@ -7,7 +7,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
     }),
     _create: function(){
         this._super();
-        var itemsAdded = "";
+        var itemsAdded = $('#selectedCategories').val();
         var self = this,
             o = self.options;
 
@@ -22,6 +22,32 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                 .bind("click.autocomplete", function(){
                     self.element.focus();
                 });
+				
+			if(!(itemsAdded === "")){
+				console.log(itemsAdded.split(","));
+				$.each(itemsAdded.split(","),function(i,items){
+					console.log(items);
+					if(!(items === "")){
+						o.maxselection--;
+						$("<div></div>")
+							.addClass("ui-autocomplete-multiselect-item")
+							.text(items)
+							.append(
+								$("<span></span>")
+									.addClass("ui-icon ui-icon-close")
+									.click(function(){
+										o.maxselection++;
+										var item = $(this).parent();
+										delete self.selectedItems[item.text()];
+										itemsAdded=itemsAdded.replace(item.text()+",","");
+										$('#selectedCategories').val(itemsAdded);
+										item.remove();
+									})
+							)
+							.insertBefore(self.element);
+					}
+				});
+			}
             
             var fontSize = parseInt(self.element.css("fontSize"), 10);
             function autoSize(e){
@@ -64,7 +90,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                                     o.maxselection++;
                                     var item = $(this).parent();
                                     delete self.selectedItems[item.text()];
-                                    itemsAdded=itemsAdded.replace(item.text(),"");
+                                    itemsAdded=itemsAdded.replace(item.text()+",","");
                                     $('#selectedCategories').val(itemsAdded);
                                     item.remove();
                                 })

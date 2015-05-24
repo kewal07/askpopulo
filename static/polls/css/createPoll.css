@@ -84,8 +84,8 @@ form.createPollContentForm input{
 	visibility:hidden;
 	background:url('question.jpg') no-repeat center center fixed; */
 }
-/*.createPollContentForm input[type="submit"]  */#submit{
-	margin-left: 18rem;
+/*.createPollContentForm input[type="submit"]  */.submit{
+	margin-left: 18rem !important;
 	margin-top:1rem;
 	background: #3e9cbf; /*the colour of the button*/
 	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
@@ -105,7 +105,7 @@ form.createPollContentForm input{
 	padding: 0 1rem;
 }
 /***SET THE BUTTON'S HOVER AND FOCUS STATES***/
-/*.createPollContentForm input[type="submit"]*/#submit:hover, .fileLabel:hover{
+/*.createPollContentForm input[type="submit"]*/.submit:hover, .fileLabel:hover{
 	/* color:#dfe7ea; */
 	letter-spacing:.05rem;
 	/*reduce the size of the shadow to give a pushed effect*/
@@ -232,4 +232,14 @@ overflow:hidden; */
   margin-bottom: 7%;
   margin-top: -4%;
   font-size: 1rem;
+}
+.choice_image{
+	width: 200px;
+  	height: 150px;
+  	border: 5px solid #666;
+  	margin-right: 2rem;
+  	cursor:pointer;
+}
+.choice_image:hover{
+	border-color: #00ff00;
 }

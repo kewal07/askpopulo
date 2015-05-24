@@ -13,12 +13,11 @@
 		<section id="createPoll">
 			<div class="createPoll">
 				<div class="createPollContent">
-				<form id="createPollForm" class="createPollContentForm autocomplete-me" method="POST" action="{% url 'polls:polls_create' %}"  enctype="multipart/form-data">
+				<form id="createPollForm" class="createPollContentForm autocomplete-me" method="POST" action="{% url 'polls:polls_create' %}?qid={{ question.id }}"  enctype="multipart/form-data">
 					{% csrf_token %}
 					<p>
 						<label for="qText">Question</label>
-						<textarea id ="qText" name="qText" placeholder="Ask the people"></textarea>
-					</p>
+						<textarea id ="qText" name="qText" placeholder="Ask the people">{{ question.question_text }}</textarea>
 						 <script type="text/javascript">
 				            // In a perfect world, this would be its own library file that got included
 				            // on the page and only the ``$(document).ready(...)`` below would be present.
@@ -104,45 +103,41 @@
 				              window.autocomplete.setup();
 				            })
 				        </script>
+					</p>
 					<p>
 						<label for="qDesc">Description</label>
-						<textarea id ="qDesc" name="qDesc" placeholder="Description"></textarea>
+						<textarea id ="qDesc" name="qDesc" placeholder="Description">{{ question.description }}</textarea>
 					</p>
 					<p>
 						<label for="qExpiry">Expires On</label>
-						<input id="qExpiry" type="date" name="qExpiry">
+						<input id="qExpiry" type="date" name="qExpiry" value="{{ expiry_date }}">
 					</p>
+					{% for choice in question.choice_set.all %}
 					<p>
-						<label for="choice1">Choice 1</label>
-						<input id="choice1" type="text" name="choice1" placeholder="First Choice">
-						<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
+						<label for="choice{{ forloop.counter }}">Choice {{ forloop.counter }}</label>
+						<input id="choice{{ forloop.counter }}" type="text" name="choice{{ forloop.counter }}" placeholder="First Choice" value="{{ choice.choice_text }}">
+						{% if choice.choice_image %}
+							<img class="choices choice_image" id="imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
+							<input type="hidden" id="imagetextchoice{{ forloop.counter }}" name="imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
+						{% endif %}
+						<input id="filechoice{{ forloop.counter }}" class="fileButtonClass" type="file" name="choice{{ forloop.counter }}" accept="image/*">
 					</p>
-					<p>
-						<label for="choice2">Choice 2</label>
-						<input id="choice2" type="text" name="choice2" placeholder="Second Choice">
-						<input id="choice2" class="fileButtonClass" type="file" name="choice2" accept="image/*">
-					</p>
-					<p>
-						<label for="choice3">Choice 3</label>
-						<input id="choice3" type="text" name="choice3" placeholder="Third Choice">
-						<input id="choice3" class="fileButtonClass" type="file" name="choice3" accept="image/*">
-					</p>
-					<p>
-						<label for="choice4">Choice 4</label>
-						<input id="choice4" type="text" name="choice4" placeholder="Fourth Choice">
-						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
-					</p>
+					{% endfor %}
 					<p>
 						<label for="categories">Category</label>
-						<input id="categories" type="text" name="categories">
-						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
+						<input id="categories" type="text" name="categories" >
+						<input id="selectedCategories" type="hidden" name="selectedCategories" value="{{ question_categories }}">
 					</p>
 					<p class="anonymous">
-						<input id="anonymous" name="anonymous" type="checkbox">
+						{% if question.isAnonymous %}
+							<input id="anonymous" name="anonymous" type="checkbox" checked>
+						{% else %}
+							<input id="anonymous" name="anonymous" type="checkbox">
+						{% endif %}
 						<label for="anonymous">Ask as Anonymous</label>
 					</p>
 					<p>
-					<input class="submit" type="submit" value="Create" />
+					<input class="submit" type="submit" value="Update" />
 					</p>
 				</form>
 				</div>
@@ -153,13 +148,21 @@
 			{% for categories in data %}
 				availableTags.push("{{ categories.category_title }}");
 			{% endfor %}
+			//console.log(availableTags);
 			$( "#categories" ).autocomplete({
 				source: availableTags,
 				multiselect: true,
 				maxselection: 5
 			});
-		$(document).ready(function()
-		{
+		$(document).ready(function(){
+			$(".fileButtonClass").click(function(){
+				$("#image"+$(this)[0].id.replace("file","")).hide();
+				$("#imagetext"+$(this)[0].id.replace("file","")).val("");
+			});
+			$(".choice_image").click(function(){
+				$("#image"+$(this)[0].id.replace("image","")).hide();
+				$("#imagetext"+$(this)[0].id.replace("image","")).val("");
+			});
 			$('.submit').bind('click', function()
 			{
 				//console.log("click called..........");
@@ -171,7 +174,7 @@
 					//console.log("submit called....");
 					var create_url = "http://{{ request.META.HTTP_HOST }}"+'/createpoll';
 					{% if user.is_authenticated %}
-					//console.log("call ajax");
+					//console.log($(elemid).serialize());
 					$.ajax(
 					{
 						type: 'POST',

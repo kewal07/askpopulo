@@ -33,9 +33,10 @@ class IndexView(generic.ListView):
 				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
 				user_categories = Category.objects.filter(pk__in=user_categories_list)
 				que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-				followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
 				latest_questions = [x.question for x in que_cat_list]
-				latest_questions.extend(followed_questions)
+			followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
+			latest_questions.extend(followed_questions)
+			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 		else:
@@ -183,6 +184,39 @@ class VoteView(generic.DetailView):
                             content_type='application/json')
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
+		
+class EditView(generic.DetailView):
+	model = Question
+	
+	def get_template_names(self):
+		template_name = 'polls/editQuestion.html'
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+		context = super(EditView, self).get_context_data(**kwargs)
+		question = self.get_object()
+		context["data"] = Category.objects.all()
+		if question.expiry:
+			tim = question.expiry.strftime("%Y-%m-%d %H:%M:%S")
+			context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+		categories = ""
+		for cat in question.questionwithcategory_set.all():
+			categories += cat.category.category_title+","
+		context["question_categories"] = categories
+		print(context)
+		return context
+		
+class DeleteView(generic.DetailView):
+	model = Question
+	
+	def get_context_data(self, **kwargs):
+		return super(DeleteView, self).get_context_data(**kwargs)
+	
+	def get(self, request, *args, **kwargs):
+		url = reverse('polls:index')
+		question = self.get_object()
+		question.delete()
+		return HttpResponseRedirect(url)
 
 class CreatePollView(generic.ListView):
 	template_name = 'polls/createPoll.html'
@@ -194,51 +228,106 @@ class CreatePollView(generic.ListView):
 	def post(self, request, *args, **kwargs):
 		url = reverse('polls:index')
 		user = request.user
+		edit = False
+		errors = {}
+		if request.GET.get("qid"):
+			edit = True
 		if not user.is_authenticated():
 			url = reverse('account_login')
 		elif request.POST:
 			qText = request.POST.get('qText')
-			if not qText:
-				self.errors['qTextError'] = "Question required"
+			if not qText.strip():
+				errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
 			qExpiry = request.POST.get('qExpiry')
 			if not qExpiry:
 				qExpiry = None
+			choice1 = ""
+			choice2 = ""
+			choice3 = ""
+			choice4 = ""
+			choice1Image = ""
+			choice2Image = ""
+			choice3Image = ""
+			choice4Image = ""
+			choice1Present = False
+			choice2Present = False
+			# print(request.FILES.get('choice1'))
+			# print(request.FILES.get('choice2'))
+			# print(request.POST.getlist('choice1'))
+			# print(request.POST.getlist('choice2'))
+			if request.POST.getlist('choice1') != [''] and request.POST.getlist('choice1') != ['',''] or request.FILES.get('choice1'):
+				choice1Present = True
+			if request.POST.getlist('choice2') != [''] and request.POST.getlist('choice2') != ['',''] or request.FILES.get('choice2'):
+				choice2Present = True
+			print(choice1Present,choice2Present)
+			if not (choice1Present and choice2Present):
+				errors['choiceError'] = "Please provide this choice"
+			if errors:
+				return HttpResponse(json.dumps(errors),content_type="application/json")
 			choice1 = request.POST.getlist('choice1')[0].strip()
-			choice1Image = request.FILES.get('choice1')
+			if edit and request.POST.get('imagechoice1',""):
+				choiceid = request.POST.get('imagechoice1').split("---")[1]
+				choice1Image = Choice.objects.get(pk=choiceid).choice_image
+			else:
+				choice1Image = request.FILES.get('choice1')
 			choice2 = request.POST.getlist('choice2')[0].strip()
-			choice2Image = request.FILES.get('choice2')
-			if (not choice1 or not choice2) and (not choice1Image or not choice2Image):
-				self.errors['choiceError'] = "At least 2 choices should be provided"
-			choice3 = request.POST.getlist('choice3')[0].strip()
-			choice3Image = request.FILES.get('choice3')
-			choice4 = request.POST.getlist('choice4')[0].strip()
-			choice4Image = request.FILES.get('choice4')
+			if edit and request.POST.get('imagechoice2',""):
+				choiceid = request.POST.get('imagechoice2').split("---")[1]
+				choice2Image = Choice.objects.get(pk=choiceid).choice_image
+			else:
+				choice2Image = request.FILES.get('choice2')
+			if request.POST.getlist('choice3'):
+				choice3 = request.POST.getlist('choice3')[0].strip()
+			if edit and request.POST.get('imagechoice3',""):
+				choiceid = request.POST.get('imagechoice3').split("---")[1]
+				choice3Image = Choice.objects.get(pk=choiceid).choice_image
+			else:
+				choice3Image = request.FILES.get('choice3')
+			if request.POST.getlist('choice4'):
+				choice4 = request.POST.getlist('choice4')[0].strip()
+			if edit and request.POST.get('imagechoice4',""):
+				choiceid = request.POST.get('imagechoice4').split("---")[1]
+				choice4Image = Choice.objects.get(pk=choiceid).choice_image
+			else:
+				choice4Image = request.FILES.get('choice4')
 			selectedCats = request.POST.get('selectedCategories','').split(",")
 			isAnon = request.POST.get('anonymous')
 			if isAnon:
 				anonymous = 1
 			else:
 				anonymous = 0
-			question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous)
+			if edit:
+				question = Question.objects.get(pk=request.GET.get("qid"))
+				question.question_text=qText
+				question.description=qDesc
+				question.expiry=qExpiry
+				question.isAnonymous=anonymous
+			else:
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous)
 			question.save()
+			if edit:
+				for choice in question.choice_set.all():
+					choice.delete()
+				for que_cat in question.questionwithcategory_set.all():
+					que_cat.delete()
 			for cat in selectedCats:
 				if cat:
 					category = Category.objects.filter(category_title=cat)[0]
 					qWcat = QuestionWithCategory(question=question,category=category)
 					qWcat.save()
 			if choice1 or choice1Image:
-				choice1 = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
-				choice1.save()
+				choice = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
+				choice.save()
 			if choice2 or choice2Image:
-				choice2 = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
-				choice2.save()
+				choice = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
+				choice.save()
 			if choice3 or choice3Image:
-				choice3 = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
-				choice3.save()
+				choice = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
+				choice.save()
 			if choice4 or choice4Image:
-				choice4 = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
-				choice4.save()
+				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
+				choice.save()
 		return HttpResponseRedirect(url)
 
 class PollsSearchView(SearchView):
