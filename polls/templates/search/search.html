@@ -10,7 +10,7 @@
         <div class="searchResults">
           <div class="result">
             <p>
-               <a href="{% url 'polls:polls_detail' result.object.id result.object.que_slug %}">{{ result.object.question_text }}</a>
+               <a href="{% url 'polls:polls_vote' result.object.id result.object.que_slug %}">{{ result.object.question_text }}</a>
             </p>
           </div>
         </div>
