@@ -229,15 +229,15 @@ class CreatePollView(generic.ListView):
 		url = reverse('polls:index')
 		user = request.user
 		edit = False
-		errors = {}
+		# errors = {}
 		if request.GET.get("qid"):
 			edit = True
 		if not user.is_authenticated():
 			url = reverse('account_login')
 		elif request.POST:
 			qText = request.POST.get('qText')
-			if not qText.strip():
-				errors['qTextError'] = "Question required"
+			# if not qText.strip():
+				# errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
 			qExpiry = request.POST.get('qExpiry')
 			if not qExpiry:
@@ -260,11 +260,11 @@ class CreatePollView(generic.ListView):
 				choice1Present = True
 			if request.POST.getlist('choice2') != [''] and request.POST.getlist('choice2') != ['',''] or request.FILES.get('choice2'):
 				choice2Present = True
-			print(choice1Present,choice2Present)
-			if not (choice1Present and choice2Present):
-				errors['choiceError'] = "Please provide this choice"
-			if errors:
-				return HttpResponse(json.dumps(errors),content_type="application/json")
+			# print(choice1Present,choice2Present)
+			# if not (choice1Present and choice2Present):
+				# errors['choiceError'] = "Please provide this choice"
+			# if errors:
+				# return HttpResponse(json.dumps(errors),content_type="application/json")
 			choice1 = request.POST.getlist('choice1')[0].strip()
 			if edit and request.POST.get('imagechoice1',""):
 				choiceid = request.POST.get('imagechoice1').split("---")[1]

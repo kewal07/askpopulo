@@ -275,3 +275,19 @@ ul.share-buttons li{
 		margin-left: -25%;
 	}
 }
+
+.choices{
+	display:flex;
+}
+.choiceDetailImage{
+	width:100px;
+	height:100px;
+	margin:0 1rem;
+}
+.choiceFigCaption{
+	text-align: center;
+}
+.que_text{
+	margin-left:1rem;
+	margin-bottom: 1rem;
+}

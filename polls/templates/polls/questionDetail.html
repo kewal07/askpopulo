@@ -42,16 +42,37 @@
 									{{question.user.first_name}}
 								{% endif %}
 							</p>
+							<p>
+								Asked on:<br>
+								{{ question.pub_date }}
+							</p>
 						</div>
 					</div> 
 					<div class="mainPoll">
-						<p>{{ question.question_text }}
+						<p class="que_text">{{ question.question_text }}
 						{% if user.is_authenticated %}
 						{% if user == question.user %}
 						<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 						<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
 						{% endif %}
 						{% endif %}
+						</p>
+						<p>
+						<div class="choices">
+						{% for choice in question.choice_set.all %}
+						{% if choice.choice_image %}
+							<figure>
+								<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+								<figcaption class="choiceFigCaption">
+									{% if choice.choice_text %}
+										{{ choice.choice_text }}
+									{% else %}
+										Image{{ forloop.counter }}
+									{% endif %}
+								</figcaption>
+							</figure>
+						{% endfor %}
+						</div>
 						</p>
 						<div id="pollsChart">
 						</div>
@@ -169,9 +190,14 @@ var disqus_config = function() {
 				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
 				{% for choice in question.choice_set.all %}
 					var inData = [];
-					inData.push("{{ choice.choice_text }}");
+					var choice_text = "{{ choice.choice_text }}";
+					choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
+					if(choice_text === "" || typeof choice_text === "undefined")
+						choice_text = "Image{{ forloop.counter }}"
+					inData.push(choice_text);
 					inData.push({{ choice.vote_set.count }});
 					inData.push(pollsColors[colCount++]);
+					console.log(inData)
 					var percent = {{ choice.vote_set.count }}/{{ question.voted_set.count }}*100;
 					inData.push(percent+"%");
 					//console.log(inData);
