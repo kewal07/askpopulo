@@ -12,10 +12,6 @@
 	<!-- <script src="{% static 'js/pollsGraph.js' %}"></script> -->
 {% endblock %}
 {% block content %}
-	<meta property="og:title" content="AskPopulo"/>
-	<meta property="og:type" content="Polling Site"/>
-	<meta property="og:url" content="http://127.0.0.1:8000{% url 'polls:polls_vote' question.id question.que_slug %}"/>
-	<meta property="og:image" content="http://127.0.0.1:8000/static/login/images/defaultAvatar.png"/>
 	<section id="content">
 			<div class="questions">
 				<div class="questionContent">
@@ -86,7 +82,7 @@
 								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
 								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
 								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
-								<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></li>
+								<li ><i class="fa fa-facebook"></i></li>
 								<li><i class="fa fa-twitter"></i></li>
 								<li><i class="fa fa-google-plus"></i></li>
 							</ul>

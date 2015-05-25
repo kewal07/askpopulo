@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-		{% load staticfiles %}		
+		{% load staticfiles %}
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/common.css' %}" />
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
@@ -12,18 +12,6 @@
 		{% block extra_js %}{% endblock %}
 	</head>
 	<body>
-		<div id="fb-root"></div>
-			<script>
-				(function(d, s, id) 
-				{
-	  				var js, fjs = d.getElementsByTagName(s)[0];
-	  				if (d.getElementById(id)) return;
-	  				js = d.createElement(s); js.id = id;
-	  				js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
-	  				fjs.parentNode.insertBefore(js, fjs);
-				}
-				(document, 'script', 'facebook-jssdk'));
-			</script>
 		<section id="header">
 			<div id="headerContent">
 				<div class="logo">
