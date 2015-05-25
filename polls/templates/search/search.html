@@ -6,6 +6,8 @@
 {% block content %}
   <section id="content">
     {% if query %}
+	<div class="searchResultsContent">
+	<p>Search Results</p><br>
       {% for result in query %}
         <div class="searchResults">
           <div class="result">
@@ -17,6 +19,7 @@
         {% empty %}
                 <p>No results found.</p>
       {% endfor %}
+	  </div>
     {% endif %}
   </section>
 {% endblock %}
