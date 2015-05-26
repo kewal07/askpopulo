@@ -40,14 +40,23 @@
 					</div>
 				</div> 
 				<div class="mainPoll">
-					<p>{{ question.question_text }}
+					<p class="que_text">{{ question.question_text }}
 					{% if user.is_authenticated %}
 					{% if user == question.user %}
+					{% if question.voted_set.count < 1 %}
 					<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+					{% endif %}
 					<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
 					{% endif %}
 					{% endif %}
 					</p>
+					<p class="question_description_header">
+							<span class="question_description_header_span">Description</span>
+					</p>
+					<p class="question_description">
+						{{ question.description }}
+					</p>
+					<p>
 					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST" id="optionsForm{{ question.id }}">
 						{% csrf_token %}
 						<input type="hidden" name="question" value="{{ question.id }}" />

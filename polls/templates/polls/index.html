@@ -40,7 +40,9 @@
 								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a>
 								{% if user.is_authenticated %}
 								{% if user == question.question.user %}
+								{% if question.question.voted_set.count < 1 %}
 								<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+								{% endif %}
 								<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o"></i></a>
 								{% endif %}
 								{% endif %}

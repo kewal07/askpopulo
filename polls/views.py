@@ -226,7 +226,7 @@ class CreatePollView(generic.ListView):
 		return Category.objects.all()
 	
 	def post(self, request, *args, **kwargs):
-		url = reverse('polls:index')
+		# url = reverse('polls:index')
 		user = request.user
 		edit = False
 		# errors = {}
@@ -328,6 +328,7 @@ class CreatePollView(generic.ListView):
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
+		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 		return HttpResponseRedirect(url)
 
 class PollsSearchView(SearchView):

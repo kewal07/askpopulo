@@ -291,3 +291,24 @@ ul.share-buttons li{
 	margin-left:1rem;
 	margin-bottom: 1rem;
 }
+.question_description{
+	font-size:1rem !important;
+	margin-left:1rem;
+	margin-bottom: 1rem;
+	padding: 1rem;
+	border-left: thin solid #000;
+	border-right: thin solid #000;
+	border-bottom: thin solid #000;
+}
+.question_description_header{
+	font-size:1rem !important;
+	margin-left:1rem;
+	padding-left: 1rem;
+	/* padding-bottom: 1rem; */
+	border-bottom:thin solid #000;
+	line-height: 0;
+}
+.question_description_header_span{
+	background: #fff;
+    padding: 0 .5rem;
+}
