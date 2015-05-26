@@ -63,12 +63,18 @@
 						{% endif %}
 						{% endif %}
 						</p>
+						{% if question.description or question.questionwithcategory_set.count > 0 %}
 						<p class="question_description_header">
 							<span class="question_description_header_span">Description</span>
 						</p>
 						<p class="question_description">
 							{{ question.description }}
+							{% if question.description and question.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
+							{% for cat in question.questionwithcategory_set.all %}
+								<span class="que_desc_cat_span">{{ cat.category.category_title }}</span>
+							{% endfor %}
 						</p>
+						{% endif %}
 						<p>
 						<div class="choices">
 						{% for choice in question.choice_set.all %}

@@ -312,3 +312,8 @@ ul.share-buttons li{
 	background: #fff;
     padding: 0 .5rem;
 }
+.que_desc_cat_span{
+	background: #ADD8E6;
+	border-radius: 5px;
+	padding: .1rem;
+}
