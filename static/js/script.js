@@ -103,3 +103,26 @@ function closeOverlay() {
 	});
 }
 /* End Overlay */
+
+function yesnoconfirm(url){
+	$("#yes").click(function(){
+		closeOverlay();
+		window.location.href = url;
+	});
+	$("#no").click(function(){
+		closeOverlay();
+		return false;
+	});
+}
+
+function confirm_redirect(olEl,val,url){
+	$oLay = $(olEl);
+	console.log(url);
+	// console.log(val);
+	if (val === "delete_question"){
+		console.log($oLay.children().children().first()[0])
+		$oLay.children().children().first()[0].innerHTML = "You Sure Want to Delete the Poll??";
+	}
+	openOverlay(olEl);
+	return yesnoconfirm(url);
+}
