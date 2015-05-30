@@ -23,6 +23,10 @@
 .questionContent>div{
 	flex:1;
 }
+
+.pollInfo{
+	width:105%;
+}
 .userInfo{
 	margin-right: 1rem;
 	flex:0.2 !important;

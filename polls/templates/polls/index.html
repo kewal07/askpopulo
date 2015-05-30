@@ -82,9 +82,9 @@
 												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" >Follow</button>
 											{% endif %}
 										</li>
-										<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-layout="button_count"></div></i></li>
-										<li><i class="fa fa-twitter"></i></li>
-										<li><i class="fa fa-google-plus"></i></li>
+										<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-layout="button_count"></div></i></li>&nbsp&nbsp
+										<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-via="askpopulo" data-hashtags="AskThePeople">Tweet</a></li>&nbsp&nbsp
+										<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}"></div></li>
 									</ul>
 								</div>
 							</div>
