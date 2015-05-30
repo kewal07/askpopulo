@@ -39,7 +39,7 @@ html{
 	border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/
 	cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
 	/*style the text*/
-	font-size:2.5rem;
+	font-size:1.5rem;
 	letter-spacing:.1rem;
 	color: #fff;
 	/*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
@@ -55,8 +55,8 @@ ul.share-buttons{
   display: inline-block;
   list-style: none;
   padding: 0;
-  font-size: 1.6rem;
-  margin-left:25%;
+  font-size: 0.3rem;
+  margin-left:20%;
 }
 
 /* .shareButtonsDiv{

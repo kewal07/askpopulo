@@ -9,6 +9,7 @@
 		<script src="http://code.jquery.com/jquery.min.js"></script>
 		<script src="{% static 'js/scriptIE.js' %}"></script>
 		<script src="{% static 'js/script.js' %}"></script>
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		{% block extra_js %}{% endblock %}
 	</head>
 	<body>
@@ -23,6 +24,18 @@
 	  				fjs.parentNode.insertBefore(js, fjs);
 				}
 				(document, 'script', 'facebook-jssdk'));
+
+				!function(d,s,id)
+				{
+					var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+					if(!d.getElementById(id))
+					{
+						js=d.createElement(s);
+						js.id=id;
+						js.src=p+'://platform.twitter.com/widgets.js';
+						fjs.parentNode.insertBefore(js,fjs);
+					}
+				}(document, 'script', 'twitter-wjs');
 			</script>
 		<section id="header">
 			<div id="headerContent">
