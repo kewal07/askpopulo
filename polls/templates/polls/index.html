@@ -5,8 +5,8 @@
 {% endblock %}
 {% block content %}
 	<section id="content">
-			{% if data.data %}
-					{% for question in data.data %}
+			{% if data %}
+					{% for question in data %}
 					<div class="questions">
 						<div class="questionContent">
 							<div class="userInfo">
@@ -69,14 +69,14 @@
 											</label>
 										</p>
 									{% endfor %}
-									<input class="submit" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+									<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
 									<ul class="pollInfoUl clearfix">
 										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
 										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> interested</li>
-										<li>{% if question.question.id in data.subscribed %}
+										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
 												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" >Follow</button>
@@ -91,6 +91,21 @@
 						</div>
 					</div>
 					{% endfor %}
+					{% if is_paginated %}
+				        <div class="pagination">
+				            <span class="page-links">
+				                {% if page_obj.has_previous %}
+				                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+				                {% endif %}
+				                <span class="page-current">
+				                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+				                </span>
+				                {% if page_obj.has_next %}
+				                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+				                {% endif %}
+				            </span>
+				        </div>
+				    {% endif %}
 			{% else %}
 					<p>No polls are available</p>
 			{% endif %}		

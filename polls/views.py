@@ -6,6 +6,7 @@ from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCateg
 from categories.models import Category
 import datetime
 import simplejson as json
+from django.core import serializers
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 from haystack.forms import ModelSearchForm
@@ -21,6 +22,7 @@ from collections import OrderedDict
 class IndexView(generic.ListView):
 	template_name = 'polls/index.html'
 	context_object_name = 'data'
+	paginate_by = 50
 	
 	def get_queryset(self):
 		request = self.request
@@ -40,7 +42,7 @@ class IndexView(generic.ListView):
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 		else:
-			latest_questions = Question.objects.order_by('-pub_date')[:10]
+			latest_questions = Question.objects.order_by('-pub_date')
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)
@@ -53,10 +55,10 @@ class IndexView(generic.ListView):
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
+			data['subscribed'] = sub_que
 			mainData.append(data)
 		context['data'] = mainData
-		context['subscribed'] = sub_que
-		return context
+		return mainData
 
 class FeaturedPollView(generic.ListView):
 	template_name = 'polls/index.html'

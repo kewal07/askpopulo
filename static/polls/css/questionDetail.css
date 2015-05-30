@@ -57,6 +57,8 @@ ul.share-buttons{
   padding: 0;
   font-size: 0.3rem;
   margin-left:20%;
+    position: absolute;
+  margin-top: 1.5rem;
 }
 
 /* .shareButtonsDiv{
@@ -117,6 +119,9 @@ ul.share-buttons li{
 
 .fa{
 	font-size:25px !important;
+}
+.analyzeAndShare{
+	position: relative;
 }
 
 @media only screen and (max-width: 480px){

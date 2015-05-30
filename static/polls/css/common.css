@@ -429,3 +429,67 @@ ul.menu-nav li a:hover{
 .display_message_content p {
 	font-size : 1.5rem;
 }
+.fa-pencil-square-o, .fa-trash-o{
+	font-size: 1rem !important;
+}
+.submit:hover,.fileLabel:hover{
+	/* color:#dfe7ea; */
+	letter-spacing:.05rem;
+	/*reduce the size of the shadow to give a pushed effect*/
+	-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+}
+.fileLabel{
+  padding: 0.2rem;
+  text-align: center;
+  display: inline-block;
+  background: #fff;
+  border: 1px solid;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #000000;
+  -webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+}
+.upImg{
+    width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+}
+#upImgText{
+  padding:1.3rem;
+}
+.submit{
+	/* margin-left: 18rem; */
+	margin: 0 auto;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	background: #fff;
+	border: 1px solid;
+	cursor: pointer;
+	font-size: 1.5rem;
+	letter-spacing: .1rem;
+	color: #000;
+	-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+	padding: 0 1rem;
+	display: block;
+}
+.voteSubmit{
+	margin-left: 0;
+}
+.detailSubmit{
+	margin-left: 0;
+	display: inline-block;
+}
