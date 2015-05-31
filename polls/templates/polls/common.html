@@ -1,7 +1,10 @@
 <!DOCTYPE HTML>
-<html>
+<html itemscope itemtype="http://schema.org/Review">
     <head>
 		{% load staticfiles %}
+		<meta itemprop="name" content="AskThePeople">
+		<meta itemprop="description" content="Posting a Poll">
+		<meta itemprop="image" content="http://127.0.0.1:8000/static/login/images/defaultAvatar.png">
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/common.css' %}" />
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
