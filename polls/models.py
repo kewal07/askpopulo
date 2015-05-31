@@ -31,7 +31,9 @@ class Question(models.Model):
 		short_q_text = self.question_text[:50]
 		self.que_slug = slugify(short_q_text)
 		digestmod = hashlib.sha1
+		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.que_pk = sig
 		super(Question, self).save(*args, **kwargs)
 	def __str__(self):
 		return self.question_text
@@ -54,6 +56,7 @@ class Choice(models.Model):
 		digestmod = hashlib.sha1
 		msg = ("%s %s"%(self.choice_text,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.choice_pk = sig
 		super(Choice, self).save(*args, **kwargs)
 		if self.choice_image:
 			size = 128, 128
@@ -69,7 +72,9 @@ class Vote(models.Model):
 		return self.choice.choice_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
 		digestmod = hashlib.sha1
+		msg = ("%s %s %s"%(self.choice.choice_text,self.user.username,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.vote_pk = sig
 		super(Vote, self).save(*args, **kwargs)
 
 class Subscriber(models.Model):
@@ -80,7 +85,9 @@ class Subscriber(models.Model):
 		return self.question.question_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
 		digestmod = hashlib.sha1
+		msg = ("%s %s %s"%(self.question.question_text,self.user.username,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.subscriber_pk = sig
 		super(Subscriber, self).save(*args, **kwargs)
 		
 class Voted(models.Model):
@@ -91,7 +98,9 @@ class Voted(models.Model):
 		return self.question.question_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
 		digestmod = hashlib.sha1
+		msg = ("%s %s %s"%(self.question.question_text,self.user.username,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.voted_pk = sig
 		super(Voted, self).save(*args, **kwargs)
 
 class QuestionWithCategory(models.Model):
@@ -104,5 +113,6 @@ class QuestionWithCategory(models.Model):
 		digestmod = hashlib.sha1
 		msg = ("%s %s %s"%(self.question.question_text,self.category.category_title,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.queWithCat_pk = sig
 		super(QuestionWithCategory, self).save(*args, **kwargs)
 	
