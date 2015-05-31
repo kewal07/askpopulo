@@ -5,6 +5,7 @@ from django.conf import settings
 import os
 from categories.models import Category
 from django.template.defaultfilters import slugify
+from PIL import Image
 # Create your models here.
 
 def get_file_path(instance, filename):
@@ -42,6 +43,13 @@ class Choice(models.Model):
 		return self.choice_text
 	def get_file_name(self):
 		return self.choice_image.path.split("\\")[-1]
+	def save(self, *args, **kwargs):
+		super(Choice, self).save(*args, **kwargs)
+		if self.choice_image:
+			size = 128, 128
+			im = Image.open(self.choice_image)
+			im.thumbnail(size)
+			im.save(self.choice_image.path)
 
 class Vote(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)

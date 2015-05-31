@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
@@ -34,6 +35,9 @@ class EditProfileView(generic.ListView):
 		extendeduser.gender=request.POST.get('gender','')
 		extendeduser.bio=request.POST.get('bio','')
 		if request.FILES.get('image',''):
+			if extendeduser.imageUrl:
+				if os.path.isfile(extendeduser.imageUrl.path):
+					os.remove(extendeduser.imageUrl.path)
 			extendeduser.imageUrl=request.FILES.get('image','')
 		categories=request.POST.getlist('categories','')
 		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)

@@ -4,6 +4,7 @@ import os
 import uuid
 from django.template.defaultfilters import slugify
 from datetime import date
+from PIL import Image
 #from django.contrib.auth.models import User
 # Create your models here.
 
@@ -29,6 +30,11 @@ class ExtendedUser(models.Model):
 	def save(self, *args, **kwargs):
 		self.user_slug = slugify(self.user.username)
 		super(ExtendedUser, self).save(*args, **kwargs)
+		if self.imageUrl:
+			size = 128, 128
+			im = Image.open(self.imageUrl)
+			im.thumbnail(size)
+			im.save(self.imageUrl.path)
 
 	def get_profile_pic_name(self):
 		return self.imageUrl.path.split("\\")[-1]

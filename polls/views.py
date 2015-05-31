@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
@@ -205,7 +206,7 @@ class EditView(generic.DetailView):
 		for cat in question.questionwithcategory_set.all():
 			categories += cat.category.category_title+","
 		context["question_categories"] = categories
-		print(context)
+		#print(context)
 		return context
 		
 class DeleteView(generic.DetailView):
@@ -267,16 +268,19 @@ class CreatePollView(generic.ListView):
 				# errors['choiceError'] = "Please provide this choice"
 			# if errors:
 				# return HttpResponse(json.dumps(errors),content_type="application/json")
+			imagePathList = []
 			choice1 = request.POST.getlist('choice1')[0].strip()
 			if edit and request.POST.get('imagechoice1',""):
 				choiceid = request.POST.get('imagechoice1').split("---")[1]
 				choice1Image = Choice.objects.get(pk=choiceid).choice_image
+				imagePathList.append(choice1Image.path)
 			else:
 				choice1Image = request.FILES.get('choice1')
 			choice2 = request.POST.getlist('choice2')[0].strip()
 			if edit and request.POST.get('imagechoice2',""):
 				choiceid = request.POST.get('imagechoice2').split("---")[1]
 				choice2Image = Choice.objects.get(pk=choiceid).choice_image
+				imagePathList.append(choice2Image.path)
 			else:
 				choice2Image = request.FILES.get('choice2')
 			if request.POST.getlist('choice3'):
@@ -284,6 +288,7 @@ class CreatePollView(generic.ListView):
 			if edit and request.POST.get('imagechoice3',""):
 				choiceid = request.POST.get('imagechoice3').split("---")[1]
 				choice3Image = Choice.objects.get(pk=choiceid).choice_image
+				imagePathList.append(choice3Image.path)
 			else:
 				choice3Image = request.FILES.get('choice3')
 			if request.POST.getlist('choice4'):
@@ -291,6 +296,7 @@ class CreatePollView(generic.ListView):
 			if edit and request.POST.get('imagechoice4',""):
 				choiceid = request.POST.get('imagechoice4').split("---")[1]
 				choice4Image = Choice.objects.get(pk=choiceid).choice_image
+				imagePathList.append(choice4Image.path)
 			else:
 				choice4Image = request.FILES.get('choice4')
 			selectedCats = request.POST.get('selectedCategories','').split(",")
@@ -310,6 +316,9 @@ class CreatePollView(generic.ListView):
 			question.save()
 			if edit:
 				for choice in question.choice_set.all():
+					if choice.choice_image:
+						if os.path.isfile(choice.choice_image.path) and choice.choice_image.path not in imagePathList:
+							os.remove(choice.choice_image.path)
 					choice.delete()
 				for que_cat in question.questionwithcategory_set.all():
 					que_cat.delete()
