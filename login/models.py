@@ -5,17 +5,20 @@ import uuid
 from django.template.defaultfilters import slugify
 from datetime import date
 from PIL import Image
+import hmac
+import hashlib
 #from django.contrib.auth.models import User
 # Create your models here.
 
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
-	filename = "profilepic%s.%s" % (instance.user.id, ext)
+	filename = "profilepic%s.%s" % (instance.user_pk, ext)
 	profilePath = (os.path.join(settings.BASE_DIR,'media/profile/'))
 	return os.path.join(profilePath,filename)
 
 class ExtendedUser(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL)
+	user_pk = models.CharField(max_length=255)
 	imageUrl = models.ImageField(upload_to=get_file_path,blank=True,null=True)
 	birthDay = models.DateField(default="2002-01-01")
 	gender = models.CharField(max_length=1,blank=True,null=True)
@@ -29,6 +32,11 @@ class ExtendedUser(models.Model):
 	
 	def save(self, *args, **kwargs):
 		self.user_slug = slugify(self.user.username)
+		digestmod = hashlib.sha1
+		msg = self.user.email.encode('utf-8')
+		key = self.user.username.encode('utf-8')
+		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+		self.user_pk = sig
 		super(ExtendedUser, self).save(*args, **kwargs)
 		if self.imageUrl:
 			size = 128, 128
