@@ -217,7 +217,7 @@ var disqus_config = function() {
 					inData.push({{ choice.vote_set.count }});
 					inData.push(pollsColors[colCount++]);
 					console.log(inData)
-					var percent = {{ choice.vote_set.count }}/{{ question.voted_set.count }}*100;
+					var percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);;
 					inData.push(percent+"%");
 					//console.log(inData);
 					pollsData.push(inData);
