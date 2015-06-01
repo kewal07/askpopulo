@@ -158,7 +158,7 @@
 			});
 		$(document).ready(function()
 		{
-			/*$('.submit').bind('click', function()
+			$('.submit').bind('click', function()
 			{
 				//console.log("click called..........");
 				var elemid = "#createPollForm";//$(this)[0].id
@@ -167,34 +167,40 @@
 				$(elemid).bind('submit', function()
 				{
 					//console.log("submit called....");
-					var create_url = "http://{{ request.META.HTTP_HOST }}"+'/createpoll';
+					var create_url = "http://{{ request.META.HTTP_HOST }}/createpoll?ajax=1";
 					{% if user.is_authenticated %}
 					//console.log("call ajax");
-					$.ajax(
-					{
-						type: 'POST',
-						url:create_url,
-						data:form_data,
-						processData: false,
-						contentType: false,
-						success:function(response)
+						$.ajax(
 						{
-							var que_error = response.qTextError;
-							var choice_error = response.choiceError;
-							if(typeof que_error === 'undefined' && typeof choice_error === 'undefined'){
-								 $(elemid).unbind('submit').submit();
-							}else{
-								if(typeof que_error === 'undefined')
-	                        	 	que_error = "";
-	                        	if(typeof choice_error === 'undefined')
-	                        	 	choice_error = "";
-								$(".errorlist").remove();
-		                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span>');
-		                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
-		                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
+							type: 'POST',
+							url:create_url,
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(response)
+							{
+								var que_error = response.qTextError;
+								var choice_error = response.choiceError;
+								var dup_choice = response.duplicateChoice;
+								var dup_image = response.duplicateImage;
+								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined'){
+									 $(elemid).unbind('submit').submit();
+								}else{
+									if(typeof que_error === 'undefined')
+		                        	 	que_error = "";
+		                        	if(typeof choice_error === 'undefined')
+		                        	 	choice_error = "";
+		                        	if(typeof dup_choice === 'undefined')
+		                        	 	dup_choice = "";
+		                        	if(typeof dup_image === 'undefined')
+		                        	 	dup_image = "";
+									$(".errorlist").remove();
+			                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span><span class="errorlist"><br>'+dup_choice+'</span><span class="errorlist"><br>'+dup_image+'</span>');
+			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
+			                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
+								}
 							}
-						}
-					});
+						});
 					{% else %}
 						//url = "http://{{ request.META.HTTP_HOST }}"+'/vote/'+queid+'/'+queslug
 						//console.log(vote_url);
@@ -202,7 +208,7 @@
 					{% endif %}
 					return false;
 				});
-			});*/
+			});
 		});
 		</script>
 	{% endblock %}

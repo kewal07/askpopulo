@@ -17,6 +17,7 @@ import base64
 import time
 from django.conf import settings
 from collections import OrderedDict
+from PIL import Image,ImageChops
 
 # Create your views here.
 
@@ -76,45 +77,6 @@ class FeaturedPollView(generic.ListView):
 			data['subscribers'] = subscribers
 			mainData.append(data)
 		return mainData
-	
-# class DetailView(generic.DetailView):
-	# model = Question
-	
-	# def get_template_names(self):
-		# template_name = 'polls/voteQuestion.html'
-		# question = self.get_object()
-		# user = self.request.user
-		# if user.is_authenticated():
-			# voted = Voted.objects.filter(question = question, user=user)
-			# if voted:
-				# template_name = 'polls/questionDetail.html'
-		# return [template_name]
-		
-	# def get_context_data(self, **kwargs):
-		# context = super(DetailView, self).get_context_data(**kwargs)
-		# user = self.request.user
-		# if user.is_authenticated():
-			# data = {
-				# "id":user.id,
-				# "username":user.username,
-				# "email":user.email,
-				# "avatar":user.extendeduser.get_profile_pic_url()
-			# }
-			# data = json.dumps(data)
-			# message = base64.b64encode(data.encode('utf-8'))
-			# timestamp = int(time.time())
-			# key = settings.DISQUS_SECRET_KEY.encode('utf-8')
-			# msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
-			# digestmod = hashlib.sha1
-			# sig = hmac.HMAC(key, msg, digestmod).hexdigest()
-			# ssoData = dict(
-				# message=message,
-				# timestamp=timestamp,
-				# sig=sig,
-				# pub_key=settings.DISQUS_API_KEY,
-			# )
-			# context['ssoData'] = ssoData
-		# return context
 
 class VoteView(generic.DetailView):
 	model = Question
@@ -232,15 +194,18 @@ class CreatePollView(generic.ListView):
 		# url = reverse('polls:index')
 		user = request.user
 		edit = False
-		# errors = {}
+		ajax = False
+		errors = {}
+		if request.GET.get("ajax"):
+			ajax = True
 		if request.GET.get("qid"):
 			edit = True
 		if not user.is_authenticated():
 			url = reverse('account_login')
 		elif request.POST:
 			qText = request.POST.get('qText')
-			# if not qText.strip():
-				# errors['qTextError'] = "Question required"
+			if not qText.strip():
+				errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
 			qExpiry = request.POST.get('qExpiry')
 			if not qExpiry:
@@ -255,56 +220,85 @@ class CreatePollView(generic.ListView):
 			choice4Image = ""
 			choice1Present = False
 			choice2Present = False
-			# print(request.FILES.get('choice1'))
-			# print(request.FILES.get('choice2'))
-			# print(request.POST.getlist('choice1'))
-			# print(request.POST.getlist('choice2'))
 			if request.POST.getlist('choice1') != [''] and request.POST.getlist('choice1') != ['',''] or request.FILES.get('choice1'):
 				choice1Present = True
 			if request.POST.getlist('choice2') != [''] and request.POST.getlist('choice2') != ['',''] or request.FILES.get('choice2'):
 				choice2Present = True
-			# print(choice1Present,choice2Present)
-			# if not (choice1Present and choice2Present):
-				# errors['choiceError'] = "Please provide this choice"
-			# if errors:
-				# return HttpResponse(json.dumps(errors),content_type="application/json")
 			imagePathList = []
+			images = []
+			choices = []
 			choice1 = request.POST.getlist('choice1')[0].strip()
+			if choice1:
+				choices.append(choice1)
 			if edit and request.POST.get('imagechoice1',""):
 				choiceid = request.POST.get('imagechoice1').split("---")[1]
 				choice1Image = Choice.objects.get(pk=choiceid).choice_image
 				imagePathList.append(choice1Image.path)
 			else:
 				choice1Image = request.FILES.get('choice1')
+			if choice1Image:
+				images.append(choice1Image)
 			choice2 = request.POST.getlist('choice2')[0].strip()
+			if choice2:
+				choices.append(choice2)
 			if edit and request.POST.get('imagechoice2',""):
 				choiceid = request.POST.get('imagechoice2').split("---")[1]
 				choice2Image = Choice.objects.get(pk=choiceid).choice_image
 				imagePathList.append(choice2Image.path)
 			else:
 				choice2Image = request.FILES.get('choice2')
+			if choice2Image:
+				images.append(choice2Image)
 			if request.POST.getlist('choice3'):
 				choice3 = request.POST.getlist('choice3')[0].strip()
+				if choice3:
+					choices.append(choice3)
 			if edit and request.POST.get('imagechoice3',""):
 				choiceid = request.POST.get('imagechoice3').split("---")[1]
 				choice3Image = Choice.objects.get(pk=choiceid).choice_image
 				imagePathList.append(choice3Image.path)
 			else:
 				choice3Image = request.FILES.get('choice3')
+			if choice3Image:
+				images.append(choice3Image)
 			if request.POST.getlist('choice4'):
 				choice4 = request.POST.getlist('choice4')[0].strip()
+				if choice4:
+					choices.append(choice4)
 			if edit and request.POST.get('imagechoice4',""):
 				choiceid = request.POST.get('imagechoice4').split("---")[1]
 				choice4Image = Choice.objects.get(pk=choiceid).choice_image
 				imagePathList.append(choice4Image.path)
 			else:
 				choice4Image = request.FILES.get('choice4')
+			if choice4Image:
+				images.append(choice4Image)
 			selectedCats = request.POST.get('selectedCategories','').split(",")
 			isAnon = request.POST.get('anonymous')
 			if isAnon:
 				anonymous = 1
 			else:
 				anonymous = 0
+			# return if any errors
+			if not (choice1.strip() or choice1Image) or not (choice2.strip() or choice2Image):
+				errors['choiceError'] = "Choice required"
+			if len(choices)!=len(set(choices)):
+				errors['duplicateChoice'] = "Please provide different choices"
+			imageSize = 128, 128
+			for i,image1 in enumerate(images):
+				for j,image2 in enumerate(images):
+					if i != j:
+						image1obj = Image.open(image1)
+						image2obj = Image.open(image2)
+						image2obj.load()
+						image1obj.load()
+						if not ImageChops.difference(image1obj,image2obj).getbbox():
+							errors['duplicateImage'] = "Please provide different images as choice"
+							break
+				if 'duplicateImage' in errors:
+					break
+			if errors or ajax:
+				return HttpResponse(json.dumps(errors), content_type='application/json')
 			if edit:
 				question = Question.objects.get(pk=request.GET.get("qid"))
 				question.question_text=qText
