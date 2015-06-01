@@ -130,6 +130,9 @@ ul.pollInfoUl li {
 	.questions{
 		padding: 1rem 0 0 0;
 	}
+	.askedOnInfo{
+		display:none;
+	}
 }
 @media only screen and (max-width: 480px){
 	#content{
@@ -143,6 +146,9 @@ ul.pollInfoUl li {
   		margin: 0rem;
   		margin-bottom:2rem;
 	}
+	.askedOnInfo{
+		display:none;
+	}
 	.userInfo{
 		margin:1rem;
 		padding:0;
@@ -155,7 +161,7 @@ ul.pollInfoUl li {
 		padding: 1rem 1rem 0rem 0rem;
   		font-size: 1rem;
   		width: 50px;
-  		overflow: hidden;
+  		text-overflow:ellipsis;
 	}
 	.mainPoll{
 		padding:1rem;

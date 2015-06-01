@@ -192,6 +192,7 @@ ul.menu-nav li a:hover{
 	padding-bottom:3rem;
 	width:100%;
 	color:white;
+	margin-top:2rem;
 }
 #footerContent{
 	width:95%;
@@ -257,12 +258,18 @@ ul.menu-nav li a:hover{
 .menuF-nav a{
 	color:white;
 }
+li.first{
+	display:none;
+}
 @media only screen and (max-width: 960px){
 	#header{
 		 position: relative;
 		 padding: 1rem 0rem 2rem 0rem;
   	     margin-bottom: 3rem;
 		}
+	#header a{
+		color:black;
+	}
 	.logo{
 		width:100%;
 		margin:0;
@@ -301,6 +308,51 @@ ul.menu-nav li a:hover{
 	.userInNav{
 		display:none;
 	}
+	#footer{
+	margin:0;
+	background: black;
+	padding-bottom:3rem;
+	width:100%;
+	color:white;
+	padding-bottom: 1rem;
+	}
+	#footerContent{
+		width:95%;
+		margin:0 auto;
+		position: relative;
+		padding-top:1rem;
+	}
+	#footer .logo{
+		display: none
+	}
+	#footer p.p1{
+		display: none;
+	}
+	#footer .menu{
+	 display: none;
+	}
+	.bottomLogo{
+		display: none;
+	}
+	.p2{
+	  display: none;
+	}
+	.menuF{
+		text-align: center;
+		font-size:1rem;
+	}
+	.menuF-nav{
+		display: inline-block;
+	}
+	.menuF-nav li{
+		display: inline-block;
+		margin-left:1rem;
+		margin-bottom:1rem;
+	}
+	.menuF-nav a{
+		color:white;
+	}
+
 }
 .anchorSpan{
 	font-size: 2rem;

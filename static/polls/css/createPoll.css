@@ -175,3 +175,50 @@ form.createPollContentForm label{
 .choice_image:hover{
 	border-color: #00ff00;
 }
+@media only screen and (max-width:480px){
+  
+  #createPoll{
+    margin:0;
+    margin-bottom:2rem;
+  } 
+  form.createPollContentForm {
+    width: 100%;
+    padding: 0; 
+    margin: 0 auto;
+    padding-top:1rem;
+  }
+  form.createPollContentForm label{
+    display: block;
+    text-align: center;
+    width:100%;
+    margin-bottom: 0.5rem;
+  }
+  #qText{
+    margin-bottom: 0.5rem;
+  }
+  form.createPollContentForm p{
+    margin-bottom:1rem;
+  }
+  form.createPollContentForm textarea {
+    margin: 0;
+    width: 100%;
+    margin-bottom:0.5rem;
+  }
+  .createPollContentForm input[type="date"] {
+    width:100%;
+    text-align: center;
+  }
+  .createPollContentForm input[type="text"]{
+    display: block;
+    width:100%;
+  }
+  .fileLabel{
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+  }
+  .ui-autocomplete-multiselect.ui-state-default{
+    width:100% !important;
+  }
+}
