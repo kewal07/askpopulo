@@ -85,14 +85,15 @@ body{
   	margin: 0 auto;
 }
 #header{
-	background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	/*background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -ms-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -moz-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-	background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+	background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);*/
+	background: black;
 	width:100%;
 	margin:0rem 0rem 3rem 0rem;
-	opacity:0.93;
+	/*opacity:0.93;*/
 	position:fixed;
 	top:0;
 	left:0;
@@ -134,8 +135,11 @@ ul.menu-nav li{
 	border-radius: 50%;
 }
 ul.menu-nav li a{
-	color:black;
+	color:white;
   	text-decoration:none;
+}
+ul.menu-nav li a:active{
+	color:#ff0000;
 }
 ul.menu-nav li a:hover{
 	color:red;
@@ -181,6 +185,77 @@ ul.menu-nav li a:hover{
    display: block; 
    height: 0; 
    clear: both;
+}
+#footer{
+	margin:0;
+	background: black;
+	padding-bottom:3rem;
+	width:100%;
+	color:white;
+}
+#footerContent{
+	width:95%;
+	margin:0 auto;
+	position: relative;
+}
+#footer .logo{
+	display:inline-block;
+	width:initial;
+	margin-top:2rem;
+}
+#footer .logo img{
+	width:150px;
+	height:150px;
+}
+#footer p.p1{
+	display:inline-block;
+	position: absolute;
+	top: 5.8rem;
+	bottom: 4rem;
+	font-size: 1.5rem;
+	margin-left: 10rem;
+}
+#footer .menu{
+  	  float: none;
+  position: absolute;
+  left: 20rem;
+  background-color: #666;
+  display: inline-table;
+  padding-left: 2;
+  padding: 1rem;
+  top: 4rem;
+}
+#footer ul.menu-nav li a{
+	color:white;
+}
+#footer ul.menu-nav li{
+	display: inline-block;
+	float:none;
+}
+.bottomLogo{
+	position:absolute;
+	right:3rem;
+}
+.p2{
+  font-size: 1.5rem;
+  position: absolute;
+  right: 7rem;
+  width: 116%;
+  top: 3.7rem;
+}
+.menuF{
+	text-align: center;
+	font-size:1.5rem;
+}
+.menuF-nav{
+	display: inline-block;
+}
+.menuF-nav li{
+	display: inline-block;
+	margin-left:1rem;
+}
+.menuF-nav a{
+	color:white;
 }
 @media only screen and (max-width: 960px){
 	#header{

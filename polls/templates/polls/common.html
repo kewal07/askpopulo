@@ -109,5 +109,35 @@
 		</section>
 		{% block content %}
 		{% endblock %}
+		<section id="footer">
+			<div id="footerContent">	
+				<div class="logo">
+					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
+					<p class="p1">Ask By Polls </p>
+				</div>
+				<div class="menu">
+					<ul class="menu-nav">
+						<li>Facebook</li>
+						<li>Twitter</l1>
+						<li>Google Plus</li>
+					</ul>
+				</div>
+				<div class="logo bottomLogo">
+					<p class="p2">Ask By Polls </p>
+					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
+				</div>
+				<div class="menuF">
+					<ul class="menuF-nav">
+						<li><a href="{% url 'polls:index' %}">Home</a></li>
+						<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
+						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+						<li><a href="#">Terms of Use</a></li>
+						<li><a href="#">Privacy</a></li>
+						<li><a href="#">Tips</a></li>
+						<li><a href="#">Write To Us</a></li>
+					</ul>
+				</div>
+			</div> 
+		</section>
 	</body>
 </html>

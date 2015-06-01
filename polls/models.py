@@ -7,9 +7,11 @@ from categories.models import Category
 from django.template.defaultfilters import slugify
 from login.models import ExtendedUser
 from PIL import Image
+import hashlib
+import hmac
 # Create your models here.
 
-shakey=settings.SHAKEY
+shakey=(settings.SHAKEY).encode('utf-8')
 
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
