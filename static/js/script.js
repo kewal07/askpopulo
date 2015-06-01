@@ -15,7 +15,7 @@ $(document).ready(function(){
 	$(".upImg").hide();
 
 	fileInput.change(function(){
-		$('#upImgText').hide();
+		// $('#upImgText').hide();
 	    $this = $(this);
 	    var fileVal = $this.val();
     	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
@@ -35,7 +35,7 @@ $(document).ready(function(){
             reader.readAsDataURL(this.files[0]);
         }
 		// $("#upImgText").text(fileName);
-		$this.parent().next().children().first().next().text(fileName);
+		$this.parent().next().children().first().next().hide();
     	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
 	})
 
