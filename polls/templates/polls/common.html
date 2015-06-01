@@ -16,131 +16,133 @@
 		{% block extra_js %}{% endblock %}
 	</head>
 	<body>
-		<div id="fb-root"></div>
-			<script>
-				(function(d, s, id) 
-				{
-	  				var js, fjs = d.getElementsByTagName(s)[0];
-	  				if (d.getElementById(id)) return;
-	  				js = d.createElement(s); js.id = id;
-	  				js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
-	  				fjs.parentNode.insertBefore(js, fjs);
-				}
-				(document, 'script', 'facebook-jssdk'));
-
-				!function(d,s,id)
-				{
-					var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
-					if(!d.getElementById(id))
-					{
-						js=d.createElement(s);
-						js.id=id;
-						js.src=p+'://platform.twitter.com/widgets.js';
-						fjs.parentNode.insertBefore(js,fjs);
-					}
-				}(document, 'script', 'twitter-wjs');
-			</script>
-		<section id="header">
-			<div id="headerContent">
-				<div class="logo">
-					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-				</div>
-				{% if user.is_authenticated %}
-				<div class="menu">
-					<ul class="menu-nav">
-						<li><a href="{% url 'polls:index' %}">Home</a></li>
-						<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
-						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-						<li><a href="{% url 'polls:mypolls' user.username %}">MyPolls</a></li>
-						<li><div class="search">
-								<form method="get" action="/search" class="autocomplete-me">
-						            <!-- {% csrf_token %} -->
-						            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
-						            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
-						            <input type="submit" value="Search!" style="display:none">
-						        </form>
-								
-							</div>
-						</li>
-						<li class="userInNav">
-							<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
-						</li>
-					</ul>
-					<div class="dropDownBox">
-						<ul class="dropDownUL">
-							<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
-							<li><a href="{% url 'login:logout' %}">Log Out</a></li>
+		<div id="wrapper">
+			<section id="header">
+				<div id="headerContent">
+					<div class="logo">
+						<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
+					</div>
+					{% if user.is_authenticated %}
+					<div class="menu">
+						<ul class="menu-nav">
+							<li><a href="{% url 'polls:index' %}">Home</a></li>
+							<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
+							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a href="{% url 'polls:mypolls' user.username %}">MyPolls</a></li>
+							<li><div class="search">
+									<form method="get" action="/search" class="autocomplete-me">
+							            <!-- {% csrf_token %} -->
+							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
+							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
+							            <input type="submit" value="Search!" style="display:none">
+							        </form>
+									
+								</div>
+							</li>
+							<li class="userInNav">
+								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
+							</li>
+						</ul>
+						<div class="dropDownBox">
+							<ul class="dropDownUL">
+								<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+								<li><a href="{% url 'login:logout' %}">Log Out</a></li>
+							</ul>
+						</div>
+					</div>
+					{% else %}
+					<div class="menu">
+						<ul class="menu-nav">
+							<li><a href="{% url 'polls:index' %}">Home</a></li>
+							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
+							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a href="{% url 'account_login' %}">Login</a></li>
+							<li><div class="search">
+									<form method="get" action="/search" class="autocomplete-me">
+							            <!-- {% csrf_token %} -->
+							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
+							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
+							            <input type="submit" value="Search!" style="display:none">
+							        </form>
+								</div>
+							</li>
 						</ul>
 					</div>
+					{% endif %}
 				</div>
-				{% else %}
-				<div class="menu">
-					<ul class="menu-nav">
-						<li><a href="{% url 'polls:index' %}">Home</a></li>
-						<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
-						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-						<li><a href="{% url 'account_login' %}">Login</a></li>
-						<li><div class="search">
-								<form method="get" action="/search" class="autocomplete-me">
-						            <!-- {% csrf_token %} -->
-						            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
-						            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
-						            <input type="submit" value="Search!" style="display:none">
-						        </form>
-							</div>
-						</li>
-					</ul>
+				<div id="overlay-inAbox" class="overlay">
+					<div class="wrapper">
+						<h1 class="overlaytext">Please select a Choice!!</h1>
+						<button id = "okay" class="push_button">Okay</button>
+					</div>
 				</div>
-				{% endif %}
-			</div>
-			<div id="overlay-inAbox" class="overlay">
-				<div class="wrapper">
-					<h1 class="overlaytext">Please select a Choice!!</h1>
-					<button id = "okay" class="push_button">Okay</button>
+				<div id="overlay-inAbox2" class="overlay">
+					<div class="wrapper">
+						<h1 class="overlaytext">Please select a Choice!!</h1>
+						<button id = "yes" class="push_button">Yes</button>
+						<button id = "no" class="push_button">No</button>
+					</div>
 				</div>
-			</div>
-			<div id="overlay-inAbox2" class="overlay">
-				<div class="wrapper">
-					<h1 class="overlaytext">Please select a Choice!!</h1>
-					<button id = "yes" class="push_button">Yes</button>
-					<button id = "no" class="push_button">No</button>
-				</div>
-			</div>
-		</section>
-		{% block content %}
-		{% endblock %}
-		<section id="footer">
-			<div id="footerContent">	
-				<div class="logo">
-					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-					<p class="p1">Ask By Polls </p>
-				</div>
-				<div class="menu">
-					<ul class="menu-nav">
-						<li>Facebook</li>
-						<li>Twitter</l1>
-						<li>Google Plus</li>
-					</ul>
-				</div>
-				<div class="logo bottomLogo">
-					<p class="p2">Ask By Polls </p>
-					<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-				</div>
-				<div class="menuF">
-					<ul class="menuF-nav">
-						<li class="first"><a href="#">Facebook</a></li>
-						<li class="first"><a href="#">Twitter</a></li>
-						<li class="first"><a href="#">Google</a></li><br>
-						<li><a href="{% url 'polls:index' %}">Home</a></li>
-						<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
-						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-						<li><a href="#">Terms of Use</a></li>
-						<li><a href="#">Privacy</a></li>
-						<li><a href="#">Tips</a></li>
-						<li><a href="#">Write To Us</a></li>
-					</ul>
-				</div>
-			</div> 
-		</section>
+			</section>
+			{% block content %}
+			{% endblock %}
+			<section id="footer">
+				<div id="footerContent">	
+					<div class="logo">
+						<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
+						<p class="p1">Ask By Polls </p>
+					</div>
+					<div class="menu">
+						<ul class="menu-nav">
+							<li>Facebook</li>
+							<li>Twitter</l1>
+							<li>Google Plus</li>
+						</ul>
+					</div>
+					<div class="logo bottomLogo">
+						<p class="p2">Ask By Polls </p>
+						<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
+					</div>
+					<div class="menuF">
+						<ul class="menuF-nav">
+							<li class="first"><a href="#">Facebook</a></li>
+							<li class="first"><a href="#">Twitter</a></li>
+							<li class="first"><a href="#">Google</a></li><br>
+							<li><a href="{% url 'polls:index' %}">Home</a></li>
+							<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
+							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a href="#">Terms of Use</a></li>
+							<li><a href="#">Privacy</a></li>
+							<li><a href="#">Tips</a></li>
+							<li><a href="#">Write To Us</a></li>
+						</ul>
+					</div>
+				</div> 
+			</section>
+			<div id="fb-root"></div>
+				<script>
+					(function(d, s, id) 
+					{
+		  				var js, fjs = d.getElementsByTagName(s)[0];
+		  				if (d.getElementById(id)) return;
+		  				js = d.createElement(s); js.id = id;
+		  				js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
+		  				fjs.parentNode.insertBefore(js, fjs);
+					}
+					(document, 'script', 'facebook-jssdk'));
+
+					!function(d,s,id)
+					{
+						var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+						if(!d.getElementById(id))
+						{
+							js=d.createElement(s);
+							js.id=id;
+							js.src=p+'://platform.twitter.com/widgets.js';
+							fjs.parentNode.insertBefore(js,fjs);
+						}
+					}(document, 'script', 'twitter-wjs');
+				</script>
+		</div>
 	</body>
 </html>

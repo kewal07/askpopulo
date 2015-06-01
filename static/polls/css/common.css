@@ -65,6 +65,7 @@ html{
 	max-width: 1200px;
   	margin: 0 auto;
   	position: relative;
+  	height: 100%;
 }
 ::-webkit-input-placeholder {
    text-align: center;
@@ -83,6 +84,18 @@ html{
 }
 body{
   	margin: 0 auto;
+}
+#wrapper {
+	min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -220px; 
+}
+#wrapper:after {
+  content: "";
+  display: block;
+}
+.#footer, #wrapper:after {
+  height: 220px; 
 }
 #header{
 	/*background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -193,7 +206,6 @@ ul.menu-nav li a:hover{
 	width:100%;
 	color:white;
 	margin-top:2rem;
-	margin-bottom: 0rem;
 }
 #footerContent{
 	width:95%;
@@ -316,6 +328,7 @@ li.first{
 	width:100%;
 	color:white;
 	padding-bottom: 1rem;
+	height: initial;
 	}
 	#footerContent{
 		width:95%;
