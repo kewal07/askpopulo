@@ -175,7 +175,7 @@ form.createPollContentForm label{
 .choice_image:hover{
 	border-color: #00ff00;
 }
-  
+@media only screen and (max-width:960px){
   #createPoll{
     margin:0;
     margin-bottom:2rem;
