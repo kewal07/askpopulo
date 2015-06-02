@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 	$("#id_categories").addClass("clearfix");
 	
-	if($(window).width() <= 480){
+	if($(window).width() <= 960){
 		$("#verticalTab").addClass("responsiveStats");
 		$("#tabContentResponsive").show();
 	}
