@@ -6,6 +6,18 @@ $(document).ready(function(){
 		$('html').css({"background":"url('http://localhost:8000/static/login/images/profile-m.jpg') no-repeat center center fixed","background-size":"cover"});
 	}
 	/* end of Gender based background image in profile.html */
+	/*gender css for responsive view*/
+	// console.log($("label[for='id_gender_0']").parent().children().first().next());
+	// $("label[for='id_gender_0']").parent().children().first().next().css({"display":"inline-block !important","width":"33% !important"});
+	$("label[for='id_gender_0']").parent().children().first().next().addClass("first_Gender");
+	/*end*/
+
+	$("#id_categories").addClass("clearfix");
+	
+	if($(window).width() <= 480){
+		$("#verticalTab").addClass("responsiveStats");
+		$("#tabContentResponsive").show();
+	}
 
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
