@@ -15,7 +15,7 @@ shakey=(settings.SHAKEY).encode('utf-8')
 
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
-	filename = "choice%s_%s.%s" % (instance.question.que_pk,instance.choice_pk, ext)
+	filename = "choice%s.%s" % (instance.question.id,ext)
 	profilePath = (os.path.join(settings.BASE_DIR,'media/choices/'))
 	return os.path.join(profilePath,filename)
 

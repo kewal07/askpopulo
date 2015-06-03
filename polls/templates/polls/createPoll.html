@@ -17,7 +17,7 @@
 					{% csrf_token %}
 					<p>
 						<label for="qText">Question</label>
-						<textarea id ="qText" name="qText" placeholder="Ask the people"></textarea>
+						<textarea id ="qText" name="qText" placeholder="Ask the people" maxlength="200"></textarea>
 					</p>
 						 <script type="text/javascript">
 				            // In a perfect world, this would be its own library file that got included
@@ -106,7 +106,7 @@
 				        </script>
 					<p>
 						<label for="qDesc">Description</label>
-						<textarea id ="qDesc" name="qDesc" placeholder="Description"></textarea>
+						<textarea id ="qDesc" name="qDesc" placeholder="Description" maxlength="400"></textarea>
 					</p>
 					<p>
 						<label for="qExpiry">Expires On</label>
@@ -114,22 +114,22 @@
 					</p>
 					<p>
 						<label for="choice1">Choice 1</label>
-						<input id="choice1" class="createPollText" type="text" name="choice1" placeholder="First Choice">
+						<input id="choice1" class="createPollText" type="text" name="choice1" placeholder="First Choice" maxlength="200">
 						<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
 					</p>
 					<p>
 						<label for="choice2">Choice 2</label>
-						<input id="choice2" class="createPollText" type="text" name="choice2" placeholder="Second Choice">
+						<input id="choice2" class="createPollText" type="text" name="choice2" placeholder="Second Choice" maxlength="200">
 						<input id="choice2" class="fileButtonClass" type="file" name="choice2" accept="image/*">
 					</p>
 					<p>
 						<label for="choice3">Choice 3</label>
-						<input id="choice3" class="createPollText" type="text" name="choice3" placeholder="Third Choice">
+						<input id="choice3" class="createPollText" type="text" name="choice3" placeholder="Third Choice" maxlength="200">
 						<input id="choice3" class="fileButtonClass" type="file" name="choice3" accept="image/*">
 					</p>
 					<p>
 						<label for="choice4">Choice 4</label>
-						<input id="choice4" class="createPollText" type="text" name="choice4" placeholder="Fourth Choice">
+						<input id="choice4" class="createPollText" type="text" name="choice4" placeholder="Fourth Choice" maxlength="200">
 						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
 					</p>
 					<p>

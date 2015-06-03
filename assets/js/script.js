@@ -55,6 +55,9 @@ $(document).ready(function(){
 	$('.userInNav').click(function(){
 		$('.dropDownBox').slideToggle("slow");
 	});
+	$('.menuResponsive').click(function(){
+		$('.dropDownBox').slideToggle("slow");
+	});
 	/* end of Dropdownbox on click of user image in nav */
 	
 	/* Overlay */
@@ -69,6 +72,15 @@ $(document).ready(function(){
 	$('#id_categories').prev().on('click', '#cats', function() {
     	$('#id_categories').toggle();
   	});
+
+
+	/*help*/
+	$(".helpChardin").click(function(e){
+		e.preventDefault();
+		$('html, body').animate({ scrollTop: 0 }, 'slow');
+		$('body').chardinJs('start');
+	});
+	/*end*/
 });
 function openOverlay(olEl) {
 	console.log("In overlay");

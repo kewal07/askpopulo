@@ -76,7 +76,7 @@
 						</p>
 						{% endif %}
 						<p>
-						<div class="choices">
+						<div class="choices clearfix">
 						{% for choice in question.choice_set.all %}
 						{% if choice.choice_image %}
 							<figure>
@@ -85,7 +85,7 @@
 									{% if choice.choice_text %}
 										{{ choice.choice_text }}
 									{% else %}
-										Image{{ forloop.counter }}
+										Img{{ forloop.counter }}
 									{% endif %}
 								</figcaption>
 							</figure>
@@ -184,7 +184,7 @@ var disqus_config = function() {
 				 }
 			  }
 			  
-			  $('#submit').click(function(){
+			  $('.submit').click(function(){
 			      $('.analysis').toggle("slow");
 				  $('#mapBackButton').removeClass("back");
 				  $("#mapBackButton").css("display", "inline-block");
@@ -212,7 +212,7 @@ var disqus_config = function() {
 					var choice_text = "{{ choice.choice_text }}";
 					choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
 					if(choice_text === "" || typeof choice_text === "undefined")
-						choice_text = "Image{{ forloop.counter }}"
+						choice_text = "Img{{ forloop.counter }}"
 					inData.push(choice_text);
 					inData.push({{ choice.vote_set.count }});
 					inData.push(pollsColors[colCount++]);
