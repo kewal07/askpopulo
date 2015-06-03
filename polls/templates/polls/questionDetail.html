@@ -312,12 +312,15 @@ var disqus_config = function() {
 			  {% for voted in question.voted_set.all %}
 			  	{% if voted.user.extendeduser.gender == "M" %}
 			  		m++;
-			  	{% else %}
+			  	{% elif voted.user.extendeduser.gender == "F" %}
 			  		f++;
+			  	{% else %}
+			  		d++;
 			  	{% endif %}
 			  {% endfor %}
 			  genderData.push(['Male',m]);
 			  genderData.push(['Female',f]);
+			  genderData.push(['Not Disclosed',d])
 			  var data = google.visualization.arrayToDataTable(genderData);
 			  var options = {
 			    pieHole: 0.4,

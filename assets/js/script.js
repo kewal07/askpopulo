@@ -1,17 +1,4 @@
 $(document).ready(function(){
-
-	/* Gender based background image in profile.html */
-	var gender = $("input[type='radio'][name='gender']:checked").val();
-	if(gender == 'M'){
-		$('html').css({"background":"url('http://localhost:8000/static/login/images/profile-m.jpg') no-repeat center center fixed","background-size":"cover"});
-	}
-	/* end of Gender based background image in profile.html */
-	/*gender css for responsive view*/
-	// console.log($("label[for='id_gender_0']").parent().children().first().next());
-	// $("label[for='id_gender_0']").parent().children().first().next().css({"display":"inline-block !important","width":"33% !important"});
-	$("label[for='id_gender_0']").parent().children().first().next().addClass("first_Gender");
-	/*end*/
-
 	$("#id_categories").addClass("clearfix");
 	
 	if($(window).width() <= 960){

@@ -1,6 +1,6 @@
 /*Vertical css tabs taken from http://codepen.io/nik-savchenko/pen/xDIAe*/
 html{
-	background:url('/static/login/images/profile-f.jpg') no-repeat center center fixed;
+	background:url('/static/login/images/profile-m.jpg') no-repeat center center fixed;
 	background-size:cover;
 }
 #profile{
