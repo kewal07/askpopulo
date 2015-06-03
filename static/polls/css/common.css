@@ -123,8 +123,8 @@ body{
   	display: inline-block;
 }
 .logo img{
-	width: 75px;
-  	height: 75px;
+	width:100%;
+  	/*height: 75px;*/
 }
 .menu{
 	font-size: 2rem;
@@ -273,6 +273,10 @@ ul.menu-nav li a:hover{
 }
 li.first{
 	display:none;
+}
+.gc-bubbleDefault{
+	position:absolute;
+	left:-33rem;
 }
 @media only screen and (max-width: 960px){
 	#header{
