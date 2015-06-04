@@ -666,3 +666,11 @@ li.first{
 	margin-left: 0;
 	display: inline-block;
 }
+.agreement_label{
+	display: initial !important;
+	margin-left: 1rem;
+	width: 100% !important;
+}
+.agreement_anchor{
+	color: red;
+}

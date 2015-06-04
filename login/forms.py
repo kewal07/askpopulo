@@ -35,11 +35,13 @@ class MySignupForm(forms.Form):
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
 	categories =  forms.MultipleChoiceField(required=True,widget=forms.CheckboxSelectMultiple(attrs={'class':'category_checkbox'}), choices=[(i,i) for i in Category.objects.all()])
-	captcha = NoReCaptchaField()
+	captcha = NoReCaptchaField(label="")
+	agreement = forms.BooleanField(required=True,label="")
 
 	def __init__(self,*args,**kwargs):
 		super(MySignupForm,self).__init__(*args,**kwargs)
 		self.fields.move_to_end('captcha')
+		self.fields.move_to_end('agreement')
 
 	def signup(self, request, user):
 		user.first_name = self.cleaned_data['first_name']

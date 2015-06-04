@@ -87,6 +87,9 @@ $(document).ready(function(){
 		$('body').chardinJs('start');
 	});
 	/*end*/
+	var agreement_label = '<label class="agreement_label" for="id_agreement">I have read and agree with the <a class="agreement_anchor" href="http://127.0.0.1:8000/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a> and <a class="agreement_anchor" href="http://127.0.0.1:8000/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></label>'
+	$("#id_agreement").parent().append(agreement_label);
+	console.log("called");
 });
 function openOverlay(olEl) {
 	console.log("In overlay");
