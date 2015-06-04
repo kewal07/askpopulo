@@ -6,6 +6,12 @@ $(document).ready(function(){
 		$("#tabContentResponsive").show();
 	}
 
+	/*gender css for responsive view*/
+	// console.log($("label[for='id_gender_0']").parent().children().first().next());
+	// $("label[for='id_gender_0']").parent().children().first().next().css({"display":"inline-block !important","width":"33% !important"});
+	$("label[for='id_gender_0']").parent().children().first().next().addClass("first_Gender");
+	/*end*/
+	
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
 	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Upload Image</span></div>');

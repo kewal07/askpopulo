@@ -23,7 +23,9 @@
 				<div id="headerContent">
 					<div class="logo">
 						<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-						<img class ="menuResponsive" src="/static/login/images/menu.png"  alt="Menu">
+						{% if user.is_authenticated %}
+							<img class ="menuResponsive" src="/static/login/images/menu.png"  alt="Menu">
+						{% endif %}
 					</div>
 					{% if user.is_authenticated %}
 					<div class="menu">
