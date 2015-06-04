@@ -30,10 +30,10 @@
 					{% if user.is_authenticated %}
 					<div class="menu">
 						<ul class="menu-nav">
-							<li><a href="{% url 'polls:index' %}"data-intro="All the latest polls served right on your screen" data-position="left">Home</a></li>
-							<li><a href="{% url 'polls:polls_create' %}" data-intro="Have a poll you don't see here...Well, just hop on and create one" data-position="bottom">Ask</a></l1>
-							<li><a href="{% url 'polls:featured' %}" data-intro="Featured & Trending polls can be found here" data-position="bottom">Featured</a></li>
-							<li><a href="{% url 'polls:mypolls' user.username %}" data-intro="We bring you hand-picked selected polls for you" data-position="bottom">MyPolls</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:index' %}"data-intro="All the latest polls served right on your screen" data-position="left">Home</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}" data-intro="Have a poll you don't see here...Well, just hop on and create one" data-position="bottom">Ask</a></l1>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}" data-intro="Featured & Trending polls can be found here" data-position="bottom">Featured</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.username %}" data-intro="We bring you hand-picked selected polls for you" data-position="bottom">MyPolls</a></li>
 							<li><div class="search" data-intro="Enter your query and we will find something for you" data-position="bottom">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->
@@ -58,10 +58,10 @@
 					{% else %}
 					<div class="menu">
 						<ul class="menu-nav">
-							<li><a href="{% url 'polls:index' %}">Home</a></li>
-							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
-							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-							<li><a href="{% url 'account_login' %}">Login</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->

@@ -87,10 +87,22 @@ $(document).ready(function(){
 		$('body').chardinJs('start');
 	});
 	/*end*/
+	/* agreement in sign up page */
 	var agreement_label = '<label class="agreement_label" for="id_agreement">I have read and agree with the <a class="agreement_anchor" href="http://127.0.0.1:8000/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a> and <a class="agreement_anchor" href="http://127.0.0.1:8000/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></label>'
 	$("#id_agreement").parent().append(agreement_label);
-	console.log("called");
+	/* end */
+
+	/* activate menu link */
+	activateMenuLink();
+	/* end */
 });
+
+function activateMenuLink () {
+	$( ".menuanchor" ).each(function( ) {
+		if($(this)[0].href == window.location.href)
+			$(this).addClass('anchoractive');
+	});
+}
 function openOverlay(olEl) {
 	console.log("In overlay");
 	$oLay = $(olEl);

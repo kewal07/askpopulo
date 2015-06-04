@@ -150,16 +150,22 @@ ul.menu-nav li{
 	height: 75px;
 	border-radius: 50%;
 }
-ul.menu-nav li a{
+.menuanchor{
 	color:white;
   	text-decoration:none;
 }
-ul.menu-nav li a:active{
+.menuanchor.active{
 	color:#ff0000 !important;
 }
-ul.menu-nav li a:hover{
-	color:red;
-	letter-spacing: 0.2rem;
+.menuanchor{
+	color:#fff !important;
+}
+.anchoractive{
+	color:#ff0000 !important;
+}
+.menuanchor:hover{
+	color:red !important;
+	letter-spacing: 0.1rem;
 }
 .search{
 	margin-top:-0.65rem;
