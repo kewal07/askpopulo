@@ -112,6 +112,9 @@ label.required:after { content: '*'; color:red; }
 		width: 80%;
 		margin-bottom:1rem;
 	}
+	.headingSignup{
+		margin-left:2rem;
+	}
 	form.signupContentForm{
 		padding:0;
 		margin:0;
