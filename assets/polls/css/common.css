@@ -666,6 +666,9 @@ li.first{
 	margin-left: 0;
 	display: inline-block;
 }
+.anchor_submit{
+	display: inline-block;
+}
 .agreement_label{
 	display: initial !important;
 	margin-left: 1rem;

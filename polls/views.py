@@ -58,6 +58,12 @@ class IndexView(generic.ListView):
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
+			user_already_voted = False
+			if user.is_authenticated():
+				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
+				if question_user_vote:
+					user_already_voted = True
+			data['user_already_voted'] = user_already_voted
 			mainData.append(data)
 		context['data'] = mainData
 		return mainData
@@ -95,6 +101,7 @@ class VoteView(generic.DetailView):
 		context = super(VoteView, self).get_context_data(**kwargs)
 		user = self.request.user
 		subscribed_questions = []
+		user_already_voted = False
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
@@ -117,6 +124,10 @@ class VoteView(generic.DetailView):
 				pub_key=settings.DISQUS_API_KEY,
 			)
 			context['ssoData'] = ssoData
+			question_user_vote = Voted.objects.filter(user=user,question=context['question'])
+			if question_user_vote:
+				user_already_voted = True
+			context['user_already_voted'] = user_already_voted
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)

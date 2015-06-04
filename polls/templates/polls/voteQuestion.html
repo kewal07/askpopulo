@@ -85,7 +85,11 @@
 								</label>
 							</p>
 						{% endfor %}
-						<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+						{% if question.user_already_voted %}
+							<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.id question.que_slug %}">See Results</a>
+						{% else %}
+							<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+						{% endif %}
 					</form>
 					<div class="pollInfo  pollsInfoVotePage clearfix">
 						<ul class="pollInfoUl clearfix">
