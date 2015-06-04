@@ -157,9 +157,6 @@ ul.menu-nav li{
 .menuanchor.active{
 	color:#ff0000 !important;
 }
-.menuanchor{
-	color:#fff !important;
-}
 .anchoractive{
 	color:#ff0000 !important;
 }
@@ -325,6 +322,9 @@ li.first{
 	}
 	.dropDownUL li a{
 		color:white !important;
+	}
+	.menuanchor{
+  		
 	}
 	ul.menu-nav li{
 		float:none;

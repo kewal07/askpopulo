@@ -37,7 +37,7 @@
 							</div> 
 							<div class="mainPoll">
 								<p>
-								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a>
+								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
 								{% if user.is_authenticated %}
 								{% if user == question.question.user %}
 								{% if question.question.voted_set.count < 1 %}
@@ -72,7 +72,7 @@
 									{% if question.user_already_voted %}
 										<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">See Results</a>
 									{% else %}
-										<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+										<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
 									{% endif %}
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
@@ -83,7 +83,7 @@
 										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
-												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" >Follow</button>
+												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom">Follow</button>
 											{% endif %}
 										</li>
 									</ul>
