@@ -155,7 +155,7 @@ ul.menu-nav li a{
   	text-decoration:none;
 }
 ul.menu-nav li a:active{
-	color:#ff0000;
+	color:#ff0000 !important;
 }
 ul.menu-nav li a:hover{
 	color:red;
@@ -208,7 +208,6 @@ ul.menu-nav li a:hover{
 #footer{
 	margin:0;
 	background: black;
-	padding-bottom:3rem;
 	width:100%;
 	color:white;
 	margin-top:5rem;
@@ -221,11 +220,10 @@ ul.menu-nav li a:hover{
 #footer .logo{
 	display:inline-block;
 	width:initial;
-	margin-top:2rem;
+	margin-top:0rem;
 }
 #footer .logo img{
-	width:150px;
-	height:150px;
+	width:100%;
 }
 #footer p.p1{
 	display:inline-block;
@@ -236,6 +234,7 @@ ul.menu-nav li a:hover{
 	margin-left: 10rem;
 }
 #footer .menu{
+	display: none !important;
   	  float: none;
   position: absolute;
   left: 16rem;
@@ -265,7 +264,10 @@ ul.menu-nav li a:hover{
 }
 .menuF{
 	text-align: center;
-	font-size:1.5rem;
+	font-size:1rem;
+	position:absolute;
+	top:1rem;
+	left:18rem;
 }
 .menuF-nav{
 	display: inline-block;
