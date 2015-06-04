@@ -81,11 +81,11 @@ $(document).ready(function(){
 
 
 	/*help*/
-	$(".helpChardin").click(function(e){
-		e.preventDefault();
-		$('html, body').animate({ scrollTop: 0 }, 'slow');
-		$('body').chardinJs('start');
-	});
+	// $(".helpChardin").click(function(e){
+	// 	e.preventDefault();
+	// 	$('html, body').animate({ scrollTop: 0 }, 'slow');
+	// 	$('body').chardinJs('start');
+	// });
 	/*end*/
 	/* agreement in sign up page */
 	var agreement_label = '<label class="agreement_label" for="id_agreement">I have read and agree with the <a class="agreement_anchor" href="http://127.0.0.1:8000/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a> and <a class="agreement_anchor" href="http://127.0.0.1:8000/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></label>'

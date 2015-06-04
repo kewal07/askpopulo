@@ -12,8 +12,8 @@
 		{% block extra_css %}{% endblock %}
 		<script src="http://code.jquery.com/jquery.min.js"></script>
 		<script src="{% static 'js/scriptIE.js' %}"></script>
-		<script src="{% static 'js/script.js' %}"></script>
 		<script src="{% static 'js/chardinjs.min.js' %}"></script>
+		<script src="{% static 'js/script.js' %}"></script>
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		{% block extra_js %}{% endblock %}
 	</head>
@@ -30,11 +30,11 @@
 					{% if user.is_authenticated %}
 					<div class="menu">
 						<ul class="menu-nav">
-							<li><a class="menuanchor" href="{% url 'polls:index' %}"data-intro="All the latest polls served right on your screen" data-position="left">Home</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}" data-intro="Have a poll you don't see here...Well, just hop on and create one" data-position="bottom">Ask</a></l1>
-							<li><a class="menuanchor" href="{% url 'polls:featured' %}" data-intro="Featured & Trending polls can be found here" data-position="bottom">Featured</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.username %}" data-intro="We bring you hand-picked selected polls for you" data-position="bottom">MyPolls</a></li>
-							<li><div class="search" data-intro="Enter your query and we will find something for you" data-position="bottom">
+							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></l1>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.username %}">MyPolls</a></li>
+							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->
 							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
@@ -44,7 +44,7 @@
 									
 								</div>
 							</li>
-							<li class="userInNav" data-intro="Visit your profile page or log out...But why log out...Go ask some new questions and vote on some trending polls" data-position="bottom">
+							<li class="userInNav">
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 							</li>
 						</ul>
