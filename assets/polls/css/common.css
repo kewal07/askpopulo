@@ -673,7 +673,9 @@ li.first{
 	display: inline-block;
 }
 .anchor_submit{
-	display: inline-block;
+	display: table;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 .agreement_label{
 	display: initial !important;

@@ -37,15 +37,20 @@
 							</div> 
 							<div class="mainPoll">
 								<p>
-								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
-								{% if user.is_authenticated %}
-								{% if user == question.question.user %}
-								{% if question.question.voted_set.count < 1 %}
-								<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
-								{% endif %}
-								<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
-								{% endif %}
-								{% endif %}
+									<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
+									{% if user.is_authenticated %}
+									{% if user == question.question.user %}
+									{% if question.question.voted_set.count < 1 %}
+									<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+									{% endif %}
+									<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
+									{% endif %}
+									{% endif %}
+								</p>
+								<p class="catsP">
+									{% for cat in question.question.questionwithcategory_set.all %}
+										<a class="que_desc_cat_span catOnIndex" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
+									{% endfor %}
 								</p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
 									{% csrf_token %}
