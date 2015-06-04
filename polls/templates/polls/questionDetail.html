@@ -309,6 +309,7 @@ var disqus_config = function() {
 			  var genderData = [['Gender', 'Votes']];
 			  var m = 0;
 			  var f = 0;
+			  var d = 0;
 			  {% for voted in question.voted_set.all %}
 			  	{% if voted.user.extendeduser.gender == "M" %}
 			  		m++;
