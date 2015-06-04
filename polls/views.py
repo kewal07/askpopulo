@@ -45,6 +45,10 @@ class IndexView(generic.ListView):
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
+		elif request.GET.get('category'):
+			category_title = request.GET.get('category')
+			category = Category.objects.filter(category_title=category_title)[0]
+			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category)]
 		else:
 			latest_questions = Question.objects.order_by('-pub_date')
 		subscribed_questions = []
