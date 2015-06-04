@@ -159,10 +159,11 @@
 						//$.ajax(); Do Unfollow
 						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
 						console.log(data);
+						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url: follow_url,
 							data:data,
 							success:function(response)
 							{
@@ -178,10 +179,11 @@
 						// $.ajax(); Do Follow
 						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
 						console.log(data);
+						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url: follow_url,
 							data:data,
 							success:function(response)
 							{

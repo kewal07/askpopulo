@@ -32,7 +32,9 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
-		if user.is_authenticated() and request.path.endswith(user.username):
+		if request.path.endswith('featuredpolls'):
+			latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')
+		elif user.is_authenticated() and request.path.endswith(user.username):
 			if user.extendeduser.categories:
 				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
 				user_categories = Category.objects.filter(pk__in=user_categories_list)
@@ -68,21 +70,21 @@ class IndexView(generic.ListView):
 		context['data'] = mainData
 		return mainData
 
-class FeaturedPollView(generic.ListView):
-	template_name = 'polls/index.html'
-	context_object_name = 'data'
+# class FeaturedPollView(generic.ListView):
+# 	template_name = 'polls/index.html'
+# 	context_object_name = 'data'
 	
-	def get_queryset(self):
-		mainData = []
-		latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
-		for mainquestion in latest_questions:
-			data = {}
-			data ['question'] = mainquestion
-			subscribers = mainquestion.subscriber_set.count()
-			data['votes'] = mainquestion.voted_set.count()
-			data['subscribers'] = subscribers
-			mainData.append(data)
-		return mainData
+# 	def get_queryset(self):
+# 		mainData = []
+# 		latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')[:10]
+# 		for mainquestion in latest_questions:
+# 			data = {}
+# 			data ['question'] = mainquestion
+# 			subscribers = mainquestion.subscriber_set.count()
+# 			data['votes'] = mainquestion.voted_set.count()
+# 			data['subscribers'] = subscribers
+# 			mainData.append(data)
+# 		return mainData
 
 class VoteView(generic.DetailView):
 	model = Question
