@@ -12,7 +12,6 @@ import os
 import pymysql
 from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
-from collections import OrderedDict
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -38,6 +37,9 @@ class MySignupForm(forms.Form):
 	categories =  forms.MultipleChoiceField(required=True,widget=forms.CheckboxSelectMultiple(attrs={'class':'category_checkbox'}), choices=[(i,i) for i in Category.objects.all()])
 	captcha = NoReCaptchaField()
 
+	def __init__(self,*args,**kwargs):
+		super(MySignupForm,self).__init__(*args,**kwargs)
+		self.fields.move_to_end('captcha')
 
 	def signup(self, request, user):
 		user.first_name = self.cleaned_data['first_name']
