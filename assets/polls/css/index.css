@@ -134,6 +134,13 @@ ul.pollInfoUl li {
 	.askedOnInfo{
 		display:none;
 	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
+	}
 }
 @media only screen and (max-width: 480px){
 	#content{
@@ -184,6 +191,13 @@ ul.pollInfoUl li {
 	}*/
 	.pollInfo{
 		display:none;
+	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
 	}
 }
 

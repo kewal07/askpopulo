@@ -379,6 +379,7 @@ li.first{
 	.menuF{
 		text-align: center;
 		font-size:1rem;
+		position: initial;
 	}
 	.menuF-nav{
 		display: inline-block;
