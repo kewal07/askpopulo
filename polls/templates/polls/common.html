@@ -12,8 +12,8 @@
 		{% block extra_css %}{% endblock %}
 		<script src="http://code.jquery.com/jquery.min.js"></script>
 		<script src="{% static 'js/scriptIE.js' %}"></script>
-		<script src="{% static 'js/script.js' %}"></script>
 		<script src="{% static 'js/chardinjs.min.js' %}"></script>
+		<script src="{% static 'js/script.js' %}"></script>
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		{% block extra_js %}{% endblock %}
 	</head>
@@ -23,16 +23,18 @@
 				<div id="headerContent">
 					<div class="logo">
 						<img src="{% static 'pollsLogo.png' %}" alt="myPolls" />
-						<img class ="menuResponsive" src="/static/login/images/menu.png"  alt="Menu">
+						{% if user.is_authenticated %}
+							<img class ="menuResponsive" src="/static/login/images/menu.png"  alt="Menu">
+						{% endif %}
 					</div>
 					{% if user.is_authenticated %}
-					<div class="menu">
+					<div class="menu" data-intro="Navigate easily using these links...Go to Home page or create a poll by going to the ASK page or have a look on the Featured ones." data-position="left">
 						<ul class="menu-nav">
-							<li><a href="{% url 'polls:index' %}"data-intro="All the latest polls served right on your screen" data-position="left">Home</a></li>
-							<li><a href="{% url 'polls:polls_create' %}" data-intro="Have a poll you don't see here...Well, just hop on and create one" data-position="bottom">Ask</a></l1>
-							<li><a href="{% url 'polls:featured' %}" data-intro="Featured & Trending polls can be found here" data-position="bottom">Featured</a></li>
-							<li><a href="{% url 'polls:mypolls' user.username %}" data-intro="We bring you hand-picked selected polls for you" data-position="bottom">MyPolls</a></li>
-							<li><div class="search" data-intro="Enter your query and we will find something for you" data-position="bottom">
+							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></l1>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.username %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
+							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->
 							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
@@ -42,7 +44,7 @@
 									
 								</div>
 							</li>
-							<li class="userInNav" data-intro="Visit your profile page or log out...But why log out...Go ask some new questions and vote on some trending polls" data-position="bottom">
+							<li class="userInNav">
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 							</li>
 						</ul>
@@ -54,12 +56,12 @@
 						</div>
 					</div>
 					{% else %}
-					<div class="menu">
+					<div class="menu" data-intro="Navigate easily using these links...Go to Home page or create a poll by going to the ASK page or have a look on the Featured ones." data-position="left">
 						<ul class="menu-nav">
-							<li><a href="{% url 'polls:index' %}">Home</a></li>
-							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
-							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-							<li><a href="{% url 'account_login' %}">Login</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}" data-intro="Type in your query and we will get you your results" data-position="bottom">Featured</a></li>
+							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->
@@ -112,8 +114,8 @@
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
 							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-							<li><a href="#">Terms of Use</a></li>
-							<li><a href="#">Privacy</a></li>
+							<li><a href="http://127.0.0.1:8000/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a>
+							<li><a href="http://127.0.0.1:8000/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></li>
 							<li><a class="helpChardin" href="#">Help</a></li>
 							<li><a href="#">Tips</a></li>
 							<li><a href="#">Write To Us</a></li>

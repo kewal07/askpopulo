@@ -101,4 +101,79 @@ span#cats{
   cursor:pointer;
   font-size:1rem;
 }
+.g-recaptcha{
+	width: 30%;
+	margin: 0 auto;
+}
 label.required:after { content: '*'; color:red; }
+@media only screen and (max-width: 960px){
+	#signup{
+		margin:0;
+		margin-bottom:2rem;
+	}
+	.signup p{
+		font-size: 1rem;
+		margin: 0 auto;
+		width: 80%;
+		margin-bottom:1rem;
+	}
+	.headingSignup{
+		margin-left:2rem;
+	}
+	form.signupContentForm{
+		padding:0;
+		margin:0;
+		margin-top:1rem;
+	}
+	form.signupContentForm label{
+		width:100%;
+		display:block;
+		text-align: center;
+		margin-bottom:0.5rem;
+	}
+	.fileLabel{
+		width: 100%;
+  		margin-bottom: 2rem;
+	}
+	.signupContentForm input[type="text"], .signupContentForm input[type="email"], .signupContentForm input[type="password"], .signupContentForm select{
+		width:100%;
+		font-size:1rem;
+	}
+	.first_Gender{
+	    display:inline-block !important;
+	    width:33% !important;
+	    margin-top:0.5rem;
+  	}
+	label[for=id_gender_1],label[for=id_gender_2]{
+	    display:inline-block !important;
+	    width:31% !important;
+  	}
+  	#id_birthDay{
+  		width:100%;
+  		text-align: center;
+  	}
+  	.signupContentForm textarea{
+  		width:100%;
+  	}
+  	#id_categories{
+	    margin:0 auto;
+	    width:90%;
+	 }
+	 #id_categories label{
+	 	width:32%;
+	 	display: inline;
+	 }
+  	span#cats{
+	    font-size:0.8rem;
+	    margin-bottom:1rem;
+	    margin:0 auto;
+	    display: inline-block;
+	    text-align: center;
+	    color:#666;
+	    width:100%;
+ 	}
+ 	.g-recaptcha{
+		width: 30%;
+		margin: 0 auto;
+	}
+}

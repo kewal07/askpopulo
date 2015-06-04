@@ -37,15 +37,20 @@
 							</div> 
 							<div class="mainPoll">
 								<p>
-								<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{question.question.question_text}}</a>
-								{% if user.is_authenticated %}
-								{% if user == question.question.user %}
-								{% if question.question.voted_set.count < 1 %}
-								<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
-								{% endif %}
-								<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
-								{% endif %}
-								{% endif %}
+									<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
+									{% if user.is_authenticated %}
+									{% if user == question.question.user %}
+									{% if question.question.voted_set.count < 1 %}
+									<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+									{% endif %}
+									<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
+									{% endif %}
+									{% endif %}
+								</p>
+								<p class="catsP">
+									{% for cat in question.question.questionwithcategory_set.all %}
+										<a class="que_desc_cat_span catOnIndex" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
+									{% endfor %}
 								</p>
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
 									{% csrf_token %}
@@ -69,7 +74,11 @@
 											</label>
 										</p>
 									{% endfor %}
-									<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+									{% if question.user_already_voted %}
+										<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">See Results</a>
+									{% else %}
+										<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+									{% endif %}
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
@@ -79,12 +88,9 @@
 										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
-												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" >Follow</button>
+												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom">Follow</button>
 											{% endif %}
 										</li>
-										<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-layout="button_count"></div></i></li>&nbsp&nbsp
-										<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-via="askpopulo" data-hashtags="AskThePeople">Tweet</a></li>&nbsp&nbsp
-										<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.question.id question.question.que_slug %}"></div></li>
 									</ul>
 								</div>
 							</div>
@@ -158,10 +164,11 @@
 						//$.ajax(); Do Unfollow
 						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
 						console.log(data);
+						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url: follow_url,
 							data:data,
 							success:function(response)
 							{
@@ -177,10 +184,11 @@
 						// $.ajax(); Do Follow
 						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
 						console.log(data);
+						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
 							type: 'POST',
-							url:'follow/'+qid+'/'+qslug,
+							url: follow_url,
 							data:data,
 							success:function(response)
 							{

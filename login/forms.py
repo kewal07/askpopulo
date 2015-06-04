@@ -11,6 +11,7 @@ from . import countryAndStateList
 import os
 import pymysql
 from categories.models import Category
+from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -25,7 +26,7 @@ class MySignupForm(forms.Form):
 	image = forms.ImageField(required=False,label='Profile Image')
 	first_name = forms.CharField(max_length=30, label='First Name', widget=forms.TextInput(attrs={'placeholder': 'First Name','autofocus': 'autofocus'}))
 	last_name = forms.CharField(max_length=30, label='Last Name', widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
-	gender = forms.ChoiceField(choices=[('M','Male'),('F','Female'),('D','Do Not Reveal')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)
+	gender = forms.ChoiceField(choices=[('M','M'),('F','F'),('D','NotSay')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)
 	birthDay = forms.DateField(widget=CustomDateInput)
 	bio = forms.CharField( max_length=1024, label="About Me", widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
 	professionList = ["","Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"]
@@ -34,6 +35,13 @@ class MySignupForm(forms.Form):
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
 	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
 	categories =  forms.MultipleChoiceField(required=True,widget=forms.CheckboxSelectMultiple(attrs={'class':'category_checkbox'}), choices=[(i,i) for i in Category.objects.all()])
+	captcha = NoReCaptchaField(label="")
+	agreement = forms.BooleanField(required=True,label="")
+
+	def __init__(self,*args,**kwargs):
+		super(MySignupForm,self).__init__(*args,**kwargs)
+		self.fields.move_to_end('captcha')
+		self.fields.move_to_end('agreement')
 
 	def signup(self, request, user):
 		user.first_name = self.cleaned_data['first_name']

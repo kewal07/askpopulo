@@ -180,3 +180,23 @@ overflow:hidden; */
 }
 label[for="id_login"] { display:none !important; }
 label[for="id_password"] { display:none !important; }
+@media only screen and (max-width: 960px){
+	#login{
+		margin:0;
+		margin-bottom:2rem;
+	}
+	.loginContentTable{
+		display: block;
+	}
+	.socialaccount_ballot{
+		border-right: none;
+		border-bottom: 4px solid #666;
+	}
+	#login img{
+		width:100%;
+	}
+	.loginContentForm input[type="text"], .loginContentForm input[type="email"], .loginContentForm input[type="password"]{
+		width:100%;
+		font-size:1rem;
+	}
+}

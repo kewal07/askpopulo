@@ -58,7 +58,7 @@
 						{{ question.description }}
 						{% if question.description and question.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 						{% for cat in question.questionwithcategory_set.all %}
-							<span class="que_desc_cat_span">{{ cat.category.category_title }}</span>
+							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
 						{% endfor %}
 					</p>
 					{% endif %}
@@ -85,9 +85,13 @@
 								</label>
 							</p>
 						{% endfor %}
-						<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+						{% if question.user_already_voted %}
+							<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.id question.que_slug %}">See Results</a>
+						{% else %}
+							<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+						{% endif %}
 					</form>
-					<div class="pollInfo clearfix">
+					<div class="pollInfo  pollsInfoVotePage clearfix">
 						<ul class="pollInfoUl clearfix">
 							<li><span class="pollInfoNum">{{ question.voted_set.count }}</span> opinion{{ question.voted_set.count|pluralize }}</li>
 							<li><span class="pollInfoNum" id="sub_num{{ question.id }}">{{ question.subscriber_set.count }}</span> interested</li>
@@ -97,9 +101,14 @@
 									<button class="btn followButton" id="follow{{ question.id }}---{{ question.que_slug }}" >Follow</button>
 								{% endif %}
 							</li>
-							<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></i></li>&nbsp&nbsp&nbsp
-							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askpopulo" data-hashtags="AskThePeople">Tweet</a>&nbsp&nbsp&nbsp
-							<li><div class="g-plus" data-action="bubble" data-annotation="bubble" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
+							<ul class="share-buttons">
+								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
+								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
+								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
+								<li ><div class="fb-share-button" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askpopulo" data-hashtags="AskThePeople">Tweet</a></li>&nbsp&nbsp&nbsp
+								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://127.0.0.1:8000/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
+							</ul>
 						</ul>
 					</div>
 				</div>

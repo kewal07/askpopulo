@@ -51,6 +51,9 @@
 .mainPoll p{
 	font-size: 2rem;
 }
+.catsP{
+	margin-top:0.5rem;
+}
 .mainPoll .optionsForm{
 	padding:2rem 2rem;
 }
@@ -66,10 +69,10 @@ ul.pollInfoUl li {
 	font-size:1.15rem;
 }
 .choice_image{
-	width: 200px;
-  	height: 150px;
+	/*width: 100%;
+  	height: 150px;*/
   	border: 5px solid #666;
-  	margin-right: 2rem;
+  	margin-right: 4rem;
   	cursor:pointer;
 }
 .choice_image:hover{
@@ -80,6 +83,9 @@ ul.pollInfoUl li {
 }
 .pollInfoNum{
 	color:#990099;
+}
+.catOnIndex{
+	font-size:1rem;
 }
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
@@ -124,6 +130,11 @@ ul.pollInfoUl li {
 		 font-size: 1rem;
 	}
 }
+@media only screen and (min-width:481px) and (max-width: 730px){
+	.choice_image{
+		margin-right:0;
+	}
+}
 @media only screen and (min-width:481px) and (max-width: 645px){
 	.pollInfo{
 		display:none;
@@ -133,6 +144,13 @@ ul.pollInfoUl li {
 	}
 	.askedOnInfo{
 		display:none;
+	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
 	}
 }
 @media only screen and (max-width: 480px){
@@ -185,41 +203,37 @@ ul.pollInfoUl li {
 	.pollInfo{
 		display:none;
 	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
+	}
+	.choice_image{
+		margin-right:0;
+	}
 }
 
 /* follow button below */
 .btn {
-    cursor:pointer;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    
-    border:1px solid #a6a6a6;
-    border-top-color:#bdbdbd;
-    border-bottom-color:#8b8a8b;
-    
-    padding:0px 14px;
-    
-    color:#666666;
-    font-size:13px;
-    background-position:0px 0px;
-    
-    text-shadow: 0 1px 0 #fff;
-    font-weight:bold;
-    
-    background-color: #ffffff;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e8e8e8)); /* Saf4+, Chrome */
-    background-image: -webkit-linear-gradient(top, #ffffff, #e8e8e8); /* Chrome 10+, Saf5.1+, iOS 5+ */
-    background-image:    -moz-linear-gradient(top, #ffffff, #e8e8e8); /* FF3.6 */
-    background-image:     -ms-linear-gradient(top, #ffffff, #e8e8e8); /* IE10 */
-    background-image:      -o-linear-gradient(top, #ffffff, #e8e8e8); /* Opera 11.10+ */
-    background-image:         linear-gradient(top, #ffffff, #e8e8e8);
-    
-    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-    
-    
+   cursor: pointer;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #a6a6a6;
+  padding: 0px 14px;
+  color: #666666;
+  font-size: 13px;
+  background-position: 0px 0px;
+  font-weight: bold;
+  background-color: black;
+  background-image: -moz-linear-gradient(top, #ffffff, #e8e8e8);
+  background-image: -ms-linear-gradient(top, #ffffff, #e8e8e8);
+  background-image: -o-linear-gradient(top, #ffffff, #e8e8e8);
+  background-image: linear-gradient(top, #ffffff, #e8e8e8);
+  -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  color: white;
 }
 
 .btn:hover {

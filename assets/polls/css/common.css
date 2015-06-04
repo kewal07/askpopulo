@@ -150,16 +150,19 @@ ul.menu-nav li{
 	height: 75px;
 	border-radius: 50%;
 }
-ul.menu-nav li a{
+.menuanchor{
 	color:white;
   	text-decoration:none;
 }
-ul.menu-nav li a:active{
-	color:#ff0000;
+.menuanchor.active{
+	color:#ff0000 !important;
 }
-ul.menu-nav li a:hover{
-	color:red;
-	letter-spacing: 0.2rem;
+.anchoractive{
+	color:#ff0000 !important;
+}
+.menuanchor:hover{
+	color:red !important;
+	letter-spacing: 0.1rem;
 }
 .search{
 	margin-top:-0.65rem;
@@ -208,7 +211,6 @@ ul.menu-nav li a:hover{
 #footer{
 	margin:0;
 	background: black;
-	padding-bottom:3rem;
 	width:100%;
 	color:white;
 	margin-top:5rem;
@@ -221,11 +223,10 @@ ul.menu-nav li a:hover{
 #footer .logo{
 	display:inline-block;
 	width:initial;
-	margin-top:2rem;
+	margin-top:0rem;
 }
 #footer .logo img{
-	width:150px;
-	height:150px;
+	width:100%;
 }
 #footer p.p1{
 	display:inline-block;
@@ -236,6 +237,7 @@ ul.menu-nav li a:hover{
 	margin-left: 10rem;
 }
 #footer .menu{
+	display: none !important;
   	  float: none;
   position: absolute;
   left: 16rem;
@@ -265,7 +267,10 @@ ul.menu-nav li a:hover{
 }
 .menuF{
 	text-align: center;
-	font-size:1.5rem;
+	font-size:1rem;
+	position:absolute;
+	top:1rem;
+	left:18rem;
 }
 .menuF-nav{
 	display: inline-block;
@@ -317,6 +322,9 @@ li.first{
 	}
 	.dropDownUL li a{
 		color:white !important;
+	}
+	.menuanchor{
+  		
 	}
 	ul.menu-nav li{
 		float:none;
@@ -377,6 +385,7 @@ li.first{
 	.menuF{
 		text-align: center;
 		font-size:1rem;
+		position: initial;
 	}
 	.menuF-nav{
 		display: inline-block;
@@ -662,4 +671,17 @@ li.first{
 .detailSubmit{
 	margin-left: 0;
 	display: inline-block;
+}
+.anchor_submit{
+	display: table;
+  margin: 0;
+  margin-top: 0.5rem;
+}
+.agreement_label{
+	display: initial !important;
+	margin-left: 1rem;
+	width: 100% !important;
+}
+.agreement_anchor{
+	color: red;
 }

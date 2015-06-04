@@ -71,7 +71,7 @@
 							{{ question.description }}
 							{% if question.description and question.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 							{% for cat in question.questionwithcategory_set.all %}
-								<span class="que_desc_cat_span">{{ cat.category.category_title }}</span>
+								<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
 							{% endfor %}
 						</p>
 						{% endif %}
@@ -309,6 +309,7 @@ var disqus_config = function() {
 			  var genderData = [['Gender', 'Votes']];
 			  var m = 0;
 			  var f = 0;
+			  var d = 0;
 			  {% for voted in question.voted_set.all %}
 			  	{% if voted.user.extendeduser.gender == "M" %}
 			  		m++;
