@@ -14,8 +14,6 @@
 <section id="signup">
 	<div class="signup">
 		<div class="signupContent">
-			<!-- <h1>{% trans "Sign Up" %}</h1> -->
-
 			<p class="headingSignup">{% blocktrans %}Already have an account ? Then please <a href="{{ login_url }}"><span class="anchorSpan">Sign in</span></a>.{% endblocktrans %}</p>
 
 			<form class="signupContentForm" id="signup_form" method="post" action="{% url 'account_signup' %}" enctype="multipart/form-data">

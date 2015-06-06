@@ -40,8 +40,13 @@ class MySignupForm(forms.Form):
 
 	def __init__(self,*args,**kwargs):
 		super(MySignupForm,self).__init__(*args,**kwargs)
-		self.fields.move_to_end('captcha')
-		self.fields.move_to_end('agreement')
+		if not args:
+			self.fields.move_to_end('captcha')
+			self.fields.move_to_end('agreement')
+		else:
+			del self.fields['captcha']
+			del self.fields['agreement']
+
 
 	def signup(self, request, user):
 		user.first_name = self.cleaned_data['first_name']
