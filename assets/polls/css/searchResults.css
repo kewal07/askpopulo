@@ -30,6 +30,6 @@
 @media only screen and (max-width: 960px){
   #content{
     margin: 0rem;
-    margin-bottom:3rem;
+    margin-bottom::;
   }
 }
