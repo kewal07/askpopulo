@@ -7,13 +7,9 @@
 	border-radius: 25px;
 	background-color: white;
 	opacity: 0.93;
-	/* padding: 1rem 1rem;
-	margin-bottom: 2rem; */
-	/* width: 75%; */
 	margin: 0 auto;
 }
 .signup p{
-	/* margin-bottom: 2rem; */
 	margin-left: 19rem;
 	margin-top: 2rem;
 }
@@ -25,10 +21,8 @@
     vertical-align: top;
 }
 form.signupContentForm{
-	/* width:60%; */
 	padding: 2rem 4rem 2rem 4rem;
 	margin:0 auto;
-	/* margin-left:21rem; */
 }
 form.signupContentForm label{
 	display: inline-block;
@@ -58,10 +52,7 @@ form.signupContentForm input{
     background: transparent;
     font-size: 1rem;
     overflow: hidden;
-	/* margin-top: -2rem; */
-	/*width: 45rem;*/
 	height: 5rem;
-	/*margin-left:11rem;*/
 }
 #qText{
 	margin-bottom:2rem;
@@ -76,19 +67,6 @@ form.signupContentForm input{
 	width:90%;
 	margin:0 auto;
 	margin-bottom:2rem;
-}
-.signupContentForm input[type="file"] {
-   /*  margin-left: 2rem;
-	width:25%;
-	background: #3e9cbf; */ /*the colour of the button*/
-	/* border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/ */
-	/* cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/ */
-	/* -moz-border-radius: 25px;
-	-webkit-border-radius: 25px;
-	border-radius: 25px;
-	font-size: 1rem;
-	visibility:hidden;
-	background:url('question.jpg') no-repeat center center fixed; */
 }
 #id_categories{
 	width: 125%;
