@@ -672,6 +672,9 @@ li.first{
 	margin-left: 0;
 	display: inline-block;
 }
+.loginSubmit{
+	display: inline-block;
+}
 .anchor_submit{
 	display: table;
   margin: 0;
