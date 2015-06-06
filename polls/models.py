@@ -53,7 +53,7 @@ class Choice(models.Model):
 	def __str__(self):
 		return self.choice_text
 	def get_file_name(self):
-		return self.choice_image.path.split("\\")[-1]
+		return self.choice_image.path.split(os.sep)[-1]
 	def save(self, *args, **kwargs):
 		digestmod = hashlib.sha1
 		msg = ("%s %s"%(self.choice_text,datetime.datetime.now())).encode('utf-8')

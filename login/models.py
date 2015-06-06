@@ -45,7 +45,7 @@ class ExtendedUser(models.Model):
 			im.save(self.imageUrl.path)
 
 	def get_profile_pic_name(self):
-		return self.imageUrl.path.split("\\")[-1]
+		return self.imageUrl.path.split(os.sep)[-1]
 
 	def get_full_name(self):
 		return self.user.first_name+ " "+self.user.last_name
