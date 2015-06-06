@@ -352,6 +352,9 @@ li.first{
 	.userInNav{
 		display:none;
 	}
+	#display_message_section{
+		margin:0 !important;
+	}
 	#footer{
 	margin:0;
 	background: black;
