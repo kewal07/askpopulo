@@ -129,10 +129,16 @@ ul.pollInfoUl li {
 		 margin-right:1rem;
 		 font-size: 1rem;
 	}
+	.anchor_submit{
+		margin-bottom: 1rem;
+	}
 }
 @media only screen and (min-width:481px) and (max-width: 730px){
 	.choice_image{
 		margin-right:0;
+	}
+	.que_desc_cat_span{
+		font-size:0.85rem;
 	}
 }
 @media only screen and (min-width:481px) and (max-width: 645px){
@@ -212,6 +218,12 @@ ul.pollInfoUl li {
 	}
 	.choice_image{
 		margin-right:0;
+	}
+	.anchor_submit{
+		margin-bottom: 1rem;
+	}
+	.que_desc_cat_span{
+		font-size:0.85rem;
 	}
 }
 
