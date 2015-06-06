@@ -51,13 +51,13 @@ class ExtendedUser(models.Model):
 		return self.user.first_name+ " "+self.user.last_name
 		
 	def get_profile_pic_url(self):
-		default_pic_url = "http://localhost:8000/static/login/images/defaultAvatar.png"
+		default_pic_url = "/static/login/images/defaultAvatar.png"
 		if self.user.socialaccount_set.all():
 			if self.imageUrl:
 				return self.imageUrl
 		else:
 			if self.imageUrl:
-				return "http://localhost:8000/media/profile/"+self.get_profile_pic_name()
+				return "/media/profile/"+self.get_profile_pic_name()
 		return default_pic_url	
 
 	def calculate_age(self):
