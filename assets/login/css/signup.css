@@ -173,7 +173,6 @@ label.required:after { content: '*'; color:red; }
 	    width:100%;
  	}
  	.g-recaptcha{
-		width: 30%;
-		margin: 0 auto;
+		margin-left:0.5rem;
 	}
 }
