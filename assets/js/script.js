@@ -97,11 +97,13 @@ $(document).ready(function(){
 	/* end */
 
 	/* description on hover */
+	if($(window).width() > 960){
 		$(".qTextDesc").hover(function(){
 			var elem=$(this)[0];
 			if($("#"+elem.id).next().text().length > 0)
 				$("#"+elem.id).next().toggle();
 		});
+	}
 	/* end */
 });
 
