@@ -37,7 +37,8 @@
 							</div> 
 							<div class="mainPoll">
 								<p>
-									<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
+									<a class="qTextDesc" id="qTextDesc{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
+									<a class="descIndex" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{ question.question.description }}</a>
 									{% if user.is_authenticated %}
 									{% if user == question.question.user %}
 									{% if question.question.voted_set.count < 1 %}

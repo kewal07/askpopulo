@@ -95,6 +95,14 @@ $(document).ready(function(){
 	/* activate menu link */
 	activateMenuLink();
 	/* end */
+
+	/* description on hover */
+		$(".qTextDesc").hover(function(){
+			var elem=$(this)[0];
+			if($("#"+elem.id).next().text().length > 0)
+				$("#"+elem.id).next().toggle();
+		});
+	/* end */
 });
 
 function activateMenuLink () {

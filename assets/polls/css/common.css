@@ -691,3 +691,15 @@ li.first{
 .agreement_anchor{
 	color: red;
 }
+.descIndex{  
+  display: none;
+  width: 50%;
+  position: absolute;
+  top: 6rem;
+  right: 1rem;
+  border: 2px solid #666;
+  border-radius: 10px;
+  padding: 0.5rem;
+  background-color: #ADD8E6;
+  font-size: 1rem;
+}
