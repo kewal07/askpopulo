@@ -1,0 +1,130 @@
+#login{
+	  margin: 7rem 5rem 0rem 5rem;
+}
+.login{
+	font-size: 1.5rem;
+	border: 3px solid #000;
+	border-radius: 25px;
+	background-color: white;
+	opacity: 0.93;
+	/* padding: 1rem 1rem;
+	margin-bottom: 2rem; */
+	/* width: 75%; */
+	margin: 0 auto;
+}
+.login p{
+	/* margin-bottom: 2rem; */
+	  /* margin-bottom: 2rem; */
+  /* margin-left: 19rem; */
+  margin:1rem 0;
+  text-align: center;
+  /* margin: 0 auto; */
+}
+
+/*.upImg{
+	width:140px;
+	height:140px;
+	border-radius:50%;
+	display:block;
+	margin:auto;
+}
+*/
+.loginContent{
+	margin: 0 auto;
+}
+/*.loginContentForm textarea{
+    vertical-align: top;
+}*/
+form.loginContentForm{
+	/* width:60%; */
+	flex:1;
+	margin:1rem 0;
+	/* padding: 2rem 4rem 2rem 4rem; */
+	/* margin:0 auto; */
+	/* margin-left:21rem; */
+}
+form.loginContentForm label{
+	display: inline-block;
+	/* width:20%; */
+	color: #666;
+    font-size: 1.5rem;
+	padding-right: 1rem;
+}
+form.loginContentForm label[for=id_remember]{
+    font-size: 1rem;
+}
+form.loginContentForm input{
+	margin-left: 0rem;
+}
+.loginContentForm input[type="text"],.loginContentForm input[type="email"],.loginContentForm input[type="password"]{
+		height: 3rem;
+		border-radius: 10px;
+		border: 1px solid #4c4c4c;
+		background: transparent;
+		font-size:2rem;
+		overflow:hidden;
+}
+/*.loginContentForm textarea{
+	border-radius: 10px;
+    border: 1px solid #666;
+    background: transparent;
+    font-size: 2rem;
+    overflow: hidden;
+	/* margin-top: -2rem; 
+	width: 45rem;
+	height: 8rem;
+	/*margin-left:11rem;
+}*/
+/*#qText{
+	margin-bottom:2rem;
+}*/
+/*.loginContentForm input[type="date"]{
+	border-radius: 10px;
+    border: 2px solid #666;
+    background: transparent;
+    font-size: 2rem;
+}*/
+.loginContentForm p{
+	width:90%;
+	margin:0 auto;
+	margin-bottom:2rem;
+}
+.loginContentTable{
+	display: flex;
+	padding: 1rem 2rem 2rem 2rem;
+}
+
+.socialaccount_ballot{
+	flex: 1;
+	border-right: 4px solid #666;
+}
+
+.forgotPass{
+	font-size : 1rem;
+}
+.login_or{
+	font-size : 1rem;
+	margin-top: 7rem;
+}
+label[for="id_login"] { display:none !important; }
+label[for="id_password"] { display:none !important; }
+@media only screen and (max-width: 960px){
+	#login{
+		margin:0;
+		margin-bottom:2rem;
+	}
+	.loginContentTable{
+		display: block;
+	}
+	.socialaccount_ballot{
+		border-right: none;
+		border-bottom: 4px solid #666;
+	}
+	#login img{
+		width:100%;
+	}
+	.loginContentForm input[type="text"], .loginContentForm input[type="email"], .loginContentForm input[type="password"]{
+		width:100%;
+		font-size:1rem;
+	}
+}
