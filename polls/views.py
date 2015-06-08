@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
+from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
 from categories.models import Category
 import datetime
@@ -375,6 +376,17 @@ class FollowPollView(generic.ListView):
 			sub.delete()
 		data = {}
 		data['sub_count'] = question.subscriber_set.count()
+		return HttpResponse(json.dumps(data),content_type='application/json')
+
+class ReportAbuse(generic.ListView):
+
+	def get(self,request,*args,**kwargs):
+		qIdBan = request.GET.get('qIdBan')
+		user = request.user
+		subject = "Report Abuse"
+		message = str(user)+" reported abuse on the question "+qIdBan
+		send_mail(subject, message, 'askpopulo@gmail.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
+		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
 def autocomplete(request):

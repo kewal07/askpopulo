@@ -21,4 +21,5 @@ urlpatterns = patterns('',
 	url(r'^polls/autocomplete', views.autocomplete,name="polls_autocomplete"),
 	url(r'^search/?$', views.PollsSearchView(), name='search_view'),
 	url(r'^follow/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$', login_required(views.FollowPollView.as_view()),name="polls_follow"),
+	url(r'^abuse$', login_required(views.ReportAbuse.as_view()),name="polls_abuse"),
 )
