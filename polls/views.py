@@ -385,7 +385,7 @@ class ReportAbuse(generic.ListView):
 		user = request.user
 		subject = "Report Abuse"
 		message = str(user)+" reported abuse on the question "+qIdBan
-		send_mail(subject, message, 'askpopulo@gmail.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
+		send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
