@@ -5,7 +5,7 @@ html{
 }
 #profile{
 	margin: 7rem 5rem 0rem 5rem;
-  margin-bottom: 55rem;
+  margin-bottom: 80rem;
 }
 .profilePic{
 	margin: 2% 2% 5% 16%;
@@ -211,6 +211,7 @@ ul.ul-easy-tabs-polls li{
 #changePassword{
     width: 40%;
   margin: 0 auto;
+    text-align: center;
 }
 #changePassword p{
   font-size:1.5rem;
@@ -221,7 +222,7 @@ ul.ul-easy-tabs-polls li{
 }
 #changePassword label{
     width: 35%;
-  display: inline-block;
+  display: none;
 }
 
 .circle
