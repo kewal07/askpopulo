@@ -109,13 +109,14 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		subscribed_questions = []
 		user_already_voted = False
+		profilepicUrl = "http://askbypoll.com"+user.extendeduser.get_profile_pic_url()
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
 				"id":user.id,
 				"username":user.username,
 				"email":user.email,
-				"avatar":user.extendeduser.get_profile_pic_url()
+				"avatar":profilepicUrl
 			}
 			data = json.dumps(data)
 			message = base64.b64encode(data.encode('utf-8'))

@@ -4,7 +4,7 @@
 		{% load staticfiles %}
 		<meta itemprop="name" content="AskThePeople">
 		<meta itemprop="description" content="Posting a Poll">
-		<meta itemprop="image" content="http://127.0.0.1:8000/static/login/images/defaultAvatar.png">
+		<meta itemprop="image" content="/static/login/images/defaultAvatar.png">
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/common.css' %}" />
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
@@ -114,8 +114,8 @@
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
 							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
-							<li><a href="http://127.0.0.1:8000/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a>
-							<li><a href="http://127.0.0.1:8000/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></li>
+							<li><a href="/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a>
+							<li><a href="/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></li>
 							<li><a class="helpChardin" href="#">Help</a></li>
 							<li><a href="#">Tips</a></li>
 							<li><a href="#">Write To Us</a></li>
