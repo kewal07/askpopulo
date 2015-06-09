@@ -192,6 +192,9 @@ ul.ul-easy-tabs-polls li{
     margin-bottom:2rem;
     display: -ms-flex; 
     display: -webkit-flex; 
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
     display: flex;
 }
 .result{
@@ -309,7 +312,7 @@ li.secondChildResponsive{
   }
   label[for=id_gender_1],label[for=id_gender_2]{
     display:inline-block !important;
-    width:32% !important;
+    width:31% !important;
   }
   .profileForm input[type="date"]{
     width:100%;
