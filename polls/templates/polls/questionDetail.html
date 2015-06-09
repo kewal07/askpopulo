@@ -8,12 +8,12 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
 {% endblock %}
 {% block extra_js %}
-	<script type='text/javascript' src='https://www.google.com/jsapi' async defer></script>
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 {% endblock %}
 {% block content %}
 	<meta property="og:title" content="AskPopulo"/>
 	<meta property="og:type" content="Polling Site"/>
-	<meta property="og:url" content="http://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}"/>
+	<meta property="og:url" content="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"/>
 	<meta property="og:image" content="/static/login/images/defaultAvatar.png"/>
 	<section id="content">
 			<div class="questions">
