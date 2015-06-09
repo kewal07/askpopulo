@@ -68,8 +68,8 @@ class LoggedInView(generic.DetailView):
 		context = super(LoggedInView, self).get_context_data(**kwargs)
 		user = self.request.user
 		form = ChangePasswordForm(UserForm(user))
-		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:10]
-		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('user_id').filter(user_id = user.id))
+		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
 		user_categories = []
 		cat_list = []
