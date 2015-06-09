@@ -12,7 +12,6 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
             o = self.options;
 
         if (o.multiselect) {
-            console.log('multiselect true');
             self.selectedItems = {};           
             self.multiselect = $("<div></div>")
                 .addClass("ui-autocomplete-multiselect ui-state-default ui-widget")
