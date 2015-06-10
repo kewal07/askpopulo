@@ -134,9 +134,13 @@ label[for="id_password"] { display:none !important; }
 	.socialaccount_ballot{
 		border-right: none;
 		border-bottom: 4px solid #666;
+		width: 100%
 	}
 	#login img{
 		width:100%;
+	}
+	form .loginContentForm{
+		width: 100%;
 	}
 	.loginContentForm input[type="text"], .loginContentForm input[type="email"], .loginContentForm input[type="password"]{
 		width:100%;
