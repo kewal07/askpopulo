@@ -1,6 +1,7 @@
 html{
 	background:url('/static/polls/images/question.jpg') no-repeat center center fixed;
-	background-size:cover;/*font-family: 'capture',sans-serif;*/
+	background-size:cover;
+  font-family: 'Arvo', serif;
 }
 #createPoll{
 	margin: 7rem 5rem 0rem 5rem;
@@ -9,7 +10,7 @@ html{
 	border: 3px solid #000;
 	border-radius: 25px;
 	background-color: white;
-	opacity: 0.93;
+	opacity: 0.8;
 	/* padding: 1rem 1rem;
 	margin-bottom: 2rem; */
 	/* width: 75%; */
