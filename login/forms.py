@@ -39,6 +39,31 @@ class MySignupForm(forms.Form):
 	captcha = NoReCaptchaField(label="")
 	agreement = forms.BooleanField(required=True,label="")
 
+	def clean_birthday(self):
+		birthDay = self.cleaned_data['birthday']
+		# print("&&&&&&&&&&&&&&&&&&&& clean bday",birthDay)
+		birthDay = date(birthDay)
+		age = self.calculate_age(birthDay)
+		print(birthDay,age)
+		if age < 1:
+			# print(self.errors)
+			raise forms.ValidationError("Age should be greater than 13 years")
+		return birthDay
+
+	def calculate_age(self,born):
+		today = date.today()
+		# born = self.birthDay
+		try: 
+			birthday = born.replace(year=today.year)
+		except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+			birthday = born.replace(year=today.year, month=born.month+1, day=1)
+		if birthday > today:
+			# print(today.year - born.year - 1)
+			return today.year - born.year - 1
+		else:
+			# print(today.year - born.year)
+			return today.year - born.year
+
 	def __init__(self,*args,**kwargs):
 		super(MySignupForm,self).__init__(*args,**kwargs)
 		if not args:

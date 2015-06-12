@@ -17,10 +17,12 @@ def get_file_path(instance, filename):
 	return os.path.join(profilePath,filename)
 
 class ExtendedUser(models.Model):
+	tdate = date.today()
+	def_bday = tdate.replace(year = tdate.year - 14)
 	user = models.OneToOneField(settings.AUTH_USER_MODEL)
 	user_pk = models.CharField(max_length=255)
 	imageUrl = models.ImageField(upload_to=get_file_path,blank=True,null=True)
-	birthDay = models.DateField(default="2002-01-01")
+	birthDay = models.DateField(default=def_bday)
 	gender = models.CharField(max_length=1,blank=True,null=True)
 	city = models.CharField(max_length=512,blank=True,null=True)
 	state = models.CharField(max_length=512,blank=True,null=True)
@@ -73,9 +75,9 @@ class ExtendedUser(models.Model):
 		except ValueError: # raised when birth date is February 29 and the current year is not a leap year
 			birthday = born.replace(year=today.year, month=born.month+1, day=1)
 		if birthday > today:
-			print(today.year - born.year - 1)
+			# print(today.year - born.year - 1)
 			return today.year - born.year - 1
 		else:
-			print(today.year - born.year)
+			# print(today.year - born.year)
 			return today.year - born.year
 			
