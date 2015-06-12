@@ -670,6 +670,11 @@ li.first{
 }
 .voteSubmit{
 	margin-left: 0;
+	display: inline-block;
+}
+.voteResultSubmit{
+	margin-left: 2rem !important;
+        display: inline-block !important;
 }
 .detailSubmit{
 	margin-left: 0;

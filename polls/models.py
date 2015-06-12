@@ -60,11 +60,13 @@ class Choice(models.Model):
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.choice_pk = sig
 		super(Choice, self).save(*args, **kwargs)
+		"""
 		if self.choice_image:
 			size = 128, 128
 			im = Image.open(self.choice_image)
 			im.thumbnail(size)
 			im.save(self.choice_image.path)
+		"""
 
 class Vote(models.Model):
 	vote_pk = models.CharField(max_length=255)

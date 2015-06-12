@@ -208,15 +208,16 @@ var disqus_config = function() {
 				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
 				{% for choice in question.choice_set.all %}
 					var inData = [];
-					var choice_text = "{{ choice.choice_text }}";
+					var choice_text = '{{ choice.choice_text }}';
 					choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
 					if(choice_text === "" || typeof choice_text === "undefined")
 						choice_text = "Img{{ forloop.counter }}"
 					inData.push(choice_text);
 					inData.push({{ choice.vote_set.count }});
 					inData.push(pollsColors[colCount++]);
-					console.log(inData)
-					var percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);;
+					var percent = 0;
+					if({{ question.voted_set.count }} > 0)
+						percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);;
 					inData.push(percent+"%");
 					//console.log(inData);
 					pollsData.push(inData);

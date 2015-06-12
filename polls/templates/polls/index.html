@@ -62,6 +62,7 @@
 											<label for="choice{{ choice.id }}">
 												{% if choice.choice_image %}
 												<script>
+													$('.choice_image').css({"width":"120px","height":"120px"});
 													$("#choice{{ choice.id }}").hide();
 													var item = $("#choice{{ choice.id}}");
 													item.parent().css({"display":"inline-block"});
@@ -75,11 +76,16 @@
 											</label>
 										</p>
 									{% endfor %}
+									<p>
 									{% if question.user_already_voted %}
 										<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
 										<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+										{% if user.id == question.question.user.id  %}
+											<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+										{% endif %}
 									{% endif %}
+									</p>
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
 								<div class="pollInfo clearfix">
@@ -121,6 +127,7 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
+			$('.choice_image').css({"width":"120px","height":"120px"});
 			$('.fa-ban').click(function()
 			{
 				var queid = $(this)[0].id.replace('ban','');

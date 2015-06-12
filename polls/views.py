@@ -100,7 +100,7 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
-			if voted:
+			if voted or user.id == question.user.id:
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
 	
@@ -109,7 +109,9 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		subscribed_questions = []
 		user_already_voted = False
-		profilepicUrl = "http://askbypoll.com"+user.extendeduser.get_profile_pic_url()
+		profilepicUrl = user.extendeduser.get_profile_pic_url()
+		if not user.socialaccount_set.all():
+			profilepicUrl = r"http://askbypoll.com"+profilepicUrl
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
@@ -304,18 +306,20 @@ class CreatePollView(generic.ListView):
 			if len(choices)!=len(set(choices)):
 				errors['duplicateChoice'] = "Please provide different choices"
 			imageSize = 128, 128
+			"""
 			for i,image1 in enumerate(images):
 				for j,image2 in enumerate(images):
 					if i != j:
 						image1obj = Image.open(image1)
 						image2obj = Image.open(image2)
-						image2obj.load()
-						image1obj.load()
+						#image2obj.load()
+						#image1obj.load()
 						if not ImageChops.difference(image1obj,image2obj).getbbox():
 							errors['duplicateImage'] = "Please provide different images as choice"
 							break
 				if 'duplicateImage' in errors:
 					break
+			"""
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			if edit:

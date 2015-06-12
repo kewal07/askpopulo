@@ -38,11 +38,13 @@ class ExtendedUser(models.Model):
 		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
 		self.user_pk = sig
 		super(ExtendedUser, self).save(*args, **kwargs)
+		"""
 		if self.imageUrl:
 			size = 128, 128
 			im = Image.open(self.imageUrl)
 			im.thumbnail(size)
 			im.save(self.imageUrl.path)
+		"""
 
 	def get_profile_pic_name(self):
 		return self.imageUrl.path.split(os.sep)[-1]
@@ -54,7 +56,10 @@ class ExtendedUser(models.Model):
 		default_pic_url = "/static/login/images/defaultAvatar.png"
 		if self.user.socialaccount_set.all():
 			if self.imageUrl:
-				return self.imageUrl
+				img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
+				if img_url.startswith("https"):
+					return r"https://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/https:/","")
+				return r"http://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/http:/","")
 		else:
 			if self.imageUrl:
 				return "/media/profile/"+self.get_profile_pic_name()

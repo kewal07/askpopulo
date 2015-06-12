@@ -72,6 +72,7 @@
 								<label for="choice{{ choice.id }}">
 									{% if choice.choice_image %}
 									<script>
+										$('.choice_image').css({"width":"120px","height":"120px"});
 										$("#choice{{ choice.id }}").hide();
 										var item = $("#choice{{ choice.id}}");
 										item.parent().css({"display":"inline-block"});
@@ -118,6 +119,7 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
+			$('.choice_image').css({"width":"120px","height":"120px"});
 			$('.submit').bind('click', function()
 			{
 				console.log("click called..........");
