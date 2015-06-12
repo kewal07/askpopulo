@@ -16,6 +16,7 @@ from categories.models import Category
 import json
 from login.forms import MySignupForm
 from django.contrib.auth.models import User
+from datetime import date
 
 class EditProfileView(generic.ListView):
 	
@@ -28,12 +29,17 @@ class EditProfileView(generic.ListView):
 		user.first_name = request.POST.get('first_name')
 		user.last_name = request.POST.get('last_name')
 		extendeduser.city=request.POST.get('city','')
-		extendeduser.birthDay=request.POST.get('birthDay','')
 		extendeduser.state=request.POST.get('state','')
 		extendeduser.country=request.POST.get('country','')
 		extendeduser.profession=request.POST.get('profession','')
 		extendeduser.gender=request.POST.get('gender','')
 		extendeduser.bio=request.POST.get('bio','')
+		bday_day = int(request.POST.getlist('birthDay_day')[0])
+		bday_month = int(request.POST.getlist('birthDay_month')[0])
+		bday_year = int(request.POST.getlist('birthDay_year')[0])
+		# print(bday_year,bday_month,bday_day)
+		bday = date(bday_year,bday_month,bday_day)
+		extendeduser.birthDay=bday #request.POST.get('birthDay','')
 		if request.FILES.get('image',''):
 			if extendeduser.imageUrl:
 				if os.path.isfile(extendeduser.imageUrl.path):
