@@ -183,8 +183,18 @@ class EditView(generic.DetailView):
 		question = self.get_object()
 		context["data"] = Category.objects.all()
 		if question.expiry:
-			tim = question.expiry.strftime("%Y-%m-%d %H:%M:%S")
-			context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+			tim = question.expiry#.strftime("%Y-%m-%d %H:%M:%S")
+			# context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+			context["qExpiry_year"]= tim.year
+			context["qExpiry_month"]= tim.month
+			context["qExpiry_day"]= tim.day
+			context["qExpiry_hr"]= tim.hour
+			context["qExpiry_min"]= tim.minute
+			context["qExpiry_ap"] = "AM"
+			if tim.hour > 11:
+				context["qExpiry_ap"] = "PM"
+				if tim.hour > 12:
+					context["qExpiry_hr"] -= 12
 		categories = ""
 		for cat in question.questionwithcategory_set.all():
 			categories += cat.category.category_title+","
@@ -217,6 +227,7 @@ class CreatePollView(generic.ListView):
 		edit = False
 		ajax = False
 		errors = {}
+		question = None
 		if request.GET.get("ajax"):
 			ajax = True
 		if request.GET.get("qid"):
@@ -228,9 +239,29 @@ class CreatePollView(generic.ListView):
 			if not qText.strip():
 				errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
-			qExpiry = request.POST.get('qExpiry')
-			if not qExpiry:
-				qExpiry = None
+			qExpiry = None
+			if edit:
+				question = Question.objects.get(pk=request.GET.get("qid"))
+				qExpiry = question.expiry
+			qeyear = int(request.POST.getlist('qExpiry_year')[0])
+			qemonth = int(request.POST.getlist('qExpiry_month')[0])
+			qeday = int(request.POST.getlist('qExpiry_day')[0])
+			qehr = int(request.POST.getlist('qExpiry_hr')[0])
+			qemin = int(request.POST.getlist('qExpiry_min')[0])
+			qeap = request.POST.getlist('qExpiry_ap')[0]
+			if qeyear != 0 and qemonth != 0 and qeday != 0 and qehr != 0 and qemin != -1: 
+				if qeap.lower() == 'pm' and qehr != 12:
+					qehr = qehr + 12
+				elif qeap.lower() == 'am' and qehr == 12:
+					qehr = 0
+				# qExpiry = request.POST.get('qExpiry')
+				# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+				try:
+					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
+				except:
+					errors['expiryError'] = "Invalid date time"
+			# if not qExpiry:
+			# 	qExpiry = None
 			choice1 = ""
 			choice2 = ""
 			choice3 = ""
@@ -323,7 +354,7 @@ class CreatePollView(generic.ListView):
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			if edit:
-				question = Question.objects.get(pk=request.GET.get("qid"))
+				# question = Question.objects.get(pk=request.GET.get("qid"))
 				question.question_text=qText
 				question.description=qDesc
 				question.expiry=qExpiry
