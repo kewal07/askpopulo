@@ -12,6 +12,7 @@ import os
 import pymysql
 from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
+from django.forms.extras.widgets import SelectDateWidget
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -27,7 +28,7 @@ class MySignupForm(forms.Form):
 	first_name = forms.CharField(max_length=30, label='First Name', widget=forms.TextInput(attrs={'placeholder': 'First Name','autofocus': 'autofocus'}))
 	last_name = forms.CharField(max_length=30, label='Last Name', widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
 	gender = forms.ChoiceField(choices=[('M','M'),('F','F'),('D','NotSay')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)
-	birthDay = forms.DateField(widget=CustomDateInput)
+	birthDay = forms.DateField(widget=SelectDateWidget(empty_label=("Choose Year", "Choose Month", "Choose Day"),years=range(curyear-100, curyear-13)),)
 	bio = forms.CharField( max_length=1024, label="About Me", widget=forms.Textarea(attrs={'placeholder': 'Tell me something about yourself'}),required=False)
 	professionList = ["","Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"]
 	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
@@ -52,7 +53,7 @@ class MySignupForm(forms.Form):
 		user.first_name = self.cleaned_data['first_name']
 		user.last_name = self.cleaned_data['last_name']
 		city=request.POST.get('city','')
-		bday=request.POST.get('birthDay','')
+		# bday=request.POST.get('birthDay','')
 		state=request.POST.get('state','')
 		country=request.POST.get('country','')
 		profession=request.POST.get('profession','')
@@ -61,5 +62,12 @@ class MySignupForm(forms.Form):
 		categories=request.POST.getlist('categories','')
 		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
 		user_categories = ",".join(str(x) for x in categories_list)
+		print(request.POST)
+		bday_day = int(request.POST.getlist('birthDay_day')[0])
+		bday_month = int(request.POST.getlist('birthDay_month')[0])
+		bday_year = int(request.POST.getlist('birthDay_year')[0])
+		print(bday_year,bday_month,bday_day)
+		bday = date(bday_year,bday_month,bday_day)
+		print(bday,bday_year,bday_month,bday_day)
 		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''),categories=user_categories)
 		extendeduser.save()
