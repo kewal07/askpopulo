@@ -152,4 +152,7 @@ span#cats{
  	.g-recaptcha{
 		margin-left:0.5rem;
 	}
+	#id_birthDay_month,#id_birthDay_day,#id_birthDay_year{
+		width:31% !important;
+	}
 }

@@ -290,6 +290,10 @@ li.first{
 	position:absolute;
 	left:-33rem;
 }
+.newDateForm{
+	width: 75%;
+  	margin: 0 auto;
+}
 @media only screen and (max-width: 960px){
 	#header{
 		 position: relative;
