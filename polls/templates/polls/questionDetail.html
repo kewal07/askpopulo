@@ -337,7 +337,9 @@ var disqus_config = function() {
 			function drawAgeChart() {
 			  var ageData = [['Age Group', 'Votes']];
 			  var under_19 = 0;
-			  var bet_20_35 = 0;
+			  var bet_20_25 = 0;
+			  var bet_26_30 = 0;
+			  var bet_31_35 = 0;
 			  var bet_36_50 = 0;
 			  var over_50 = 0;
 			  {% for voted in question.voted_set.all %}
@@ -345,8 +347,12 @@ var disqus_config = function() {
 			  		over_50++;
 			  	{% elif voted.user.extendeduser.calculate_age > 35 %}
 			  		bet_36_50++;
-				{% elif voted.user.extendeduser.calculate_age > 19 %}
-			  		bet_20_35++;
+			  	{% elif voted.user.extendeduser.calculate_age > 30 %}
+			  		bet_31_35++;
+			  	{% elif voted.user.extendeduser.calculate_age > 25 %}
+			  		bet_26_30++;
+			  	{% elif voted.user.extendeduser.calculate_age > 19 %}
+			  		bet_20_25++;
 				{% elif voted.user.extendeduser.calculate_age > 0 %}
 			  		under_19++;
 				{% else %}
@@ -354,7 +360,9 @@ var disqus_config = function() {
 			  	{% endif %}
 			  {% endfor %}
 			  ageData.push(['Upto 19',under_19]);
-			  ageData.push(['20-35',bet_20_35]);
+			  ageData.push(['20-25',bet_20_25]);
+			  ageData.push(['26-30',bet_26_30]);
+			  ageData.push(['31-35',bet_31_35]);
 			  ageData.push(['36-50',bet_36_50]);
 			  ageData.push(['50+',over_50]);
 			  var data = google.visualization.arrayToDataTable(ageData);

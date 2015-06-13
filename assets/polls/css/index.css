@@ -8,7 +8,7 @@
   	border-radius: 25px;
   	background-color: white;
   	opacity: 0.8;
-  	padding: 3rem 3rem;
+  	padding: 1rem;/*earlier it was 3rem*/
   	margin-bottom:2rem;
   	display: -ms-flex; 
   	display: -webkit-flex; 
@@ -75,7 +75,7 @@
 	margin-top:0.5rem;
 }
 .mainPoll .optionsForm{
-	padding:2rem 2rem;
+	padding:1rem;/*earlier it was 2rem*/
 }
 .optionsForm p {
 	padding-left:0.5rem;
@@ -92,7 +92,7 @@ ul.pollInfoUl li {
 	height: 120px;
 	width:120px;
   	border: 5px solid #666;
-  	margin-right: 4rem;
+  	margin-right: 6rem;
   	cursor:pointer;
 }
 .choice_image:hover{

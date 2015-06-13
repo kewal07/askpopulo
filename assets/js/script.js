@@ -5,7 +5,13 @@ $(document).ready(function(){
 		$("#verticalTab").addClass("responsiveStats");
 		$("#tabContentResponsive").show();
 	}
-
+	if($(window).width() > 960){
+		/* for expiry date */
+		var cnt = $(".newDateForm").contents();
+		$(".newDateForm").remove();
+		$("label[for='qExpiry']").parent().append(cnt);
+		/* end */
+	}
 	/*gender css for responsive view*/
 	// console.log($("label[for='id_gender_0']").parent().children().first().next());
 	// $("label[for='id_gender_0']").parent().children().first().next().css({"display":"inline-block !important","width":"33% !important"});
