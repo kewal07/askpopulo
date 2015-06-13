@@ -3,6 +3,13 @@
 {% disqus_show_comments %}
 {% set_disqus_url object.get_absolute_url %} 
 {% load static %}
+{% block meta_data_extra %}
+	<meta property="og:title" content="AskByPoll"/>
+	<meta property="og:type" content="article"/>
+	<meta property="og:url" content="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"/>
+	<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogo.png"/>
+	<meta property="og:description" content="{{ question.question_text  }}" />
+{% endblock %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
@@ -11,10 +18,6 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 {% endblock %}
 {% block content %}
-	<meta property="og:title" content="AskPopulo"/>
-	<meta property="og:type" content="Polling Site"/>
-	<meta property="og:url" content="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"/>
-	<meta property="og:image" content="/static/login/images/defaultAvatar.png"/>
 	<section id="content">
 			<div class="questions">
 				<div class="questionContent">

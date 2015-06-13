@@ -26,10 +26,10 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'choices'+os.se
         im = Image.open(path)
         msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
         log_file.write(msg)
-        #print("Size of",path,"is",im.size,"@",dt.datetime.now())
+        #print(msg)
         if im.size[0] > 128 or im.size[1] > 128:
             msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
-            #print()
+            #print(msg)
             log_file.write(msg)
             im.thumbnail(resize_to)
             im.save(path)
@@ -46,12 +46,34 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'profile'+os.se
         im = Image.open(path)
         msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
         log_file.write(msg)
-        #print()
+        #print(msg)
         if im.size[0] > 128 or im.size[1] > 128:
             msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
-            #print()
+            #print(msg)
             log_file.write(msg)
             im.thumbnail(resize_to)
             im.save(path)
+"""
+for root,dirs,files in os.walk(script_path+os.sep+'media'):  
+    for fname in files:
+        path=os.path.join(root,fname)
+        st=os.stat(path)    
+        #mtime=dt.datetime.fromtimestamp(st.st_mtime)
+        #print(mtime,ago)
+        #if mtime>ago:
+        #print('%s modified %s'%(path,mtime))
+        #imfile, ext = os.path.splitext(path)
+        #print(imfile,ext,path)
+        im = Image.open(path)
+        msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
+        log_file.write(msg)
+        #print(msg)
+        if im.size[0] > 128 or im.size[1] > 128:
+            msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
+            #print(msg)
+            log_file.write(msg)
+            im.thumbnail(resize_to)
+            im.save(path)
+"""
 
 log_file.close()

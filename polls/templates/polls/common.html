@@ -2,10 +2,12 @@
 <html itemscope itemtype="http://schema.org/Review">
     <head>
 		{% load staticfiles %}
-		<meta itemprop="name" content="AskThePeople">
+		<meta itemprop="name" content="AskByPoll">
 		<meta itemprop="description" content="Posting a Poll">
-		<meta itemprop="image" content="/static/login/images/defaultAvatar.png">
+		<meta itemprop="image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogo.png">
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
+		{% block meta_data_extra %}
+		{% endblock %}
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/common.css' %}" />
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/chardinjs.css' %}" />
