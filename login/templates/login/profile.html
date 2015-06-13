@@ -13,7 +13,8 @@
 		{% if user %}
 		<section id="profile">
 				<div class="profilePic">
-					{% if user.socialaccount_set.all %}
+					<img src="{{ user.extendeduser.get_profile_pic_url }}" alt="User {{ user.first_name }}"	>
+					<!-- {% if user.socialaccount_set.all %}
 					  {% if user.extendeduser.imageUrl %}
 						<img src="{{ user.extendeduser.imageUrl }}" alt="User {{ user.first_name }}">
 					  {% endif %}
@@ -24,6 +25,7 @@
 						<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
 					  {% endif %}
 					{% endif %}
+					{{ user.extendeduser.profile_pic_url }} -->
 				</div>
 				<div class="profileContent">
 					<ul class="tabs clearfix">

@@ -13,7 +13,9 @@ import hashlib
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
 	filename = "profilepic%s.%s" % (instance.user_pk, ext)
-	profilePath = (os.path.join(settings.BASE_DIR,'media/profile/'))
+	# profilePath = (os.path.join(settings.BASE_DIR,'media/profile/'))
+	folder_day = date.today()
+	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'profile'+os.sep+str(folder_day)))
 	return os.path.join(profilePath,filename)
 
 class ExtendedUser(models.Model):
@@ -53,18 +55,34 @@ class ExtendedUser(models.Model):
 
 	def get_full_name(self):
 		return self.user.first_name+ " "+self.user.last_name
+
+	def get_folder_day(self):
+		folder_day = ""
+		try:
+			day = self.imageUrl.path.split(os.sep)[-2]
+			# print(day.split("-"))
+			# print(day,int(day.split("-")[0]),int(day.split("-")[2]),int(day.split("-")[3]))
+			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
+		except:
+			pass
+		return folder_day
 		
 	def get_profile_pic_url(self):
 		default_pic_url = "/static/login/images/defaultAvatar.png"
 		if self.user.socialaccount_set.all():
 			if self.imageUrl:
 				img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
+				# print(img_url)
 				if img_url.startswith("https"):
 					return r"https://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/https:/","")
-				return r"http://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/http:/","")
+				elif img_url.startswith("http"):
+					return r"http://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/http:/","")
+				else:
+					# print("/media/profile/"+self.get_profile_pic_name())
+					return "/media/profile/"+self.get_folder_day()+os.sep+self.get_profile_pic_name()
 		else:
 			if self.imageUrl:
-				return "/media/profile/"+self.get_profile_pic_name()
+				return "/media/profile/"+self.get_folder_day()+os.sep+self.get_profile_pic_name()
 		return default_pic_url	
 
 	def calculate_age(self):
