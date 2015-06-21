@@ -68,7 +68,7 @@
 													item.parent().css({"display":"inline-block"});
 													// console.log($this.parent().next().children().first().show());
 												</script>
-													<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+													<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
 													<!-- <p>{{ choice.choice_text }}</p> -->
 												{% else %}
 													{{ choice.choice_text }}
