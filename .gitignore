@@ -8,3 +8,4 @@ static*
 askbypoll_crone.log
 askbypoll_crone.sh
 crone_output.log
+*.log

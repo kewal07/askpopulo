@@ -75,7 +75,10 @@ class RedirectLoginView(generic.ListView):
 				if social_set.provider == 'google':
 					google_data = social_set.extra_data
 					img_url = google_data.get('picture')
-					gender_data = google_data.get('gender','')[0].upper()
+					if 'gender' in google_data :
+						gender_data = google_data.get('gender','')[0].upper()
+					else:
+						gender_data = 'D'
 					extendedUser = ExtendedUser(user=user, imageUrl = img_url, gender=gender_data)
 					extendedUser.save()
 				if social_set.provider == 'twitter':
