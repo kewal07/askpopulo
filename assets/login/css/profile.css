@@ -82,7 +82,7 @@ html{
     background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
     margin: 0rem 0rem;
     padding: 3rem 0rem;
-    opacity: 0.8;
+    opacity: 0.9;
     border: 3px solid #000;
   	border-radius: 25px;
 }
@@ -188,7 +188,7 @@ ul.ul-easy-tabs-polls li{
   border: 3px solid #000;
     border-radius: 25px;
     background-color: white;
-    opacity: 0.8;
+    opacity: 0.9;
     padding: 1rem 3rem;
     margin-bottom:2rem;
     display: -ms-flex; 

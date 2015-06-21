@@ -22,6 +22,9 @@ html{
   left: -3%;
   text-transform: capitalize;
 }
+.choices figure{
+	width:50%;
+}
 #submit{
 	display: inline-block;
 	padding: 0 2rem 0 2rem;
@@ -305,8 +308,10 @@ ul.share-buttons li{
 	margin:0 1rem;
 }
 .choiceFigCaption{
-	text-align: center;
-	height:21px;
+	/*text-align: center;*/
+	/*height:21px;*/
+	width:54%;
+	margin-left:1rem;
 }
 .que_text{
 	margin-left:1rem;
