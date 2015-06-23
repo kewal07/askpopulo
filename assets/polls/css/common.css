@@ -715,3 +715,6 @@ li.first{
   font-size: 1rem;
 }
 label.required:after { content: '*'; color:red; }
+.passwordResetKeyForm p label{
+	display: none;
+}
