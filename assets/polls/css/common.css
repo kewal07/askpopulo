@@ -145,6 +145,7 @@ ul.menu-nav li{
 .userInNav{
 	/* margin-left: 10rem; */
   	margin-top: -1.2rem;
+	cursor:pointer;
 }
 .userInNav img{
 	width: 75px;

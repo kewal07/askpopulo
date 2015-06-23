@@ -12,8 +12,10 @@
 {% block content %}
 <section id="signup">
 	<div class="signup">
-		<div class="signupContent">
-			<!-- <h1>{% trans "Sign Up" %}</h1> -->
+		<div class="signupContent" style="text-align:center;margin:1rem">
+			There is already an account registered using this email-id. Please <a href="{% url 'account_login' %}"><span class="anchorSpan">Sign in</span></a>.
+
+			<!-- <h1>{% trans "Sign Up" %}</h1>
 
 			<p>{% blocktrans %}Already have an account ? Then please <a href="{{ login_url }}"><span class="anchorSpan">Sign in</span></a>.{% endblocktrans %}</p>
 
@@ -24,7 +26,7 @@
 			  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 			  {% endif %}
 			  <button type="submit" id="submit">Sign Up</button>
-			</form>
+			</form> -->
 		</div>
 	</div>
 </section>
