@@ -109,10 +109,10 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		subscribed_questions = []
 		user_already_voted = False
-		profilepicUrl = user.extendeduser.get_profile_pic_url()
-		if not user.socialaccount_set.all():
-			profilepicUrl = r"http://askbypoll.com"+profilepicUrl
 		if user.is_authenticated():
+			profilepicUrl = user.extendeduser.get_profile_pic_url()
+			if not profilepicUrl.startswith('http'):
+				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
 				"id":user.id,
@@ -146,28 +146,40 @@ class VoteView(generic.DetailView):
 
 	def post(self, request, *args, **kwargs):
 		user = request.user
-		questionId = -1
-		queSlug = "None"
-		if request.POST.get('choice'):
-			choiceId = request.POST.get('choice')
-			choice = Choice.objects.get(pk=choiceId)
-			questionId = request.POST.get('question')
-			question = Question.objects.get(pk=questionId)
-			queSlug = question.que_slug
-			voted_questions = user.voted_set.filter(user=user,question=question)
-			if not voted_questions:
-				vote = Vote(user=user, choice=choice)
-				voted = Voted(user=user, question=question)
-				subscribed = Subscriber(user=user, question=question)
-				vote.save()
-				voted.save()
-				subscribed.save()
+		questionId = request.POST.get('question')
+		question = Question.objects.get(pk=questionId)
+		queSlug = question.que_slug
+		# queSlug = "None"
+		# print(user,user.is_authenticated())
+		if user.is_authenticated():
+			if request.POST.get('choice'):
+				choiceId = request.POST.get('choice')
+				choice = Choice.objects.get(pk=choiceId)
+				# questionId = request.POST.get('question')
+				# question = Question.objects.get(pk=questionId)
+				# queSlug = question.que_slug
+				voted_questions = user.voted_set.filter(user=user,question=question)
+				if not voted_questions:
+					vote = Vote(user=user, choice=choice)
+					voted = Voted(user=user, question=question)
+					subscribed = Subscriber(user=user, question=question)
+					vote.save()
+					voted.save()
+					subscribed.save()
+			else:
+				# error to show no choice selected
+				data={}
+				data['form_errors'] = "Please select a choice"
+				return HttpResponse(json.dumps(data),
+	                            content_type='application/json')
 		else:
-			# error to show no choice selected
-			data={}
-			data['form_errors'] = "No choice selected"
-			return HttpResponse(json.dumps(data),
-                            content_type='application/json')
+				# print(questionId,queSlug)
+				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
+				# print(next_url)
+				url = reverse('account_login')
+				url += "?next="+next_url
+				# print(url)
+				return HttpResponseRedirect(url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 		
