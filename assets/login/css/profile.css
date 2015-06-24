@@ -4,9 +4,20 @@ html{
 	background-size:cover;
   font-family: 'Arvo', serif;
 }
+
+.categoriesList{
+	margin-top:10rem !important;
+	position: relative;
+  	border: 3px solid #000;
+  	border-radius: 25px;
+	background-color: white;
+  	opacity: 0.9;
+  	padding: 1rem;
+  	margin-bottom: 2rem;
+}
 #profile{
 	margin: 7rem 5rem 0rem 5rem;
-  margin-bottom: 80rem;
+  	margin-bottom: 80rem;
 }
 .profilePic{
 	margin: 2% 2% 5% 16%;

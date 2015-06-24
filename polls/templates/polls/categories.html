@@ -2,17 +2,20 @@
 {% load static %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
 {% endblock %}
 {% block content %}
-	<section id="myCategories">
+<section id="myCategories">
       <h2><a href="#myCategories">Categories</a></h2>
-      <div>
-    	{% for category in categories %}
-    		<figure class="category_figure">
-				<img class="category_imagethumbnails" src="{{ category.category_image }}" alt="{{ category.category_title }}">
-				<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
-			</figure>
-    	{% endfor %}
+	<div class="categoriesList">
+    		{% for category in categories %}
+			<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
+    				<figure class="category_figure">
+					<img class="category_imagethumbnails" src="{{ category.category_image }}" alt="{{ category.category_title }}">
+					<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
+				</figure>
+			</a>
+    		{% endfor %}
 	</div>
-  </section>
+</section>
 {% endblock %}
