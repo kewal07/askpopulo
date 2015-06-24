@@ -437,6 +437,13 @@ class ReportAbuse(generic.ListView):
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
+class CategoryView(generic.ListView):
+	template_name = 'polls/categories.html'
+	context_object_name = 'categories'
+	def get_queryset(self):
+		mainData = Category.objects.all()
+		return mainData
+
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
     suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs]
