@@ -50,6 +50,7 @@ class IndexView(generic.ListView):
 			category_title = request.GET.get('category')
 			category = Category.objects.filter(category_title=category_title)[0]
 			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category)]
+			latest_questions = latest_questions[::-1]
 		else:
 			latest_questions = Question.objects.order_by('-pub_date')
 		subscribed_questions = []
