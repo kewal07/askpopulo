@@ -718,3 +718,11 @@ label.required:after { content: '*'; color:red; }
 .passwordResetKeyForm p label{
 	display: none;
 }
+input[disabled].submit{
+  /*color: red;*/
+  background-color: red;
+}
+button[disabled].submit{
+  /*color: red;*/
+  background-color: red;
+}
