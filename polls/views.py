@@ -19,6 +19,7 @@ import time
 from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
+from django.utils import timezone
 
 # Create your views here.
 
@@ -85,6 +86,9 @@ class IndexView(generic.ListView):
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
+			data['expired'] = False
+			if mainquestion.expiry and mainquestion.expiry < timezone.now():
+				data['expired'] = True
 			user_already_voted = False
 			if user.is_authenticated():
 				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
@@ -162,6 +166,9 @@ class VoteView(generic.DetailView):
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
 		context['subscribed'] = sub_que
+		context['expired'] = False
+		if context['question'].expiry and context['question'].expiry < timezone.now():
+			context['expired'] = True
 		return context
 
 	def post(self, request, *args, **kwargs):
