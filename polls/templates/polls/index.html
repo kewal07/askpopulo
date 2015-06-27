@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 	<section id="content">
-			{% if user.username in request.path %}
+			{% if user.is_authenticated and user.username in request.path %}
 				<div class="mypolltab">
 					<a href="{{ request.path }}" class="mypollstabs">Asked</a>
 					<a href="{{ request.path }}?tab=voted" class="mypollstabs">Voted</a>
