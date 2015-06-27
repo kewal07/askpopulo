@@ -2,7 +2,7 @@
 	margin: 7rem 5rem 0rem 5rem;
 	padding-bottom:220px;
 }
-.questions{
+.questions, .mypolltab{
 	position: relative;
 	border: 3px solid #000;
   	border-radius: 25px;
@@ -364,4 +364,25 @@ button.followButton.unfollow{
 }
 .page-links a{
 	color: orange;
+}
+
+.mypollstabs{
+	background-color: #323232;
+	margin: 0 5rem;
+	padding: 0.5rem;
+	border-radius: 7px;
+	color: white;
+}
+
+.mypollstabs:hover{
+	background-color: red;
+}
+
+.mypolltab{
+	padding: 0;
+	border: none;
+	background: transparent;
+	border-bottom: 5px solid #fff;
+	border-radius: 0;
+	padding-bottom: 1rem
 }

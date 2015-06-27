@@ -23,9 +23,15 @@ from PIL import Image,ImageChops
 # Create your views here.
 
 class IndexView(generic.ListView):
-	template_name = 'polls/index.html'
 	context_object_name = 'data'
 	paginate_by = 50
+
+	def get_template_names(self):
+		request = self.request
+		template_name = 'polls/index.html'
+		if request.path.endswith('category') and not request.GET.get('category'):
+			template_name = 'polls/categories.html'
+		return [template_name]
 	
 	def get_queryset(self):
 		request = self.request
@@ -33,16 +39,29 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
-		if request.path.endswith('featuredpolls'):
+		if request.path.endswith('category') and not request.GET.get('category'):
+			mainData = Category.objects.all()
+			return mainData
+		elif request.path.endswith('featuredpolls'):
 			latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')
 		elif user.is_authenticated() and request.path.endswith(user.username):
-			if user.extendeduser.categories:
-				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
-				user_categories = Category.objects.filter(pk__in=user_categories_list)
-				que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-				latest_questions = [x.question for x in que_cat_list]
-			followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
-			latest_questions.extend(followed_questions)
+			if request.GET.get('tab') == 'mycategories':
+				category_questions = []
+				if user.extendeduser.categories:
+					user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
+					user_categories = Category.objects.filter(pk__in=user_categories_list)
+					que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
+					category_questions = [x.question for x in que_cat_list]
+					latest_questions.extend(category_questions)
+			elif request.GET.get('tab') == 'followed':
+				followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
+				latest_questions.extend(followed_questions)
+			elif request.GET.get('tab') == 'voted':
+				voted_questions = [x.question for x in Voted.objects.filter(user=user)]
+				latest_questions.extend(voted_questions)
+			elif request.GET.get('tab') == 'mypolls' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				asked_polls = Question.objects.filter(user=user)
+				latest_questions.extend(asked_polls)
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
@@ -437,13 +456,6 @@ class ReportAbuse(generic.ListView):
 		send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
-
-class CategoryView(generic.ListView):
-	template_name = 'polls/categories.html'
-	context_object_name = 'categories'
-	def get_queryset(self):
-		mainData = Category.objects.all()
-		return mainData
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
