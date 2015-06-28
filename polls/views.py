@@ -44,7 +44,13 @@ class IndexView(generic.ListView):
 			mainData = Category.objects.all()
 			return mainData
 		elif request.path.endswith('featuredpolls'):
-			latest_questions = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
+			adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
+			featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0).order_by('-pub_date')
+			latest_questions.extend(featuredpolls)
+			latest_questions.extend(adminpolls)
+			if latest_questions:
+				latest_questions = list(OrderedDict.fromkeys(latest_questions))
+				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 		elif user.is_authenticated() and request.path.endswith(user.username):
 			if request.GET.get('tab') == 'mycategories':
 				category_questions = []
