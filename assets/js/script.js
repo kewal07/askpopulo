@@ -115,7 +115,11 @@ $(document).ready(function(){
 
 function activateMenuLink () {
 	$( ".menuanchor" ).each(function( ) {
-		if($(this)[0].href == window.location.href)
+		elemHref = $(this)[0].href;
+		windowHref = window.location.href;
+		if(windowHref.indexOf("?") != -1)
+			windowHref = windowHref.substr(0,windowHref.indexOf("?"));
+		if(windowHref == elemHref)
 			$(this).addClass('anchoractive');
 	});
 }

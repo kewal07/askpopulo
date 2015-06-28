@@ -8,7 +8,7 @@
 <section id="myCategories">
       <h2><a href="#myCategories">Categories</a></h2>
 	<div class="categoriesList">
-    		{% for category in categories %}
+    		{% for category in data %}
 			<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
     				<figure class="category_figure">
 					<img class="category_imagethumbnails" src="{{ category.category_image }}" alt="{{ category.category_title }}">

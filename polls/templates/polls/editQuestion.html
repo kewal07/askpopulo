@@ -374,6 +374,14 @@
 						{% endif %}
 						<label for="anonymous">Ask as Anonymous</label>
 					</p>
+					<p class="anonymous">
+						{% if question.privatePoll %}
+							<input id="private" name="private" type="checkbox" checked>
+						{% else %}
+							<input id="private" name="private" type="checkbox">
+						{% endif %}
+						<label for="private">Make Poll as Private</label>
+					</p>
 					<p>
 					<input class="submit" type="submit" value="Update" />
 					</p>

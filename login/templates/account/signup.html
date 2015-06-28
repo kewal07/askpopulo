@@ -22,7 +22,7 @@
 			  {% if redirect_field_value %}
 			  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 			  {% endif %}
-			  <button type="submit" class="submit">Sign Up</button>
+			  <button type="submit" class="submit" id="signupButton">Sign Up</button>
 			</form>
 		</div>
 	</div>
@@ -30,6 +30,12 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('.category_checkbox').prop('checked', true);
+		$("#signupButton").bind('click',function(){
+			// console.log($("#signupButton"));
+			$("#signupButton").unbind('click').click();
+			$("#signupButton").attr("disabled","disabled");
+			return false;
+		});
 	});
 </script>
 

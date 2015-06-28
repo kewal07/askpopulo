@@ -19,13 +19,20 @@ import time
 from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
+from django.utils import timezone
 
 # Create your views here.
 
 class IndexView(generic.ListView):
-	template_name = 'polls/index.html'
 	context_object_name = 'data'
 	paginate_by = 50
+
+	def get_template_names(self):
+		request = self.request
+		template_name = 'polls/index.html'
+		if request.path.endswith('category') and not request.GET.get('category'):
+			template_name = 'polls/categories.html'
+		return [template_name]
 	
 	def get_queryset(self):
 		request = self.request
@@ -33,27 +40,41 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
-		if request.path.endswith('featuredpolls'):
+
+		if request.path.endswith('category') and not request.GET.get('category'):
+			mainData = Category.objects.all()
+			return mainData
+		elif request.path.endswith('featuredpolls'):
 			sendFeed()
-			latest_questions = Question.objects.filter(user__is_superuser=1).order_by('-pub_date')
+			latest_questions = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
 		elif user.is_authenticated() and request.path.endswith(user.username):
-			if user.extendeduser.categories:
-				user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
-				user_categories = Category.objects.filter(pk__in=user_categories_list)
-				que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-				latest_questions = [x.question for x in que_cat_list]
-			followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
-			latest_questions.extend(followed_questions)
+			if request.GET.get('tab') == 'mycategories':
+				category_questions = []
+				if user.extendeduser.categories:
+					user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
+					user_categories = Category.objects.filter(pk__in=user_categories_list)
+					que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
+					category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0]
+					latest_questions.extend(category_questions)
+			elif request.GET.get('tab') == 'followed':
+				followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
+				latest_questions.extend(followed_questions)
+			elif request.GET.get('tab') == 'voted':
+				voted_questions = [x.question for x in Voted.objects.filter(user=user)]
+				latest_questions.extend(voted_questions)
+			elif request.GET.get('tab') == 'mypolls' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				asked_polls = Question.objects.filter(user=user)
+				latest_questions.extend(asked_polls)
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 		elif request.GET.get('category'):
 			category_title = request.GET.get('category')
 			category = Category.objects.filter(category_title=category_title)[0]
-			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category)]
+			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
 			latest_questions = latest_questions[::-1]
 		else:
-			latest_questions = Question.objects.order_by('-pub_date')
+			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)
@@ -67,6 +88,9 @@ class IndexView(generic.ListView):
 			data['votes'] = mainquestion.voted_set.count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
+			data['expired'] = False
+			if mainquestion.expiry and mainquestion.expiry < timezone.now():
+				data['expired'] = True
 			user_already_voted = False
 			if user.is_authenticated():
 				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
@@ -144,6 +168,9 @@ class VoteView(generic.DetailView):
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
 		context['subscribed'] = sub_que
+		context['expired'] = False
+		if context['question'].expiry and context['question'].expiry < timezone.now():
+			context['expired'] = True
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -341,10 +368,15 @@ class CreatePollView(generic.ListView):
 				images.append(choice4Image)
 			selectedCats = request.POST.get('selectedCategories','').split(",")
 			isAnon = request.POST.get('anonymous')
+			isPrivate = request.POST.get('private')
 			if isAnon:
 				anonymous = 1
 			else:
 				anonymous = 0
+			if isPrivate:
+				private = 1
+			else:
+				private = 0
 			# return if any errors
 			if not (choice1.strip() or choice1Image) or not (choice2.strip() or choice2Image):
 				errors['choiceError'] = "Choice required"
@@ -373,8 +405,9 @@ class CreatePollView(generic.ListView):
 				question.description=qDesc
 				question.expiry=qExpiry
 				question.isAnonymous=anonymous
+				question.privatePoll=private
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous,privatePoll=private)
 			question.save()
 			sub = Subscriber(user=user,question=question)
 			sub.save()
@@ -386,11 +419,17 @@ class CreatePollView(generic.ListView):
 					choice.delete()
 				for que_cat in question.questionwithcategory_set.all():
 					que_cat.delete()
-			for cat in selectedCats:
-				if cat:
-					category = Category.objects.filter(category_title=cat)[0]
-					qWcat = QuestionWithCategory(question=question,category=category)
-					qWcat.save()
+			# print("selectedcates",selectedCats,list(filter(bool, selectedCats)))
+			if list(filter(bool, selectedCats)):
+				for cat in selectedCats:
+					if cat:
+						category = Category.objects.filter(category_title=cat)[0]
+						qWcat = QuestionWithCategory(question=question,category=category)
+						qWcat.save()
+			else:
+				category = Category.objects.filter(category_title="Miscellaneous")[0]
+				qWcat = QuestionWithCategory(question=question,category=category)
+				qWcat.save()
 			if choice1 or choice1Image:
 				choice = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
 				choice.save()
@@ -440,13 +479,6 @@ class ReportAbuse(generic.ListView):
 		send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
-
-class CategoryView(generic.ListView):
-	template_name = 'polls/categories.html'
-	context_object_name = 'categories'
-	def get_queryset(self):
-		mainData = Category.objects.all()
-		return mainData
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]

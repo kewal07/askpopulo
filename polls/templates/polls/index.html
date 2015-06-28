@@ -5,6 +5,14 @@
 {% endblock %}
 {% block content %}
 	<section id="content">
+			{% if user.is_authenticated and user.username in request.path %}
+				<div class="mypolltab">
+					<a href="{{ request.path }}" class="mypollstabs">Asked</a>
+					<a href="{{ request.path }}?tab=voted" class="mypollstabs">Voted</a>
+					<a href="{{ request.path }}?tab=followed" class="mypollstabs">Followed</a>
+					<a href="{{ request.path }}?tab=mycategories" class="mypollstabs">Category Polls</a>
+				</div>
+			{% endif %}
 			{% if data %}
 					{% for question in data %}
 					<div class="questions">
@@ -80,7 +88,11 @@
 									{% if question.user_already_voted %}
 										<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
-										<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+										{% if question.expired %}
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Expired" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+										{% else %}
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+										{% endif %}
 										{% if user.id == question.question.user.id  %}
 											<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 										{% endif %}
@@ -128,6 +140,13 @@
 		$(document).ready(function()
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
+			$( ".mypollstabs" ).each(function( ) {
+				if($(this)[0].href == window.location.href)
+					$(this).css({
+						"background-color":"white",
+						"color":"black"
+					});
+			});
 			$('.fa-ban').click(function()
 			{
 				var queid = $(this)[0].id.replace('ban','');

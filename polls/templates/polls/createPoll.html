@@ -379,7 +379,11 @@
 						<input id="anonymous" name="anonymous" type="checkbox">
 						<label for="anonymous">Ask as Anonymous</label>
 					</p>
-					<input class="submit" type="submit" value="Create" />
+					<p class="anonymous">
+						<input id="private" name="private" type="checkbox">
+						<label for="private">Make Poll as Private</label>
+					</p>
+					<input class="submit" type="submit" value="Create" id="createPollSubmit"/>
 				</form>
 				</div>
 			</div>
@@ -405,6 +409,8 @@
 				$(elemid).bind('submit', function()
 				{
 					//console.log("submit called....");
+					// console.log($("#createPollSubmit"));
+					$("#createPollSubmit").attr("disabled","disabled");
 					var create_url = "http://{{ request.META.HTTP_HOST }}/createpoll?ajax=1";
 					{% if user.is_authenticated %}
 					//console.log("call ajax");
@@ -440,6 +446,7 @@
 			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#qExpiry_ap").parent().children().first().append('<span class="errorlist"><br>'+expiry_error+'</span>');
+			                        $("#createPollSubmit").removeAttr('disabled');
 								}
 							}
 						});
