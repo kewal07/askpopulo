@@ -31,6 +31,7 @@ class Question(models.Model):
 	isAnonymous = models.BooleanField(default=0)
 	que_slug = models.SlugField(null=True,blank=True)
 	privatePoll = models.BooleanField(default=0)
+	featuredPoll = models.BooleanField(default=0)
 	
 	def save(self, *args, **kwargs):
 		short_q_text = self.question_text[:50]
