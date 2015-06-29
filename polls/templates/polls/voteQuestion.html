@@ -95,7 +95,7 @@
 							{% else %}
 								<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
 							{% endif %}
-							{% if user.id == question.user.id  %}
+							{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 								<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
 							{% endif %}
 						{% endif %}

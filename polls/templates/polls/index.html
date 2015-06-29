@@ -93,7 +93,7 @@
 										{% else %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
 										{% endif %}
-										{% if user.id == question.question.user.id  %}
+										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 											<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 										{% endif %}
 									{% endif %}

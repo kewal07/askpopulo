@@ -132,7 +132,7 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
-			if voted or user.id == question.user.id:
+			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ):
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
 	
