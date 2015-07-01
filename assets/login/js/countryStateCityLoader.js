@@ -268,7 +268,7 @@ for (var i = 0; i < length; i++) {
 
 $("#id_country").change(function(){
 	$('#id_state option').remove();
-	$("#id_state").append('<option value='+s_a[0]+'>'+s_a[0]+'</option>');
+	$("#id_state").append('<option value="'+s_a[0]+'">'+s_a[0]+'</option>');
 	var selectedCountry = $("#id_country option:selected").text();
 	var selectedCountryIndex = countryList.indexOf(selectedCountry);
 	//alert(countryList.indexOf(selectedCountry));
@@ -277,7 +277,7 @@ $("#id_country").change(function(){
 	
 	for (var i = 0; i < stateListLength; i++) {
 		//console.log('<option value='+countryList[i]+'>'+countryList[i]+'</option>');
-		var tempOption = '<option value='+stateList[i]+'>'+stateList[i]+'</option>';
+		var tempOption = '<option value="'+stateList[i]+'">'+stateList[i]+'</option>';
 		$("#id_state").append(tempOption);
 	}
 });
