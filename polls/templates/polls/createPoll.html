@@ -411,13 +411,13 @@
 					//console.log("submit called....");
 					// console.log($("#createPollSubmit"));
 					$("#createPollSubmit").attr("disabled","disabled");
-					var create_url = "http://{{ request.META.HTTP_HOST }}/createpoll?ajax=1";
+					var create_url = "https://{{ request.META.HTTP_HOST }}/createpoll?ajax=1";
 					{% if user.is_authenticated %}
 					//console.log("call ajax");
 						$.ajax(
 						{
 							type: 'POST',
-							url:create_url,
+							url:"?ajax=1",
 							data:form_data,
 							processData: false,
 							contentType: false,

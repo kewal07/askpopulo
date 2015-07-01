@@ -52,7 +52,7 @@ class IndexView(generic.ListView):
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-			sendFeed()
+			#sendFeed()
 		elif user.is_authenticated() and request.path.endswith(user.username):
 			if request.GET.get('tab') == 'mycategories':
 				category_questions = []
@@ -132,7 +132,7 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
-			if voted or user.id == question.user.id:
+			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ):
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
 	
@@ -188,6 +188,8 @@ class VoteView(generic.DetailView):
 		# print(user,user.is_authenticated())
 		if user.is_authenticated():
 			if request.POST.get('choice'):
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
 				choiceId = request.POST.get('choice')
 				choice = Choice.objects.get(pk=choiceId)
 				# questionId = request.POST.get('question')
@@ -208,13 +210,17 @@ class VoteView(generic.DetailView):
 				return HttpResponse(json.dumps(data),
 	                            content_type='application/json')
 		else:
-				# print(questionId,queSlug)
+				# print(questionId,queSlug)		
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
 				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 				# print(next_url)
 				url = reverse('account_login')
-				url += "?next="+next_url
+				extra_params = '?next=%s'%next_url
+				#url += "?next="+next_url
+				full_url = '%s%s'%(url,extra_params)
 				# print(url)
-				return HttpResponseRedirect(url)
+				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 		
@@ -455,9 +461,8 @@ class PollsSearchView(SearchView):
     
     def extra_context(self):
         queryset = super(PollsSearchView, self).get_results()
-        return {
-            'query': queryset,
-        }
+        queryset = [x for x in queryset if x.object.privatePoll == 0]
+        return {'query': queryset,}
 
 class FollowPollView(generic.ListView):
 
@@ -488,7 +493,7 @@ class ReportAbuse(generic.ListView):
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
-    suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs]
+    suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs if result.object.privatePoll == 0]
     the_data = json.dumps({
         'results': suggestions
     })
@@ -498,7 +503,7 @@ import pymysql
 import random
 from django.core.mail import EmailMessage
 def sendFeed():
-	conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='#welcome12345', db='askbypoll')
+	conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='vfr43edc', db='askbypoll')
 	
 	questionCur = conn.cursor()
 	questionCur.execute("SELECT id,question_text,que_slug FROM polls_question ORDER BY id DESC LIMIT 0 , 3")
@@ -542,7 +547,7 @@ def sendFeed():
 				subsQSlug.append(data[4])
 
 		msg = EmailMessage(subject="Your Personal News Feed delivered with love by Ask By Poll!", from_email="askbypoll@gmail.com",to=['goyal.ankit.049@gmail.com','kewal07@gmail.com'])
-		msg.template_name = "activity-letter"           # A Mandrill template name
+		msg.template_name = "activityletter"           # A Mandrill template name
 		#msg.template_content = {                        # Content blocks to fill in
 		#   'TRACKING_BLOCK1': "<a href='.../*|Link1|*'>Poll1</a>",
 		   #'Link1':"<a href='www.askbypoll.com/polls/'+str(topPolls[0].id)+'/'+topPolls[0].que_slug> *|TOP1|* </a>"
@@ -586,6 +591,7 @@ def sendFeed():
 			}
 		print(msg.global_merge_vars)
 		msg.send()
+		break
 		subsQId  = []
 		subsQText= []
 		subsQSlug= []
