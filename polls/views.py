@@ -20,6 +20,7 @@ from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
+from login.models import ExtendedUser
 
 # Create your views here.
 
@@ -142,6 +143,7 @@ class VoteView(generic.DetailView):
 		subscribed_questions = []
 		user_already_voted = False
 		if user.is_authenticated():
+			createExtendedUser(user)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
 				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
@@ -272,6 +274,7 @@ class CreatePollView(generic.ListView):
 	context_object_name = 'data'
 	
 	def get_queryset(self):
+		createExtendedUser(self.request.user)
 		return Category.objects.all()
 	
 	def post(self, request, *args, **kwargs):
@@ -604,3 +607,34 @@ def sendFeed():
 	userIdCur.close()
 	catCur.close()
 	conn.close()
+
+def createExtendedUser(user):
+	if hasattr(user,'extendeduser'):
+		# user_slug = request.user.extendeduser.user_slug
+		pass
+	elif user.socialaccount_set.all():
+		social_set = user.socialaccount_set.all()[0]
+		# print((social_set.extra_data))
+		if not (ExtendedUser.objects.filter(user_id = user.id)):
+			if social_set.provider == 'facebook':
+				facebook_data = social_set.extra_data
+				img_url =  "https://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
+				gender_data = facebook_data.get('gender','')[0].upper()
+				birth_day = facebook_data.get('birthday','2002-01-01')
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, birthDay = birth_day,gender=gender_data)
+				extendedUser.save()
+			if social_set.provider == 'google':
+				google_data = social_set.extra_data
+				img_url = google_data.get('picture')
+				if 'gender' in google_data :
+					gender_data = google_data.get('gender','')[0].upper()
+				else:
+					gender_data = 'D'
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, gender=gender_data)
+				extendedUser.save()
+			if social_set.provider == 'twitter':
+				twitter_data = social_set.extra_data
+				img_url = twitter_data.get('profile_image_url')
+				city_data = twitter_data.get('location','')
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
+				extendedUser.save()
