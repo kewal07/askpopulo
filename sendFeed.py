@@ -16,7 +16,7 @@ def sendFeed():
 	userCur = conn.cursor()
 
 	userIdCur = conn.cursor()
-	userIdCur.execute("SELECT id from auth_user")
+	userIdCur.execute("SELECT id,email from auth_user")
 
 	catCur = conn.cursor()
 	catCur.execute("SELECT category_title from categories_category order by rand() LIMIT 2")
@@ -40,7 +40,9 @@ def sendFeed():
 		topQText.append(topQ[1])
 		topSlug.append(topQ[2])
 
-	for idNum in userIdCur:
+	for idNumEmail in userIdCur:
+		idNum = idNumEmail[0]
+		to_email = idNumEmail[1]
 		print('***************',idNum)
 		query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s LIMIT 3" %idNum
 		count = userCur.execute(query)
@@ -50,8 +52,8 @@ def sendFeed():
 				subsQId.append(data[2])
 				subsQText.append(data[3])
 				subsQSlug.append(data[4])
-
-		msg = EmailMessage(subject="Your Personal News Feed delivered with love by Ask By Poll!", from_email="askbypoll@gmail.com",to=['goyal.ankit.049@gmail.com','kewal07@gmail.com'])
+		print(to_email)
+		msg = EmailMessage(subject="Your Personal News Feed delivered with love by Ask By Poll!", from_email="askbypoll@gmail.com",to=[to_email])
 		msg.template_name = "activityletter"           # A Mandrill template name
 		#msg.template_content = {                        # Content blocks to fill in
 		#   'TRACKING_BLOCK1': "<a href='.../*|Link1|*'>Poll1</a>",
@@ -95,8 +97,8 @@ def sendFeed():
 		    'YLink1':'polls'+'/'+str(subsQId[0])+'/'+subsQSlug[0], 'YLink2':'polls'+'/'+str(subsQId[1])+'/'+subsQSlug[1], 'YLink3':'polls'+'/'+str(subsQId[2])+'/'+subsQSlug[2]
 			}
 		print(msg.global_merge_vars)
-		msg.send()
-		break
+		if to_email:
+			msg.send()
 		subsQId  = []
 		subsQText= []
 		subsQSlug= []

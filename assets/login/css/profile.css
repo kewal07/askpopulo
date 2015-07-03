@@ -340,10 +340,11 @@ li.secondChildResponsive{
     margin-top:0.5rem;
   }
   .categoriesList{
-    margin-top:1rem;
+    margin-top:1rem !important;
   }
   h2{
     text-align: center;
+    background: white;
   }
   #id_categories{
     margin:0;
