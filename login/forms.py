@@ -106,3 +106,9 @@ class MySignupPartForm(forms.Form):
 	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
+
+	def __init__(self,*args,**kwargs):
+		super(MySignupPartForm,self).__init__(*args,**kwargs)
+		# if you want to do it to all of them
+		for field in self.fields.values():
+			field.error_messages = {'required':'Required'}

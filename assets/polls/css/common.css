@@ -295,127 +295,6 @@ li.first{
 	width: 75%;
   	margin: 0 auto;
 }
-@media only screen and (max-width: 960px){
-	#header{
-		 position: relative;
-		 padding: 1rem 0rem 2rem 0rem;
-  	     margin-bottom: 3rem;
-		}
-	#header a{
-		color:black;
-	}
-	.logo{
-		width:100%;
-		margin:0;
-	}
-	.logo img{
-		display: block;
-  		margin:0 auto;
-  		width:initial;
-		height:75px;
-	}
-	.menu{
-		display: block;
-		position: relative;
-	}
-	.menuResponsive{
-		display: block;
-		position: absolute;
-  		top: -7px;
-  		right: 0;
-	}
-	.dropDownBox{
-		top:-76px;
-	}
-	.dropDownUL li a{
-		color:white !important;
-	}
-	.menuanchor{
-  		
-	}
-	ul.menu-nav li{
-		float:none;
-		padding: 0;
-		text-align:center;
-		background: #fff;
-		border: 3px solid #000;
-    	border-radius: 25px;
-    	margin-bottom:1rem;
-	}
-	.searchLi{
-		border:none !important;
-	}
-	.search{
-		margin:0;
-		width:100%;
-	}
-	.searchBox{
-		width:100%;
-	    margin:0 auto;
-	    font-size:1rem;
-	    height:2.7rem;
-	    border: none;
-	}
-	.userInNav{
-		display:none;
-	}
-	#display_message_section{
-		margin:0 !important;
-	}
-	#footer{
-	margin:0;
-	background: black;
-	padding-bottom:3rem;
-	width:100%;
-	color:white;
-	padding-bottom: 1rem;
-	height: initial;
-	}
-	#footerContent{
-		width:95%;
-		margin:0 auto;
-		position: relative;
-		padding-top:1rem;
-	}
-	#footer .logo{
-		display: none
-	}
-	#footer p.p1{
-		display: none;
-	}
-	#footer .menu{
-	 display: none;
-	}
-	.bottomLogo{
-		display: none;
-	}
-	.p2{
-	  display: none;
-	}
-	.menuF{
-		text-align: center;
-		font-size:1rem;
-		position: initial;
-	}
-	.menuF-nav{
-		display: inline-block;
-	}
-	.menuF-nav li{
-		display: inline-block;
-		margin-left:1rem;
-		margin-bottom:1rem;
-	}
-	.menuF-nav a{
-		color:white;
-	}
-
-}
-@media only screen and (min-width: 961px) and (max-width: 1110px){
-	.logo img{
-		width:170px;
-		height: 75px;
-	}
-}
 .anchorSpan{
 	font-size: 2rem;
   	color: orange;
@@ -467,8 +346,9 @@ li.first{
 }
 #overlay-inAbox3 {
 	display: none;
-	margin-left: 12%;
-	width: 65%;
+	position: relative;
+	margin: 0 auto;
+	width: 90%;
 }
 .overlaytext{
 	font-size: 1rem;
@@ -520,90 +400,7 @@ li.first{
 	-moz-box-shadow: inset 0px 1px 0px green, 0px 5px 0px 0px #003300, 0px 10px 5px #999;
 	box-shadow: inset 0px 1px 0px green, 0px 5px 0px 0px #003300, 0px 10px 5px #999;
 }
-/*@media only screen and (max-width: 480px){
-	#header{
-		 position: relative;
-		 padding: 1rem 0rem 1rem 0rem;
-  	     margin-bottom: 3rem;
-		}
-	.logo{
-		width:100%;
-		margin:0;
-	}
-	.logo img{
-		display: block;
-  		margin:0 auto;
-	}
-	.menu{
-		margin-top:1rem;
-		width:100%;
-	}
-	ul.menu-nav li{
-		float:none;
-		padding: 0;
-		text-align:center;
-		background: #fff;
-		border: 3px solid #000;
-    	border-radius: 25px;
-    	margin-bottom:1rem;
-	}
-	.searchLi{
-		border:none !important;
-	}
-	.search{
-		margin:0;
-		width:100%;
-	}
-	.searchBox{
-		width:100%;
-	    margin:0 auto;
-	    font-size:1rem;
-	    height:2.7rem;
-	}
-	#header,.menu,.search{
-		float:none;
-	}
-	#header{
-		position: relative;
-		width:90%;
-		margin:0 auto;
-		padding:3rem 0rem 1rem 0rem;
-	}
-	.logo{
-		width:100%;
-		margin:-2rem 1rem;
-	}
-	.logo img{
-		margin: 0 auto;
-  		display: block;
-	}
-	.menu{
-		margin-top:3rem;
-		width:100%;
-	}
-	ul.menu-nav li{
-		float:none;
-		padding: 0;
-		text-align:center;
-		background: #fff;
-		border: 3px solid #000;
-    	border-radius: 25px;
-    	margin-bottom:1rem;
-	}
-	.searchLi{
-		border:none !important;
-	}
-	.search{
-		margin:0;
-		width:100%;
-	}
-	.searchBox{
-		width:100%;
-	    margin:0 auto;
-	    font-size:1rem;
-	    height:2.7rem;
-	}
-}*/
+
 #display_message_section{
 	margin: 7rem 5rem 0rem 5rem;
 }
@@ -752,6 +549,7 @@ form.signupContentPartForm input{
 		background: transparent;
 		font-size:1rem;
 		overflow:hidden;
+
 }
 
 .signupContentPartForm select{
@@ -761,4 +559,178 @@ form.signupContentPartForm input{
 	width:90%;
 	margin:0 auto;
 	margin-bottom:2rem;
+}
+
+@media only screen and (max-width: 960px){
+	#header{
+		 position: relative;
+		 padding: 1rem 0rem 2rem 0rem;
+  	     margin-bottom: 3rem;
+		}
+	#header a{
+		color:black;
+	}
+	.logo{
+		width:100%;
+		margin:0;
+	}
+	.logo img{
+		display: block;
+  		margin:0 auto;
+  		width:initial;
+		height:75px;
+	}
+	.menu{
+		display: block;
+		position: relative;
+	}
+	.menuResponsive{
+		display: block;
+		position: absolute;
+  		top: -7px;
+  		right: 0;
+	}
+	.dropDownBox{
+		top:-76px;
+	}
+	.dropDownUL li a{
+		color:white !important;
+	}
+	.menuanchor{
+  		
+	}
+	ul.menu-nav li{
+		float:none;
+		padding: 0;
+		text-align:center;
+		background: #fff;
+		border: 3px solid #000;
+    	border-radius: 25px;
+    	margin-bottom:1rem;
+	}
+	.searchLi{
+		border:none !important;
+	}
+	.search{
+		margin:0;
+		width:100%;
+	}
+	.searchBox{
+		width:100%;
+	    margin:0 auto;
+	    font-size:1rem;
+	    height:2.7rem;
+	    border: none;
+	}
+	.userInNav{
+		display:none;
+	}
+	#display_message_section{
+		margin:0 !important;
+	}
+	#footer{
+	margin:0;
+	background: black;
+	padding-bottom:3rem;
+	width:100%;
+	color:white;
+	padding-bottom: 1rem;
+	height: initial;
+	}
+	#footerContent{
+		width:95%;
+		margin:0 auto;
+		position: relative;
+		padding-top:1rem;
+	}
+	#footer .logo{
+		display: none
+	}
+	#footer p.p1{
+		display: none;
+	}
+	#footer .menu{
+	 display: none;
+	}
+	.bottomLogo{
+		display: none;
+	}
+	.p2{
+	  display: none;
+	}
+	.menuF{
+		text-align: center;
+		font-size:1rem;
+		position: initial;
+	}
+	.menuF-nav{
+		display: inline-block;
+	}
+	.menuF-nav li{
+		display: inline-block;
+		margin-left:1rem;
+		margin-bottom:1rem;
+	}
+	.menuF-nav a{
+		color:white;
+	}
+	#signup{
+		margin:0;
+		margin-bottom:2rem;
+	}
+	.signup p{
+		font-size: 1rem;
+		margin: 0 auto;
+		width: 80%;
+		margin-bottom:1rem;
+	}
+	.headingSignup{
+		margin-left:2rem;
+	}
+	form.signupContentPartForm{
+		padding:0;
+		margin:0;
+		margin-top:1rem;
+		height:320px;
+		overflow: auto;
+	}
+	form.signupContentPartForm label{
+		width:100%;
+		display:block;
+		text-align: center;
+		margin-bottom:0.5rem;
+	}
+	.signupContentPartForm input[type="text"],.signupContentPartForm select{
+		font-size:1rem;
+		width:100% !important;
+	}
+	.first_Gender{
+	    display:inline-block !important;
+	    width:33% !important;
+	    margin-top:0.5rem;
+  	}
+	label[for=id_gender_1],label[for=id_gender_2]{
+	    display:inline-block !important;
+	    width:31% !important;
+  	}
+  	#id_birthDay{
+  		width:100%;
+  		text-align: center;
+  	}
+	#id_birthDay_month,#id_birthDay_day,#id_birthDay_year{
+		width:31% !important;
+	}
+	#overlay-inAbox3 {
+		display: none;
+		margin:0 !important;
+		width: 100% !important;
+		position: absolute;
+	}
+
+}
+@media only screen and (min-width: 961px) and (max-width: 1110px){
+	.logo img{
+		width:170px;
+		height: 75px;
+	}
 }
