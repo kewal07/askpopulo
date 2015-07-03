@@ -96,3 +96,13 @@ class MySignupForm(forms.Form):
 		# print(bday,bday_year,bday_month,bday_day)
 		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''),categories=user_categories)
 		extendeduser.save()
+
+class MySignupPartForm(forms.Form):
+	required_css_class = 'required'
+	curyear = datetime.now().year
+	gender = forms.ChoiceField(choices=[('M','M'),('F','F'),('D','NotSay')], label='Gender', widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),)
+	birthDay = forms.DateField(widget=SelectDateWidget(empty_label=("Choose Year", "Choose Month", "Choose Day"),years=range(curyear-100, curyear-13)),)
+	professionList = ["","Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"]
+	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
+	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
+	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)

@@ -424,7 +424,7 @@
 						$.ajax(
 						{
 							type: 'POST',
-							url:create_url,
+							url:"/createpoll?qid={{ question.id }}&&ajax=1",
 							data:form_data,
 							processData: false,
 							contentType: false,

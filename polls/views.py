@@ -20,6 +20,8 @@ from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
+from login.models import ExtendedUser
+from login.forms import MySignupPartForm
 
 # Create your views here.
 
@@ -52,7 +54,7 @@ class IndexView(generic.ListView):
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-			sendFeed()
+			# sendFeed()
 		elif user.is_authenticated() and request.path.endswith(user.username):
 			if request.GET.get('tab') == 'mycategories':
 				category_questions = []
@@ -137,11 +139,16 @@ class VoteView(generic.DetailView):
 		return [template_name]
 	
 	def get_context_data(self, **kwargs):
+
 		context = super(VoteView, self).get_context_data(**kwargs)
 		user = self.request.user
 		subscribed_questions = []
 		user_already_voted = False
 		if user.is_authenticated():
+			createExtendedUser(user)
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+				context['signup_part_form'] = MySignupPartForm(userFormData)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
 				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
@@ -184,10 +191,20 @@ class VoteView(generic.DetailView):
 		questionId = request.POST.get('question')
 		question = Question.objects.get(pk=questionId)
 		queSlug = question.que_slug
+		# print(request.is_ajax())
 		# queSlug = "None"
 		# print(user,user.is_authenticated())
 		if user.is_authenticated():
+			if request.is_ajax():
+				if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+					return HttpResponse(json.dumps({}),content_type='application/json')
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
+				return HttpResponseRedirect(url)
 			if request.POST.get('choice'):
+				if request.is_ajax():
+
+					return HttpResponse(json.dumps({}),content_type='application/json')
 				choiceId = request.POST.get('choice')
 				choice = Choice.objects.get(pk=choiceId)
 				# questionId = request.POST.get('question')
@@ -211,10 +228,15 @@ class VoteView(generic.DetailView):
 				# print(questionId,queSlug)
 				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 				# print(next_url)
+				extra_params = '?next=%s'%next_url
 				url = reverse('account_login')
-				url += "?next="+next_url
+				# url += "?next="+next_url
 				# print(url)
-				return HttpResponseRedirect(url)
+				full_url = '%s%s'%(url,extra_params)
+				# print(full_url)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
+				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		return HttpResponseRedirect(url)
 		
@@ -266,7 +288,14 @@ class CreatePollView(generic.ListView):
 	context_object_name = 'data'
 	
 	def get_queryset(self):
-		return Category.objects.all()
+		createExtendedUser(self.request.user)
+		context = {}
+		user = self.request.user
+		if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+			userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+			context['signup_part_form'] = MySignupPartForm(userFormData)
+		context['categories'] = Category.objects.all()
+		return context
 	
 	def post(self, request, *args, **kwargs):
 		# url = reverse('polls:index')
@@ -455,6 +484,7 @@ class PollsSearchView(SearchView):
     
     def extra_context(self):
         queryset = super(PollsSearchView, self).get_results()
+        queryset = [x for x in queryset if x.object.privatePoll == 0]
         return {
             'query': queryset,
         }
@@ -598,3 +628,34 @@ def sendFeed():
 	userIdCur.close()
 	catCur.close()
 	conn.close()
+
+def createExtendedUser(user):
+	if hasattr(user,'extendeduser'):
+		# user_slug = request.user.extendeduser.user_slug
+		pass
+	elif user.socialaccount_set.all():
+		social_set = user.socialaccount_set.all()[0]
+		# print((social_set.extra_data))
+		if not (ExtendedUser.objects.filter(user_id = user.id)):
+			if social_set.provider == 'facebook':
+				facebook_data = social_set.extra_data
+				img_url =  "http://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
+				gender_data = facebook_data.get('gender','')[0].upper()
+				birth_day = facebook_data.get('birthday','2002-01-01')
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, birthDay = birth_day,gender=gender_data)
+				extendedUser.save()
+			if social_set.provider == 'google':
+				google_data = social_set.extra_data
+				img_url = google_data.get('picture')
+				if 'gender' in google_data :
+					gender_data = google_data.get('gender','')[0].upper()
+				else:
+					gender_data = 'D'
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, gender=gender_data)
+				extendedUser.save()
+			if social_set.provider == 'twitter':
+				twitter_data = social_set.extra_data
+				img_url = twitter_data.get('profile_image_url')
+				city_data = twitter_data.get('location','')
+				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
+				extendedUser.save()

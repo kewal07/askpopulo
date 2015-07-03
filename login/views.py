@@ -26,14 +26,18 @@ class EditProfileView(generic.ListView):
 		extendeduser = user.extendeduser
 		print(request.POST)
 		# print(request.POST.get('name'))
-		user.first_name = request.POST.get('first_name')
-		user.last_name = request.POST.get('last_name')
-		extendeduser.city=request.POST.get('city','')
+		if request.POST.get('first_name'):
+			user.first_name = request.POST.get('first_name')
+		if request.POST.get('last_name'):
+			user.last_name = request.POST.get('last_name')
+		if request.POST.get('city',''):
+			extendeduser.city=request.POST.get('city','')
 		extendeduser.state=request.POST.get('state','')
 		extendeduser.country=request.POST.get('country','')
 		extendeduser.profession=request.POST.get('profession','')
 		extendeduser.gender=request.POST.get('gender','')
-		extendeduser.bio=request.POST.get('bio','')
+		if request.POST.get('bio',''):
+			extendeduser.bio=request.POST.get('bio','')
 		bday_day = int(request.POST.getlist('birthDay_day')[0])
 		bday_month = int(request.POST.getlist('birthDay_month')[0])
 		bday_year = int(request.POST.getlist('birthDay_year')[0])
@@ -45,12 +49,19 @@ class EditProfileView(generic.ListView):
 				if os.path.isfile(extendeduser.imageUrl.path):
 					os.remove(extendeduser.imageUrl.path)
 			extendeduser.imageUrl=request.FILES.get('image','')
-		categories=request.POST.getlist('categories','')
-		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
-		user_categories = ",".join(str(x) for x in categories_list)
-		extendeduser.categories=user_categories
+		if request.POST.getlist('categories',''):
+			categories=request.POST.getlist('categories','')
+			categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
+			user_categories = ",".join(str(x) for x in categories_list)
+			extendeduser.categories=user_categories
 		user.save()
 		extendeduser.save()
+		if request.is_ajax():
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				data={}
+				data['form_errors'] = "Profile Incomplete"
+				return HttpResponse(json.dumps(data),
+                            content_type='application/json')
 		return HttpResponseRedirect(url)
 
 class RedirectLoginView(generic.ListView):

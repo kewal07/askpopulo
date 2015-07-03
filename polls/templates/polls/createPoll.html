@@ -390,7 +390,7 @@
 		</section>
 		<script>
 		var availableTags = []
-			{% for categories in data %}
+			{% for categories in data.categories %}
 				availableTags.push("{{ categories.category_title }}");
 			{% endfor %}
 			$( "#categories" ).autocomplete({
@@ -417,7 +417,7 @@
 						$.ajax(
 						{
 							type: 'POST',
-							url:create_url,
+							url:"?ajax=1",
 							data:form_data,
 							processData: false,
 							contentType: false,

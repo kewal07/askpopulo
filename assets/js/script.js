@@ -125,6 +125,9 @@ function activateMenuLink () {
 }
 function openOverlay(olEl) {
 	console.log("In overlay");
+	toppx = 130;
+	if(olEl === "#overlay-inAbox3")
+		toppx = 100;
 	$oLay = $(olEl);
 	if ($('#overlay-shade').length == 0)
 		$('body').prepend('<div id="overlay-shade"></div>');
@@ -139,7 +142,7 @@ function openOverlay(olEl) {
 			opacity : 0,
 			});
 	$oLay.animate({
-			top : 130,
+			top : toppx,
 			opacity : 1
 			}, 600);
 	});

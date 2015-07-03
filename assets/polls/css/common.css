@@ -447,11 +447,11 @@ li.first{
 	border: 3px solid #000;
   	border-radius: 25px;
   	background-color: #fff;
-    position: relative;
+    position: fixed;
     /*top: -300px;
     left: 0;*/
     width: 50%;
-    min-height: 30%;
+    /*min-height: 30%;*/
     z-index: 11;
     color: #000;
 } .ie7 .overlay {
@@ -460,7 +460,7 @@ li.first{
     padding: 15px 30px 30px;
 	text-align: center;
 }
-#overlay-inAbox, #overlay-inAbox2{
+#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox3{
 	display:none;
 	margin-left: 25%;
 }
@@ -725,4 +725,34 @@ input[disabled].submit{
 button[disabled].submit{
   /*color: red;*/
   background-color: red;
+}
+form.signupContentPartForm{
+	margin:0 auto;
+	text-align: initial;
+}
+form.signupContentPartForm label{
+	display: inline-block;
+	width:20%;
+	color: #666;
+    font-size: 1rem;
+}
+form.signupContentPartForm input{
+	margin-left: 0rem;
+}
+.signupContentPartForm input[type="text"],.signupContentPartForm input[type="email"],.signupContentPartForm input[type="password"],.signupContentPartForm select{
+		height: 2rem;
+		border-radius: 10px;
+		border: 1px solid #4c4c4c;
+		background: transparent;
+		font-size:1rem;
+		overflow:hidden;
+}
+
+.signupContentPartForm select{
+	font-size:1rem;
+}
+.signupContentPartForm p{
+	width:90%;
+	margin:0 auto;
+	margin-bottom:2rem;
 }

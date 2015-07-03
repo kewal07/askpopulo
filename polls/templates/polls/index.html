@@ -178,6 +178,8 @@
 						success:function(response)
 						{
 							var form_errors = response.form_errors;
+							console.log(response);
+							console.log(form_errors);
 							
 							if(typeof form_errors === 'undefined'){
 								 $(elemid).unbind('submit').submit();

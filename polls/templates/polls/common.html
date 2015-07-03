@@ -26,6 +26,7 @@
 		<script src="{% static 'js/chardinjs.min.js' %}" ></script>
 		<script src="{% static 'js/script.js' %}" ></script>
 		<script src="https://apis.google.com/js/platform.js" ></script>
+		<script src="{% static 'login/js/countryStateCityLoader.js' %}" ></script>
 		{% block extra_js %}{% endblock %}
 		<script>
 		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -112,6 +113,50 @@
 					</div>
 				</div>
 			</section>
+			{% if signup_part_form or data.signup_part_form %}
+			<script type="text/javascript">
+			$(document).ready(function(){
+				openOverlay("#overlay-inAbox3");
+				$('.submit').bind('click', function()
+				{
+					var elemid = "#part_signup_form";//$(this)[0].id
+					post_url = $(elemid).attr('action');
+					$(elemid).bind('submit', function()
+					{
+						$.ajax(
+						{
+							type: 'POST',
+							url:post_url,
+							data:$(elemid).serialize(),
+							success:function(response)
+							{
+								var form_errors = response.form_errors;
+							
+								if(typeof form_errors === 'undefined'){
+									closeOverlay("#overlay-inAbox");
+								}
+							}
+						});     
+						return false;
+					});
+				});
+			});
+			</script>
+			{% endif %}
+			<div id="overlay-inAbox3" class="overlay">
+				<div class="wrapper">
+					<h1 class="overlaytext">Please complete your profile</h1>
+					<form class="signupContentPartForm" id="part_signup_form" method="post" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
+					  {% csrf_token %}
+					  {{ signup_part_form.as_p }}
+					  {{ data.signup_part_form.as_p }}
+					  {% if redirect_field_value %}
+					  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+					  {% endif %}
+					  <button type="submit" class="submit" id="signupPartButton">Sign Up</button>
+					</form>
+				</div>
+			</div>
 			{% block content %}
 			{% endblock %}
 			<section id="footer">
