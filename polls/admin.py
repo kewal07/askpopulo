@@ -13,7 +13,7 @@ class CategoryInline(admin.TabularInline):
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Add Question', {'fields': ['user','question_text','description']}),
+        ('Add Question', {'fields': ['user','question_text','description','featuredPoll','privatePoll']}),
         ('Date information', {'fields': ['pub_date','expiry'], 'classes': ['collapse']}),
     ]
     inlines = [ChoiceInline,CategoryInline]
