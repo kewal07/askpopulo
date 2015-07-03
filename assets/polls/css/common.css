@@ -125,7 +125,7 @@ body{
   	display: inline-block;
 }
 .logo img{
-	width:100%;
+	width:35%;
   	/*height: 75px;*/
 }
 .menuResponsive{
@@ -312,6 +312,7 @@ li.first{
 		display: block;
   		margin:0 auto;
   		width:initial;
+		height:75px;
 	}
 	.menu{
 		display: block;
