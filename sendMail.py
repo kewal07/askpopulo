@@ -2,6 +2,8 @@ import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = "askpopulo.settings"
 
-import polls.views
+import sendFeed
 
-polls.views.sendFeed()
+sendFeed.sendFeed()
+
+
