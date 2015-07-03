@@ -418,7 +418,7 @@
 				$(elemid).bind('submit', function()
 				{
 					//console.log("submit called....");
-					var create_url = "http://{{ request.META.HTTP_HOST }}/createpoll?qid={{ question.id }}&&ajax=1";
+					var create_url = "https://{{ request.META.HTTP_HOST }}/createpoll?qid={{ question.id }}&&ajax=1";
 					{% if user.is_authenticated %}
 					//console.log("call ajax");
 						$.ajax(

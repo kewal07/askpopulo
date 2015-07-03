@@ -78,7 +78,7 @@ class RedirectLoginView(generic.ListView):
 			if not (ExtendedUser.objects.filter(user_id = user.id)):
 				if social_set.provider == 'facebook':
 					facebook_data = social_set.extra_data
-					img_url =  "http://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
+					img_url =  "https://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
 					gender_data = facebook_data.get('gender','')[0].upper()
 					birth_day = facebook_data.get('birthday','2002-01-01')
 					extendedUser = ExtendedUser(user=user, imageUrl = img_url, birthDay = birth_day,gender=gender_data)

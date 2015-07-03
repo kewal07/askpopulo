@@ -203,7 +203,6 @@ class VoteView(generic.DetailView):
 				return HttpResponseRedirect(url)
 			if request.POST.get('choice'):
 				if request.is_ajax():
-
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				choiceId = request.POST.get('choice')
 				choice = Choice.objects.get(pk=choiceId)
@@ -225,15 +224,12 @@ class VoteView(generic.DetailView):
 				return HttpResponse(json.dumps(data),
 	                            content_type='application/json')
 		else:
-				# print(questionId,queSlug)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
 				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
-				# print(next_url)
 				extra_params = '?next=%s'%next_url
 				url = reverse('account_login')
-				# url += "?next="+next_url
-				# print(url)
 				full_url = '%s%s'%(url,extra_params)
-				# print(full_url)
 				if request.is_ajax():
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				return HttpResponseRedirect(full_url)
@@ -485,9 +481,7 @@ class PollsSearchView(SearchView):
     def extra_context(self):
         queryset = super(PollsSearchView, self).get_results()
         queryset = [x for x in queryset if x.object.privatePoll == 0]
-        return {
-            'query': queryset,
-        }
+		return {'query': queryset,}
 
 class FollowPollView(generic.ListView):
 
@@ -518,7 +512,7 @@ class ReportAbuse(generic.ListView):
 
 def autocomplete(request):
     sqs = SearchQuerySet().autocomplete(question_auto=request.GET.get('qText', ''))[:5]
-    suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs]
+    suggestions = [[result.object.question_text,result.object.id,result.object.que_slug] for result in sqs if result.object.privatePoll == 0]
     the_data = json.dumps({
         'results': suggestions
     })
@@ -528,7 +522,7 @@ import pymysql
 import random
 from django.core.mail import EmailMessage
 def sendFeed():
-	conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='#welcome12345', db='askbypoll')
+	conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='vfr43edc', db='askbypoll')
 	
 	questionCur = conn.cursor()
 	questionCur.execute("SELECT id,question_text,que_slug FROM polls_question ORDER BY id DESC LIMIT 0 , 3")
@@ -572,7 +566,7 @@ def sendFeed():
 				subsQSlug.append(data[4])
 
 		msg = EmailMessage(subject="Your Personal News Feed delivered with love by Ask By Poll!", from_email="askbypoll@gmail.com",to=['goyal.ankit.049@gmail.com','kewal07@gmail.com'])
-		msg.template_name = "activity-letter"           # A Mandrill template name
+		msg.template_name = "activityletter"           # A Mandrill template name
 		#msg.template_content = {                        # Content blocks to fill in
 		#   'TRACKING_BLOCK1': "<a href='.../*|Link1|*'>Poll1</a>",
 		   #'Link1':"<a href='www.askbypoll.com/polls/'+str(topPolls[0].id)+'/'+topPolls[0].que_slug> *|TOP1|* </a>"
@@ -616,6 +610,7 @@ def sendFeed():
 			}
 		print(msg.global_merge_vars)
 		msg.send()
+		break
 		subsQId  = []
 		subsQText= []
 		subsQSlug= []
@@ -639,7 +634,7 @@ def createExtendedUser(user):
 		if not (ExtendedUser.objects.filter(user_id = user.id)):
 			if social_set.provider == 'facebook':
 				facebook_data = social_set.extra_data
-				img_url =  "http://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
+				img_url =  "https://graph.facebook.com/{}/picture?width=140&&height=140".format(facebook_data.get('id',''))
 				gender_data = facebook_data.get('gender','')[0].upper()
 				birth_day = facebook_data.get('birthday','2002-01-01')
 				extendedUser = ExtendedUser(user=user, imageUrl = img_url, birthDay = birth_day,gender=gender_data)
