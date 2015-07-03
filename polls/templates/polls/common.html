@@ -101,13 +101,13 @@
 				</div>
 				<div id="overlay-inAbox" class="overlay">
 					<div class="wrapper">
-						<h1 class="overlaytext">Please select a Choice!!</h1>
+						<p class="overlaytext">Please select a Choice!!</p>
 						<button id = "okay" class="push_button">Okay</button>
 					</div>
 				</div>
 				<div id="overlay-inAbox2" class="overlay">
 					<div class="wrapper">
-						<h1 class="overlaytext">Please select a Choice!!</h1>
+						<p class="overlaytext">Please select a Choice!!</p>
 						<button id = "yes" class="push_button">Yes</button>
 						<button id = "no" class="push_button">No</button>
 					</div>
@@ -145,7 +145,7 @@
 			{% endif %}
 			<div id="overlay-inAbox3" class="overlay">
 				<div class="wrapper">
-					<h1 class="overlaytext">Please complete your profile</h1>
+					<p class="overlaytext">Please complete your profile</p>
 					<form class="signupContentPartForm" id="part_signup_form" method="post" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
 					  {% csrf_token %}
 					  {{ signup_part_form.as_p }}

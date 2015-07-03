@@ -461,9 +461,14 @@ li.first{
     padding: 15px 30px 30px;
 	text-align: center;
 }
-#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox3{
+#overlay-inAbox, #overlay-inAbox2{
 	display:none;
 	margin-left: 25%;
+}
+#overlay-inAbox3 {
+	display: none;
+	margin-left: 12%;
+	width: 65%;
 }
 .overlaytext{
 	font-size: 1rem;

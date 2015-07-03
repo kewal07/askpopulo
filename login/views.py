@@ -57,11 +57,13 @@ class EditProfileView(generic.ListView):
 		user.save()
 		extendeduser.save()
 		if request.is_ajax():
+			data={}
 			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
-				data={}
 				data['form_errors'] = "Profile Incomplete"
 				return HttpResponse(json.dumps(data),
                             content_type='application/json')
+			else:
+				return HttpResponse(json.dumps(data),content_type='application/json')
 		return HttpResponseRedirect(url)
 
 class RedirectLoginView(generic.ListView):
