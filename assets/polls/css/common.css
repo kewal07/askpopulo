@@ -270,9 +270,9 @@ ul.menu-nav li{
 .menuF{
 	text-align: center;
 	font-size:1rem;
-	position:absolute;
 	top:1rem;
-	left:18rem;
+	padding-bottom:1rem;
+	margin:0 auto;
 }
 .menuF-nav{
 	display: inline-block;
