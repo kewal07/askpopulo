@@ -116,8 +116,17 @@ ul.pollInfoUl li {
 .win-prizes img{
 	width:90px;
 }
-.win-prizes img:hover{
+/*.win-prizes img:hover{
 	width:200px;
+}*/
+.feedback{
+	position:fixed;
+	right:0;
+	top:48%;
+	cursor:pointer;
+}
+.feedback img{
+	width:90px;
 }
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
@@ -168,7 +177,12 @@ ul.pollInfoUl li {
 	.win-prizes{
 		position: absolute;
 		margin: 0 auto;
-		left: 40%;
+		left: 10%;
+		top: 27rem;
+	}
+	.feedback{
+		position: absolute;
+		right: 10%;
 		top: 27rem;
 	}
 }
@@ -270,9 +284,14 @@ ul.pollInfoUl li {
 	}
 	.win-prizes{
 		position: absolute;
-		left: 40%;
+		left: 10%;
 		top: 27rem;
 		display: inline;
+	}
+	.feedback{
+		position: absolute;
+		right: 10%;
+		top: 27rem;
 	}
 }
 

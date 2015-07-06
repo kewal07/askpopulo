@@ -5,7 +5,10 @@
 {% endblock %}
 {% block content %}
 	<div class="win-prizes">
-				<a href="https://www.facebook.com/askybypoll"><img src="/static/polls/images/win.png"  alt="Signup and win movie tickets" title="Signup and win Movie Tickets"></a>
+				<a href="https://www.facebook.com/askybypoll" target="new"><img src="/static/polls/images/win.png"  alt="Signup and win movie tickets" title="Signup and win Movie Tickets"></a>
+	</div>
+	<div class="feedback">
+				<a href="https://qasiatrial.asia.qualtrics.com/SE/?SID=SV_dn8FIW14ZPPiDlz" target="new"><img src="/static/polls/images/feedback.png"  alt="Feedback" title="Feedback"></a>
 	</div>
 	<section id="content">
 			{% if user.is_authenticated and user.username in request.path %}
