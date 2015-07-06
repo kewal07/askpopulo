@@ -100,7 +100,7 @@
 								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
 								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
 								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
-								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-image='http://askbypoll.com/static/pollsLogoShare.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
 							</ul>
@@ -209,7 +209,8 @@ var disqus_config = function() {
 				{% for choice in question.choice_set.all %}
 					var inData = [];
 					var choice_text = '{{ choice.choice_text }}';
-					choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
+					choice_text = $('<p>'+choice_text+'</p>').html()
+					// choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
 					if(choice_text === "" || typeof choice_text === "undefined")
 						choice_text = "Img{{ forloop.counter }}"
 					inData.push(choice_text);
