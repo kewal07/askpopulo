@@ -107,9 +107,22 @@ ul.pollInfoUl li {
 .catOnIndex{
 	font-size:.8rem;
 }
+.win-prizes{
+	position: fixed;
+	top:48%;
+	left:0;
+	cursor: pointer;
+}
+.win-prizes img{
+	width:90px;
+}
+.win-prizes img:hover{
+	width:200px;
+}
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
 		margin: 2rem 0.5rem;
+		margin-top:6.5rem;
 	}
 	.questions{
 		padding: 1rem 0rem;
@@ -152,6 +165,12 @@ ul.pollInfoUl li {
 	.anchor_submit{
 		margin-bottom: 1rem;
 	}
+	.win-prizes{
+		position: absolute;
+		margin: 0 auto;
+		left: 40%;
+		top: 27rem;
+	}
 }
 @media only screen and (min-width:481px) and (max-width: 730px){
 	.choice_image{
@@ -182,6 +201,7 @@ ul.pollInfoUl li {
 @media only screen and (max-width: 480px){
 	#content{
 		margin: 2rem 0.5rem;
+		margin-top:6.5rem;
 	}
 	.questions{
 		padding: 1rem 0 0 0;
@@ -247,6 +267,12 @@ ul.pollInfoUl li {
 	}
 	.que_desc_cat_span{
 		font-size:0.85rem;
+	}
+	.win-prizes{
+		position: absolute;
+		left: 40%;
+		top: 27rem;
+		display: inline;
 	}
 }
 
