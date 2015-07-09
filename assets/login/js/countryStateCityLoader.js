@@ -262,8 +262,8 @@ var length = countryList.length;
 $("#id_state").append('<option value='+s_a[0]+'>'+s_a[0]+'</option>');
 for (var i = 0; i < length; i++) {
 	//console.log('<option value='+countryList[i]+'>'+countryList[i]+'</option>');
-	var tempOption = '<option value='+countryList[i]+'>'+countryList[i]+'</option>';
-    $("#id_country").append(tempOption);
+	//var tempOption = '<option value='+countryList[i]+'>'+countryList[i]+'</option>';
+    //$("#id_country").append(tempOption);
 }
 
 $("#id_country").change(function(){
@@ -271,7 +271,6 @@ $("#id_country").change(function(){
 	$("#id_state").append('<option value="'+s_a[0]+'">'+s_a[0]+'</option>');
 	var selectedCountry = $("#id_country option:selected").text();
 	var selectedCountryIndex = countryList.indexOf(selectedCountry);
-	//alert(countryList.indexOf(selectedCountry));
 	var stateList = s_a[selectedCountryIndex].split("|");
 	var stateListLength = stateList.length;
 	
