@@ -12,5 +12,5 @@ while true
 do
 	python sendMail.py
 	# sleep for 24 hours
-	sleep 86400
+	sleep 43200
 done

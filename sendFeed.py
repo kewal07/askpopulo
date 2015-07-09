@@ -1,5 +1,7 @@
 import pymysql
 import random
+import time
+import datetime
 from django.core.mail import EmailMessage
 import askpopulo.settings
 def sendFeed():
@@ -29,6 +31,8 @@ def sendFeed():
 	subsQId  = []
 	subsQText= []
 	subsQSlug= []
+	
+	mail_log_file = open('/home/ubuntu/askpopulo/mail_send_log.log','a')
 
 	for row in catCur:
 		cList = list(row)
@@ -40,6 +44,7 @@ def sendFeed():
 		topQText.append(topQ[1])
 		topSlug.append(topQ[2])
 
+	for_loop_counter = 1
 	for idNumEmail in userIdCur:
 		idNum = idNumEmail[0]
 		to_email = idNumEmail[1]
@@ -97,8 +102,19 @@ def sendFeed():
 		    'YLink1':'polls'+'/'+str(subsQId[0])+'/'+subsQSlug[0], 'YLink2':'polls'+'/'+str(subsQId[1])+'/'+subsQSlug[1], 'YLink3':'polls'+'/'+str(subsQId[2])+'/'+subsQSlug[2]
 			}
 		print(msg.global_merge_vars)
-		if to_email:
+		if to_email and to_email.strip():
+			mail_log_file.write("\n*********************** Send to and content **********************\n")
+			mail_log_file.write(str(for_loop_counter) + "\n")
+			mail_log_file.write(str(datetime.datetime.now()) + "\n")
+			mail_log_file.write(to_email + "\n")
+			mail_log_file.write(str(msg.global_merge_vars) + "\n")
+			mail_log_file.write("\n*********************** Send to and content end ******************\n")
+			for_loop_counter += 1
 			msg.send()
+			time.sleep(10)
+			pass
+		if for_loop_counter % 150 == 0:
+			time.sleep(2200)
 		subsQId  = []
 		subsQText= []
 		subsQSlug= []
@@ -106,6 +122,7 @@ def sendFeed():
 		#    'accounting@example.com': {'NAME': "Pat"},
 		#    'customer@example.com':   {'NAME': "Kim"}
 		#}
+	mail_log_file.close()
 	questionCur.close()
 	userCur.close()
 	userIdCur.close()

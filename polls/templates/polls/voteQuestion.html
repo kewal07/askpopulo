@@ -12,17 +12,7 @@
 						{% if question.isAnonymous %}
 							<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
 						{% else %}
-							{% if question.user.socialaccount_set.all %}
-							   {% if question.user.extendeduser.imageUrl %}
-									<img src="{{ question.user.extendeduser.imageUrl }}" alt="User {{ question.user.first_name }}">
-								{% endif %}
-							{% else %}
-								{% if question.user.extendeduser.imageUrl %}
-									<img src="/media/profile/{{ question.user.extendeduser.get_profile_pic_name }}" alt="User {{ question.user.first_name }}">
-								{% else %}
-									<img src="/static/login/images/defaultAvatar.png"  alt="User {{ user.first_name }}">
-								{% endif %}
-							{% endif %}
+							<img src="{{ question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.user.first_name }}">
 						{% endif %}
 					</div>
 					<div class="userBrief">
