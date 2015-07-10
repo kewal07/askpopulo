@@ -537,11 +537,7 @@ def createExtendedUser(user):
 
 def comment_mail(request):
 	print("comment mail")
-	print(request.POST)
-	print(settings.BASE_DIR)
-	print(User.Objects.filter(id=request.POST.get('to_user_id'))
-	to_email = User.Objects.filter(pk=request.POST.get('to_user_id')).email
-	print(to_email)
+	to_email = User.objects.filter(pk=request.POST.get('to_user_id'))[0].email
 	que_author = request.POST.get('que_author')
 	que_text = request.POST.get('que_text')
 	que_url = request.POST.get('que_url')
@@ -554,12 +550,14 @@ def comment_mail(request):
 	    "QuestionURL" : que_url,
 	    "QuestionText" : que_text
 		}
-	mail_log_file = open(settings.BASE_DIR + '/mail_send_comment_log.log','a')
+	"""
+	mail_log_file = open('/home/ubuntu/askpopulo/mail_send_comment_log.log','a')
 	mail_log_file.write("\n*********************** Send to and content **********************\n")
 	mail_log_file.write(str(datetime.datetime.now()) + "\n")
 	mail_log_file.write(to_email + "\n")
 	mail_log_file.write(str(msg.global_merge_vars) + "\n")
 	mail_log_file.write("\n*********************** Send to and content end ******************\n")
 	mail_log_file.close()
+	"""
 	msg.send()
 	return HttpResponse(json.dumps({}),content_type='application/json')

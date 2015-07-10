@@ -13,7 +13,7 @@ def sendFeed():
 	conn = pymysql.connect(host=db_host, port=3306, user=db_user, passwd=db_pass, db=db_name)
 	
 	questionCur = conn.cursor()
-	questionCur.execute("SELECT id,question_text,que_slug FROM polls_question ORDER BY id DESC LIMIT 0 , 3")
+	questionCur.execute("SELECT id,question_text,que_slug FROM polls_question where privatePoll = 0 ORDER BY id DESC LIMIT 0 , 3")
 	
 	userCur = conn.cursor()
 
@@ -49,7 +49,7 @@ def sendFeed():
 		idNum = idNumEmail[0]
 		to_email = idNumEmail[1]
 		print('***************',idNum)
-		query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s LIMIT 3" %idNum
+		query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s AND polls_question.privatePoll = 0 LIMIT 3" %idNum
 		count = userCur.execute(query)
 		if count!= 0:
 			for row in userCur:

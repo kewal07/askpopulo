@@ -146,23 +146,19 @@ var disqus_config = function() {
 
 	this.callbacks.onNewComment = [function(comment) { 
 
-		var data_dict = { "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.first_name }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" };
-		console.log(data_dict);
+		if({{ question.user.id }} != {{ user.id }}){
+			var data_dict = { "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
 
-		$.ajax(
- 			{
+			$.ajax(
+ 				{
                                                 type: 'POST',
                                                 url:'/comment_mail',
                                                 data:data_dict,
                                                 success:function(response)
                                                 {
                                                 }
-                        });
-			//$.post("/comment_mail", data_dict, function(result){
-			
-				// alert(result);
-				
-			//});
+                        	});
+		}
 			
 	}];
 
