@@ -542,11 +542,12 @@ def comment_mail(request):
 	que_url = request.POST.get('que_url')
 	com_author = request.user.first_name
 	que_author = []
-	que_author.append(request.POST.get('que_author'))
-	to_email.append(User.objects.filter(pk=request.POST.get('to_user_id'))[0].email)
+	if request.user.id != request.POST.get('to_user_id'):
+		que_author.append(request.POST.get('que_author'))
+		to_email.append(User.objects.filter(pk=request.POST.get('to_user_id'))[0].email)
 	for sub_user in Subscriber.objects.filter(question_id=request.POST.get('que_id')):
 		sub_email = sub_user.user.email
-		if sub_email not in to_email:
+		if sub_email not in to_email and sub_user.user.id != request.user.id:
 			to_email.append(sub_email)
 			que_author.append(sub_user.user.first_name)
 	# print(to_email)
