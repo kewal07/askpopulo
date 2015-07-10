@@ -34,7 +34,11 @@ class Question(models.Model):
 	featuredPoll = models.BooleanField(default=0)
 	
 	def save(self, *args, **kwargs):
-		short_q_text = self.question_text[:50]
+		qText = self.question_text
+		qText = ''.join(e for e in qText if e.isalnum())
+		short_q_text = qText[:50]
+		if not short_q_text.strip():
+			short_q_text = None
 		self.que_slug = slugify(short_q_text)
 		digestmod = hashlib.sha1
 		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
