@@ -538,32 +538,29 @@ def createExtendedUser(user):
 def comment_mail(request):
 	# print("comment mail")
 	to_email = []
+	que_text = request.POST.get('que_text')
+	que_url = request.POST.get('que_url')
+	com_author = request.user.first_name
+	que_author = []
+	que_author.append(request.POST.get('que_author'))
 	to_email.append(User.objects.filter(pk=request.POST.get('to_user_id'))[0].email)
 	for sub_user in Subscriber.objects.filter(question_id=request.POST.get('que_id')):
 		sub_email = sub_user.user.email
 		if sub_email not in to_email:
 			to_email.append(sub_email)
+			que_author.append(sub_user.user.first_name)
 	# print(to_email)
-	que_author = request.POST.get('que_author')
-	que_text = request.POST.get('que_text')
-	que_url = request.POST.get('que_url')
-	com_author = request.user.first_name
-	msg = EmailMessage(subject="Discussion on Your Question", from_email="askbypoll@gmail.com",to=to_email)
-	msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
-	msg.global_merge_vars = {                       # Merge tags in your template
-	    "QuestionAuthor" : que_author,
-	    "CommentAuthor" : com_author,
-	    "QuestionURL" : que_url,
-	    "QuestionText" : que_text
-		}
-	"""
-	mail_log_file = open('/home/ubuntu/askpopulo/mail_send_comment_log.log','a')
-	mail_log_file.write("\n*********************** Send to and content **********************\n")
-	mail_log_file.write(str(datetime.datetime.now()) + "\n")
-	mail_log_file.write(to_email + "\n")
-	mail_log_file.write(str(msg.global_merge_vars) + "\n")
-	mail_log_file.write("\n*********************** Send to and content end ******************\n")
-	mail_log_file.close()
-	"""
-	msg.send()
+	for index,to_mail in enumerate(to_email):
+		# print(index,to_mail)
+		# print("&&&&&&&&&&&&")
+		# print(que_author[index])
+		msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
+		msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
+		msg.global_merge_vars = {                       # Merge tags in your template
+		    "QuestionAuthor" : que_author[index],
+		    "CommentAuthor" : com_author,
+		    "QuestionURL" : que_url,
+		    "QuestionText" : que_text
+			}
+		msg.send()
 	return HttpResponse(json.dumps({}),content_type='application/json')
