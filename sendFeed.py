@@ -128,3 +128,26 @@ def sendFeed():
 	userIdCur.close()
 	catCur.close()
 	conn.close()
+
+	def sendMailOnComment(data_dict):
+		to_email = data_dict.get('to_email')
+		que_author = data_dict.get('que_author')
+		com_author = data_dict.get('com_author')
+		que_url = data_dict.get('que_url')
+		que_text = data_dict.get('que_text')
+		msg = EmailMessage(subject="Discussion on Your Question", from_email="askbypoll@gmail.com",to=[to_email])
+		msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
+		msg.global_merge_vars = {                       # Merge tags in your template
+		    "QuestionAuthor" : que_author,
+		    "CommentAuthor" : com_author,
+		    "QuestionURL" : que_url,
+		    "QuestionText" : que_text
+			}
+		mail_log_file = open('/home/ubuntu/askpopulo/mail_send_comment_log.log','a')
+		mail_log_file.write("\n*********************** Send to and content **********************\n")
+		mail_log_file.write(str(datetime.datetime.now()) + "\n")
+		mail_log_file.write(to_email + "\n")
+		mail_log_file.write(str(msg.global_merge_vars) + "\n")
+		mail_log_file.write("\n*********************** Send to and content end ******************\n")
+		mail_log_file.close()
+		msg.send()
