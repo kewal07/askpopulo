@@ -22,6 +22,8 @@ from PIL import Image,ImageChops
 from django.utils import timezone
 from login.models import ExtendedUser
 from login.forms import MySignupPartForm
+from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
 
 # Create your views here.
 
@@ -532,3 +534,26 @@ def createExtendedUser(user):
 				city_data = twitter_data.get('location','')
 				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 				extendedUser.save()
+
+def comment_mail(request):
+	to_email = User.Objects.filter(pk=request.POST.get('to_user_id')).email
+	que_author = request.POST.get('que_author')
+	que_text = request.POST.get('que_text')
+	que_url = request.POST.get('que_url')
+	com_author = request.user.first_name
+	msg = EmailMessage(subject="Discussion on Your Question", from_email="askbypoll@gmail.com",to=[to_email])
+	msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
+	msg.global_merge_vars = {                       # Merge tags in your template
+	    "QuestionAuthor" : que_author,
+	    "CommentAuthor" : com_author,
+	    "QuestionURL" : que_url,
+	    "QuestionText" : que_text
+		}
+	mail_log_file = open(settings.BASE_DIR + 'mail_send_comment_log.log','a')
+	mail_log_file.write("\n*********************** Send to and content **********************\n")
+	mail_log_file.write(str(datetime.datetime.now()) + "\n")
+	mail_log_file.write(to_email + "\n")
+	mail_log_file.write(str(msg.global_merge_vars) + "\n")
+	mail_log_file.write("\n*********************** Send to and content end ******************\n")
+	mail_log_file.close()
+	msg.send()
