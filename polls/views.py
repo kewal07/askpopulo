@@ -536,13 +536,19 @@ def createExtendedUser(user):
 				extendedUser.save()
 
 def comment_mail(request):
-	print("comment mail")
-	to_email = User.objects.filter(pk=request.POST.get('to_user_id'))[0].email
+	# print("comment mail")
+	to_email = []
+	to_email.append(User.objects.filter(pk=request.POST.get('to_user_id'))[0].email)
+	for sub_user in Subscriber.objects.filter(question_id=request.POST.get('que_id')):
+		sub_email = sub_user.user.email
+		if sub_email not in to_email:
+			to_email.append(sub_email)
+	# print(to_email)
 	que_author = request.POST.get('que_author')
 	que_text = request.POST.get('que_text')
 	que_url = request.POST.get('que_url')
 	com_author = request.user.first_name
-	msg = EmailMessage(subject="Discussion on Your Question", from_email="askbypoll@gmail.com",to=[to_email])
+	msg = EmailMessage(subject="Discussion on Your Question", from_email="askbypoll@gmail.com",to=to_email)
 	msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
 	msg.global_merge_vars = {                       # Merge tags in your template
 	    "QuestionAuthor" : que_author,
