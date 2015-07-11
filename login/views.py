@@ -71,6 +71,7 @@ class RedirectLoginView(generic.ListView):
 	def get(self,request,*args,**kwargs):
 		user_slug = None
 		user = request.user
+		url = reverse('polls:index', kwargs={})
 		# print("redirect view",request.user,user.socialaccount_set.all())
 		if hasattr(request.user,'extendeduser'):
 			user_slug = request.user.extendeduser.user_slug
@@ -101,7 +102,9 @@ class RedirectLoginView(generic.ListView):
 					extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 					extendedUser.save()
 				user_slug = request.user.extendeduser.user_slug
-		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':user_slug})
+				url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':user_slug})
+		else:
+			url = reverse('polls:index', kwargs={})
 		return HttpResponseRedirect(url)
 
 class LoggedInView(generic.DetailView):
