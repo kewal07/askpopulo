@@ -55,7 +55,13 @@ class IndexView(generic.ListView):
 			latest_questions.extend(adminpolls)
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
-				latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
+				if request.GET.get('tab') == 'mostvoted' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+				elif request.GET.get('tab') == 'latest':
+					latest_questions = latest_questions
+				elif request.GET.get('tab') == 'leastvoted':
+					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+				# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 			# sendFeed()
 		elif user.is_authenticated() and request.path.endswith(user.username):
 			if request.GET.get('tab') == 'mycategories':
@@ -85,6 +91,13 @@ class IndexView(generic.ListView):
 			latest_questions = latest_questions[::-1]
 		else:
 			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
+			latest_questions = list(OrderedDict.fromkeys(latest_questions))
+			if request.GET.get('tab') == 'mostvoted' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+			elif request.GET.get('tab') == 'latest':
+				latest_questions = latest_questions
+			elif request.GET.get('tab') == 'leastvoted':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)

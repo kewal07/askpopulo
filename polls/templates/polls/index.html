@@ -4,10 +4,10 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 {% endblock %}
 {% block content %}
-	<div class="win-prizes">
+	<div class="win-prizes" style="display:none">
 				<a href="{% url 'account_login' %}" target="new"><img src="/static/polls/images/win.png"  alt="Signup and win movie tickets" title="Signup and win Movie Tickets"></a>
 	</div>
-	<div class="feedback">
+	<div class="feedback" style="display:none">
 				<a href="https://qasiatrial.asia.qualtrics.com/SE/?SID=SV_dn8FIW14ZPPiDlz" target="new"><img src="/static/polls/images/feedback.png"  alt="Feedback" title="Feedback"></a>
 	</div>
 	<section id="content">
@@ -17,6 +17,18 @@
 					<a href="{{ request.path }}?tab=voted" class="mypollstabs">Voted</a>
 					<a href="{{ request.path }}?tab=followed" class="mypollstabs">Followed</a>
 					<a href="{{ request.path }}?tab=mycategories" class="mypollstabs">Category Polls</a>
+				</div>
+			{% elif "category" in request.GET.urlencode %}
+				<div class="mypolltab" style="display:none">
+					<a href="{{ request.path }}?{{ request.GET.urlencode }}" class="mypollstabs">Most Voted</a>
+					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=latest" class="mypollstabs">Latest</a>
+					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
+				</div>
+			{% else %}
+				<div class="mypolltab">
+					<a href="{{ request.path }}" class="mypollstabs">Most Voted</a>
+					<a href="{{ request.path }}?tab=latest" class="mypollstabs">Latest</a>
+					<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
 				</div>
 			{% endif %}
 			{% if data %}
