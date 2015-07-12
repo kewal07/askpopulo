@@ -55,9 +55,9 @@ class IndexView(generic.ListView):
 			latest_questions.extend(adminpolls)
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
-				if request.GET.get('tab') == 'mostvoted' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				if request.GET.get('tab') == 'mostvoted':
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-				elif request.GET.get('tab') == 'latest':
+				elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 					latest_questions = latest_questions
 				elif request.GET.get('tab') == 'leastvoted':
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
@@ -92,9 +92,9 @@ class IndexView(generic.ListView):
 		else:
 			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
-			if request.GET.get('tab') == 'mostvoted' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+			if request.GET.get('tab') == 'mostvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-			elif request.GET.get('tab') == 'latest':
+			elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 				latest_questions = latest_questions
 			elif request.GET.get('tab') == 'leastvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
@@ -133,6 +133,8 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
+			# subscribed = Subscriber.objects.filter(user=user, question=question)
+			# print(subscribed)
 			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ):
 				template_name = 'polls/questionDetail.html'
 		return [template_name]

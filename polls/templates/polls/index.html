@@ -26,8 +26,8 @@
 				</div>
 			{% else %}
 				<div class="mypolltab">
-					<a href="{{ request.path }}" class="mypollstabs">Most Voted</a>
-					<a href="{{ request.path }}?tab=latest" class="mypollstabs">Latest</a>
+					<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
+					<a href="{{ request.path }}" class="mypollstabs">Latest</a>
 					<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
 				</div>
 			{% endif %}
@@ -221,7 +221,7 @@
 						
 						//$.ajax(); Do Unfollow
 						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						console.log(data);
+						// console.log(data);
 						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
@@ -241,7 +241,7 @@
 						
 						// $.ajax(); Do Follow
 						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						console.log(data);
+						// console.log(data);
 						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
 						$.ajax(
 						{
@@ -258,7 +258,7 @@
 						$button.text('Following');
 					}
 				{% else %}
-					url = '/polls/'+qid+'/'+qslug
+					url = '{% url 'account_login' %}?next=/polls/'+qid+'/'+qslug
 					console.log(url);
 					$(location).attr('href',url);
 				{% endif %}
