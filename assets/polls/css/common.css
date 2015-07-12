@@ -577,8 +577,8 @@ form.signupContentPartForm input{
 	.logo img{
 		display: block;
   		margin:0 auto;
-  		width: 25px;
-  		height: 20px;
+  		width:initial;
+		height:75px;
 	}
 	.menu{
 		display: block;
@@ -589,6 +589,8 @@ form.signupContentPartForm input{
 		position: absolute;
   		top: -7px;
   		right: 0;
+  		width: 25px !important;
+  		height: 20px !important;
 	}
 	.dropDownBox{
 		top:-76px;
