@@ -71,12 +71,15 @@
 								<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
 								<figcaption class="choiceFigCaption">
 									{% if choice.choice_text %}
-										{{ choice.choice_text }}
+										Choice{{ forloop.counter }} : {{ choice.choice_text }}
 									{% else %}
-										Img{{ forloop.counter }}
+										Choice{{ forloop.counter }}
 									{% endif %}
 								</figcaption>
 							</figure>
+						{% else %}
+							Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+							<br/>
 						{% endif %}
 						{% endfor %}
 						</div>
@@ -214,11 +217,8 @@ var disqus_config = function() {
 				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
 				{% for choice in question.choice_set.all %}
 					var inData = [];
-					var choice_text = '{{ choice.choice_text }}';
-					choice_text = $('<p>'+choice_text+'</p>').html()
-					// choice_text = choice_text.replace( /(:|\.|\[|\]|,)/g, "\$1" );
-					if(choice_text === "" || typeof choice_text === "undefined")
-						choice_text = "Img{{ forloop.counter }}"
+					var choice_text = "";
+					choice_text = 'Choice{{ forloop.counter }}';
 					inData.push(choice_text);
 					inData.push({{ choice.vote_set.count }});
 					inData.push(pollsColors[colCount++]);
