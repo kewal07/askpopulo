@@ -384,7 +384,7 @@ var disqus_config = function() {
 				{% for voted in question.voted_set.all %}
 					{% if voted.user.extendeduser.profession %}
 						var prof = "{{ voted.user.extendeduser.profession }}";
-						if(prof in profData)
+						if(prof in profDict)
 							profDict[prof] = profDict[prof]+1;
 						else
 							profDict[prof] = 1;

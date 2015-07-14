@@ -57,7 +57,7 @@
 							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:polls_category' %}">Category</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.username %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
+							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <!-- {% csrf_token %} -->
