@@ -35,11 +35,14 @@ class Question(models.Model):
 	
 	def save(self, *args, **kwargs):
 		qText = self.question_text
-		qText = ''.join(e for e in qText if e.isalnum())
+		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
 		short_q_text = qText[:50]
 		if not short_q_text.strip():
 			short_q_text = None
-		self.que_slug = slugify(short_q_text)
+		qslug = slugify(short_q_text)
+		if not qslug and not qslug.strip():
+			qslug = None
+		self.que_slug = qslug
 		digestmod = hashlib.sha1
 		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
@@ -52,6 +55,13 @@ class Question(models.Model):
 		was_published_recently.admin_order_field = 'pub_date'
 		was_published_recently.boolean = True
 		was_published_recently.short_description = 'Published recently'
+	def get_extra_choices(self):
+		ex_ch = 4 - self.choice_set.count()
+		ch_list = []
+		if ex_ch > 0:
+			for x in range(ex_ch,4):
+				ch_list.append(x+1)
+		return ch_list
 
 class Choice(models.Model):
 	choice_pk = models.CharField(max_length=255)

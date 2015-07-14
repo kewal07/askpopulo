@@ -35,7 +35,12 @@ class ExtendedUser(models.Model):
 	categories = models.CharField(max_length=100,default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26',blank=True,null=True)
 	
 	def save(self, *args, **kwargs):
-		self.user_slug = slugify(self.user.username)
+		uname = self.user.username
+		# uname = ''.join(e for e in uname if e.isalnum())
+		uslug = slugify(uname)
+		if not uslug and not uslug.strip():
+			uslug = None
+		self.user_slug = uslug
 		digestmod = hashlib.sha1
 		msg = self.user.email.encode('utf-8')
 		key = self.user.username.encode('utf-8')

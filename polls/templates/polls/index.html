@@ -104,15 +104,19 @@
 									{% endfor %}
 									<p>
 									{% if question.user_already_voted %}
-										<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+										<a class="submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
 										{% if question.expired %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Expired" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 										{% else %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="{{ question.question.id }}---{{ question.question.que_slug }}"/>
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}"/>
 										{% endif %}
 										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
-											<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+										<!-- {% elif question.question.id in question.subscribed %}
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.question.id }}" href="{% url 'polls:polls_result' question.question.id question.question.que_slug %}">Results</a>
+										{% else %}
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.question.id }}" style="display:none !important" href="{% url 'polls:polls_result' question.question.id question.question.que_slug %}">Results</a> -->
 										{% endif %}
 									{% endif %}
 									</p>
@@ -183,11 +187,13 @@
 
 			$('.submit').bind('click', function()
 			{
-				var queid = $(this)[0].id.split("---")[0];
-				var queslug = $(this)[0].id.split("---")[1];
+				var voteSubmitId = $(this)[0].id;
+				var queid = $(this)[0].id.replace('vote','').split("---")[0];
+				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
 				$(elemid).bind('submit', function()
 				{
+					$("#"+voteSubmitId).attr("disabled","disabled");
 					$.ajax(
 					{
 						type: 'POST',
@@ -196,13 +202,14 @@
 						success:function(response)
 						{
 							var form_errors = response.form_errors;
-							console.log(response);
-							console.log(form_errors);
+							// console.log(response);
+							// console.log(form_errors);
 							
 							if(typeof form_errors === 'undefined'){
 								 $(elemid).unbind('submit').submit();
 							}else{
 								openOverlay("#overlay-inAbox");
+								$("#"+voteSubmitId).removeAttr("disabled");
 							}
 						}
 					});     
@@ -211,9 +218,9 @@
 			});
 			$('.followButton').bind('click', function(e){
 				// e.preventDefault();
-				console.log($(this)[0].id)
+				// console.log($(this)[0].id)
 				$button = $("#"+$(this)[0].id);
-				console.log($button);
+				// console.log($button);
 				var qid = $(this)[0].id.split("---")[0].replace("follow","");
 				var qslug = $(this)[0].id.split("---")[1];
 				{% if user.is_authenticated %}
@@ -231,6 +238,12 @@
 							success:function(response)
 							{
 								$("#sub_num"+qid).text(response.sub_count);
+								// console.log($("#voteResultButtonLink"+qid).length);
+								// if($("#voteResultButtonLink"+qid).length == 0){
+								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
+								// 		'style', "display : none !important"
+								// 	);
+								// }
 							}
 						});  
 						
@@ -251,6 +264,12 @@
 							success:function(response)
 							{
 								$("#sub_num"+qid).text(response.sub_count);
+								// console.log($("#voteResultButtonLink"+qid).length);
+								// if($("#voteResultButtonLink"+qid).length == 0){
+								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
+								// 		'style', "display : block"
+								// 	);
+								// }
 							}
 						});  
 						

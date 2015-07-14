@@ -133,9 +133,9 @@ class VoteView(generic.DetailView):
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
-			# subscribed = Subscriber.objects.filter(user=user, question=question)
+			subscribed = Subscriber.objects.filter(user=user, question=question)
 			# print(subscribed)
-			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ):
+			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ) or (self.request.path.endswith('result') and subscribed):
 				template_name = 'polls/questionDetail.html'
 		return [template_name]
 	

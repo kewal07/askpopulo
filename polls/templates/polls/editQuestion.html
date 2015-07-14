@@ -17,7 +17,7 @@
 					{% csrf_token %}
 					<p>
 						<label for="qText">Question</label>
-						<textarea id ="qText" name="qText" placeholder="Ask the people">{{ question.question_text }}</textarea>
+						<textarea id ="qText" name="qText" placeholder="Ask the people" maxlength="200">{{ question.question_text }}</textarea>
 						 <script type="text/javascript">
 				            // In a perfect world, this would be its own library file that got included
 				            // on the page and only the ``$(document).ready(...)`` below would be present.
@@ -106,7 +106,7 @@
 					</p>
 					<p>
 						<label for="qDesc">Description</label>
-						<textarea id ="qDesc" name="qDesc" placeholder="Description">{{ question.description }}</textarea>
+						<textarea id ="qDesc" name="qDesc" placeholder="Description" maxlength="400">{{ question.description }}</textarea>
 					</p>
 					<p>
 						<label for="qExpiry">Expires On</label>
@@ -353,12 +353,18 @@
 					{% for choice in question.choice_set.all %}
 					<p>
 						<label for="choice{{ forloop.counter }}">Choice {{ forloop.counter }}</label>
-						<input id="choice{{ forloop.counter }}" type="text" name="choice{{ forloop.counter }}" placeholder="First Choice" value="{{ choice.choice_text }}">
+						<input id="choice{{ forloop.counter }}" type="text" name="choice{{ forloop.counter }}" placeholder="First Choice" value="{{ choice.choice_text }}" maxlength="200">
 						{% if choice.choice_image %}
 							<img class="choices choice_image" id="imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
 							<input type="hidden" id="imagetextchoice{{ forloop.counter }}" name="imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
 						{% endif %}
 						<input id="filechoice{{ forloop.counter }}" class="fileButtonClass" type="file" name="choice{{ forloop.counter }}" accept="image/*">
+					</p>
+					{% endfor %}
+					{% for x in question.get_extra_choices %}
+					<p>
+						<label for="choice{{ x }}">Choice {{ x }}</label>
+						<input id="choice{{ x }}" type="text" name="choice{{ x }}" placeholder="Choice" maxlength="200">
 					</p>
 					{% endfor %}
 					<p>

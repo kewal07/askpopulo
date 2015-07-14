@@ -68,7 +68,7 @@
 										item.parent().css({"display":"inline-block"});
 										// console.log($this.parent().next().children().first().show());
 									</script>
-										<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+										<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
 										<!-- {{ choice.choice_text }} -->
 									{% else %}
 										{{ choice.choice_text }}
@@ -78,15 +78,19 @@
 						{% endfor %}
 						<p>
 						{% if question.user_already_voted %}
-							<a class="submit anchor_submit" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+							<a class="submit anchor_submit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
 						{% else %}
 							{% if expired %}
 								<input class="submit voteSubmit" type="submit" value="Expired" id="{{ question.id }}---{{ question.que_slug }}" disabled="disabled"/>
 							{% else %}
-								<input class="submit voteSubmit" type="submit" value="Vote" id="{{ question.id }}---{{ question.que_slug }}"/>
+								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}"/>
 							{% endif %}
 							{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
-								<a class="submit anchor_submit voteResultSubmit" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+							<!-- {% elif question.id in subscribed %}
+								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.id }}" href="{% url 'polls:polls_result' question.id question.que_slug %}">Results</a>
+							{% else %}
+								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.id }}" style="display:none !important" href="{% url 'polls:polls_result' question.id question.que_slug %}">Results</a> -->
 							{% endif %}
 						{% endif %}
 					</p>
@@ -124,11 +128,13 @@
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			$('.submit').bind('click', function()
 			{
-				var queid = $(this)[0].id.split("---")[0];
-				var queslug = $(this)[0].id.split("---")[1];
+				var voteSubmitId = $(this)[0].id;
+				var queid = $(this)[0].id.replace('vote','').split("---")[0];
+				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
 				$(elemid).bind('submit', function()
 				{
+					$("#"+voteSubmitId).attr("disabled","disabled");
 					var vote_url = "https://{{ request.META.HTTP_HOST }}"+'/polls/'+queid+'/'+queslug;
 					$.ajax(
 					{
@@ -143,6 +149,7 @@
 								 $(elemid).unbind('submit').submit();
 							}else{
 								openOverlay("#overlay-inAbox");
+								$("#"+voteSubmitId).removeAttr("disabled");
 							}
 						}
 					});
@@ -151,9 +158,9 @@
 			});
 			$('.followButton').bind('click', function(e){
 				// e.preventDefault();
-				console.log($(this)[0].id)
+				// console.log($(this)[0].id)
 				$button = $("#"+$(this)[0].id);
-				console.log($button);
+				// console.log($button);
 				var qid = $(this)[0].id.split("---")[0].replace("follow","");
 				var qslug = $(this)[0].id.split("---")[1];
 				var follow_url = "https://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
@@ -171,9 +178,11 @@
 							success:function(response)
 							{
 								$("#sub_num"+qid).text(response.sub_count);
-								// url = "{% url 'polls:polls_vote' question.id question.que_slug %}"
-								// // console.log(url);
-								// $(location).attr('href',url);
+								// if($("#voteResultButtonLink"+qid).length == 0){
+								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
+								// 		'style', "display : none !important"
+								// 	);
+								// }
 							}
 						});  
 						
@@ -193,9 +202,11 @@
 							success:function(response)
 							{
 								$("#sub_num"+qid).text(response.sub_count);
-								// url = "{% url 'polls:polls_vote' question.id question.que_slug %}"
-								// // console.log(url);
-								// $(location).attr('href',url);
+								// if($("#voteResultButtonLink"+qid).length == 0){
+								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
+								// 		'style', "display : block"
+								// 	);
+								// }
 							}
 						});  
 						
