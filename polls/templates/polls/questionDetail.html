@@ -408,6 +408,9 @@ var disqus_config = function() {
 				{% for voted in question.voted_set.all %}
 					{% if voted.user.extendeduser.country %}
 						var country = "{{ voted.user.extendeduser.country }}";
+						if(country == 'United Kingdom' || country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
+							country = 'United Kingdom'
+						}
 						if(country in conDict)
 							conDict[country] = conDict[country]+1;
 						else
@@ -424,23 +427,24 @@ var disqus_config = function() {
 			    google.visualization.events.addListener(chart, 'regionClick', selectHandler);
 			}
 			function selectHandler(e) {
-			  /*if(e.region == 'IN'){
-				$("#mapBackButton").css("display", "inline-block");
-				$('#mapBackButton').addClass("back");
-			    drawIndiaMap()
-			  } else if(e.region == 'US'){
-				$("#mapBackButton").css("display", "inline-block");
-				$('#mapBackButton').addClass("back");
-			    drawUSMap()
-			  }*/
 				$("#mapBackButton").css("display", "inline-block");
 				$('#mapBackButton').addClass("back");
 				drawStateMap(e.region);
 			}
 			
 			var regionDict = {
-				"IN" :"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand"
+				"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland"
 			}
+
+			var englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire",
+				"Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire",
+				"Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
+
+			var nothernIreLand = ['Antrim','Ards','Armagh','Ballymena','Ballymoney','Banbridge','Belfast','Carrickfergus','Castlereagh','Coleraine','Cookstown','Craigavon','Derry','Down','Dungannon and South Tyrone','Fermanagh','Larne','Limavady','Lisburn','Magherafelt','Moyle','Newry and Mourne District','Newtownabbey','North Down','Omagh','Strabane'];
+
+			var scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmannanshire","Dumfries and Galloway","Dundee City","East Ayrshire","East Dunbartonshire","East Lothian","East Renfrewshire","Edinburgh, City of","Eilean Siar","Falkirk","Fife","Glasgow City","Highland","Inverclyde","Midlothian","Moray","North Ayrshire","North Lanarkshire","Orkney Islands","Perth and Kinross","Renfrewshire","Scottish Borders, The","Shetland Islands","South Ayrshire","South Lanarkshire","Stirling","West Dunbartonshire","West Lothian"];
+
+			var wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
 				
 			function drawStateMap(region){
 				var options = {
@@ -458,12 +462,33 @@ var disqus_config = function() {
 				{% for voted in question.voted_set.all %}
 					{% if voted.user.extendeduser.country %}
 						var country = "{{ voted.user.extendeduser.country }}";
+						if(country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
+								country = 'United Kingdom'
+						}
 						if(country == stateContry){
 							var state = "{{ voted.user.extendeduser.state }}";
-							if(state in stateDict)
-								stateDict[state] = stateDict[state]+1;
-							else
-								stateDict[state] = 1;
+							if(country == 'United Kingdom')
+							{
+								console.log(state);
+								if(englandDict.indexOf(state) > -1){
+									stateDict['England'] = stateDict['England']||0 + 1;
+								} else if(nothernIreLand.indexOf(state) > -1) {
+									stateDict['Northern Ireland'] = stateDict['Northern Ireland']||0 + 1;
+								} else if(scotland.indexOf(state) > -1) {
+									stateDict['Scotland'] = stateDict['Scotland']||0 + 1;
+								} else if(wales.indexOf(state) > -1) {
+									stateDict['Wales'] = stateDict['Wales']||0 + 1;
+								} else {
+									stateDict[state] = 1;
+								}
+							} 
+							else 
+							{
+								if(state in stateDict)
+									stateDict[state] = stateDict[state]+1;
+								else
+									stateDict[state] = 1;
+							}
 						}
 					{% endif %}
 				{% endfor %}
@@ -476,92 +501,10 @@ var disqus_config = function() {
 				chart.draw(data, options);
 			}
 			    
-			/*US Starts*/
-			function drawUSMap() {
-			  var data = google.visualization.arrayToDataTable([
-			            ['State', 'Data'],
-			            ['California', 5],
-			            ['Texas', 22],
-			            ['Florida', 37],
-			            ['New York', 15],
-			            ['Illinois',7],
-			            ['Pennsylvania',102],
-			            ['Ohio',112],
-			            ['Georgia',3],
-			            ['North Carolina',76],
-			            ['Michigan',13],
-			            ['New Jersey',47],
-			            ['Virginia',39],
-			            ['Washington',20],
-			            ['Massachusetts',33],
-			            ['Arizona',21],
-			            ['Indiana',45],
-			            ['Tennessee',77],
-			            ['Missouri',67],
-			            ['Maryland',1],
-			            ['Wisconsin',4],
-			            ['Minnesota',65],
-			            ['Colorado',8],
-			            ['Alabama',21],
-			            ['South Carolina',3],
-			            ['Louisiana',143],
-			            ['Kentucky',17],
-			            ['Oregon',33],
-			            ['Oklahoma',99],
-			            ['Puerto Rico',11],
-			            ['Connecticut',1],
-			            ['Iowa',44],
-			            ['Mississippi',175],
-			            ['Arkansas',3],
-			            ['Utah',11],
-			            ['Kansas',4],
-			            ['Nevada',65],
-			            ['New Mexico',8],
-			            ['Alabama',21],
-			            ['Nebraska',3],
-			            ['West Virginia',143],
-			            ['Idaho',17],
-			            ['Hawaii',33],
-			            ['Maine',99],
-			            ['New Hampshire',11],
-			            ['Rhode Island',1],
-			            ['Montana',44],
-			            ['Delaware',175],
-			            ['South Dakota',3],
-			            ['North Dakota',11],
-			            ['Alaska',33],
-			            ['District of Columbia',99],
-			            ['Vermont',11],
-			            ['Rhode Island',1],
-			            ['Wyoming',44],
-			            ['Guam',175],
-			            ['U.S. Virgin Islands',3],
-			            ['American Samoa',11],
-			            ['Northern Mariana Islands',11]
-			  ]);
-			var options = {
-			    region: 'US',
-			    displayMode: 'regions',
-			    resolution: 'provinces',
-			    datalessRegionColor: '#666',
-			    colorAxis: {colors: ['#B22234', '#FFFFFF', '#3C3B6E']},
-			    backgroundColor: '#81d4fa',
-			    domain: 'IN',
-			    width: '100%'
-			  };
-
-			  var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
-			  chart.draw(data, options);
-			};
-			/*US Ends*/
-
 			function back(){  
 				$("#mapBackButton").css("display", "none");  
 			    drawLocationChart();
 			}
-   
-
-
 		</script>
 		<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 {% endblock %}
