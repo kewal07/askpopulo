@@ -87,10 +87,6 @@
 							{% endif %}
 							{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
-							<!-- {% elif question.id in subscribed %}
-								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.id }}" href="{% url 'polls:polls_result' question.id question.que_slug %}">Results</a>
-							{% else %}
-								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.id }}" style="display:none !important" href="{% url 'polls:polls_result' question.id question.que_slug %}">Results</a> -->
 							{% endif %}
 						{% endif %}
 					</p>

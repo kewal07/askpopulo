@@ -52,7 +52,7 @@ def sendFeed():
 			idNum = idNumEmail[0]
 			to_email = idNumEmail[1]
 			#print('***************',idNum)
-			query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s AND polls_question.privatePoll = 0 LIMIT 3" %idNum
+			query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s AND polls_question.privatePoll = 0 order by RAND() LIMIT 3" %idNum
 			count = userCur.execute(query)
 			if count!= 0:
 				for row in userCur:
@@ -112,11 +112,11 @@ def sendFeed():
 				mail_log_file.write(str(msg.global_merge_vars) + "\n")
 				mail_log_file.write("\n*********************** Send to and content end ******************\n")
 				for_loop_counter += 1
-				#msg.send()
-				#time.sleep(10)
+				msg.send()
+				time.sleep(10)
 
 			if for_loop_counter % 150 == 0:
-				#time.sleep(2200)
+				time.sleep(2200)
 				pass
 
 			subsQId  = []

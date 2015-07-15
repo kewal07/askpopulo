@@ -113,10 +113,6 @@
 										{% endif %}
 										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
-										<!-- {% elif question.question.id in question.subscribed %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.question.id }}" href="{% url 'polls:polls_result' question.question.id question.question.que_slug %}">Results</a>
-										{% else %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLinkonFollow{{ question.question.id }}" style="display:none !important" href="{% url 'polls:polls_result' question.question.id question.question.que_slug %}">Results</a> -->
 										{% endif %}
 									{% endif %}
 									</p>
