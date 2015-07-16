@@ -11,7 +11,10 @@
 				<a href="https://qasiatrial.asia.qualtrics.com/SE/?SID=SV_dn8FIW14ZPPiDlz" target="new"><img src="/static/polls/images/feedback.png"  alt="Feedback" title="Feedback"></a>
 	</div>
 	<section id="content">
-			{% if user.is_authenticated and user.username in request.path %}
+			{% if user.is_authenticated %}
+				{% url 'polls:mypolls' user.id user.extendeduser.user_slug as mypolls_url %}
+			{% endif %}
+			{% if user.is_authenticated and request.path == mypolls_url %}
 				<div class="mypolltab">
 					<a href="{{ request.path }}" class="mypollstabs">Asked</a>
 					<a href="{{ request.path }}?tab=voted" class="mypollstabs">Voted</a>

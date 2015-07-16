@@ -44,6 +44,8 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
+		# if user.is_authenticated():
+		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
 
 		if request.path.endswith('category') and not request.GET.get('category'):
 			mainData = Category.objects.all()
@@ -63,7 +65,7 @@ class IndexView(generic.ListView):
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
 				# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 			# sendFeed()
-		elif user.is_authenticated() and request.path.endswith(user.extendeduser.user_slug):
+		elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
 			if request.GET.get('tab') == 'mycategories':
 				category_questions = []
 				if user.extendeduser.categories:

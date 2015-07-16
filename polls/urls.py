@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     #url(r'^', views.index),
 	url(r'^$',views.IndexView.as_view(),name='index'),
-	url(r'^mypolls/(?P<user_name>[\w\-]+)$',login_required(views.IndexView.as_view()),name='mypolls'),
+	url(r'^mypolls/(?P<pk>\d+)/(?P<user_name>[\w\-]+)$',login_required(views.IndexView.as_view()),name='mypolls'),
 	url(r'^category$',views.IndexView.as_view(),name='polls_category'),
 	url(r'^polls/featuredpolls$',views.IndexView.as_view(),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',views.VoteView.as_view(),name='polls_vote'),
