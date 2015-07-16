@@ -63,7 +63,7 @@ class IndexView(generic.ListView):
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
 				# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 			# sendFeed()
-		elif user.is_authenticated() and request.path.endswith(user.username):
+		elif user.is_authenticated() and request.path.endswith(user.extendeduser.user_slug):
 			if request.GET.get('tab') == 'mycategories':
 				category_questions = []
 				if user.extendeduser.categories:
