@@ -44,6 +44,7 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
+		curtime = timezone.now()
 		# if user.is_authenticated():
 		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
 
@@ -63,6 +64,16 @@ class IndexView(generic.ListView):
 					latest_questions = latest_questions
 				elif request.GET.get('tab') == 'leastvoted':
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+				elif request.GET.get('tab') == 'withexpiry':
+					toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+					expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+					toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+					expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+					latest_questions = []
+					if toexpire_polls:
+						latest_questions.extend(toexpire_polls)
+					if expired_polls:
+						latest_questions.extend(expired_polls)
 				# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 			# sendFeed()
 		elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
@@ -91,6 +102,22 @@ class IndexView(generic.ListView):
 			category = Category.objects.filter(category_title=category_title)[0]
 			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
 			latest_questions = latest_questions[::-1]
+			if request.GET.get('tab') == 'mostvoted':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+			elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				latest_questions = latest_questions
+			elif request.GET.get('tab') == 'leastvoted':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+			elif request.GET.get('tab') == 'withexpiry':
+				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+				toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+				expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+				latest_questions = []
+				if toexpire_polls:
+					latest_questions.extend(toexpire_polls)
+				if expired_polls:
+					latest_questions.extend(expired_polls)
 		else:
 			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
@@ -100,6 +127,16 @@ class IndexView(generic.ListView):
 				latest_questions = latest_questions
 			elif request.GET.get('tab') == 'leastvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+			elif request.GET.get('tab') == 'withexpiry':
+				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+				toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+				expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+				latest_questions = []
+				if toexpire_polls:
+					latest_questions.extend(toexpire_polls)
+				if expired_polls:
+					latest_questions.extend(expired_polls)
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)
@@ -114,7 +151,7 @@ class IndexView(generic.ListView):
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
-			if mainquestion.expiry and mainquestion.expiry < timezone.now():
+			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
 			if user.is_authenticated():
