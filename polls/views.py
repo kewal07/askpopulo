@@ -297,7 +297,6 @@ class CreatePollView(generic.ListView):
 		return context
 	
 	def post(self, request, *args, **kwargs):
-		# url = reverse('polls:index')
 		user = request.user
 		edit = False
 		ajax = False
