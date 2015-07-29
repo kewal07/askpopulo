@@ -81,7 +81,7 @@
 							<a class="submit anchor_submit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
 						{% else %}
 							{% if expired %}
-								<input class="submit voteSubmit" type="submit" value="Expired" id="{{ question.id }}---{{ question.que_slug }}" disabled="disabled"/>
+								<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.id }}---{{ question.que_slug }}" disabled="disabled"/>
 							{% else %}
 								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}"/>
 							{% endif %}

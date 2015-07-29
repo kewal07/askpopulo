@@ -21,17 +21,19 @@
 					<a href="{{ request.path }}?tab=followed" class="mypollstabs">Followed</a>
 					<a href="{{ request.path }}?tab=mycategories" class="mypollstabs">Category Polls</a>
 				</div>
-			{% elif "category" in request.GET.urlencode %}
-				<div class="mypolltab" style="display:none">
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}" class="mypollstabs">Most Voted</a>
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=latest" class="mypollstabs">Latest</a>
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
-				</div>
 			{% else %}
 				<div class="mypolltab">
-					<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
-					<a href="{{ request.path }}" class="mypollstabs">Latest</a>
-					<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
+					{% if "category" in request.GET %}
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=mostvoted" class="mypollstabs">Most Voted</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}" class="mypollstabs">Latest</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=withexpiry" class="mypollstabs">Timed Polls</a>
+						{% else %}
+						<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
+						<a href="{{ request.path }}" class="mypollstabs">Latest</a>
+						<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
+						<a href="{{ request.path }}?tab=withexpiry" class="mypollstabs">Timed Polls</a>
+					{% endif %}
 				</div>
 			{% endif %}
 			{% if data %}
@@ -138,7 +140,7 @@
 										<a class="submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
 										{% if question.expired %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Expired" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 										{% else %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}"/>
 										{% endif %}
@@ -170,13 +172,37 @@
 				        <div class="pagination">
 				            <span class="page-links">
 				                {% if page_obj.has_previous %}
-				                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+				                	{% if "tab" in request.GET %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% else %}
+				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% endif %}
+				                	{% else %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% else %}
+				                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+				                    	{% endif %}
+				                    {% endif %}
 				                {% endif %}
 				                <span class="page-current">
 				                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
 				                </span>
 				                {% if page_obj.has_next %}
-				                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+				                	{% if "tab" in request.GET %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% else %}
+				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% endif %}
+				                	{% else %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% else %}
+				                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
+				                    	{% endif %}
+				                    {% endif %}
 				                {% endif %}
 				            </span>
 				        </div>
@@ -191,7 +217,10 @@
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			$( ".mypollstabs" ).each(function( ) {
-				if($(this)[0].href == window.location.href)
+				winLocation = window.location.href;
+				if(winLocation.indexOf("page=") != -1)
+					winLocation = winLocation.substr(0,winLocation.indexOf("page=")-1);
+				if($(this)[0].href == winLocation)
 					$(this).css({
 						"background-color":"white",
 						"color":"black"
