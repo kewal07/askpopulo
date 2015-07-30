@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
 from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
+import polls.continent_country_dict
 from categories.models import Category
 import datetime
 import simplejson as json
@@ -31,6 +32,14 @@ class IndexView(generic.ListView):
 	context_object_name = 'data'
 	paginate_by = 50
 
+	def render_to_response(self, context, **response_kwargs):
+		response = super(IndexView, self).render_to_response(context, **response_kwargs)
+		# print(self.request.COOKIES.get("location"))
+		if not self.request.COOKIES.get("location"):
+			# print("setting location cookie")
+			response.set_cookie("location","global")
+		return response
+
 	def get_template_names(self):
 		request = self.request
 		template_name = 'polls/index.html'
@@ -47,6 +56,13 @@ class IndexView(generic.ListView):
 		curtime = timezone.now()
 		# if user.is_authenticated():
 		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
+		global_location = ""
+		country_list =[]
+		if request.COOKIES.get("location","global").lower() != "global":
+			global_location = request.COOKIES.get("location").lower()
+			country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
+		print(global_location)
+		print(country_list)
 
 		if request.path.endswith('category') and not request.GET.get('category'):
 			mainData = Category.objects.all()
@@ -143,6 +159,8 @@ class IndexView(generic.ListView):
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
+		if country_list:
+			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
 			data = {}
 			data ['question'] = mainquestion

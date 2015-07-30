@@ -74,12 +74,29 @@ $(document).ready(function(){
 
 	/* Dropdownbox on click of user image in nav */
 	$('.userInNav').click(function(){
+		$('.dropDownLoc').hide();
 		$('.dropDownBox').slideToggle("slow");
 	});
 	$('.menuResponsive').click(function(){
+		$('.dropDownLoc').hide();
 		$('.dropDownBox').slideToggle("slow");
 	});
+	$('.location_select').click(function(){
+		$('.dropDownBox').hide();
+		$('.dropDownLoc').slideToggle("slow");
+	});
 	/* end of Dropdownbox on click of user image in nav */
+
+	$(".location_link").bind("click",function(){
+		new_location = $(this)[0].innerHTML;
+		// console.log(document.cookie);
+		var d = new Date();
+	    d.setTime(d.getTime() + (1000*24*60*60*1000));
+	    var expires = "expires="+d.toUTCString();
+	    document.cookie = "location=" + new_location;
+	    $(".location_link").unbind("click").click();
+		// return false;
+	});
 	
 	/* Overlay */
 	/* close overlay call */

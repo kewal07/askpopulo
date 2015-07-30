@@ -25,7 +25,7 @@
 						</p>
 						<p>
 							Asked on:<br>
-							{{ question.pub_date }}
+								<span id="{{ question.id }}pubdate"></span><br>
 						</p>
 					</div>
 				</div> 
@@ -85,7 +85,7 @@
 							{% else %}
 								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}"/>
 							{% endif %}
-							{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
+							{% if user.is_authenticated and user.id == question.user.id or expired %}
 								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
 							{% endif %}
 						{% endif %}
@@ -101,14 +101,12 @@
 									<button class="btn followButton" id="follow{{ question.id }}---{{ question.que_slug }}" >Follow</button>
 								{% endif %}
 							</li>
-							<ul class="share-buttons">
-								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
-								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
-								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
+							<li><i id="ban{{ question.id }}" title="Report Spam" class="fa fa-ban" style="color:red; cursor:pointer"></i></li>
+							<ul class="pollInfoUl clearfix share-buttons">
 								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
-							</ul>
+							</ul>							
 						</ul>
 					</div>
 					<p style="text-align:center;font-size:1rem;margin-top:1rem">
@@ -151,6 +149,21 @@
 					});
 					return false;
 				});
+			});
+			$('.fa-ban').click(function()
+			{
+				var queid = $(this)[0].id.replace('ban','');
+				$.ajax(
+					{
+						type: 'GET',
+						url:'/abuse?qIdBan='+queid,
+						success:function(response)
+						{
+								$('#overlay-inAbox').children().children().first().text("AskByPoll has been informed. We are looking into it. For any more details please write to us @ support@askbypoll.com ");
+								openOverlay("#overlay-inAbox");
+								$(this).css({"color":"red"});
+						}
+					});     
 			});
 			$('.followButton').bind('click', function(e){
 				// e.preventDefault();

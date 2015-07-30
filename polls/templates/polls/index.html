@@ -62,7 +62,7 @@
 									</p>
 									<p class="askedOnInfo">
 										Asked on:<br>
-										<span id="{{ question.question.id }}"></span><br>
+										<span id="{{ question.question.id }}pubdate"></span><br>
 									</p>
 								</div>
 							</div> 
@@ -147,7 +147,7 @@
 					
 												var publicationDate = new Date({{ question.question.pub_date.year }}, {{ question.question.pub_date.month }}, {{ question.question.pub_date.day }}, {{ question.question.pub_date.hour }}, {{ question.question.pub_date.minute }}-offset, {{ question.question.pub_date.second }});
 												var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
-												document.getElementById('{{ question.question.id }}').innerHTML = pubDateString;
+												document.getElementById('{{ question.question.id }}pubdate').innerHTML = pubDateString;
 
 												{% if question.question.expiry and not question.expired %}
 												var expiryDate = new Date({{ question.question.expiry.year }}, {{ question.question.expiry.month }}, {{ question.question.expiry.day }}, {{ question.question.expiry.hour }}, {{ question.question.expiry.minute }}-offset, {{ question.question.expiry.second }});

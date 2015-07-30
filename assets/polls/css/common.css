@@ -179,7 +179,7 @@ ul.menu-nav li{
 	text-align:center;
 	padding:0 1rem;
 }
-.dropDownBox{
+.dropDownBox, .dropDownLoc{
 	display: none;
 	position: absolute;
 	z-index: 98;

@@ -52,55 +52,59 @@
 							<img class ="menuResponsive" src="/static/login/images/menu.png"  alt="Menu">
 						{% endif %}
 					</div>
-					{% if user.is_authenticated %}
 					<div class="menu" data-intro="Navigate easily using these links...Go to Home page or create a poll by going to the ASK page or have a look on the Featured ones." data-position="left">
 						<ul class="menu-nav">
 							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:polls_category' %}">Category</a></li>
+					{% if user.is_authenticated %}
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
+					{% else %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
+					{% endif %}
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
-							            <!-- {% csrf_token %} -->
-							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
 							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
 							            <input type="submit" value="Search!" style="display:none">
 							        </form>
-									
 								</div>
 							</li>
+					{% if user.is_authenticated %}
 							<li class="userInNav">
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 							</li>
-						</ul>
-						<div class="dropDownBox">
-							<ul class="dropDownUL">
-								<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
-								<li><a href="{% url 'login:logout' %}">Log Out</a></li>
-							</ul>
-						</div>
-					</div>
-					{% else %}
-					<div class="menu" data-intro="Navigate easily using these links...Go to Home page or create a poll by going to the ASK page or have a look on the Featured ones." data-position="left">
-						<ul class="menu-nav">
-							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:featured' %}" data-intro="Type in your query and we will get you your results" data-position="bottom">Featured</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:polls_category' %}">Category</a></li>
-							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
-							<li><div class="search">
-									<form method="get" action="/search" class="autocomplete-me">
-							            <!-- {% csrf_token %} -->
-							            <!-- <input type="search" class="searchBox" name="searchQuery" placeholder="Search Opinions"> -->
-							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
-							            <input type="submit" value="Search!" style="display:none">
-							        </form>
-								</div>
-							</li>
-						</ul>
-					</div>
 					{% endif %}
+							<li class="location_select" style="cursor:pointer"><a class="menuanchor">{{ request.COOKIES.location|default:"global"|capfirst }}</a></li>
+						</ul>
+					{% if user.is_authenticated %}
+							<div class="dropDownBox">
+								<ul class="dropDownUL">
+									<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+									<li><a href="{% url 'login:logout' %}">Log Out</a></li>
+								</ul>
+							</div>
+					{% endif %}
+							<div class="dropDownLoc">
+								<ul class="dropDownUL">
+									{% if request.GET.urlencode %}
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Global</a></li>
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Asia</a></li>
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Europe</a></li>
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Australia</a></li>
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">America</a></li>
+									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Africa</a></li>
+									{% else %}
+									<li><a href="{{ request.path }}" class="location_link">Global</a></li>
+									<li><a href="{{ request.path }}" class="location_link">Asia</a></li>
+									<li><a href="{{ request.path }}" class="location_link">Europe</a></li>
+									<li><a href="{{ request.path }}" class="location_link">Australia</a></li>
+									<li><a href="{{ request.path }}" class="location_link">America</a></li>
+									<li><a href="{{ request.path }}" class="location_link">Africa</a></li>
+									{% endif %}
+								</ul>
+							</div>
+					</div>
 				</div>
 				<div id="overlay-inAbox" class="overlay">
 					<div class="wrapper">
