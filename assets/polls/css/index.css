@@ -403,6 +403,7 @@ button.followButton.unfollow{
 	.userImage img{
 		padding:0;
 		width:100%;
+		height: inherit;
 	}
 	.userBrief p{
 		padding: 1rem 1rem 0rem 0rem;
