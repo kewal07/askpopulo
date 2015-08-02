@@ -62,6 +62,11 @@ class Question(models.Model):
 			for x in range(ex_ch,4):
 				ch_list.append(x+1)
 		return ch_list
+	def has_image(self):
+		for choice in self.choice_set.all():
+			if choice.choice_image:
+				return choice.get_file_name()
+		return False
 
 class Choice(models.Model):
 	choice_pk = models.CharField(max_length=255)

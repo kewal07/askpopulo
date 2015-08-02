@@ -6,7 +6,7 @@ now=dt.datetime.now()
 ago=now-dt.timedelta(minutes=30)
 folder_day = dt.date.today()
 
-resize_to = 128, 128
+resize_to = 300, 300
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 log_file = open(script_path+os.sep+"askbypoll_crone.log","a")
@@ -27,7 +27,7 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'choices'+os.se
         msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
         log_file.write(msg)
         #print(msg)
-        if im.size[0] > 128 or im.size[1] > 128:
+        if im.size[0] > 300 or im.size[1] > 300:
             msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
             #print(msg)
             log_file.write(msg)
@@ -47,7 +47,7 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'profile'+os.se
         msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
         log_file.write(msg)
         #print(msg)
-        if im.size[0] > 128 or im.size[1] > 128:
+        if im.size[0] > 300 or im.size[1] > 300:
             msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
             #print(msg)
             log_file.write(msg)
@@ -68,7 +68,7 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'):
         msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
         log_file.write(msg)
         #print(msg)
-        if im.size[0] > 128 or im.size[1] > 128:
+        if im.size[0] > 300 or im.size[1] > 300:
             msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
             #print(msg)
             log_file.write(msg)

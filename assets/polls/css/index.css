@@ -386,6 +386,7 @@ button.followButton.unfollow{
 	border-left: thin solid #000;
 	border-right: thin solid #000;
 	border-bottom: thin solid #000;
+	overflow-wrap:break-word;
 }
 .question_description_header{
 	font-size:1rem !important;

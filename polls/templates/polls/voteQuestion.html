@@ -1,5 +1,19 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% block meta_data_extra %}
+	{% with question.has_image as has_image %}
+	{%if has_image %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/media/choices/{{ has_image }}"/>
+		<meta property="og:image:width" content="300" /> 
+		<meta property="og:image:height" content="300" />
+	{% else %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
+	{% endif %}
+	{% endwith %}
+	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<meta property="og:title" content="{{ question.question_text  }}"/>
+	<meta property="og:description" content="{{ question.description  }}" />
+{% endblock %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 {% endblock %}
@@ -102,11 +116,8 @@
 								{% endif %}
 							</li>
 							<ul class="share-buttons">
-								  <!-- <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost&t=ssd" target="_blank" title="Share on Facebook"><i class="fa fa-facebook-square fa-2x"></i></a></li>
-								  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Flocalhost&text=ssd:%20http%3A%2F%2Flocalhost" target="_blank" title="Tweet"><i class="fa fa-twitter-square fa-2x"></i></a></li>
-								  <li><a href="https://plus.google.com/share?url=http%3A%2F%2Flocalhost" target="_blank" title="Share on Google+"><i class="fa fa-google-plus-square fa-2x"></i></a></li> -->
 								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
-								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
 							</ul>
 						</ul>

@@ -310,7 +310,8 @@ class CreatePollView(generic.ListView):
 		if not user.is_authenticated():
 			url = reverse('account_login')
 		elif request.POST:
-			qText = request.POST.get('qText')
+			qText = request.POST.get('qText')	
+			qText = qText.replace('\n', ' ').replace('\r', '')
 			if not qText.strip():
 				errors['qTextError'] = "Question required"
 			qDesc = request.POST.get('qDesc')
@@ -568,17 +569,22 @@ def comment_mail(request):
 			to_email.append(sub_email)
 			que_author.append(sub_user.user.first_name)
 	# print(to_email)
+	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
 	for index,to_mail in enumerate(to_email):
 		# print(index,to_mail)
 		# print("&&&&&&&&&&&&")
 		# print(que_author[index])
-		msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
-		msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
-		msg.global_merge_vars = {                       # Merge tags in your template
-		    "QuestionAuthor" : que_author[index],
-		    "CommentAuthor" : com_author,
-		    "QuestionURL" : que_url,
-		    "QuestionText" : que_text
-			}
-		msg.send()
+		if (not to_email in doNotSendList):
+			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
+			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
+			msg.global_merge_vars = {                       # Merge tags in your template
+		    	"QuestionAuthor" : que_author[index],
+		    	"CommentAuthor" : com_author,
+		    	"QuestionURL" : que_url,
+		    	"QuestionText" : que_text
+				}
+			msg.send()
 	return HttpResponse(json.dumps({}),content_type='application/json')
+
+def error_CompanyName(request):
+	return render(request,'error404.html')
