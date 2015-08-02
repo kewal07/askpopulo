@@ -206,15 +206,9 @@
 	                    success:function(response)
 	                    {
 	                    	var form_errors = response.form_errors;
-	                    	console.log(response.form_errors);
-	                    	console.log(typeof form_errors === 'undefined');
-
 	                    	if(typeof form_errors === 'undefined'){
 	                        	 $('#password_change_form').unbind('submit').submit();
 	                        }else{
-	                        	console.log(form_errors.oldpassword);
-		                    	console.log(form_errors.password1);
-		                    	console.log(form_errors.password2);
 		                    	if(typeof form_errors.oldpassword === 'undefined')
 	                        	 	form_errors.oldpassword = "";
 	                        	 if(typeof form_errors.password1 === 'undefined')

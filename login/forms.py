@@ -112,3 +112,7 @@ class MySignupPartForm(forms.Form):
 		# if you want to do it to all of them
 		for field in self.fields.values():
 			field.error_messages = {'required':'Required'}
+
+class UnsubscribeForm(forms.Form):
+	required_css_class = 'true'
+	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))

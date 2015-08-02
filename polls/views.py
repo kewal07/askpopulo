@@ -622,17 +622,52 @@ def comment_mail(request):
 			to_email.append(sub_email)
 			que_author.append(sub_user.user.first_name)
 	# print(to_email)
+	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
 	for index,to_mail in enumerate(to_email):
 		# print(index,to_mail)
 		# print("&&&&&&&&&&&&")
 		# print(que_author[index])
-		msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
-		msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
-		msg.global_merge_vars = {                       # Merge tags in your template
-		    "QuestionAuthor" : que_author[index],
-		    "CommentAuthor" : com_author,
-		    "QuestionURL" : que_url,
-		    "QuestionText" : que_text
-			}
-		msg.send()
+		if (not to_email in doNotSendList):
+			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
+			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
+			msg.global_merge_vars = {                       # Merge tags in your template
+		    	"QuestionAuthor" : que_author[index],
+		    	"CommentAuthor" : com_author,
+		    	"QuestionURL" : que_url,
+		    	"QuestionText" : que_text
+				}
+			msg.send()
 	return HttpResponse(json.dumps({}),content_type='application/json')
+
+class MyUnsubscribeView(generic.ListView):
+	template_name = 'unsubscribe.html'
+
+	def get_queryset(self):
+		context = {}
+		return context
+
+	def post(self,request,*args,**kwargs):
+		error={}
+		ajax = False
+		if request.GET.get("ajax"):
+			ajax = True
+			print("Ajax call detected")
+		emailToUnsubscribe = request.POST.get('unsubscribeEmail')
+		if(emailToUnsubscribe):
+			userId = User.objects.filter(email=emailToUnsubscribe).values('id')
+			if(userId):
+				unsubscribeUser = ExtendedUser.objects.get(user_id = userId)
+				unsubscribeUser.mailSubscriptionFlag = 1
+				unsubscribeUser.save()
+			else:
+				error['nouser'] = "No user exists with given email id. Please provide your correct email id"
+		else:
+			error['emptyemail'] = "Please provide your registered email id to unsubscribe."
+		if error or ajax:
+			if(('emptyemail' in error) or ('nouser' in error)):
+				return HttpResponse(json.dumps(error), content_type='application/json')
+			else:
+				print("here")
+				error['success'] = "You are successfully unsubscribed from all email notifications."
+				return HttpResponse(json.dumps(error), content_type='application/json')
+

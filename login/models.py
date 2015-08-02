@@ -33,6 +33,7 @@ class ExtendedUser(models.Model):
 	profession = models.CharField(max_length=512,blank=True,null=True)
 	user_slug = models.SlugField(null=True,blank=True)
 	categories = models.CharField(max_length=100,default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26',blank=True,null=True)
+	mailSubscriptionFlag = models.BooleanField(default=0)
 	
 	def save(self, *args, **kwargs):
 		uname = self.user.username

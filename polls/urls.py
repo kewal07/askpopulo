@@ -24,4 +24,5 @@ urlpatterns = patterns('',
 	url(r'^follow/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$', login_required(views.FollowPollView.as_view()),name="polls_follow"),
 	url(r'^abuse$', login_required(views.ReportAbuse.as_view()),name="polls_abuse"),
 	url(r'^comment_mail$', views.comment_mail,name="comment_mail"),
+	url(r'^unsubscribe$',views.MyUnsubscribeView.as_view(),name="unsubscribe"),
 )
