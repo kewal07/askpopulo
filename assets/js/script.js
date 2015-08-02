@@ -88,13 +88,9 @@ $(document).ready(function(){
 	/* end of Dropdownbox on click of user image in nav */
 
 	$(".location_link").bind("click",function(){
-		new_location = $(this)[0].innerHTML;
-		// console.log(document.cookie);
-		var d = new Date();
-	    d.setTime(d.getTime() + (1000*24*60*60*1000));
-	    var expires = "expires="+d.toUTCString();
-	    document.cookie = "location=" + new_location;
-	    $(".location_link").unbind("click").click();
+		var new_location = $(this)[0].innerHTML;
+		document.cookie = "location=" + new_location;
+	    $(".location_link").unbind("click");
 		// return false;
 	});
 	
@@ -109,6 +105,17 @@ $(document).ready(function(){
 	$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
 	$('#id_categories').prev().on('click', '#cats', function() {
     	$('#id_categories').toggle();
+  	});
+
+  	$(".fa-info-circle").hover(function(e){
+  		// console.log("category_tooltip");
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#category_tooltip").css({
+  			"top":elem_pos.top,
+  			"left":elem_pos.left-60,
+  		});
+  		$("#category_tooltip").toggle();
   	});
 
 	/*help*/
@@ -136,6 +143,14 @@ $(document).ready(function(){
 				$("#"+elem.id).next().toggle();
 		});
 	}
+	/* end */
+
+	/* clean old time */
+	$("#clearOldExpiryTimefa").click(function(){
+		// console.log($("#oldExpiryTimespan")[0].innerHTML);
+		$("#oldExpiryTimespan")[0].innerHTML = "None";
+		$("#oldExpiryTimeinput").attr("value","clean");
+	});
 	/* end */
 });
 

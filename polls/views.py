@@ -61,8 +61,8 @@ class IndexView(generic.ListView):
 		if request.COOKIES.get("location","global").lower() != "global":
 			global_location = request.COOKIES.get("location").lower()
 			country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
-		print(global_location)
-		print(country_list)
+		# print(global_location)
+		# print(country_list)
 
 		if request.path.endswith('category') and not request.GET.get('category'):
 			mainData = Category.objects.all()
@@ -357,6 +357,7 @@ class CreatePollView(generic.ListView):
 		ajax = False
 		errors = {}
 		question = None
+		curtime = datetime.datetime.now();
 		if request.GET.get("ajax"):
 			ajax = True
 		if request.GET.get("qid"):
@@ -371,22 +372,26 @@ class CreatePollView(generic.ListView):
 			qExpiry = None
 			if edit:
 				question = Question.objects.get(pk=request.GET.get("qid"))
-				qExpiry = question.expiry
+				if request.POST.get("oldExpiryTime") != "clean":
+					qExpiry = question.expiry
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
 			qemonth = int(request.POST.getlist('qExpiry_month')[0])
 			qeday = int(request.POST.getlist('qExpiry_day')[0])
 			qehr = int(request.POST.getlist('qExpiry_hr')[0])
 			qemin = int(request.POST.getlist('qExpiry_min')[0])
 			qeap = request.POST.getlist('qExpiry_ap')[0]
-			if qeyear != 0 and qemonth != 0 and qeday != 0 and qehr != 0 and qemin != -1: 
+			print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1: 
 				if qeap.lower() == 'pm' and qehr != 12:
 					qehr = qehr + 12
 				elif qeap.lower() == 'am' and qehr == 12:
 					qehr = 0
 				# qExpiry = request.POST.get('qExpiry')
-				# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+				print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
+					if qExpiry < curtime:
+						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
 			# if not qExpiry:
@@ -408,6 +413,9 @@ class CreatePollView(generic.ListView):
 			imagePathList = []
 			images = []
 			choices = []
+			selectedCats = request.POST.get('selectedCategories','').split(",")
+			if not list(filter(bool, selectedCats)):
+				errors['categoryError'] = "Please Select a category"
 			choice1 = request.POST.getlist('choice1')[0].strip()
 			if choice1:
 				choices.append(choice1)
@@ -454,7 +462,6 @@ class CreatePollView(generic.ListView):
 				choice4Image = request.FILES.get('choice4')
 			if choice4Image:
 				images.append(choice4Image)
-			selectedCats = request.POST.get('selectedCategories','').split(",")
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			if isAnon:
@@ -495,7 +502,7 @@ class CreatePollView(generic.ListView):
 				question.isAnonymous=anonymous
 				question.privatePoll=private
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous,privatePoll=private)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private)
 			question.save()
 			sub = Subscriber(user=user,question=question)
 			sub.save()

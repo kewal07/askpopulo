@@ -63,6 +63,27 @@
 					{% else %}
 							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
 					{% endif %}
+							<li class="location_select" style="cursor:pointer"><a class="menuanchor">{{ request.COOKIES.location|default:"global"|capfirst }}</a>
+								<div class="dropDownLoc">
+									<ul class="dropDownUL">
+										{% if request.GET.urlencode %}
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Global</a></li>
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Asia</a></li>
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Europe</a></li>
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Australia</a></li>
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">America</a></li>
+										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Africa</a></li>
+										{% else %}
+										<li><a href="{{ request.path }}" class="location_link">Global</a></li>
+										<li><a href="{{ request.path }}" class="location_link">Asia</a></li>
+										<li><a href="{{ request.path }}" class="location_link">Europe</a></li>
+										<li><a href="{{ request.path }}" class="location_link">Australia</a></li>
+										<li><a href="{{ request.path }}" class="location_link">America</a></li>
+										<li><a href="{{ request.path }}" class="location_link">Africa</a></li>
+										{% endif %}
+									</ul>
+								</div>
+							</li>
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
@@ -75,7 +96,6 @@
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 							</li>
 					{% endif %}
-							<li class="location_select" style="cursor:pointer"><a class="menuanchor">{{ request.COOKIES.location|default:"global"|capfirst }}</a></li>
 						</ul>
 					{% if user.is_authenticated %}
 							<div class="dropDownBox">
@@ -85,25 +105,6 @@
 								</ul>
 							</div>
 					{% endif %}
-							<div class="dropDownLoc">
-								<ul class="dropDownUL">
-									{% if request.GET.urlencode %}
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Global</a></li>
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Asia</a></li>
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Europe</a></li>
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Australia</a></li>
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">America</a></li>
-									<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Africa</a></li>
-									{% else %}
-									<li><a href="{{ request.path }}" class="location_link">Global</a></li>
-									<li><a href="{{ request.path }}" class="location_link">Asia</a></li>
-									<li><a href="{{ request.path }}" class="location_link">Europe</a></li>
-									<li><a href="{{ request.path }}" class="location_link">Australia</a></li>
-									<li><a href="{{ request.path }}" class="location_link">America</a></li>
-									<li><a href="{{ request.path }}" class="location_link">Africa</a></li>
-									{% endif %}
-								</ul>
-							</div>
 					</div>
 				</div>
 				<div id="overlay-inAbox" class="overlay">

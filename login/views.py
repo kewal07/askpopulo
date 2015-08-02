@@ -111,13 +111,27 @@ class LoggedInView(generic.DetailView):
 	template_name = 'login/profile.html'
 	model = User
 	#model = settings.AUTH_USER_MODEL
-	# context_object_name = 'data'
+	context_object_name = 'context_user'
 	# print(request.path)
 	# template_name=request.path
+
+	def get_template_names(self, **kwargs):
+		request = self.request
+		user = self.request.user
+		context = super(LoggedInView, self).get_context_data(**kwargs)
+		context_user = context['context_user']
+		template_name = 'login/profile.html'
+		if user != context_user:
+			template_name = 'login/public_profile.html'
+		return [template_name]
+
 	def get_context_data(self, **kwargs):
 		context = super(LoggedInView, self).get_context_data(**kwargs)
-		user = self.request.user
-		form = ChangePasswordForm(UserForm(user))
+		request_user = self.request.user
+		user = context['context_user']
+		public_profile = False
+		if request_user != user:
+			public_profile = True
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
 		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
@@ -129,16 +143,17 @@ class LoggedInView(generic.DetailView):
 				user_categories = Category.objects.all().filter(pk__in=user_categories_list)
 				for cat in user.extendeduser.categories.split(","):
 					cat_list.append(Category.objects.get(pk=cat).category_title)
-		mainData = {}
-		context['form'] = form
+		if not public_profile:
+			form = ChangePasswordForm(UserForm(user))
+			context['form'] = form
+			userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city,'categories':cat_list}
+			loggedInForm = MySignupForm(userFormData)
+			context["loggedInForm"] = loggedInForm
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
 		# if not user.is_anonymous():	
-		userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city,'categories':cat_list}
-		loggedInForm = MySignupForm(userFormData)
-		context["loggedInForm"] = loggedInForm
 		return context
 		
 # class DetailView(generic.DetailView):

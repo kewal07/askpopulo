@@ -371,7 +371,7 @@
 						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
 					</p>
 					<p>
-						<label for="categories">Category</label>
+						<label for="categories">Category <i class="fa fa-info-circle"></i></label>
 						<input id="categories" type="text" name="categories">
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
 					</p>
@@ -386,6 +386,12 @@
 					<input class="submit" type="submit" value="Create" id="createPollSubmit"/>
 				</form>
 				</div>
+			</div>
+			<div id="category_tooltip">
+				<span>Categories list:<br></span>
+				{% for cat in data.categories %}
+					<span class="cat_title_tooltip">{{ cat }},    </span>
+				{% endfor %}
 			</div>
 		</section>
 		<script>
@@ -428,7 +434,8 @@
 								var dup_choice = response.duplicateChoice;
 								var dup_image = response.duplicateImage;
 								var expiry_error = response.expiryError;
-								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined'){
+								var category_error = response.categoryError;
+								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined'){
 									 $(elemid).unbind('submit').submit();
 								}else{
 									if(typeof que_error === 'undefined')
@@ -441,11 +448,14 @@
 		                        	 	dup_image = "";
 									if(typeof expiry_error === 'undefined')
 		                        	 	expiry_error = "";
+		                        	 if(typeof category_error === 'undefined')
+		                        	 	category_error = "";
 									$(".errorlist").remove();
 			                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span><span class="errorlist"><br>'+dup_choice+'</span><span class="errorlist"><br>'+dup_image+'</span>');
 			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#qExpiry_ap").parent().children().first().append('<span class="errorlist"><br>'+expiry_error+'</span>');
+			                        $("#categories").parent().parent().children().first().append('<span class="errorlist"><br>'+category_error+'</span>');
 			                        $("#createPollSubmit").removeAttr('disabled');
 								}
 							}
