@@ -53,13 +53,7 @@
 						<ul class="menu-nav">
 							<li><a class="menuanchor" href="{% url 'polls:index' %}">Home</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:polls_create' %}">Ask</a></li>
-							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
 							<li><a class="menuanchor" href="{% url 'polls:polls_category' %}">Category</a></li>
-					{% if user.is_authenticated %}
-							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
-					{% else %}
-							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
-					{% endif %}
 							<li class="location_select" style="cursor:pointer"><a class="menuanchor">{{ request.COOKIES.location|default:"global"|capfirst }}</a>
 								<div class="dropDownLoc">
 									<ul class="dropDownUL">
@@ -81,6 +75,12 @@
 									</ul>
 								</div>
 							</li>
+							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
+					{% if user.is_authenticated %}
+							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
+					{% else %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
+					{% endif %}
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">
 							            <input type="search" id="q" class="searchBox" name="q" placeholder="Search Opinions">
