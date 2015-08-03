@@ -102,6 +102,34 @@
 								{% endif %}
 							</li>
 							<li><i id="ban{{ question.id }}" title="Report Spam" class="fa fa-ban" style="color:red; cursor:pointer"></i></li>
+							<li>
+								{% if question.expiry and not expired %}
+									<!-- Time Left:<br> -->
+									<div id="{{ question.id }}timer" class="timerClass"></div>
+								{% endif %}
+								<script>
+									var currentDate = new Date();
+									var offset = currentDate.getTimezoneOffset();
+									
+									var utcDate = new Date({{ question.pub_date.year }}, {{ question.pub_date.month }} - 1, {{ question.pub_date.day }}, {{ question.pub_date.hour }}, {{ question.pub_date.minute }}, {{ question.pub_date.second }});
+		
+									var publicationDate = new Date({{ question.pub_date.year }}, {{ question.pub_date.month }}, {{ question.pub_date.day }}, {{ question.pub_date.hour }}, {{ question.pub_date.minute }}-offset, {{ question.pub_date.second }});
+									var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
+									document.getElementById('{{ question.id }}pubdate').innerHTML = pubDateString;
+
+									{% if question.expiry and not question.expired %}
+									var expiryDate = new Date({{ question.expiry.year }}, {{ question.expiry.month }}, {{ question.expiry.day }}, {{ question.expiry.hour }}, {{ question.expiry.minute }}-offset, {{ question.expiry.second }});
+									$("#{{ question.id }}timer").countdown({until: new Date({{ question.expiry.year }}, {{ question.expiry.month }} - 1, {{ question.expiry.day }}, {{ question.expiry.hour }}, {{ question.expiry.minute }}-offset, {{ question.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+									{% endif %}
+
+									function disableVoteButton(){
+										$('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
+										$('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
+										$('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
+										$('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
+									}
+								</script>
+							</li>
 							<ul class="pollInfoUl clearfix share-buttons">
 								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp

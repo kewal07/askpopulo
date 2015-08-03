@@ -123,10 +123,13 @@
 									</p>
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
-								<div class="pollInfo clearfix">
+							</div>
+						</div>
+						<div class="pollInfo clearfix">
+							<div class="pollInfoData clearfix">
 									<ul class="pollInfoUl clearfix">
-										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
-										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> interested</li>
+										<li><span class="pollInfoNum">{{question.votes}}</span> <i title="opinions" class="fa fa-check-circle"></i></li>
+										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> <i title="interested" class="fa fa-users"></i></li>
 										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
@@ -137,7 +140,7 @@
 										<li>
 											{% if question.question.expiry and not question.expired %}
 												<!-- Time Left:<br> -->
-												<div id="{{ question.question.id }}timer" class="timerClass"></div>
+												<div id="{{ question.question.id }}timer" class="timerClass countdownIndex"></div>
 											{% endif %}
 											<script>
 												var currentDate = new Date();
@@ -165,7 +168,6 @@
 									</ul>
 								</div>
 							</div>
-						</div>
 					</div>
 					{% endfor %}
 					{% if is_paginated %}

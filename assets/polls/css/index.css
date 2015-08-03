@@ -17,6 +17,9 @@
   	display: -ms-flexbox;      /* TWEENER - IE 10 */
   	display: flex;
 }
+.questions {
+	display: block;
+}
 /*.questions>div{
 	flex:1;
 }*/
@@ -40,7 +43,12 @@
 }
 
 .pollInfo{
-	width:105%;
+	width:90%;
+	margin: 0 auto;
+}
+.pollInfoData{
+	width: 60%;
+	margin: 0 auto;
 }
 .userInfo{
 	margin-right: 1rem;
@@ -321,6 +329,10 @@ button.followButton.unfollow{
 	.pollInfo{
 		margin-top:1rem;
 	}
+	.pollInfoData{
+		width: 90%;
+		padding-bottom: 1rem;
+	}
 	ul.pollInfoUl li{
 		 list-style-type: none;
 		 float: left;
@@ -344,7 +356,7 @@ button.followButton.unfollow{
 	}
 
 	.is-countdown{
-	display:none;
+	/*display:none;*/
 	}
 }
 @media only screen and (min-width:481px) and (max-width: 730px){
@@ -356,12 +368,12 @@ button.followButton.unfollow{
 	}
 
 	.is-countdown{
-	    display:none;
+	    /*display:none;*/
 	}
 }
 @media only screen and (min-width:481px) and (max-width: 645px){
 	.pollInfo{
-		display:none;
+		/*display:none;*/
 	}
 	.questions{
 		padding: 1rem 0 0 0;
@@ -377,7 +389,7 @@ button.followButton.unfollow{
 		margin-bottom:0.5rem;
 	}
 	.is-countdown{
-		display:none;
+		/*display:none;*/
 	}
 }
 @media only screen and (max-width: 480px){
@@ -430,7 +442,11 @@ button.followButton.unfollow{
 		 font-size: 1rem;
 	}*/
 	.pollInfo{
-		display:none;
+		/*display:none;*/
+	}
+	.pollInfoData{
+		width: 90%;
+		padding-bottom: 1rem;
 	}
 	.pollsInfoVotePage{
 		display: block !important;
@@ -463,8 +479,10 @@ button.followButton.unfollow{
 		top: 27rem;
 	}
 
-	.is-countdown{
-	    display:none;
+	.countdownIndex{
+	    /*display:none;*/
+	    margin-left: 4rem;
+    	margin-top: 0.5rem;
 	}
 }
 
