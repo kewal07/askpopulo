@@ -48,6 +48,7 @@ class IndexView(generic.ListView):
 		return [template_name]
 	
 	def get_queryset(self):
+		createExtendedUser(self.request.user)
 		request = self.request
 		user = request.user
 		context = {}
@@ -584,7 +585,9 @@ def autocomplete(request):
     return HttpResponse(the_data, content_type='application/json')
 
 def createExtendedUser(user):
-	if hasattr(user,'extendeduser'):
+	if not user.is_authenticated():
+		pass
+	elif hasattr(user,'extendeduser'):
 		# user_slug = request.user.extendeduser.user_slug
 		pass
 	elif user.socialaccount_set.all():

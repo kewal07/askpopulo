@@ -100,7 +100,11 @@
 								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}"/>
 							{% endif %}
 							{% if user.is_authenticated and user.id == question.user.id or expired %}
-								<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+								{% if user.is_authenticated %}
+									<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+								{% else %}
+									<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.id question.que_slug %}">Results</a>
+								{% endif %}
 							{% endif %}
 						{% endif %}
 					</p>

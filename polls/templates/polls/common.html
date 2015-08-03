@@ -2,7 +2,7 @@
 <html itemscope itemtype="http://schema.org/Review">
     <head>
 		{% load staticfiles %}
-		<title>A Social Info Polling Paltform</title>
+		<title>A Social Info Polling Platform</title>
 		<meta itemprop="name" content="AskByPoll">
 		<meta itemprop="description" content="A Socio-Info-Polling platform providing users an interactive social tool to gather the public opinion on any question they have in a fun filled way.">
 		<meta itemprop="image" content="https://{{ request.META.HTTP_HOST }}/static/pollsLogo.png">
@@ -79,7 +79,11 @@
 					{% if user.is_authenticated %}
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
 					{% else %}
-							<li><a class="menuanchor" href="{% url 'account_login' %}">Login</a></li>
+						{% if request.GET.urlencode %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}">Login</a></li>
+						{% else %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}">Login</a></li>
+						{% endif %}
 					{% endif %}
 							<li><div class="search">
 									<form method="get" action="/search" class="autocomplete-me">

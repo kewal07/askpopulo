@@ -13,7 +13,11 @@
 			<!-- <h1>{% trans "Sign In" %}</h1> -->
 
 			{% if socialaccount.providers  %}
-			<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+			{% if request.GET.next %}
+				<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+			{% else %}
+				<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+			{% endif %}
 
 			<div class="loginContentTable">
 			<div class="socialaccount_ballot">

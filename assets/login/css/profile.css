@@ -386,7 +386,7 @@ li.secondChildResponsive{
   .accordion section:target h2 {width:100%;}
   .accordion section:target h2 a{ color:orange; margin-bottom:0.5rem;padding:0;}
   .accordion section:target p {display:block;}
-  .accordion section h2 a{padding:8px 10px;display:block; font-size:16px; font-weight:normal;color:#eee; text-decoration:none; }
+  .accordion section h2 a{padding:8px 10px;display:block; font-size:16px; font-weight:normal;color:#666; text-decoration:none; }
 
   /*set style of closed slide*/
   .accordion section{ float:left; overflow:hidden; color:#333; cursor:pointer; background: #666; margin:3px; }
