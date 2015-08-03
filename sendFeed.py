@@ -21,7 +21,7 @@ def sendFeed():
 		userCur = conn.cursor()
 
 		userIdCur = conn.cursor()
-		userIdCur.execute("SELECT id,email from auth_user")
+		userIdCur.execute("select auth_user.id, email from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where mailSubscriptionFlag = 0")
 
 		catCur = conn.cursor()
 		catCur.execute("SELECT category_title from categories_category order by rand() LIMIT 2")
