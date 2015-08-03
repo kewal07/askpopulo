@@ -50,6 +50,10 @@
 	width: 60%;
 	margin: 0 auto;
 }
+.pollInfoDataDetail{
+	width: 87%;
+	margin: 0 auto;
+}
 .userInfo{
 	margin-right: 1rem;
 	 -webkit-box-flex: 0.2 !important;      /* OLD - iOS 6-, Safari 3.1-6 */

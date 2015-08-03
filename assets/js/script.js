@@ -88,7 +88,7 @@ $(document).ready(function(){
 	/* end of Dropdownbox on click of user image in nav */
 
 	$(".location_link").bind("click",function(){
-		console.log("link clicked");
+		// console.log("link clicked");
 		var new_location = $(this)[0].innerHTML;
 		document.cookie = "location=" + new_location + "; path=/";
 	    $(".location_link").unbind("click");
