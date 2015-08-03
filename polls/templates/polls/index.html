@@ -117,7 +117,11 @@
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}"/>
 										{% endif %}
 										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
+											{% if user.is_authenticated %}
 											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+											{% else %}
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+											{% endif %}
 										{% endif %}
 									{% endif %}
 									</p>
