@@ -17,6 +17,9 @@
   	display: -ms-flexbox;      /* TWEENER - IE 10 */
   	display: flex;
 }
+.questions {
+	display: block;
+}
 /*.questions>div{
 	flex:1;
 }*/
@@ -40,7 +43,12 @@
 }
 
 .pollInfo{
-	width:105%;
+	width:90%;
+	margin: 0 auto;
+}
+.pollInfoData{
+	width: 60%;
+	margin: 0 auto;
 }
 .userInfo{
 	margin-right: 1rem;
@@ -56,7 +64,9 @@
 .userImage img{
 	border-radius:50%;
 	padding:0;
-	width:100%;
+	/*width:100%;*/
+	width:128px;
+	height:128px;
 }
 .userBrief p{
 	padding: 1rem 0rem;
@@ -128,173 +138,6 @@ ul.pollInfoUl li {
 .feedback img{
 	width:90px;
 }
-@media only screen and (min-width:481px) and (max-width: 960px){
-	#content{
-		margin: 2rem 0.5rem;
-		/*margin-top:6.5rem;*/
-	}
-	.questions{
-		padding: 1rem 0rem;
-  		margin: 0rem;
-  		margin-bottom:2rem;
-	}
-	.userInfo{
-		margin:1rem;
-		padding:0;
-	}
-	.userImage img{
-		padding:0;
-		width:100%;
-	}
-	.userBrief p{
-		padding: 1rem 0rem 0rem 0rem;
-  		font-size: 1rem;
-	}
-	.mainPoll{
-		padding:1rem;
-		margin-bottom: -1rem;
-	}
-	.mainPoll p{
-		font-size: 1rem;
-	}
-	.mainPoll .optionsForm{
-		padding:1rem 1rem 0rem 1rem;
-		font-size:1rem;
-	}
-	.pollInfo{
-		margin-top:1rem;
-	}
-	ul.pollInfoUl li{
-		 list-style-type: none;
-		 float: left;
-		 margin-left: 0rem;
-		 margin-right:1rem;
-		 font-size: 1rem;
-	}
-	.anchor_submit{
-		margin-bottom: 1rem;
-	}
-	.win-prizes{
-		position: absolute;
-		margin: 0 auto;
-		left: 10%;
-		top: 27rem;
-	}
-	.feedback{
-		position: absolute;
-		right: 10%;
-		top: 27rem;
-	}
-}
-@media only screen and (min-width:481px) and (max-width: 730px){
-	.choice_image{
-		margin-right:0;
-	}
-	.que_desc_cat_span{
-		font-size:0.85rem;
-	}
-}
-@media only screen and (min-width:481px) and (max-width: 645px){
-	.pollInfo{
-		display:none;
-	}
-	.questions{
-		padding: 1rem 0 0 0;
-	}
-	.askedOnInfo{
-		display:none;
-	}
-	.pollsInfoVotePage{
-		display: block !important;
-		margin-bottom: 1rem;
-	}
-	.pollsInfoVotePage ul li{
-		margin-bottom:0.5rem;
-	}
-}
-@media only screen and (max-width: 480px){
-	#content{
-		margin: 2rem 0.5rem;
-		/*margin-top:6.5rem;*/
-	}
-	.questions{
-		padding: 1rem 0 0 0;
-	}
-	.questions{
-		padding: 1rem 0 0 0;
-  		margin: 0rem;
-  		margin-bottom:2rem;
-	}
-	.askedOnInfo{
-		display:none;
-	}
-	.userInfo{
-		margin:1rem;
-		padding:0;
-	}
-	.userImage img{
-		padding:0;
-		width:100%;
-	}
-	.userBrief p{
-		padding: 1rem 1rem 0rem 0rem;
-  		font-size: 1rem;
-  		width: 50px;
-  		text-overflow:ellipsis;
-	}
-	.mainPoll{
-		padding:1rem;
-		margin-bottom: -1rem;
-	}
-	.mainPoll p{
-		font-size: 1rem;
-	}
-	.mainPoll .optionsForm{
-		padding:1rem 1rem 0rem 1rem;
-		font-size:1rem;
-	}
-	/*ul.pollInfoUl li{
-		 list-style-type: none;
-		 float: left;
-		 margin-left: 0rem;
-		 margin-right:1rem;
-		 font-size: 1rem;
-	}*/
-	.pollInfo{
-		display:none;
-	}
-	.pollsInfoVotePage{
-		display: block !important;
-		margin-bottom: 1rem;
-	}
-	.pollsInfoVotePage ul li{
-		margin-bottom:0.5rem;
-	}
-	.choice_image{
-		margin-right:0;
-	}
-	.anchor_submit{
-		margin-bottom: 1rem;
-	}
-	.voteResultSubmit {
-		margin-left: 0 !important;
-	}
-	.que_desc_cat_span{
-		font-size:0.85rem;
-	}
-	.win-prizes{
-		position: absolute;
-		left: 10%;
-		top: 27rem;
-		display: inline;
-	}
-	.feedback{
-		position: absolute;
-		right: 10%;
-		top: 27rem;
-	}
-}
-
 /* follow button below */
 .btn {
    cursor: pointer;
@@ -386,7 +229,6 @@ button.followButton.unfollow{
 	border-left: thin solid #000;
 	border-right: thin solid #000;
 	border-bottom: thin solid #000;
-	overflow-wrap:break-word;
 }
 .question_description_header{
 	font-size:1rem !important;
@@ -435,3 +277,212 @@ button.followButton.unfollow{
 	border-radius: 0;
 	padding-bottom: 1rem
 }
+
+.is-countdown{
+    text-align: center;
+    font-size: 7px;
+    color: white;
+    border: none;
+    background-color: black;
+    font-family: monospace;
+    border-radius: 11px;
+    height: 0.3rem;
+    font-weight: 700;
+    padding: 0.1rem 0.1rem 0.7rem 0.1rem;
+    /*margin-top: 26px;
+    width: 86%;
+    margin:24px 0px 0px 8px;*/
+}
+@media only screen and (min-width:481px) and (max-width: 960px){
+	#content{
+		margin: 2rem 0.5rem;
+		/*margin-top:6.5rem;*/
+	}
+	.questions{
+		padding: 1rem 0rem;
+  		margin: 0rem;
+  		margin-bottom:2rem;
+	}
+	.userInfo{
+		margin:1rem;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+	}
+	.userBrief p{
+		padding: 1rem 0rem 0rem 0rem;
+  		font-size: 1rem;
+	}
+	.mainPoll{
+		padding:1rem;
+		margin-bottom: -1rem;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.mainPoll .optionsForm{
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	.pollInfo{
+		margin-top:1rem;
+	}
+	.pollInfoData{
+		width: 90%;
+		padding-bottom: 1rem;
+	}
+	ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
+	}
+	.anchor_submit{
+		margin-bottom: 1rem;
+	}
+	.win-prizes{
+		position: absolute;
+		margin: 0 auto;
+		left: 10%;
+		top: 27rem;
+	}
+	.feedback{
+		position: absolute;
+		right: 10%;
+		top: 27rem;
+	}
+
+	.is-countdown{
+	/*display:none;*/
+	}
+}
+@media only screen and (min-width:481px) and (max-width: 730px){
+	.choice_image{
+		margin-right:0;
+	}
+	.que_desc_cat_span{
+		font-size:0.85rem;
+	}
+
+	.is-countdown{
+	    /*display:none;*/
+	}
+}
+@media only screen and (min-width:481px) and (max-width: 645px){
+	.pollInfo{
+		/*display:none;*/
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+	.askedOnInfo{
+		display:none;
+	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
+	}
+	.is-countdown{
+		/*display:none;*/
+	}
+}
+@media only screen and (max-width: 480px){
+	#content{
+		margin: 2rem 0.5rem;
+		/*margin-top:6.5rem;*/
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+	}
+	.questions{
+		padding: 1rem 0 0 0;
+  		margin: 0rem;
+  		margin-bottom:2rem;
+	}
+	.askedOnInfo{
+		display:none;
+	}
+	.userInfo{
+		margin:1rem;
+		padding:0;
+	}
+	.userImage img{
+		padding:0;
+		width:100%;
+		height: inherit;
+	}
+	.userBrief p{
+		padding: 1rem 1rem 0rem 0rem;
+  		font-size: 1rem;
+  		width: 50px;
+  		text-overflow:ellipsis;
+	}
+	.mainPoll{
+		padding:1rem;
+		margin-bottom: -1rem;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.mainPoll .optionsForm{
+		padding:1rem 1rem 0rem 1rem;
+		font-size:1rem;
+	}
+	/*ul.pollInfoUl li{
+		 list-style-type: none;
+		 float: left;
+		 margin-left: 0rem;
+		 margin-right:1rem;
+		 font-size: 1rem;
+	}*/
+	.pollInfo{
+		/*display:none;*/
+	}
+	.pollInfoData{
+		width: 90%;
+		padding-bottom: 1rem;
+	}
+	.pollsInfoVotePage{
+		display: block !important;
+		margin-bottom: 1rem;
+	}
+	.pollsInfoVotePage ul li{
+		margin-bottom:0.5rem;
+	}
+	.choice_image{
+		margin-right:0;
+	}
+	.anchor_submit{
+		margin-bottom: 1rem;
+	}
+	.voteResultSubmit {
+		margin-left: 0 !important;
+	}
+	.que_desc_cat_span{
+		font-size:0.85rem;
+	}
+	.win-prizes{
+		position: absolute;
+		left: 10%;
+		top: 27rem;
+		display: inline;
+	}
+	.feedback{
+		position: absolute;
+		right: 10%;
+		top: 27rem;
+	}
+
+	.countdownIndex{
+	    /*display:none;*/
+	    margin-left: 4rem;
+    	margin-top: 0.5rem;
+	}
+}
+

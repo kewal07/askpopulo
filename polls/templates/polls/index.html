@@ -21,17 +21,19 @@
 					<a href="{{ request.path }}?tab=followed" class="mypollstabs">Followed</a>
 					<a href="{{ request.path }}?tab=mycategories" class="mypollstabs">Category Polls</a>
 				</div>
-			{% elif "category" in request.GET.urlencode %}
-				<div class="mypolltab" style="display:none">
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}" class="mypollstabs">Most Voted</a>
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=latest" class="mypollstabs">Latest</a>
-					<a href="{{ request.path }}?{{ request.GET.urlencode }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
-				</div>
 			{% else %}
 				<div class="mypolltab">
-					<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
-					<a href="{{ request.path }}" class="mypollstabs">Latest</a>
-					<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
+					{% if "category" in request.GET %}
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=mostvoted" class="mypollstabs">Most Voted</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}" class="mypollstabs">Latest</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
+						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=withexpiry" class="mypollstabs">Timed Polls</a>
+						{% else %}
+						<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
+						<a href="{{ request.path }}" class="mypollstabs">Latest</a>
+						<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
+						<a href="{{ request.path }}?tab=withexpiry" class="mypollstabs">Timed Polls</a>
+					{% endif %}
 				</div>
 			{% endif %}
 			{% if data %}
@@ -60,7 +62,7 @@
 									</p>
 									<p class="askedOnInfo">
 										Asked on:<br>
-										{{ question.question.pub_date }}
+										<span id="{{ question.question.id }}pubdate"></span><br>
 									</p>
 								</div>
 							</div> 
@@ -110,7 +112,7 @@
 										<a class="submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
 										{% if question.expired %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Expired" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 										{% else %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}"/>
 										{% endif %}
@@ -121,34 +123,88 @@
 									</p>
 								</form>
 								<!-- {{ question.question.questionwithcategory_set.all }} -->
-								<div class="pollInfo clearfix">
+							</div>
+						</div>
+						<div class="pollInfo clearfix">
+							<div class="pollInfoData clearfix">
 									<ul class="pollInfoUl clearfix">
-										<li><span class="pollInfoNum">{{question.votes}}</span> opinion{{question.votes|pluralize}}</li>
-										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> interested</li>
+										<li><span class="pollInfoNum">{{question.votes}}</span> <i title="opinions" class="fa fa-check-circle"></i></li>
+										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> <i title="interested" class="fa fa-users"></i></li>
 										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
 											{% else %}
 												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom">Follow</button>
 											{% endif %}
 										</li>
-										<li><span title="Report Spam"><i id="ban{{ question.question.id }}" class="fa fa-ban"></i></span></li>
+										<li><i id="ban{{ question.question.id }}" title="Report Spam" class="fa fa-ban" style="color:red; cursor:pointer"></i></li>
+										<li>
+											{% if question.question.expiry and not question.expired %}
+												<!-- Time Left:<br> -->
+												<div id="{{ question.question.id }}timer" class="timerClass countdownIndex"></div>
+											{% endif %}
+											<script>
+												var currentDate = new Date();
+												var offset = currentDate.getTimezoneOffset();
+												
+												var utcDate = new Date({{ question.question.pub_date.year }}, {{ question.question.pub_date.month }} - 1, {{ question.question.pub_date.day }}, {{ question.question.pub_date.hour }}, {{ question.question.pub_date.minute }}, {{ question.question.pub_date.second }});
+					
+												var publicationDate = new Date({{ question.question.pub_date.year }}, {{ question.question.pub_date.month }}, {{ question.question.pub_date.day }}, {{ question.question.pub_date.hour }}, {{ question.question.pub_date.minute }}-offset, {{ question.question.pub_date.second }});
+												var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
+												document.getElementById('{{ question.question.id }}pubdate').innerHTML = pubDateString;
+
+												{% if question.question.expiry and not question.expired %}
+												var expiryDate = new Date({{ question.question.expiry.year }}, {{ question.question.expiry.month }}, {{ question.question.expiry.day }}, {{ question.question.expiry.hour }}, {{ question.question.expiry.minute }}-offset, {{ question.question.expiry.second }});
+												$("#{{ question.question.id }}timer").countdown({until: new Date({{ question.question.expiry.year }}, {{ question.question.expiry.month }} - 1, {{ question.question.expiry.day }}, {{ question.question.expiry.hour }}, {{ question.question.expiry.minute }}-offset, {{ question.question.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+												{% endif %}
+
+												function disableVoteButton(){
+													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').attr('disabled','disabled');
+													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').attr('id','{{ question.question.id }}---{{ question.question.que_slug }}');
+													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').removeAttr('vote{{ question.question.id }}---{{ question.question.que_slug }}');
+													$('#{{ question.question.id }}---{{ question.question.que_slug }}').attr('value','Expired');
+												}
+											</script>
+										</li>
 									</ul>
 								</div>
 							</div>
-						</div>
 					</div>
 					{% endfor %}
 					{% if is_paginated %}
 				        <div class="pagination">
 				            <span class="page-links">
 				                {% if page_obj.has_previous %}
-				                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+				                	{% if "tab" in request.GET %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% else %}
+				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% endif %}
+				                	{% else %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+				                		{% else %}
+				                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+				                    	{% endif %}
+				                    {% endif %}
 				                {% endif %}
 				                <span class="page-current">
 				                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
 				                </span>
 				                {% if page_obj.has_next %}
-				                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+				                	{% if "tab" in request.GET %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% else %}
+				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% endif %}
+				                	{% else %}
+				                		{% if "category" in request.GET %}
+				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+				                		{% else %}
+				                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
+				                    	{% endif %}
+				                    {% endif %}
 				                {% endif %}
 				            </span>
 				        </div>
@@ -158,11 +214,15 @@
 			{% endif %}		
 	</section>
 	<script type="text/javascript">
+
 		$(document).ready(function()
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			$( ".mypollstabs" ).each(function( ) {
-				if($(this)[0].href == window.location.href)
+				winLocation = window.location.href;
+				if(winLocation.indexOf("page=") != -1)
+					winLocation = winLocation.substr(0,winLocation.indexOf("page=")-1);
+				if($(this)[0].href == winLocation)
 					$(this).css({
 						"background-color":"white",
 						"color":"black"

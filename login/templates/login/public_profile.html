@@ -35,7 +35,7 @@
 									<div id="tabContent2" class="tabContent">
 										<div id="verticalTab">
 											<ul class="resp-tabs-list ul-easy-tabs-polls">
-												<li>Asked Polls</li>
+												<li>Public Asked Polls</li>
 												<li>Voted Polls</li>
 												<li>Categories</li>
 												<li>Statistics</li>
@@ -194,9 +194,15 @@
 	                    success:function(response)
 	                    {
 	                    	var form_errors = response.form_errors;
+	                    	console.log(response.form_errors);
+	                    	console.log(typeof form_errors === 'undefined');
+
 	                    	if(typeof form_errors === 'undefined'){
 	                        	 $('#password_change_form').unbind('submit').submit();
 	                        }else{
+	                        	console.log(form_errors.oldpassword);
+		                    	console.log(form_errors.password1);
+		                    	console.log(form_errors.password2);
 		                    	if(typeof form_errors.oldpassword === 'undefined')
 	                        	 	form_errors.oldpassword = "";
 	                        	 if(typeof form_errors.password1 === 'undefined')

@@ -112,7 +112,11 @@
 						<label for="qExpiry">Expires On</label>
 						<div class="newDateForm">
 							<!-- <input id="qExpiry" type="date" name="qExpiry" value="{{ expiry_date }}"> -->
-							{{ question.expiry }}
+							<span id="oldExpiryTimespan">{{ question.expiry }} </span>
+							{% if question.expiry %}
+								<i style="cursor:pointer" id="clearOldExpiryTimefa" class="fa fa-times-circle-o"></i>
+							{% endif %}
+							<input id="oldExpiryTimeinput" type="hidden" name="oldExpiryTime" value="{{ question.expiry }}" />
 							<select id="qExpiry_month" name="qExpiry_month" selected="{{ qExpiry_month }}">
 								<option value="0">Month</option>
 								<option value="1">January</option>
@@ -365,10 +369,11 @@
 					<p>
 						<label for="choice{{ x }}">Choice {{ x }}</label>
 						<input id="choice{{ x }}" type="text" name="choice{{ x }}" placeholder="Choice" maxlength="200">
+						<input id="choice{{ x }}" class="fileButtonClass" type="file" name="choice{{ x }}" accept="image/*">
 					</p>
 					{% endfor %}
 					<p>
-						<label for="categories">Category</label>
+						<label for="categories">Category <i class="fa fa-info-circle"></i></label>
 						<input id="categories" type="text" name="categories" >
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="{{ question_categories }}">
 					</p>
@@ -389,10 +394,16 @@
 						<label for="private">Make Poll as Private</label>
 					</p>
 					<p>
-					<input class="submit" type="submit" value="Update" />
+					<input class="submit" type="submit" value="Update" id="createPollSubmit"/>
 					</p>
 				</form>
 				</div>
+			</div>
+			<div id="category_tooltip">
+				<span>Categories list:<br></span>
+				{% for cat in data %}
+					<span class="cat_title_tooltip">{{ cat }},    </span>
+				{% endfor %}
 			</div>
 		</section>
 		<script>
@@ -424,6 +435,7 @@
 				$(elemid).bind('submit', function()
 				{
 					//console.log("submit called....");
+					$("#createPollSubmit").attr("disabled","disabled");
 					var create_url = "https://{{ request.META.HTTP_HOST }}/createpoll?qid={{ question.id }}&&ajax=1";
 					{% if user.is_authenticated %}
 					//console.log("call ajax");
@@ -441,7 +453,8 @@
 								var dup_choice = response.duplicateChoice;
 								var dup_image = response.duplicateImage;
 								var expiry_error = response.expiryError;
-								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined'){
+								var category_error = response.categoryError;
+								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined'){
 									 $(elemid).unbind('submit').submit();
 								}else{
 									if(typeof que_error === 'undefined')
@@ -452,13 +465,17 @@
 		                        	 	dup_choice = "";
 		                        	if(typeof dup_image === 'undefined')
 		                        	 	dup_image = "";
-		                        	if(typeof expiry_error === 'undefined')
+									if(typeof expiry_error === 'undefined')
 		                        	 	expiry_error = "";
+		                        	 if(typeof category_error === 'undefined')
+		                        	 	category_error = "";
 									$(".errorlist").remove();
 			                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span><span class="errorlist"><br>'+dup_choice+'</span><span class="errorlist"><br>'+dup_image+'</span>');
 			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#qExpiry_ap").parent().children().first().append('<span class="errorlist"><br>'+expiry_error+'</span>');
+			                        $("#categories").parent().parent().children().first().append('<span class="errorlist"><br>'+category_error+'</span>');
+			                        $("#createPollSubmit").removeAttr('disabled');
 								}
 							}
 						});

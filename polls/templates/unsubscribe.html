@@ -1,0 +1,58 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+{% endblock %}
+{% block content %}
+		<div class="questions" style="margin-top:10%">
+			<div id="unsubscribe" style="width: 40%;margin: 0 auto;text-align: center;">
+				<p class="infoP" style="position: relative; top: 0; bottom: 0; left: 0; right: 0; margin: 0 auto;"> Enter your registered email id to unsubscribe  </p><br><br>
+				<div id="errorDiv"></div>
+				<form id="unsubscribeform" class="unsubscribeform" method="POST" action="{% url 'polls:unsubscribe' %}"  enctype="multipart/form-data">
+					{% csrf_token %}
+					<label class="required" for="emailUnsubscription">Email</label>
+					<input id="emailUnsubscription" name="unsubscribeEmail" type="email"><br><br>
+					<input value="unsubscribe" class="submit" id="submit" type="submit"/>
+				</form>
+			</div>
+			<script>
+				$(document).ready(function()
+				{
+					$('.submit').bind('click', function(event)
+					{
+						event.preventDefault();
+						var form_data = new FormData($(".unsubscribeform")[0]);
+						$.ajax({
+							type: 'POST',
+							url:"?ajax=1",
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(response)
+							{
+								var resp = response;
+								var noUserError = response.nouser;
+								var emptyEmailError = response.emptyemail;
+								var success = response.success;
+								if(typeof emptyEmailError === 'undefined' && typeof noUserError === 'undefined'){
+									$(".submit").unbind('click').submit();
+									$(".errorlist").remove();
+									$(".unsubscribeform").remove();
+									$(".infoP").remove();
+									$("#errorDiv").append('<span class="errorlist"><br>'+success+'</span>');
+								}else{
+									if(typeof emptyEmailError === 'undefined')
+		                        	 	emptyEmailError = "";
+		                        	if(typeof noUserError === 'undefined')
+		                        	 	noUserError = "";
+									$(".errorlist").remove();
+			                        $("#errorDiv").append('<span class="errorlist"><br>'+noUserError+'</span>');
+			                        $("#errorDiv").append('<span class="errorlist"><br>'+emptyEmailError+'</span>');
+								}
+							}
+						});
+					});
+				});
+			</script>
+		</div>
+{% endblock %}

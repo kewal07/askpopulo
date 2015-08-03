@@ -25,4 +25,5 @@ urlpatterns = patterns('',
 	url(r'^abuse$', login_required(views.ReportAbuse.as_view()),name="polls_abuse"),
 	url(r'^comment_mail$', views.comment_mail,name="comment_mail"),
 	url(r'^companyname$',views.error_CompanyName,name="error_CompanyName"),
+	url(r'^unsubscribe$',views.MyUnsubscribeView.as_view(),name="unsubscribe"),
 )

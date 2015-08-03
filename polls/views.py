@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
 from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
+import polls.continent_country_dict
 from categories.models import Category
 import datetime
 import simplejson as json
@@ -31,6 +32,14 @@ class IndexView(generic.ListView):
 	context_object_name = 'data'
 	paginate_by = 50
 
+	def render_to_response(self, context, **response_kwargs):
+		response = super(IndexView, self).render_to_response(context, **response_kwargs)
+		# print(self.request.COOKIES.get("location"))
+		if not self.request.COOKIES.get("location"):
+			# print("setting location cookie")
+			response.set_cookie("location","global")
+		return response
+
 	def get_template_names(self):
 		request = self.request
 		template_name = 'polls/index.html'
@@ -44,8 +53,16 @@ class IndexView(generic.ListView):
 		context = {}
 		mainData = []
 		latest_questions = []
+		curtime = timezone.now()
 		# if user.is_authenticated():
 		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
+		global_location = ""
+		country_list =[]
+		if request.COOKIES.get("location","global").lower() != "global":
+			global_location = request.COOKIES.get("location").lower()
+			country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
+		# print(global_location)
+		# print(country_list)
 
 		if request.path.endswith('category') and not request.GET.get('category'):
 			mainData = Category.objects.all()
@@ -63,6 +80,16 @@ class IndexView(generic.ListView):
 					latest_questions = latest_questions
 				elif request.GET.get('tab') == 'leastvoted':
 					latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+				elif request.GET.get('tab') == 'withexpiry':
+					toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+					expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+					toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+					expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+					latest_questions = []
+					if toexpire_polls:
+						latest_questions.extend(toexpire_polls)
+					if expired_polls:
+						latest_questions.extend(expired_polls)
 				# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
 			# sendFeed()
 		elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
@@ -91,6 +118,22 @@ class IndexView(generic.ListView):
 			category = Category.objects.filter(category_title=category_title)[0]
 			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
 			latest_questions = latest_questions[::-1]
+			if request.GET.get('tab') == 'mostvoted':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+			elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+				latest_questions = latest_questions
+			elif request.GET.get('tab') == 'leastvoted':
+				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+			elif request.GET.get('tab') == 'withexpiry':
+				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+				toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+				expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+				latest_questions = []
+				if toexpire_polls:
+					latest_questions.extend(toexpire_polls)
+				if expired_polls:
+					latest_questions.extend(expired_polls)
 		else:
 			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
@@ -100,12 +143,24 @@ class IndexView(generic.ListView):
 				latest_questions = latest_questions
 			elif request.GET.get('tab') == 'leastvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+			elif request.GET.get('tab') == 'withexpiry':
+				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+				toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+				expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+				latest_questions = []
+				if toexpire_polls:
+					latest_questions.extend(toexpire_polls)
+				if expired_polls:
+					latest_questions.extend(expired_polls)
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
+		if country_list:
+			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
 			data = {}
 			data ['question'] = mainquestion
@@ -114,7 +169,7 @@ class IndexView(generic.ListView):
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
-			if mainquestion.expiry and mainquestion.expiry < timezone.now():
+			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
 			if user.is_authenticated():
@@ -297,12 +352,12 @@ class CreatePollView(generic.ListView):
 		return context
 	
 	def post(self, request, *args, **kwargs):
-		# url = reverse('polls:index')
 		user = request.user
 		edit = False
 		ajax = False
 		errors = {}
 		question = None
+		curtime = datetime.datetime.now();
 		if request.GET.get("ajax"):
 			ajax = True
 		if request.GET.get("qid"):
@@ -318,22 +373,26 @@ class CreatePollView(generic.ListView):
 			qExpiry = None
 			if edit:
 				question = Question.objects.get(pk=request.GET.get("qid"))
-				qExpiry = question.expiry
+				if request.POST.get("oldExpiryTime") != "clean":
+					qExpiry = question.expiry
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
 			qemonth = int(request.POST.getlist('qExpiry_month')[0])
 			qeday = int(request.POST.getlist('qExpiry_day')[0])
 			qehr = int(request.POST.getlist('qExpiry_hr')[0])
 			qemin = int(request.POST.getlist('qExpiry_min')[0])
 			qeap = request.POST.getlist('qExpiry_ap')[0]
-			if qeyear != 0 and qemonth != 0 and qeday != 0 and qehr != 0 and qemin != -1: 
+			print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1: 
 				if qeap.lower() == 'pm' and qehr != 12:
 					qehr = qehr + 12
 				elif qeap.lower() == 'am' and qehr == 12:
 					qehr = 0
 				# qExpiry = request.POST.get('qExpiry')
-				# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+				print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
+					if qExpiry < curtime:
+						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
 			# if not qExpiry:
@@ -355,6 +414,9 @@ class CreatePollView(generic.ListView):
 			imagePathList = []
 			images = []
 			choices = []
+			selectedCats = request.POST.get('selectedCategories','').split(",")
+			if not list(filter(bool, selectedCats)):
+				errors['categoryError'] = "Please Select a category"
 			choice1 = request.POST.getlist('choice1')[0].strip()
 			if choice1:
 				choices.append(choice1)
@@ -401,7 +463,6 @@ class CreatePollView(generic.ListView):
 				choice4Image = request.FILES.get('choice4')
 			if choice4Image:
 				images.append(choice4Image)
-			selectedCats = request.POST.get('selectedCategories','').split(",")
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			if isAnon:
@@ -442,7 +503,7 @@ class CreatePollView(generic.ListView):
 				question.isAnonymous=anonymous
 				question.privatePoll=private
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=datetime.datetime.now(),isAnonymous=anonymous,privatePoll=private)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private)
 			question.save()
 			sub = Subscriber(user=user,question=question)
 			sub.save()
@@ -588,3 +649,36 @@ def comment_mail(request):
 
 def error_CompanyName(request):
 	return render(request,'error404.html')
+
+class MyUnsubscribeView(generic.ListView):
+	template_name = 'unsubscribe.html'
+
+	def get_queryset(self):
+		context = {}
+		return context
+
+	def post(self,request,*args,**kwargs):
+		error={}
+		ajax = False
+		if request.GET.get("ajax"):
+			ajax = True
+			print("Ajax call detected")
+		emailToUnsubscribe = request.POST.get('unsubscribeEmail')
+		if(emailToUnsubscribe):
+			userId = User.objects.filter(email=emailToUnsubscribe).values('id')
+			if(userId):
+				unsubscribeUser = ExtendedUser.objects.get(user_id = userId)
+				unsubscribeUser.mailSubscriptionFlag = 1
+				unsubscribeUser.save()
+			else:
+				error['nouser'] = "No user exists with given email id. Please provide your correct email id"
+		else:
+			error['emptyemail'] = "Please provide your registered email id to unsubscribe."
+		if error or ajax:
+			if(('emptyemail' in error) or ('nouser' in error)):
+				return HttpResponse(json.dumps(error), content_type='application/json')
+			else:
+				print("here")
+				error['success'] = "You are successfully unsubscribed from all email notifications."
+				return HttpResponse(json.dumps(error), content_type='application/json')
+
