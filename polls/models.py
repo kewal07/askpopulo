@@ -10,6 +10,7 @@ from PIL import Image
 import hashlib
 import hmac
 from datetime import date
+from stream_django.activity import Activity
 # Create your models here.
 
 shakey=(settings.SHAKEY).encode('utf-8')
@@ -21,7 +22,7 @@ def get_file_path(instance, filename):
 	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'choices'+os.sep+str(folder_day)))
 	return os.path.join(profilePath,filename)
 
-class Question(models.Model):
+class Question(models.Model,Activity):
 	que_pk = models.CharField(max_length=255)
 	question_text = models.CharField(max_length=200)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -32,7 +33,15 @@ class Question(models.Model):
 	que_slug = models.SlugField(null=True,blank=True)
 	privatePoll = models.BooleanField(default=0)
 	featuredPoll = models.BooleanField(default=0)
-	
+	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+
+	@property
+	def extra_activity_data(self):
+		return {'question_text': self.question_text,'question_url': "/polls/"+str(self.id)+"/"+self.que_slug,'question_desc': self.description }
+	@property
+	def activity_object_attr(self):
+		return self.user
+
 	def save(self, *args, **kwargs):
 		qText = self.question_text
 		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
@@ -127,10 +136,17 @@ class Subscriber(models.Model):
 		self.subscriber_pk = sig
 		super(Subscriber, self).save(*args, **kwargs)
 		
-class Voted(models.Model):
+class Voted(models.Model,Activity):
 	voted_pk = models.CharField(max_length=255)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
+	created_at = models.DateTimeField(auto_now_add=True)
+	@property
+	def extra_activity_data(self):
+		return {'question_text': self.question.question_text,'question_url': "/polls/"+str(self.question.id)+"/"+self.question.que_slug,'question_desc': self.question.description }
+	@property
+	def activity_object_attr(self):
+		return self.user
 	def __str__(self):
 		return self.question.question_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
@@ -138,6 +154,7 @@ class Voted(models.Model):
 		msg = ("%s %s %s"%(self.question.question_text,self.user.username,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.voted_pk = sig
+		print("Voted")
 		super(Voted, self).save(*args, **kwargs)
 
 class QuestionWithCategory(models.Model):

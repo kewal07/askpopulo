@@ -13,5 +13,6 @@ urlpatterns = patterns('',
 	url(r'^editprofile$',login_required(views.EditProfileView.as_view()),name='edit_profile'),
 	url(r'^logout$',views.logout_view,name="logout"),
 	url(r'^changepassword$',login_required(views.MyChangePasswordView.as_view()),name="change_password"),
+	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/follow$',login_required(views.FollowView.as_view()),name='follow'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

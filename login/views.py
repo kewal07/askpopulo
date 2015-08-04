@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser
+from login.models import ExtendedUser,Follow
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -14,9 +14,13 @@ from allauth.account.adapter import get_adapter
 from polls.models import Question,Voted,Subscriber
 from categories.models import Category
 import json
-from login.forms import MySignupForm
+from login.forms import MySignupForm,FollowForm
 from django.contrib.auth.models import User
 from datetime import date
+from stream_django.feed_manager import feed_manager
+from stream_django.enrich import Enrich
+from django.contrib.auth.decorators import login_required
+
 
 class EditProfileView(generic.ListView):
 	
@@ -153,6 +157,24 @@ class LoggedInView(generic.DetailView):
 		context['voted'] = user_voted_questions
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
+		context['followed'] = Follow.objects.filter(user=request_user, target_id=user, deleted_at__isnull=True)
+		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc'])
+		# enricher = Enrich()
+		# print(dir(feed_manager))
+		feed = feed_manager.get_user_feed(user.id)
+		#print(dir(feed))
+		# if request.REQUEST.get('delete'):
+		# 	feed.delete()
+		activities = feed.get(limit=25)['results']
+		context["activities"] = enricher.enrich_activities(activities)
+		acts = context["activities"]
+		print(acts)
+		#for a in acts:
+			#print(dir(a))
+			#print("*********")
+			#print(a.activity_data)
+		# print(dir(enricher.enrich_activities(activities)))
+		# print(context["activities"])
 		# if not user.is_anonymous():	
 		return context
 		
@@ -188,3 +210,25 @@ class MyChangePasswordView(PasswordChangeView):
 		url = reverse('account_login')
 		return HttpResponseRedirect(url)
 		# return get_adapter().ajax_response(request, response, form=form, redirect_to=reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug}))
+
+class FollowView(generic.DetailView):
+	def post(self,request,*args,**kwargs):
+	    '''
+	    A view to follow other users
+	    '''
+	    print("**********")
+	    print(request.POST)
+	    print("**********")
+	    output = {}
+	    if request.method == "POST":
+	        form = FollowForm(user=request.user, data=request.POST)
+
+	        if form.is_valid():
+	            follow = form.save()
+	            if follow:
+	                output['follow'] = dict(id=follow.id)
+	            if not request.is_ajax():
+	                return HttpResponseRedirect(request.POST.get("next"))
+	        else:
+	            output['errors'] = dict(form.errors.items())
+	    return HttpResponse(json.dumps(output), content_type='application/json')

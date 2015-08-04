@@ -13,6 +13,7 @@ import pymysql
 from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 from django.forms.extras.widgets import SelectDateWidget
+from login.models import Follow
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -116,3 +117,28 @@ class MySignupPartForm(forms.Form):
 class UnsubscribeForm(forms.Form):
 	required_css_class = 'true'
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
+
+class FollowForm(forms.Form):
+    target = forms.IntegerField()
+    remove = forms.IntegerField(required=False)
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(FollowForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        target = self.cleaned_data['target']
+        remove = bool(int(self.cleaned_data.get('remove', 0) or 0))
+        print(target,remove,self.user)
+
+        if remove:
+            follows = Follow.objects.filter(user=self.user, target_id=target)
+            now = datetime.now()
+            for follow in follows:
+                follow.deleted_at = now
+                follow.save()
+        else:
+            follow, created = Follow.objects.get_or_create(user=self.user, target_id=target)
+            if not created and follow.deleted_at is not None:
+                follow.deleted_at = None
+                follow.save()

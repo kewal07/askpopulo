@@ -1,6 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
-
+{% load activity_tags %}
 		{% block extra_css %}
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/public_profile.css' %}" />
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" />
@@ -21,7 +21,18 @@
 						<li>{{ context_user.first_name }} {{ context_user.last_name }}</li>
 						<li>{{ context_user.extendeduser.profession }}</li>
 						<li>{{ context_user.extendeduser.state }},{{ context_user.extendeduser.country }}</li>
-						<li><i class="fa fa-rss"></i><li>
+						<li><form method="POST" id="follow_user_form" action="{% url 'login:follow' context_user.id context_user.extendeduser.user_slug %}" class="create-destroy" style="display:inline">
+					            {% csrf_token %}
+					            {% if followed %}
+					                <input name="remove" type="hidden" value="1">
+					                <i class="fa fa-rss" style="color:green;cursor:pointer" title="Unfollow"></i>
+					            {% else %}
+					            	<i class="fa fa-rss" style="cursor:pointer" title="Follow"></i>
+					            {% endif %}
+					            <input name="target" type="hidden" value="{{ context_user.id }}">
+					            <input name="next" type="hidden" value="{{ request.path }}">
+					        </form>
+					    </li>
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
 					</ul>
@@ -44,40 +55,32 @@
 				</div>
 				<div class="profileDetail">
 					<ul class="profileDetailUl">
+						{% for activity in activities %}
 						<li>
 							<div class="liDetail">
-								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
-								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+								<p class="main">
+									{% if activity.verb == "question" %}
+										{{ activity.actor.username }} asked <a href="{{ activity.question_url }}">{{ activity.question_text }} {{ activity.time|timesince }} ago
+									{% else %}
+										{{ activity.actor.username }} {{ activity.verb }} on <a href="{{ activity.question_url }}">{{ activity.question_text }} {{ activity.time|timesince }} ago
+									{% endif %}
+								</p>
+    						<!--  render_activity activity -->
+								<p class="desc">{{ activity.question_desc }}</p>
 							</div>
 						</li>
-						<li>
-							<div class="liDetail">
-								<p class="main">Dave Das voted on Another random question ? </p>
-								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
-							</div>
-						</li>
-						<li>
-							<div class="liDetail">
-								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
-								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
-							</div>
-						</li>
-						<li>
-							<div class="liDetail">
-								<p class="main">Dave Das voted on Another random question ? </p>
-								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
-							</div>
-						</li>
-						<li>
-							<div class="liDetail">
-								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
-								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
-							</div>
-						</li>
+						{% endfor %}
 						<li>See More</li>
 					</ul>
 				</div>
 			</div>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$(".fa-rss").click(function(){
+						$("#follow_user_form").submit();
+					});
+				});
+			</script>
 		{% endif %}
 		</section>
 		{% endblock %}
