@@ -29,6 +29,10 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	margin: 0 auto;
+  	height:100%;
+    padding:0;
+    font-family: 'Arvo', serif;
 }
 ol, ul {
 	list-style: none;
@@ -83,24 +87,19 @@ html{
 :-ms-input-placeholder {  
    text-align: center; 
 }
-body{
-  	margin: 0 auto;
-  	/*font-family: 'Droid Sans', sans-serif;*/
-  	/*font-family: 'Lato', sans-serif;*/
-  	font-family: 'Arvo', serif;
-}
 #wrapper {
 	min-height: 100%;
   /* equal to footer height */
-  margin-bottom: -220px; 
+  /*margin-bottom: -220px; */
+  position: relative;
 }
-#wrapper:after {
+/*#wrapper:after {
   content: "";
   display: block;
-}
-.#footer, #wrapper:after {
+}*/
+/*#footer, #wrapper:after {
   height: 220px; 
-}
+}*/
 #header{
 	/*background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -234,11 +233,12 @@ ul.menu-nav li{
    clear: both;
 }
 #footer{
-	margin:0;
-	background: black;
 	width:100%;
-	color:white;
-	margin-top:5rem;
+    /*height: 100px; height of footer*/
+    position:absolute;
+    bottom:0;
+    left:0;
+    background: black;
 }
 #footerContent{
 	width:95%;

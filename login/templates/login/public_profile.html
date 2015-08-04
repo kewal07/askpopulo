@@ -2,7 +2,7 @@
 {% load static %}
 
 		{% block extra_css %}
-			<link rel="stylesheet" type="text/css" href="{% static 'login/css/profile.css' %}" />
+			<link rel="stylesheet" type="text/css" href="{% static 'login/css/public_profile.css' %}" />
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" />
 		{% endblock %}
 		{% block extra_js %}
@@ -10,215 +10,74 @@
 			<script type="text/javascript" src="{% static 'login/js/easy-responsive-tabs.js' %}"></script>
 		{% endblock %}
 		{% block content %}
+		<section id="content">
 		{% if context_user %}
-		<section id="profile">
-				<div class="profilePic">
-					<img src="{{ context_user.extendeduser.get_profile_pic_url }}" alt="User {{ context_user.first_name }}"	>
+			<div class="profileHeader clearfix">
+				<div class="profilePicDiv clearfix">
+					<img class="profilePic" src="{{ context_user.extendeduser.get_profile_pic_url }}" alt="User {{ context_user.first_name }}">
 				</div>
-				<div class="profileContent">
-					<ul class="tabs clearfix">
-						<ul class="insideTabs clearfix">
-							<li class="firstChild">
-								<input type="radio" name="tabs" id="tab1" checked />
-								<label class="tabsLabel" for="tab1">About</label>
-								<div id="tabContent1" class="tabContent">
-									<form class="profileForm" method="POST" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
-										{% csrf_token %}
-										{{ loggedInForm.as_p }}
-										<input class="submit" id="submit" type="submit" value="Save Changes" />
-									</form>
-								</div>
-							</li>
-							<li class="secondChild">
-								<input type="radio" name="tabs" id="tab2" unchecked />
-								<label class="tabsLabel secondChildLabel" for="tab2">Stats</label>
-									<div id="tabContent2" class="tabContent">
-										<div id="verticalTab">
-											<ul class="resp-tabs-list ul-easy-tabs-polls">
-												<li>Public Asked Polls</li>
-												<li>Voted Polls</li>
-												<li>Categories</li>
-												<li>Statistics</li>
-											</ul>
-											<div class="resp-tabs-container polls-resp-tabs-container">
-												<div>
-												    <div class="content">
-												    	{% if questions.count %}
-															{% for question in questions %}
-															<div class="searchResults">
-		          												<div class="result">
-		            												<p>
-																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
-																	</p>
-																</div>
-															</div>
-															{% endfor %}
-														{% else %}
-															<p class="profilePageZeroQuestions"> You have not created any polls yet. <a class="anchorSpan" href="{% url 'polls:polls_create' %}"> Create</a> one now </p>
-														{% endif %}
-													</div>
-												</div>
-												<div>
-													<div class="content">
-														{% if voted.count %}
-															{% for question in voted %}
-															<div class="searchResults">
-		          												<div class="result">
-		            												<p>
-																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
-																	</p>
-																</div>
-															</div>
-															{% endfor %}
-														{% else %}
-															<p class="profilePageZeroQuestions"> You have not voted on any polls yet. <a class="anchorSpan" href="{% url 'polls:index' %}"> Vote</a> now </p>
-														{% endif %}
-													</div>
-												</div>
-												<div>
-											    	{% for category in categories %}
-											    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
-											    		<figure class="category_figure">
-															<img class="category_imagethumbnails" src="https://{{ request.META.HTTP_HOST }}/{{ category.category_image }}" alt="{{ category.category_title }}">
-															<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
-														</figure>
-														</a>
-											    	{% endfor %}
-												</div>
-												<div>
-													<div class="circle"><p class="circleP">{{ questions.count }}<br/>Asked</p></div>
-													<div class="circle"><p class="circleP">{{ voted.count }}<br/>Voted</p></div>
-													<div class="circle"><p class="circleP">{{ subscribed }}<br/>Subscribed</p></div>
-												</div>
-											</div>
-										</div>
-										<div id="tabContentResponsive">
-											<div class="accordion vertical">
-											  <section id="askedPolls">
-											      <h2><a href="#askedPolls">Asked Polls</a></h2>
-											      <div class="content">
-												    	{% if questions.count %}
-															{% for question in questions %}
-															<div class="searchResults">
-		          												<div class="result">
-		            												<p>
-																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
-																	</p>
-																</div>
-															</div>
-															{% endfor %}
-														{% else %}
-															<p class="profilePageZeroQuestions"> You have not created any polls yet. <a class="anchorSpan" href="{% url 'polls:polls_create' %}"> Create</a> one now </p>
-														{% endif %}
-													</div>
-											  </section>
-											  <section id="votedPolls">
-											      <h2><a href="#votedPolls">Voted Polls</a></h2>
-											      <div class="content">
-														{% if voted.count %}
-															{% for question in voted %}
-															<div class="searchResults">
-		          												<div class="result">
-		            												<p>
-																		<a href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{ question.question_text }}</a>
-																	</p>
-																</div>
-															</div>
-															{% endfor %}
-														{% else %}
-															<p class="profilePageZeroQuestions"> You have not voted on any polls yet. <a class="anchorSpan" href="{% url 'polls:index' %}"> Vote</a> now </p>
-														{% endif %}
-													</div>
-											  </section>
-											  <section id="myCategories">
-											      <h2><a href="#myCategories">My Categories</a></h2>
-											      <div>
-											    		{% for category in categories %}
-												    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
-												    		<figure class="category_figure">
-																<img class="category_imagethumbnails" src="https://{{ request.META.HTTP_HOST }}/{{ category.category_image }}" alt="{{ category.category_title }}">
-																<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
-															</figure>
-															</a>
-											    		{% endfor %}
-												</div>
-											  </section>
-											  <section id="myStats">
-											      <h2><a href="#myStats">My Stats</a></h2>
-											      <div>
-													<div class="circle"><p class="circleP">{{ questions.count }}<br/>Asked</p></div>
-													<div class="circle"><p class="circleP">{{ voted.count }}<br/>Voted</p></div>
-													<div class="circle"><p class="circleP">{{ subscribed }}<br/>Subscribed</p></div>
-												</div>
-											  </section>
-											</div>
-										</div>
-									</div>	
-							</li>
-							<li class="thirdChild">
-								<input type="radio" name="tabs" id="tab3" unchecked />
-								<label class="tabsLabel" for="tab3">Settings</label>
-								<div id="tabContent3" class="tabContent">
-									<div id="changePassword">
-												<p>Change Password</p>
-												<form action="{% url 'account_login' %}" method="get" class="password_change" id="password_change_form">
-										    		{% csrf_token %}
-										    		{{ form.as_p }}
-										    		<button class="submit" type="submit" name="action">Change Password</button>
-										    		<!-- <input type="submit" value="Submit" /> -->
-												</form>
-									</div>
-								</div>
-							</li>
-					    </ul>
+				<div class="profileBrief clearfix">
+					<ul class="profileBriefUl">
+						<li>{{ context_user.first_name }} {{ context_user.last_name }}</li>
+						<li>{{ context_user.extendeduser.profession }}</li>
+						<li>{{ context_user.extendeduser.state }},{{ context_user.extendeduser.country }}</li>
+						<li><i class="fa fa-rss"></i><li>
+						<li><i class="fa fa-comment"></i></li>
+						<li><i class="fa fa-flag"></i></li>
 					</ul>
 				</div>
+				<div class="detailHeader">
+						<h1>Recent Activity</h1>
+				</div>
+			</div>
+			<div class="profileBody clearfix">
+				<div class="profileStats">
+					<ul class="profileStatsUl">
+						<li><i class="fa fa-coins"></i> 900 Credits</li>
+						<li><i class="fa fa-users"></i> 190 Connections</li>
+						<li><i class="fa fa-question-circle"></i> {{ questions.count }} Polls</li>
+						<li><i class="fa fa-check-circle"></i> {{ voted.count }} Votes</li>
+						<li><i class="fa fa-comments"></i> 15 Comments</li>
+						<li><i class="fa fa-th-large"></i>{{ categories|length }} Categories</li>
+						<li><i class="fa fa-coin-bag"></i>12 Bets</li>
+					</ul>
+				</div>
+				<div class="profileDetail">
+					<ul class="profileDetailUl">
+						<li>
+							<div class="liDetail">
+								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
+								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+							</div>
+						</li>
+						<li>
+							<div class="liDetail">
+								<p class="main">Dave Das voted on Another random question ? </p>
+								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+							</div>
+						</li>
+						<li>
+							<div class="liDetail">
+								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
+								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+							</div>
+						</li>
+						<li>
+							<div class="liDetail">
+								<p class="main">Dave Das voted on Another random question ? </p>
+								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+							</div>
+						</li>
+						<li>
+							<div class="liDetail">
+								<p class="main">Dave Das voted on Why would someone vote on this ? </p>
+								<p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nos</p>
+							</div>
+						</li>
+						<li>See More</li>
+					</ul>
+				</div>
+			</div>
+		{% endif %}
 		</section>
-		<script type="text/javascript">
-			$(document).ready(function()
-		    {
-		    	$('#verticalTab').easyResponsiveTabs({
-					type: 'vertical',
-					width: 'auto',
-					fit: true
-				});
-		  		$('#password_change_form').bind('submit', function()
-	            {     
-
-	                // e.preventDefault();
-	                $.ajax(
-	                    {
-	                    type: 'POST',
-	                    url:'/loggedin/changepassword',
-	                    data:$('#password_change_form').serialize(),
-	                    success:function(response)
-	                    {
-	                    	var form_errors = response.form_errors;
-	                    	console.log(response.form_errors);
-	                    	console.log(typeof form_errors === 'undefined');
-
-	                    	if(typeof form_errors === 'undefined'){
-	                        	 $('#password_change_form').unbind('submit').submit();
-	                        }else{
-	                        	console.log(form_errors.oldpassword);
-		                    	console.log(form_errors.password1);
-		                    	console.log(form_errors.password2);
-		                    	if(typeof form_errors.oldpassword === 'undefined')
-	                        	 	form_errors.oldpassword = "";
-	                        	 if(typeof form_errors.password1 === 'undefined')
-	                        	 	form_errors.password1 = "";
-	                        	 if(typeof form_errors.password2 === 'undefined')
-	                        	 	form_errors.password2 = "";
-		                    	$(".password_form_errors").remove();
-		                        $("#id_oldpassword").parent().append('<span class="password_form_errors"><br>'+form_errors.oldpassword+'</span>');
-		                        $("#id_password1").parent().append('<span class="password_form_errors"><br>'+form_errors.password1+'</span>');
-		                        $("#id_password2").parent().append('<span class="password_form_errors"><br>'+form_errors.password2+'</span>');
-	                    	}
-	                    }
-	                });     
-				return false;
-	            });
-		    });
-		</script>
-	{% endif %}
-	{% endblock %}
+		{% endblock %}
