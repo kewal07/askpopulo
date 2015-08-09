@@ -27,6 +27,7 @@ html{
     border-radius: 25px;
     padding: 1rem;
     opacity:0.9;
+    font-family: 'Arvo', serif;
 }
 .profileHeader{
 	width:90%;
@@ -71,9 +72,18 @@ ul.profileBriefUl li{
 	width:30%;
 	float:left;
 }
-.profileDetail{
+.myProfileTabs{
+	cursor: pointer;
+}
+.displayDiv{
 	width:70%;
 	float:left;
+}
+.profileDetail{
+	display: none;
+}
+.myActivityDiv{
+	display: block;
 }
 ul.profileStatsUl li{
 	margin:1rem;
@@ -85,8 +95,40 @@ ul.profileDetailUl{
 	padding-top: 1rem;
 }
 p.main{
-	font-size:1.5rem;
+	font-size:1rem;
+	position: relative;
 }
 p.desc{
-	margin:1rem;
+    font-size: 0.85rem;
+    margin: -0.5rem 1rem 1rem 4rem;
+}
+p.pollsDesc{
+    font-size: 0.85rem;
+    margin: 0.5rem 1rem 1rem 4rem;
+}
+.imgInFeed{
+	width:50px;
+	height:50px;
+	border-radius: 50%;
+}
+.activity_text{
+	position: absolute;
+    left: 4rem;
+    top: 1rem;
+}
+.activity_url{
+	color:orange;
+	cursor:pointer;
+}
+.category_figure{
+    display:inline-block;
+    margin:1rem;
+}
+.category_figurecaption{
+    font-size: 1rem;
+    text-align: center;
+}
+.category_imagethumbnails{
+    height:96px;
+    width:128px;
 }

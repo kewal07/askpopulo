@@ -9,6 +9,7 @@ import hmac
 import hashlib
 from stream_django.activity import Activity
 from stream_django.feed_manager import feed_manager
+from django.db.models.signals import post_delete, post_save
 #from django.contrib.auth.models import User
 # Create your models here.
 
@@ -138,10 +139,14 @@ class Follow(Activity,BaseModel):
         target_feed = feed_manager.get_notification_feed(self.target_id)
         return [target_feed]
 
-
 def follow_change(sender, instance, created, **kwargs):
     if instance.deleted_at is None:
         feed_manager.follow_user(instance.user_id, instance.target_id)
     else:
         feed_manager.unfollow_user(instance.user_id, instance.target_id)
 
+def unfollow_feed(sender, instance, **kwargs):
+    feed_manager.unfollow_user(instance.user_id, instance.target_id)
+
+post_save.connect(follow_change, sender=Follow)
+post_delete.connect(unfollow_feed, sender=Follow)

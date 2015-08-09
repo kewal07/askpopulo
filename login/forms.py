@@ -1,5 +1,6 @@
 from django import forms
 from .models import ExtendedUser
+from django.contrib.auth.models import User
 # from allauth.account.forms import SignupForm
 from django.utils.safestring import mark_safe
 from django.forms import extras
@@ -14,6 +15,9 @@ from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 from django.forms.extras.widgets import SelectDateWidget
 from login.models import Follow
+import stream
+client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
+
 
 class CustomDateInput(widgets.TextInput):
 	input_type = 'date'
@@ -119,26 +123,36 @@ class UnsubscribeForm(forms.Form):
 	email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
 
 class FollowForm(forms.Form):
-    target = forms.IntegerField()
-    remove = forms.IntegerField(required=False)
+	target = forms.IntegerField()
+	remove = forms.IntegerField(required=False)
 
-    def __init__(self, user, *args, **kwargs):
-        self.user = user
-        super(FollowForm, self).__init__(*args, **kwargs)
+	def __init__(self, user, *args, **kwargs):
+		self.user = user
+		super(FollowForm, self).__init__(*args, **kwargs)
 
-    def save(self):
-        target = self.cleaned_data['target']
-        remove = bool(int(self.cleaned_data.get('remove', 0) or 0))
-        print(target,remove,self.user)
-
-        if remove:
-            follows = Follow.objects.filter(user=self.user, target_id=target)
-            now = datetime.now()
-            for follow in follows:
-                follow.deleted_at = now
-                follow.save()
-        else:
-            follow, created = Follow.objects.get_or_create(user=self.user, target_id=target)
-            if not created and follow.deleted_at is not None:
-                follow.deleted_at = None
-                follow.save()
+	def save(self):
+		target = self.cleaned_data['target']
+		remove = bool(int(self.cleaned_data.get('remove', 0) or 0))
+		print(target,remove,self.user)
+		
+		if remove:
+			follows = Follow.objects.filter(user=self.user, target_id=target)
+			now = datetime.now()
+			for follow in follows:
+				follow.deleted_at = now
+				follow.save()
+		else:
+			follow, created = Follow.objects.get_or_create(user=self.user, target_id=target)
+			if not created and follow.deleted_at is not None:
+				follow.deleted_at = None
+				follow.save()
+				target_user = User.objects.get(pk=target)
+				print(target_user)
+				# object will have 
+				activity = {'actor': self.user.username, 'verb': 'followed', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
+				feed = client.feed('notification', target)
+				feed.add_activity(activity)
+				feed = client.feed('user',self.user.id)
+				feed.add_activity(activity)
+				feed = client.feed('user',target)
+				feed.add_activity(activity)

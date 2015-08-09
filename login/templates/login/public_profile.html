@@ -18,7 +18,7 @@
 				</div>
 				<div class="profileBrief clearfix">
 					<ul class="profileBriefUl">
-						<li>{{ context_user.first_name }} {{ context_user.last_name }}</li>
+						<li>{{ context_user.first_name }} {{ context_user.last_name }}<br></li>
 						<li>{{ context_user.extendeduser.profession }}</li>
 						<li>{{ context_user.extendeduser.state }},{{ context_user.extendeduser.country }}</li>
 						<li><form method="POST" id="follow_user_form" action="{% url 'login:follow' context_user.id context_user.extendeduser.user_slug %}" class="create-destroy" style="display:inline">
@@ -35,6 +35,9 @@
 					    </li>
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
+						{% if context_user == user %}
+							<li><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></li>
+						{% endif %}
 					</ul>
 				</div>
 				<div class="detailHeader">
@@ -44,40 +47,178 @@
 			<div class="profileBody clearfix">
 				<div class="profileStats">
 					<ul class="profileStatsUl">
-						<li><i class="fa fa-coins"></i> 900 Credits</li>
-						<li><i class="fa fa-users"></i> 190 Connections</li>
-						<li><i class="fa fa-question-circle"></i> {{ questions.count }} Polls</li>
-						<li><i class="fa fa-check-circle"></i> {{ voted.count }} Votes</li>
-						<li><i class="fa fa-comments"></i> 15 Comments</li>
-						<li><i class="fa fa-th-large"></i>{{ categories|length }} Categories</li>
-						<li><i class="fa fa-coin-bag"></i>12 Bets</li>
+						{% if context_user == user %}
+							<li class="myProfileTabs" id="myActivity"><img style="margin-right:0.5rem" src="/static/login/images/goyal.png"/> My Activity</li>
+							<li class="myProfileTabs" id="notifications"><i class="fa fa-bell"></i> Notifications</li>
+							<li class="myProfileTabs" id="newsFeed"><i class="fa fa-newspaper-o"></i> My Feed</li>
+						{% else %}
+							<li class="myProfileTabs" id="myActivity"><img style="margin-right:0.5rem" src="/static/login/images/goyal.png"/> {{ context_user }}'s Activity</li>
+							<li class="myProfileTabs" id="newsFeed"><i class="fa fa-newspaper-o"></i> {{ context_user }}'s Feed</li>
+						{% endif %}
+						<li class="myProfileTabs" id="credits"><i class="fa fa-coins"></i> 900 Credits</li>
+						<li class="myProfileTabs" id="connections"><i class="fa fa-users"></i> 190 Connections</li>
+						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i> {{ questions.count }} Polls</li>
+						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i> {{ voted.count }} Votes</li>
+						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i> 15 Comments</li>
+						<li class="myProfileTabs" id="myCategories"><i class="fa fa-th-large"></i>{{ categories|length }} Categories</li>
+						<li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i>12 Bets</li>
 					</ul>
 				</div>
-				<div class="profileDetail">
-					<ul class="profileDetailUl">
-						{% for activity in activities %}
-						<li>
-							<div class="liDetail">
-								<p class="main">
-									{% if activity.verb == "question" %}
-										{{ activity.actor.username }} asked <a href="{{ activity.question_url }}">{{ activity.question_text }} {{ activity.time|timesince }} ago
-									{% else %}
-										{{ activity.actor.username }} {{ activity.verb }} on <a href="{{ activity.question_url }}">{{ activity.question_text }} {{ activity.time|timesince }} ago
-									{% endif %}
-								</p>
-    						<!--  render_activity activity -->
-								<p class="desc">{{ activity.question_desc }}</p>
-							</div>
-						</li>
-						{% endfor %}
-						<li>See More</li>
-					</ul>
+				<div class="displayDiv">
+					<div class="profileDetail notificationsDiv">
+						<ul class="profileDetailUl">
+							{% for activity in notification_activities %}
+							<li>
+								<div class="liDetail">
+									<p class="main">
+										{% if activity.verb == "question" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "voted" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "follow" or activity.verb == "followed" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% else %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% endif %}
+									</p>
+	    						<!--  render_activity activity -->
+									<p class="desc">{{ activity.question_desc }}</p>
+								</div>
+							</li>
+							{% endfor %}
+							<li>See More</li>
+						</ul>
+					</div>
+					<div class="profileDetail myActivityDiv">
+						<ul class="profileDetailUl">
+							{% for activity in activities %}
+							<li>
+								<div class="liDetail">
+									<p class="main">
+										{% if activity.verb == "question" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "voted" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "follow" or activity.verb == "followed" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% else %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% endif %}
+									</p>
+	    						<!--  render_activity activity -->
+									<p class="desc">{{ activity.question_desc }}</p>
+								</div>
+							</li>
+							{% endfor %}
+							<li>See More</li>
+						</ul>
+					</div>
+					<div class="profileDetail newsFeedDiv">
+						<ul class="profileDetailUl">
+							{% for activity in flat_feed_activities %}
+							<li>
+								<div class="liDetail">
+									<p class="main">
+										{% if activity.verb == "question" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "voted" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>voted on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% elif activity.verb == "follow" or activity.verb == "followed" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% else %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+										{% endif %}
+									</p>
+	    						<!--  render_activity activity -->
+									<p class="desc">{{ activity.question_desc }}</p>
+								</div>
+							</li>
+							{% endfor %}
+							<li>See More</li>
+							<a href='#' onclick='login();'>Login</a>
+							<div id='firechat-wrapper'></div>
+						</ul>
+					</div>
+					<div class="profileDetail myPollsDiv">
+						<ul class="profileDetailUl">
+							{% for question in questions %}
+							<li>
+								<div class="liDetail">
+									<p class="main">
+										<a class="activity_url" id="qTextDesc{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{question.question_text}}</a>
+									</p>
+	    						<!--  render_activity activity -->
+									<p class="pollsDesc">{{ question.description }}</p>
+								</div>
+							</li>
+							{% endfor %}
+							<li>See More</li>
+							<a href='#' onclick='login();'>Login</a>
+							<div id='firechat-wrapper'></div>
+						</ul>
+					</div>
+					<div class="profileDetail myVotesDiv">
+						<ul class="profileDetailUl">
+							{% for question in voted %}
+							<li>
+								<div class="liDetail">
+									<p class="main">
+										<a class="activity_url" id="qTextDesc{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{question.question_text}}</a>
+									</p>
+	    						<!--  render_activity activity -->
+									<p class="pollsDesc">{{ question.description }}</p>
+								</div>
+							</li>
+							{% endfor %}
+							<li>See More</li>
+							<a href='#' onclick='login();'>Login</a>
+							<div id='firechat-wrapper'></div>
+						</ul>
+					</div>
+					<div class="profileDetail myCategoriesDiv">
+						{% for category in categories %}
+				    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
+				    		<figure class="category_figure">
+								<img class="category_imagethumbnails" src="https://{{ request.META.HTTP_HOST }}/{{ category.category_image }}" alt="{{ category.category_title }}">
+								<figcaption class="category_figurecaption">{{ category.category_title }}</figcaption>
+							</figure>
+							</a>
+				    	{% endfor %}
+					</div>
 				</div>
 			</div>
 			<script type="text/javascript">
+			// Create a new Firebase reference, and a new instance of the Login client
+					var chatRef = new Firebase('https://fiery-inferno-807.firebaseio.com/');//https://fiery-inferno-807.firebaseio.com/#-Jvmemt7s4zjFOgequh3|11ccd772537b9d4bb9f2edeac254a174
+					var AUTH_TOKEN = "{{ token }}";
+					console.log(AUTH_TOKEN);
+					function login() {
+					  chatRef.authWithCustomToken(AUTH_TOKEN, function(error, authData) {
+					  	 if (error) {
+						    console.log("Login Failed!", error);
+						  } else {
+						    console.log("Login Succeeded!", authData);
+						    initChat(authData);
+						  }
+						});
+					}
+					function initChat(authData) {
+					  var chat = new FirechatUI(chatRef, document.getElementById('firechat-wrapper'));
+					  chat.setUser(authData.uid, 'kewal');
+					}
+				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Betting Polls", "myCategories":"Category Polls", "myComments":"Commentend Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "connections":"Connections"};
 				$(document).ready(function(){
 					$(".fa-rss").click(function(){
 						$("#follow_user_form").submit();
+					});
+					$(".myProfileTabs").click(function(){
+						var elemId = $(this)[0].id;
+						// console.log(elemId);
+						var divElemId = "." + elemId + "Div";
+						// console.log(divElemId);
+						$(".profileDetail").hide();
+						$(".detailHeader h1").text(headerText[elemId]);
+						$(divElemId).slideToggle("slow");
 					});
 				});
 			</script>

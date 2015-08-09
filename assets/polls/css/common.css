@@ -215,6 +215,26 @@ ul.menu-nav li{
 	font-size: 1.5rem;
 	color: white;
 }
+.dropDownNot{
+	display: none;
+	position: absolute;
+	z-index: 98;
+	font-size: 1rem !important;
+	top: 2rem;
+	margin-left: 25rem;
+	/*top: 57px;
+	right: -11px;*/
+	padding: 10px;
+	color: #333;
+	background: black;
+	opacity: 1;
+	border: 2px solid white;
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+	text-align: center;
+	font-size: 1.5rem;
+	color: white;
+}
 .dropDownLoc ul li{
 	float:none;
 }
@@ -592,7 +612,20 @@ form.signupContentPartForm input{
 	padding: 1rem;
 	width: 50%;
 }
-
+.imgInFeednot{
+	width:25px;
+	height:25px;
+	border-radius: 50%;
+}
+.activity_textNot{
+	/*/*position: absolute;
+    left: 4rem;
+    top: 1rem;*/
+}
+.activity_urlNot{
+	color:orange;
+	cursor:pointer;
+}
 @media only screen and (max-width: 960px){
 	#header{
 		 position: relative;

@@ -73,17 +73,39 @@ $(document).ready(function(){
 	/* End of changing image border color */
 
 	/* Dropdownbox on click of user image in nav */
-	$('.userInNav').click(function(){
-		$('.dropDownLoc').hide();
-		$('.dropDownBox').slideToggle("slow");
-	});
+	// $('.userInNav').click(function(){
+	// 	$('.dropDownLoc').hide();
+	// 	// $('.dropDownNot').hide();
+	// 	$('.dropDownBox').slideToggle("slow");
+	// });
 	$('.menuResponsive').click(function(){
 		$('.dropDownLoc').hide();
+		// $('.dropDownNot').hide();
 		$('.dropDownBox').slideToggle("slow");
 	});
 	$('.location_select').click(function(){
 		$('.dropDownBox').hide();
+		// $('.dropDownNot').hide();
 		$('.dropDownLoc').slideToggle("slow");
+	});
+	$(".userInNav").click(function(){
+		// console.log("notification click")
+		var elem_pos = $(this).offset();
+		$('.dropDownLoc').hide();
+		// $('.dropDownBox').hide();
+		$(".dropDownBox").slideToggle("slow");
+		$("#notification_count_span")[0].innerHTML = 0;
+		$("#notification_count_span").hide();
+  		$.ajax(
+		{
+			type: 'GET',
+			url:"/user/notifications_read",
+			// data:$(elemid).serialize(),
+			success:function(response)
+			{
+				console.log("marked read");
+			}
+		});     
 	});
 	/* end of Dropdownbox on click of user image in nav */
 

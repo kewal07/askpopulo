@@ -21,14 +21,96 @@ from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
-from login.models import ExtendedUser
+from login.models import ExtendedUser,Follow
 from login.forms import MySignupPartForm
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+from stream_django.feed_manager import feed_manager
+from stream_django.enrich import Enrich
+import stream
+client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
 
-class IndexView(generic.ListView):
+class BaseViewList(generic.ListView):
+	def get_context_data(self, **kwargs):
+		context = super(BaseViewList, self).get_context_data(**kwargs)
+		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
+		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
+		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		if self.request.user.is_authenticated():
+			enricher = Enrich()
+			feed = feed_manager.get_notification_feed(self.request.user.id)
+			readonly_token = feed.get_readonly_token()
+			context['readonly_token'] = readonly_token
+			activities = feed.get(limit=25)['results']
+			notifications = enricher.enrich_activities(activities)
+			notify = []
+			notification_count = 0
+			for notification in notifications:
+				# print(notification)
+				# print(notification.activity_data)
+				if not notification.activity_data['is_seen']:
+					notification_count += 1
+					for activity in notification.activity_data['activities']:
+						# if activity['verb'] == "followed":
+						# 	# print(dir(activity))
+						# 	# print(activity)
+						# 	# print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
+						# 	not_data = {}
+						# 	if len(activity['actor'].split(":")) > 1: 
+						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
+						# 	else:
+						# 		following_user = User.objects.get(username=activity['actor'])
+						# 	not_data['following_user'] = following_user
+						# 	not_data['time'] = activity['time']
+						# 	not_data['verb'] = activity['verb']
+						notify.append(activity)
+						break
+			context['notification_count'] = notification_count
+			context['notifications'] = notifications
+		return context
+
+class BaseViewDetail(generic.DetailView):
+	def get_context_data(self, **kwargs):
+		context = super(BaseViewDetail, self).get_context_data(**kwargs)
+		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
+		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
+		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		if self.request.user.is_authenticated():
+			enricher = Enrich()
+			feed = feed_manager.get_notification_feed(self.request.user.id)
+			readonly_token = feed.get_readonly_token()
+			context['readonly_token'] = readonly_token
+			activities = feed.get(limit=25)['results']
+			notifications = enricher.enrich_activities(activities)
+			notify = []
+			notification_count = 0
+			for notification in notifications:
+				# print(notification)
+				# print(notification.activity_data)
+				if not notification.activity_data['is_seen']:
+					notification_count += 1
+					for activity in notification.activity_data['activities']:
+						# if activity['verb'] == "followed":
+						# 	# print(dir(activity))
+						# 	# print(activity)
+						# 	# print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
+						# 	not_data = {}
+						# 	if len(activity['actor'].split(":")) > 1: 
+						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
+						# 	else:
+						# 		following_user = User.objects.get(username=activity['actor'])
+						# 	not_data['following_user'] = following_user
+						# 	not_data['time'] = activity['time']
+						# 	not_data['verb'] = activity['verb']
+						notify.append(activity)
+						break
+			context['notification_count'] = notification_count
+			context['notifications'] = notify
+		return context
+
+class IndexView(BaseViewList):
 	context_object_name = 'data'
 	paginate_by = 50
 
@@ -182,7 +264,7 @@ class IndexView(generic.ListView):
 		context['data'] = mainData
 		return mainData
 
-class VoteView(generic.DetailView):
+class VoteView(BaseViewDetail):
 	model = Question
 	
 	def get_template_names(self):
@@ -293,9 +375,19 @@ class VoteView(generic.DetailView):
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
+		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'user/'+str(user.id)+"/"+user.extendeduser.user_slug}
+		following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
+		if user.id != question.user_id:
+			feed = client.feed('notification', question.user_id)
+			feed.add_activity(activity)
+		for following_id in following_id_list:
+			feed = client.feed('notification', following_id)
+			feed.add_activity(activity)
+		feed = client.feed('user', question.user_id)
+		feed.add_activity(activity)
 		return HttpResponseRedirect(url)
 		
-class EditView(generic.DetailView):
+class EditView(BaseViewDetail):
 	model = Question
 	
 	def get_template_names(self):
@@ -326,7 +418,7 @@ class EditView(generic.DetailView):
 		#print(context)
 		return context
 		
-class DeleteView(generic.DetailView):
+class DeleteView(BaseViewDetail):
 	model = Question
 	
 	def get_context_data(self, **kwargs):
@@ -338,7 +430,7 @@ class DeleteView(generic.DetailView):
 		question.delete()
 		return HttpResponseRedirect(url)
 
-class CreatePollView(generic.ListView):
+class CreatePollView(BaseViewList):
 	template_name = 'polls/createPoll.html'
 	context_object_name = 'data'
 	
@@ -539,6 +631,11 @@ class CreatePollView(generic.ListView):
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
+		activity = {'actor': user.username, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'user/'+str(user.id)+"/"+user.extendeduser.user_slug}
+		following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
+		for following_id in following_id_list:
+			feed = client.feed('notification', following_id)
+			feed.add_activity(activity)
 		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 		return HttpResponseRedirect(url)
 
@@ -549,7 +646,7 @@ class PollsSearchView(SearchView):
         queryset = [x for x in queryset if x.object.privatePoll == 0]
         return {'query': queryset,}
 
-class FollowPollView(generic.ListView):
+class FollowPollView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
 		follow = request.POST.get('follow')
@@ -565,7 +662,7 @@ class FollowPollView(generic.ListView):
 		data['sub_count'] = question.subscriber_set.count()
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
-class ReportAbuse(generic.ListView):
+class ReportAbuse(BaseViewList):
 
 	def get(self,request,*args,**kwargs):
 		qIdBan = request.GET.get('qIdBan')
@@ -653,7 +750,7 @@ def comment_mail(request):
 def error_CompanyName(request):
 	return render(request,'error404.html')
 
-class MyUnsubscribeView(generic.ListView):
+class MyUnsubscribeView(BaseViewList):
 	template_name = 'unsubscribe.html'
 
 	def get_queryset(self):
