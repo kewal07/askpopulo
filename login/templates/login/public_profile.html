@@ -59,7 +59,7 @@
 						<li class="myProfileTabs" id="connections"><i class="fa fa-users"></i> 190 Connections</li>
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i> {{ questions.count }} Polls</li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i> {{ voted.count }} Votes</li>
-						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i> 15 Comments</li>
+						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments"></span></li>
 						<li class="myProfileTabs" id="myCategories"><i class="fa fa-th-large"></i>{{ categories|length }} Categories</li>
 						<li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i>12 Bets</li>
 					</ul>
@@ -171,8 +171,6 @@
 							</li>
 							{% endfor %}
 							<li>See More</li>
-							<a href='#' onclick='login();'>Login</a>
-							<div id='firechat-wrapper'></div>
 						</ul>
 					</div>
 					<div class="profileDetail myCategoriesDiv">
@@ -184,6 +182,10 @@
 							</figure>
 							</a>
 				    	{% endfor %}
+					</div>
+					<div class="profileDetail myCommentsDiv">
+						<ul class="commentList">
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -208,14 +210,71 @@
 					}
 				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Betting Polls", "myCategories":"Category Polls", "myComments":"Commentend Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "connections":"Connections"};
 				$(document).ready(function(){
+					var disqusPublicKey = "{{ DISQUS_API_KEY }}";
+					var disqusShortname = "{{ DISQUS_WEBSITE_SHORTNAME }}";
+					console.log("{{ DISQUS_API_KEY }}");
+					console.log("{{ DISQUS_WEBSITE_SHORTNAME }}");
+					$.ajax({
+					    type: 'GET',
+					    url: 'https://disqus.com/api/3.0/users/details.json',
+					    data: { api_key: disqusPublicKey, remote_auth:"{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}"},
+					    cache: false,
+					    dataType: 'jsonp',
+					    success: function(response) {
+					        $('#numComments').text(response['response'].numPosts.toString()+' Comments');
+					    }
+					});
+					
+					var messages = [];
+					var link = [];
+					var displayed = 0;
+					$.ajax({
+					    type: 'GET',
+					    url: 'https://disqus.com/api/3.0/users/listPosts.json',
+					    data: { api_key: disqusPublicKey, remote_auth:"{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}"},
+					    cache: false,
+					    dataType: 'jsonp',
+					    success: function(response) {
+					    	findComments(response);
+					       
+					    }
+					});
+
+					function findComments(response){
+						for(var i=0; i<response['response'].length; i++){
+				       		var threadId = response['response'][i]['thread'];
+				       		var message = response['response'][i]['message'];
+				       		messages[i] = response['response'][i]['message'];
+				        		$.ajax({
+								    type: 'GET',
+								    url: 'https://disqus.com/api/3.0/threads/details.json',
+								    data: { api_key: disqusPublicKey, thread:threadId},
+								    cache: false,
+								    dataType: 'jsonp',
+								    success: function(threadDetails) {
+								    	link.push(threadDetails['response']['link']);
+								       if(link.length == response['response'].length && displayed == 0){
+								       		disp();
+								       }
+								   	}
+								});
+					    }
+					}
+
+					function disp(){
+						displayed = 1;
+						for(var i=0; i<link.length; i++){
+							$(".commentList").append("<li> <a href="+link[i]+">"+messages[i]+"</a></li>");
+						}
+					}
+
 					$(".fa-rss").click(function(){
 						$("#follow_user_form").submit();
 					});
 					$(".myProfileTabs").click(function(){
+						console.log("yes here");
 						var elemId = $(this)[0].id;
-						// console.log(elemId);
 						var divElemId = "." + elemId + "Div";
-						// console.log(divElemId);
 						$(".profileDetail").hide();
 						$(".detailHeader h1").text(headerText[elemId]);
 						$(divElemId).slideToggle("slow");

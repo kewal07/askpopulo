@@ -22,6 +22,7 @@ from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
 from login.models import ExtendedUser,Follow
+from login.views import BaseViewList,BaseViewDetail
 from login.forms import MySignupPartForm
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
@@ -31,85 +32,6 @@ import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
-
-class BaseViewList(generic.ListView):
-	def get_context_data(self, **kwargs):
-		context = super(BaseViewList, self).get_context_data(**kwargs)
-		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
-		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
-		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
-		if self.request.user.is_authenticated():
-			enricher = Enrich()
-			feed = feed_manager.get_notification_feed(self.request.user.id)
-			readonly_token = feed.get_readonly_token()
-			context['readonly_token'] = readonly_token
-			activities = feed.get(limit=25)['results']
-			notifications = enricher.enrich_activities(activities)
-			notify = []
-			notification_count = 0
-			for notification in notifications:
-				# print(notification)
-				# print(notification.activity_data)
-				if not notification.activity_data['is_seen']:
-					notification_count += 1
-					for activity in notification.activity_data['activities']:
-						# if activity['verb'] == "followed":
-						# 	# print(dir(activity))
-						# 	# print(activity)
-						# 	# print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
-						# 	not_data = {}
-						# 	if len(activity['actor'].split(":")) > 1: 
-						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
-						# 	else:
-						# 		following_user = User.objects.get(username=activity['actor'])
-						# 	not_data['following_user'] = following_user
-						# 	not_data['time'] = activity['time']
-						# 	not_data['verb'] = activity['verb']
-						notify.append(activity)
-						break
-			context['notification_count'] = notification_count
-			context['notifications'] = notifications
-		return context
-
-class BaseViewDetail(generic.DetailView):
-	def get_context_data(self, **kwargs):
-		context = super(BaseViewDetail, self).get_context_data(**kwargs)
-		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
-		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
-		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
-		if self.request.user.is_authenticated():
-			enricher = Enrich()
-			feed = feed_manager.get_notification_feed(self.request.user.id)
-			readonly_token = feed.get_readonly_token()
-			context['readonly_token'] = readonly_token
-			activities = feed.get(limit=25)['results']
-			notifications = enricher.enrich_activities(activities)
-			notify = []
-			notification_count = 0
-			for notification in notifications:
-				# print(notification)
-				# print(notification.activity_data)
-				if not notification.activity_data['is_seen']:
-					notification_count += 1
-					for activity in notification.activity_data['activities']:
-						# if activity['verb'] == "followed":
-						# 	# print(dir(activity))
-						# 	# print(activity)
-						# 	# print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
-						# 	not_data = {}
-						# 	if len(activity['actor'].split(":")) > 1: 
-						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
-						# 	else:
-						# 		following_user = User.objects.get(username=activity['actor'])
-						# 	not_data['following_user'] = following_user
-						# 	not_data['time'] = activity['time']
-						# 	not_data['verb'] = activity['verb']
-						notify.append(activity)
-						break
-			context['notification_count'] = notification_count
-			context['notifications'] = notify
-		return context
-
 class IndexView(BaseViewList):
 	context_object_name = 'data'
 	paginate_by = 50
