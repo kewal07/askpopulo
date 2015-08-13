@@ -201,6 +201,8 @@ class LoggedInView(BaseViewDetail):
 		public_profile = False
 		if request_user != user:
 			public_profile = True
+		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
+		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
 		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
@@ -222,7 +224,7 @@ class LoggedInView(BaseViewDetail):
 			activities = feed.get(limit=25)['results']
 			notification_activities = []
 			for act in activities:
-				print("NOTTTTTTTTTTTTTTTTTT",act)
+				# print("NOTTTTTTTTTTTTTTTTTT",act)
 				notification_activities.extend(act['activities'])
 			context['notification_activities'] = notification_activities
 		ssoData = {}
@@ -270,8 +272,8 @@ class LoggedInView(BaseViewDetail):
 		# feed_activities = aggregated_feed.get(limit=25)['results']
 		# print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",feed_activities)
 		context['flat_feed_activities'] = feed_activities
-		for act in activities:
-			print("____________________",act.activity_data)
+		# for act in activities:
+		# 	print("____________________",act.activity_data)
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
