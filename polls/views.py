@@ -47,12 +47,13 @@ class BaseViewList(generic.ListView):
 			notifications = enricher.enrich_activities(activities)
 			notify = []
 			notification_count = 0
+			print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",notifications)
 			for notification in notifications:
 				# print(notification)
-				# print(notification.activity_data)
+				print(notification.activity_data)
 				if not notification.activity_data['is_seen']:
-					notification_count += 1
 					for activity in notification.activity_data['activities']:
+						notification_count += 1
 						# if activity['verb'] == "followed":
 						# 	# print(dir(activity))
 						# 	# print(activity)
@@ -66,9 +67,10 @@ class BaseViewList(generic.ListView):
 						# 	not_data['time'] = activity['time']
 						# 	not_data['verb'] = activity['verb']
 						notify.append(activity)
-						break
+						# break
+			print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",notify)
 			context['notification_count'] = notification_count
-			context['notifications'] = notifications
+			context['notifications'] = notify
 		return context
 
 class BaseViewDetail(generic.DetailView):
@@ -90,8 +92,8 @@ class BaseViewDetail(generic.DetailView):
 				# print(notification)
 				# print(notification.activity_data)
 				if not notification.activity_data['is_seen']:
-					notification_count += 1
 					for activity in notification.activity_data['activities']:
+						notification_count += 1
 						# if activity['verb'] == "followed":
 						# 	# print(dir(activity))
 						# 	# print(activity)
@@ -105,7 +107,7 @@ class BaseViewDetail(generic.DetailView):
 						# 	not_data['time'] = activity['time']
 						# 	not_data['verb'] = activity['verb']
 						notify.append(activity)
-						break
+						# break
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
 		return context

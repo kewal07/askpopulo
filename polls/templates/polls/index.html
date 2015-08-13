@@ -40,17 +40,20 @@
 					{% for question in data %}
 					<div class="questions">
 						<div class="questionContent">
-							<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
 							<div class="userInfo">
 								<div class="userImage">
 									{% if question.question.user.extendeduser %}
 										{% if question.question.isAnonymous %}
 											<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
 										{% else %}
-											<img src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
+											<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
+												<img src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
+											</a>
 										{% endif %}
 									{% else %}
-										<img src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
+										<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
+											<img src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
+										</a>
 									{% endif %}
 								</div>
 								<div class="userBrief">
@@ -58,7 +61,9 @@
 										{% if question.question.isAnonymous %}
 											Anonymous
 										{% else %}
-											{{question.question.user.first_name}}
+											<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
+												{{question.question.user.first_name}}
+											</a>
 										{% endif %}
 									</p>
 									<p class="askedOnInfo">
@@ -67,7 +72,6 @@
 									</p>
 								</div>
 							</div> 
-							</a>
 							<div class="mainPoll">
 								<p>
 									<a class="qTextDesc" id="qTextDesc{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
