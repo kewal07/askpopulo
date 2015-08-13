@@ -229,26 +229,26 @@ class LoggedInView(BaseViewDetail):
 			context['notification_activities'] = notification_activities
 		ssoData = {}
 
-		if public_profile:
-			profilepicUrl = user.extendeduser.get_profile_pic_url()
-			if not profilepicUrl.startswith('http'):
-				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
-			data = {
-				"id":user.id,
-				"username":user.username,
-				"email":user.email,
-				"avatar":profilepicUrl
-			}
-		else:
-			profilepicUrl = request_user.extendeduser.get_profile_pic_url()
-			if not profilepicUrl.startswith('http'):
-				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
-			data = {
-				"id":request_user.id,
-				"username":request_user.username,
-				"email":request_user.email,
-				"avatar":profilepicUrl
-			}
+		#if public_profile:
+		profilepicUrl = user.extendeduser.get_profile_pic_url()
+		if not profilepicUrl.startswith('http'):
+			profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+		data = {
+			"id":user.id,
+			"username":user.username,
+			"email":user.email,
+			"avatar":profilepicUrl
+		}
+		#else:
+		# profilepicUrl = request_user.extendeduser.get_profile_pic_url()
+		# if not profilepicUrl.startswith('http'):
+		# 	profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+		# data = {
+		# 	"id":request_user.id,
+		# 	"username":request_user.username,
+		# 	"email":request_user.email,
+		# 	"avatar":profilepicUrl
+		# }
 		data = json.dumps(data)
 		message = base64.b64encode(data.encode('utf-8'))
 		timestamp = int(time.time())
