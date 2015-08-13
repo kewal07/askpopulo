@@ -14,6 +14,10 @@ from allauth.account.adapter import get_adapter
 from polls.models import Question,Voted,Subscriber
 from categories.models import Category
 import json
+import base64
+import hmac
+import time
+import hashlib
 from login.forms import MySignupForm,FollowForm
 from django.contrib.auth.models import User
 from datetime import date
@@ -29,6 +33,8 @@ class BaseViewList(generic.ListView):
 		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
 		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
 		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
+		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
 			feed = feed_manager.get_notification_feed(self.request.user.id)
@@ -69,6 +75,8 @@ class BaseViewDetail(generic.DetailView):
 		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
 		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
 		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
+		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
 			feed = feed_manager.get_notification_feed(self.request.user.id)
@@ -243,6 +251,33 @@ class LoggedInView(BaseViewDetail):
 			for act in activities:
 				notification_activities.extend(act['activities'])
 			context['notification_activities'] = notification_activities
+		ssoData = {}
+
+		if public_profile:
+			profilepicUrl = user.extendeduser.get_profile_pic_url()
+			if not profilepicUrl.startswith('http'):
+				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+			data = {
+				"id":user.id,
+				"username":user.username,
+				"email":user.email,
+				"avatar":profilepicUrl
+			}
+			print(profilepicUrl)
+			data = json.dumps(data)
+			message = base64.b64encode(data.encode('utf-8'))
+			timestamp = int(time.time())
+			key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+			msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+			digestmod = hashlib.sha1
+			sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+			ssoData = dict(
+				message=message,
+				timestamp=timestamp,
+				sig=sig,
+				pub_key=settings.DISQUS_API_KEY,
+			)
+		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
 		context['subscribed'] = user_subscribed_questions
