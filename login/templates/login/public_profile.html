@@ -58,7 +58,7 @@
 							<li class="myProfileTabs" id="newsFeed"><i class="fa fa-newspaper-o"></i><span class="iCaption"> {{ context_user }}'s Feed</span></li>
 						{% endif %}
 						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption"> Credits</span></li>
-						<li class="myProfileTabs" id="connections"><i class="fa fa-users"></i><span class="iCaption"> 190 Connections</span></li>
+						<li class="myProfileTabs" id="myConnections"><i class="fa fa-users"></i><span class="iCaption"> {{ connection_count }} Connections</span></li>
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
 						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments" class="iCaption"> 0 Comments</span></li>
@@ -186,17 +186,23 @@
 				    	{% endfor %}
 					</div>
 					<div class="profileDetail myCommentsDiv">
-						<ul class="commentList">
+						<ul class="profileDetailUl">
 						</ul>
 					</div>
 					<div class="profileDetail myCreditsDiv">
-						<ul class="creditsList">
+						<ul class="profileDetailUl">
 							Coming Soon !!!
 						</ul>
 					</div>
 					<div class="profileDetail myBetsDiv">
-						<ul class="betsList">
+						<ul class="profileDetailUl">
 							Coming Soon !!!
+						</ul>
+					</div>
+					<div class="profileDetail myConnectionsDiv">
+						<ul class="profileDetailUl">
+							{{ followers }}
+							{{ following }}
 						</ul>
 					</div>
 				</div>
