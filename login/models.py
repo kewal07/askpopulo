@@ -134,11 +134,6 @@ class Follow(Activity,BaseModel):
     def activity_object_attr(self):
         return self
 
-    @property
-    def activity_notify(self):
-        target_feed = feed_manager.get_notification_feed(self.target_id)
-        return [target_feed]
-
 def follow_change(sender, instance, created, **kwargs):
     if instance.deleted_at is None:
         feed_manager.follow_user(instance.user_id, instance.target_id)

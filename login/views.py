@@ -41,29 +41,17 @@ class BaseViewList(generic.ListView):
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
 			activities = feed.get(limit=25)['results']
-			notifications = enricher.enrich_activities(activities)
+			# notifications = enricher.enrich_activities(activities)
+			notifications = activities
 			notify = []
 			notification_count = 0
 			for notification in notifications:
-				# print(notification)
-				# print(notification.activity_data)
-				if not notification.activity_data['is_seen']:
+				if not notification['is_seen']:
 					notification_count += 1
-					for activity in notification.activity_data['activities']:
-						# if activity['verb'] == "followed":
-						# 	print(dir(activity))
-						# 	print(activity)
-						# 	print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
-						# 	not_data = {}
-						# 	if len(activity['actor'].split(":")) > 1: 
-						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
-						# 	else:
-						# 		following_user = User.objects.get(username=activity['actor'])
-						# 	not_data['following_user'] = following_user
-						# 	not_data['time'] = activity['time']
-						# 	not_data['verb'] = activity['verb']
-						notify.append(activity)
-						break
+					activity = notification['activities'][0]
+					if notification['activity_count'] - 1 > 0:
+						activity['activity_count'] = notification['activity_count'] - 1
+					notify.append(activity)
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
 		return context
@@ -82,29 +70,17 @@ class BaseViewDetail(generic.DetailView):
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
 			activities = feed.get(limit=25)['results']
-			notifications = enricher.enrich_activities(activities)
+			# notifications = enricher.enrich_activities(activities)
+			notifications = activities
 			notify = []
 			notification_count = 0
 			for notification in notifications:
-				# print(notification)
-				# print(notification.activity_data)
-				if not notification.activity_data['is_seen']:
+				if not notification['is_seen']:
 					notification_count += 1
-					for activity in notification.activity_data['activities']:
-						# if activity['verb'] == "followed":
-						# 	# print(dir(activity))
-						# 	# print(activity)
-						# 	# print("*******************",activity['actor'],len(activity['actor'].split(":")),len(activity['actor'].split(":")) > 1)
-						# 	not_data = {}
-						# 	if len(activity['actor'].split(":")) > 1: 
-						# 		following_user = User.objects.get(pk=activity['actor'].split(":")[1])
-						# 	else:
-						# 		following_user = User.objects.get(username=activity['actor'])
-						# 	not_data['following_user'] = following_user
-						# 	not_data['time'] = activity['time']
-						# 	not_data['verb'] = activity['verb']
-						notify.append(activity)
-						break
+					activity = notification['activities'][0]
+					if notification['activity_count'] - 1 > 0:
+						activity['activity_count'] = notification['activity_count'] - 1
+					notify.append(activity)
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
 		return context
@@ -246,6 +222,7 @@ class LoggedInView(BaseViewDetail):
 			activities = feed.get(limit=25)['results']
 			notification_activities = []
 			for act in activities:
+				print("NOTTTTTTTTTTTTTTTTTT",act)
 				notification_activities.extend(act['activities'])
 			context['notification_activities'] = notification_activities
 		ssoData = {}
