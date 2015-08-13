@@ -379,6 +379,13 @@ button.followButton.unfollow{
 	.is-countdown{
 	/*display:none;*/
 	}
+	.upvote{
+		position: absolute;
+	    top: 40%;
+	    right: 6%;
+	    width: 2%;
+	    cursor: pointer;
+	}
 }
 @media only screen and (min-width:481px) and (max-width: 730px){
 	.choice_image{
