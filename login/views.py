@@ -239,20 +239,29 @@ class LoggedInView(BaseViewDetail):
 				"email":user.email,
 				"avatar":profilepicUrl
 			}
-			print(profilepicUrl)
-			data = json.dumps(data)
-			message = base64.b64encode(data.encode('utf-8'))
-			timestamp = int(time.time())
-			key = settings.DISQUS_SECRET_KEY.encode('utf-8')
-			msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
-			digestmod = hashlib.sha1
-			sig = hmac.HMAC(key, msg, digestmod).hexdigest()
-			ssoData = dict(
-				message=message,
-				timestamp=timestamp,
-				sig=sig,
-				pub_key=settings.DISQUS_API_KEY,
-			)
+		else:
+			profilepicUrl = request_user.extendeduser.get_profile_pic_url()
+			if not profilepicUrl.startswith('http'):
+				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+			data = {
+				"id":request_user.id,
+				"username":request_user.username,
+				"email":request_user.email,
+				"avatar":profilepicUrl
+			}
+		data = json.dumps(data)
+		message = base64.b64encode(data.encode('utf-8'))
+		timestamp = int(time.time())
+		key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+		msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+		digestmod = hashlib.sha1
+		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+		ssoData = dict(
+			message=message,
+			timestamp=timestamp,
+			sig=sig,
+			pub_key=settings.DISQUS_API_KEY,
+		)
 		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
