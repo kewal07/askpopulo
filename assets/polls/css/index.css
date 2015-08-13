@@ -305,6 +305,14 @@ button.followButton.unfollow{
     width: 2%;
     cursor: pointer;
 }
+
+.upvotemessage{
+	position: absolute;
+    right: -280%;
+    width: 600%;
+    background-color: antiquewhite;
+}
+
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
 		margin: 2rem 0.5rem;
