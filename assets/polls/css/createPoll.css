@@ -4,7 +4,7 @@ html{
   font-family: 'Arvo', serif;
 }
 #createPoll{
-	margin: 7rem 5rem 0rem 5rem;
+	margin: 7rem 5rem 5rem 5rem;
 }
 .createPoll{
 	border: 3px solid #000;
@@ -179,7 +179,7 @@ form.createPollContentForm label{
 @media only screen and (max-width:960px){
   #createPoll{
     margin:0;
-    margin-bottom:2rem;
+    margin-bottom:11rem;
   } 
   form.createPollContentForm {
     width: 100%;
