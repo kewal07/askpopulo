@@ -108,6 +108,8 @@ class ExtendedUser(models.Model):
 			# print(today.year - born.year)
 			return today.year - born.year
 
+	
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     deleted_at = models.DateTimeField(blank=True, null=True)

@@ -1,6 +1,7 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% load activity_tags %}
+{% load get_name %}
 		{% block extra_css %}
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/public_profile.css' %}" />
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" />
@@ -56,13 +57,13 @@
 							<li class="myProfileTabs" id="myActivity"><img style="margin-right:0.5rem" src="/static/login/images/goyal.png"/><span class="iCaption"> {{ context_user }}'s Activity</span></li>
 							<li class="myProfileTabs" id="newsFeed"><i class="fa fa-newspaper-o"></i><span class="iCaption"> {{ context_user }}'s Feed</span></li>
 						{% endif %}
-						<li class="myProfileTabs" id="credits"><i class="fa fa-coins"></i><span class="iCaption"> 900 Credits</span></li>
+						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption"> Credits</span></li>
 						<li class="myProfileTabs" id="connections"><i class="fa fa-users"></i><span class="iCaption"> 190 Connections</span></li>
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
-						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments" class="iCaption"></span></li>
+						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments" class="iCaption"> 0 Comments</span></li>
 						<li class="myProfileTabs" id="myCategories"><i class="fa fa-th-large"></i><span class="iCaption"> {{ categories|length }} Categories</span></li>
-						<li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i><span class="iCaption"> 12 Bets</span></li>
+						<li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i><span class="iCaption"> Bets</span></li>
 					</ul>
 				</div>
 				<div class="displayDiv">
@@ -73,13 +74,13 @@
 								<div class="liDetail">
 									<p class="main">
 										{% if activity.verb == "question" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "voted" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% else %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ user.username|getName:activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
@@ -97,13 +98,13 @@
 								<div class="liDetail">
 									<p class="main">
 										{% if activity.verb == "question" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "voted" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% else %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ user.username|getName:activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
@@ -121,13 +122,13 @@
 								<div class="liDetail">
 									<p class="main">
 										{% if activity.verb == "question" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "voted" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>voted on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% else %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> {{ activity.time|timesince }} ago</span>
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
@@ -186,6 +187,16 @@
 					</div>
 					<div class="profileDetail myCommentsDiv">
 						<ul class="commentList">
+						</ul>
+					</div>
+					<div class="profileDetail myCreditsDiv">
+						<ul class="creditsList">
+							Coming Soon !!!
+						</ul>
+					</div>
+					<div class="profileDetail myBetsDiv">
+						<ul class="betsList">
+							Coming Soon !!!
 						</ul>
 					</div>
 				</div>
