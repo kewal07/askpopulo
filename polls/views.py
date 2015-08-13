@@ -4,7 +4,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -175,6 +175,7 @@ class IndexView(BaseViewList):
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
+			data['upvoteCount'] = mainquestion.upvoteCount
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -705,3 +706,56 @@ class MyUnsubscribeView(BaseViewList):
 				error['success'] = "You are successfully unsubscribed from all email notifications."
 				return HttpResponse(json.dumps(error), content_type='application/json')
 
+class QuestionUpvoteView(BaseViewList):
+	template_name = 'index.html'
+
+	def get_queryset(self):
+		context = {}
+		return context
+
+	def post(self,request,*args,**kwargs):
+		try:
+			error={}
+			response={}
+			votedQuestionId = int(request.GET.get("qId"))
+			vote = int(request.GET.get("vote"))
+
+			isAlreadyVotedByUser = QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId)
+
+			if(isAlreadyVotedByUser):
+				if((isAlreadyVotedByUser[0].vote and vote == 1) or (not(isAlreadyVotedByUser[0].vote) and vote == 0)):
+					response={"message":"Already voted by user"}
+				else:
+					questionVoted = Question.objects.filter(id=votedQuestionId)
+					currentCount = questionVoted[0].upvoteCount
+					if vote == 1:
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 1)
+						currentCount += 1
+					else:
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 1)
+						currentCount -= 1
+
+					countVotes = questionVoted[0].upvoteCount
+					QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId).update(vote = vote)
+					response = {"message":"Done", "count":countVotes}
+			else:
+				upVote = QuestionUpvotes(user_id=request.user.id, question_id = votedQuestionId, vote = vote)
+				questionUpVoted = Question.objects.filter(id=votedQuestionId)
+				currentCount = questionUpVoted[0].upvoteCount
+				if vote == 1:
+					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 1)
+					currentCount += 1
+				else:
+					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 1)
+					currentCount -= 1
+				upVote.save()
+				response={"message":"Question Upvoted", "count":currentCount}
+
+			return HttpResponse(json.dumps(response), content_type='application/json')
+
+		except Exception as e:
+			import os,sys
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			print(e)

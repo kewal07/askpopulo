@@ -26,4 +26,5 @@ urlpatterns = patterns('',
 	url(r'^comment_mail$', views.comment_mail,name="comment_mail"),
 	url(r'^companyname$',views.error_CompanyName,name="error_CompanyName"),
 	url(r'^unsubscribe$',views.MyUnsubscribeView.as_view(),name="unsubscribe"),
+	url(r'^upvoted/$',views.QuestionUpvoteView.as_view(),name="upvote"),
 )

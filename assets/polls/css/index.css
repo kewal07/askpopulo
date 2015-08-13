@@ -297,6 +297,14 @@ button.followButton.unfollow{
     width: 86%;
     margin:24px 0px 0px 8px;*/
 }
+
+.upvote{
+	position: absolute;
+    top: 40%;
+    right: 4%;
+    width: 2%;
+    cursor: pointer;
+}
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
 		margin: 2rem 0.5rem;

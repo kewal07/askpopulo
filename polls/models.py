@@ -34,6 +34,7 @@ class Question(models.Model,Activity):
 	privatePoll = models.BooleanField(default=0)
 	featuredPoll = models.BooleanField(default=0)
 	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+	upvoteCount = models.IntegerField(default=0)
 
 	@property
 	def extra_activity_data(self):
@@ -171,4 +172,8 @@ class QuestionWithCategory(models.Model):
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.queWithCat_pk = sig
 		super(QuestionWithCategory, self).save(*args, **kwargs)
-	
+
+class QuestionUpvotes(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	question = models.ForeignKey(Question)
+	vote = models.BooleanField(default=0)
