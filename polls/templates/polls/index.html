@@ -178,6 +178,11 @@
 									</ul>
 								</div>
 							</div>
+							<div class="upvote">
+								<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }})"></i>
+								<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
+								<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="downvoted({{ question.question.id }})"></i>
+							</div>
 					</div>
 					{% endfor %}
 					{% if is_paginated %}
@@ -224,6 +229,50 @@
 			{% endif %}		
 	</section>
 	<script type="text/javascript">
+
+		function upvoted(questionId){
+			$.ajax({
+				type: 'POST',
+				url:'/upvoted/?qId='+questionId+'&vote=1',
+				data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
+				error:function(response){
+					console.log('error occured');
+				},
+				success:function(response)
+				{
+						count = response.count;
+						message = response.message;
+						if(typeof count === 'undefined'){
+
+						} else {
+							spanId = '#upvoteon'+questionId.toString();
+							$(spanId).text(response.count.toString());
+						}
+				}
+			}); 
+		}
+
+		function downvoted(questionId){
+			$.ajax({
+				type: 'POST',
+				url:'/upvoted/?qId='+questionId+'&vote=0',
+				data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
+				error:function(response){
+					console.log('error occured');
+				},
+				success:function(response)
+				{
+						count = response.count;
+						message = response.message;
+						if(typeof count === 'undefined'){
+
+						} else {
+							spanId = '#upvoteon'+questionId.toString();
+							$(spanId).text(response.count.toString());
+						}
+				}
+			}); 
+		}
 
 		$(document).ready(function()
 		{
