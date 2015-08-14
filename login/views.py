@@ -224,7 +224,6 @@ class LoggedInView(BaseViewDetail):
 			activities = feed.get(limit=25)['results']
 			notification_activities = []
 			for act in activities:
-				# print("NOTTTTTTTTTTTTTTTTTT",act)
 				notification_activities.extend(act['activities'])
 			context['notification_activities'] = notification_activities
 		ssoData = {}
@@ -239,16 +238,6 @@ class LoggedInView(BaseViewDetail):
 			"email":user.email,
 			"avatar":profilepicUrl
 		}
-		#else:
-		# profilepicUrl = request_user.extendeduser.get_profile_pic_url()
-		# if not profilepicUrl.startswith('http'):
-		# 	profilepicUrl = r"http://askbypoll.com"+profilepicUrl
-		# data = {
-		# 	"id":request_user.id,
-		# 	"username":request_user.username,
-		# 	"email":request_user.email,
-		# 	"avatar":profilepicUrl
-		# }
 		data = json.dumps(data)
 		message = base64.b64encode(data.encode('utf-8'))
 		timestamp = int(time.time())
