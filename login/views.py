@@ -286,11 +286,15 @@ class LoggedInView(BaseViewDetail):
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
+		print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id) ]
+		print(followers)
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id) ]
+		print(following)
 		context["followers"] = followers
 		context["following"] = following
-		connections = followers
+		connections = []
+		connections.extend(followers)
 		connections.extend(following)
 		context["connection_count"] = len(set(connections))
 		return context
