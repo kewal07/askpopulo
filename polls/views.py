@@ -729,10 +729,10 @@ class QuestionUpvoteView(BaseViewList):
 					questionVoted = Question.objects.filter(id=votedQuestionId)
 					currentCount = questionVoted[0].upvoteCount
 					if vote == 1:
-						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 1)
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 2)
 						currentCount += 1
 					else:
-						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 1)
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 2)
 						currentCount -= 1
 
 					countVotes = questionVoted[0].upvoteCount
