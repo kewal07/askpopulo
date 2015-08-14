@@ -180,9 +180,9 @@
 								</div>
 							</div>
 							<div class="upvote">
-								<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }})"></i>
+								<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}')"></i>
 								<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
-								<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="downvoted({{ question.question.id }})"></i>
+								<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="downvoted({{ question.question.id }},'{{ question.question.que_slug }}')"></i>
 								<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
 							</div>
 					</div>
@@ -232,7 +232,7 @@
 	</section>
 	<script type="text/javascript">
 
-		function upvoted(questionId){
+		function upvoted(questionId,qslug){
 			{% if user.is_authenticated %}
 				$.ajax({
 					type: 'POST',
@@ -259,10 +259,13 @@
 				var id = "#upvotemessage"+questionId.toString();
 				$(id).append("<p> Login to upvote </p>");
 				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
+				// console.log(url);
+				$(location).attr('href',url);
 			{% endif %}
 		}
 
-		function downvoted(questionId){
+		function downvoted(questionId,qslug){
 			{% if user.is_authenticated %}
 				$.ajax({
 					type: 'POST',
@@ -289,6 +292,9 @@
 				var id = "#upvotemessage"+questionId.toString();
 				$(id).append("<p> Login to downvote </p>");
 				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
+				// console.log(url);
+				$(location).attr('href',url);
 			{% endif %}
 		}
 
