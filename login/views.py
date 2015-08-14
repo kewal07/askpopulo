@@ -287,9 +287,9 @@ class LoggedInView(BaseViewDetail):
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
 		print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
-		followers = [ x.user for x in Follow.objects.filter(target_id=user.id) ]
+		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 		print(followers)
-		following = [ x.target for x in Follow.objects.filter(user_id=user.id) ]
+		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
 		print(following)
 		context["followers"] = followers
 		context["following"] = following

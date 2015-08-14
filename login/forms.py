@@ -149,7 +149,7 @@ class FollowForm(forms.Form):
 			target_user = User.objects.get(pk=target)
 			# print(target_user)
 			# object will have 
-			activity = {'actor': self.user.username, 'verb': 'followed', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
+			activity = {'actor': self.user.username, 'verb': 'followed', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
 			feed = client.feed('notification', target)
 			feed.add_activity(activity)
 			feed = client.feed('user',self.user.id)
