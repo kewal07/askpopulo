@@ -653,6 +653,9 @@ def comment_mail(request):
 def error_CompanyName(request):
 	return render(request,'error404.html')
 
+def privacyPolicy(request):
+	return render(request,'privacyPolicy.html')
+
 class MyUnsubscribeView(generic.ListView):
 	template_name = 'unsubscribe.html'
 
@@ -665,7 +668,6 @@ class MyUnsubscribeView(generic.ListView):
 		ajax = False
 		if request.GET.get("ajax"):
 			ajax = True
-			print("Ajax call detected")
 		emailToUnsubscribe = request.POST.get('unsubscribeEmail')
 		if(emailToUnsubscribe):
 			userId = User.objects.filter(email=emailToUnsubscribe).values('id')
