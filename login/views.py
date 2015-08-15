@@ -260,7 +260,7 @@ class LoggedInView(BaseViewDetail):
 		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc','following_user_img', 'followed_username', 'followed_user_img', 'actor_user_name', 'actor_user_url', 'actor_user_pic', 'target_user_name', 'target_user_pic', 'target_user_url'])
 		feed = feed_manager.get_user_feed(user.id)
 		activities = feed.get(limit=25)['results']
-		activities = enricher.enrich_activities(activities)
+		# activities = enricher.enrich_activities(activities)
 		context["activities"] = activities
 		# print(dir(feed_manager))
 		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
