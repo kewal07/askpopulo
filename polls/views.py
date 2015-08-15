@@ -278,10 +278,11 @@ class VoteView(BaseViewDetail):
 				if not voted_questions:
 					vote = Vote(user=user, choice=choice)
 					voted = Voted(user=user, question=question)
-					subscribed = Subscriber(user=user, question=question)
+					# subscribed = Subscriber(user=user, question=question)
+					subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 					vote.save()
 					voted.save()
-					subscribed.save()
+					# subscribed.save()
 			else:
 				# error to show no choice selected
 				data={}
@@ -301,6 +302,8 @@ class VoteView(BaseViewDetail):
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug}
 		following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
+		while user.id in following_id_list:
+			following_id_list.remove(user.id)
 		if user.id != question.user_id:
 			feed = client.feed('notification', question.user_id)
 			feed.add_activity(activity)
