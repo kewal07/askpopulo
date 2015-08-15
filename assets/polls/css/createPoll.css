@@ -213,7 +213,7 @@ form.createPollContentForm label{
     width:100%;
   }
   .fileLabel{
-    width: 50%;
+    /*width: 50%;*/
     margin-right: auto;
     margin-left: auto;
     display: block;

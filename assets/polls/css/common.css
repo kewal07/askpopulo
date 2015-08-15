@@ -603,7 +603,7 @@ form.signupContentPartForm input{
 	margin:0 auto;
 	margin-bottom:2rem;
 }
-#category_tooltip{
+.tooltip{
 	display: none;
 	position: absolute;
 	border: 2px solid black;
@@ -798,6 +798,9 @@ form.signupContentPartForm input{
 		margin:0 !important;
 		width: 100% !important;
 		position: absolute;
+	}
+	.fa-info-circle {
+		display: none !important;
 	}
 
 }

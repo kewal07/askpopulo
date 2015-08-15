@@ -130,15 +130,27 @@ $(document).ready(function(){
     	$('#id_categories').toggle();
   	});
 
-  	$(".fa-info-circle").hover(function(e){
-  		// console.log("category_tooltip");
+  	$("#category_tooltip_fa").hover(function(e){
+  		// console.log($(this));
   		var elem_pos = $(this).offset();
   		// console.log(elem_pos.top,elem_pos.left);
   		$("#category_tooltip").css({
-  			"top":elem_pos.top,
+  			"top":elem_pos.top-100,
   			"left":elem_pos.left-60,
   		});
   		$("#category_tooltip").toggle();
+  	});
+
+  	$("#private_poll_fa").hover(function(e){
+  		// console.log("category_tooltip");
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#private_poll_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  			"width":"30%",
+  		});
+  		$("#private_poll_tooltip").toggle();
   	});
 
 	/*help*/
