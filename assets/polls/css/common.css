@@ -29,6 +29,10 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	margin: 0 auto;
+  	height:100%;
+    padding:0;
+    font-family: 'Arvo', serif;
 }
 ol, ul {
 	list-style: none;
@@ -83,24 +87,19 @@ html{
 :-ms-input-placeholder {  
    text-align: center; 
 }
-body{
-  	margin: 0 auto;
-  	/*font-family: 'Droid Sans', sans-serif;*/
-  	/*font-family: 'Lato', sans-serif;*/
-  	font-family: 'Arvo', serif;
-}
 #wrapper {
 	min-height: 100%;
   /* equal to footer height */
-  margin-bottom: -220px; 
+  /*margin-bottom: -220px; */
+  position: relative;
 }
-#wrapper:after {
+/*#wrapper:after {
   content: "";
   display: block;
-}
-.#footer, #wrapper:after {
+}*/
+/*#footer, #wrapper:after {
   height: 220px; 
-}
+}*/
 #header{
 	/*background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
 	background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
@@ -216,6 +215,26 @@ ul.menu-nav li{
 	font-size: 1.5rem;
 	color: white;
 }
+.dropDownNot{
+	display: none;
+	position: absolute;
+	z-index: 98;
+	font-size: 1rem !important;
+	top: 2rem;
+	margin-left: 25rem;
+	/*top: 57px;
+	right: -11px;*/
+	padding: 10px;
+	color: #333;
+	background: black;
+	opacity: 1;
+	border: 2px solid white;
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+	text-align: center;
+	font-size: 1.5rem;
+	color: white;
+}
 .dropDownLoc ul li{
 	float:none;
 }
@@ -234,11 +253,12 @@ ul.menu-nav li{
    clear: both;
 }
 #footer{
-	margin:0;
-	background: black;
 	width:100%;
-	color:white;
-	margin-top:5rem;
+    /*height: 100px; height of footer*/
+    position:absolute;
+    bottom:0;
+    left:0;
+    background: black;
 }
 #footerContent{
 	width:95%;
@@ -583,7 +603,7 @@ form.signupContentPartForm input{
 	margin:0 auto;
 	margin-bottom:2rem;
 }
-#category_tooltip{
+.tooltip{
 	display: none;
 	position: absolute;
 	border: 2px solid black;
@@ -592,7 +612,20 @@ form.signupContentPartForm input{
 	padding: 1rem;
 	width: 50%;
 }
-
+.imgInFeednot{
+	width:25px;
+	height:25px;
+	border-radius: 50%;
+}
+.activity_textNot{
+	/*/*position: absolute;
+    left: 4rem;
+    top: 1rem;*/
+}
+.activity_urlNot{
+	color:orange;
+	cursor:pointer;
+}
 @media only screen and (max-width: 960px){
 	#header{
 		 position: relative;
@@ -765,6 +798,9 @@ form.signupContentPartForm input{
 		margin:0 !important;
 		width: 100% !important;
 		position: absolute;
+	}
+	.fa-info-circle {
+		display: none !important;
 	}
 
 }

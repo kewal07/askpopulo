@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser
+from login.models import ExtendedUser,Follow
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -14,14 +14,81 @@ from allauth.account.adapter import get_adapter
 from polls.models import Question,Voted,Subscriber
 from categories.models import Category
 import json
-from login.forms import MySignupForm
+import base64
+import hmac
+import time
+import hashlib
+from login.forms import MySignupForm,FollowForm
 from django.contrib.auth.models import User
 from datetime import date
+from stream_django.feed_manager import feed_manager
+from stream_django.enrich import Enrich
+from django.contrib.auth.decorators import login_required
+from firebase_token_generator import create_token
 
-class EditProfileView(generic.ListView):
+
+class BaseViewList(generic.ListView):
+	def get_context_data(self, **kwargs):
+		context = super(BaseViewList, self).get_context_data(**kwargs)
+		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
+		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
+		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
+		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
+		if self.request.user.is_authenticated():
+			enricher = Enrich()
+			feed = feed_manager.get_notification_feed(self.request.user.id)
+			readonly_token = feed.get_readonly_token()
+			context['readonly_token'] = readonly_token
+			activities = feed.get(limit=25)['results']
+			# notifications = enricher.enrich_activities(activities)
+			notifications = activities
+			notify = []
+			notification_count = 0
+			for notification in notifications:
+				if not notification['is_seen']:
+					notification_count += 1
+					activity = notification['activities'][0]
+					if notification['activity_count'] - 1 > 0:
+						activity['activity_count'] = notification['activity_count'] - 1
+					notify.append(activity)
+			context['notification_count'] = notification_count
+			context['notifications'] = notify
+		return context
+
+class BaseViewDetail(generic.DetailView):
+	def get_context_data(self, **kwargs):
+		context = super(BaseViewDetail, self).get_context_data(**kwargs)
+		context["STREAM_API_KEY"] = settings.STREAM_API_KEY
+		context['STREAM_APP_ID'] = settings.STREAM_APP_ID
+		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
+		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
+		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
+		if self.request.user.is_authenticated():
+			enricher = Enrich()
+			feed = feed_manager.get_notification_feed(self.request.user.id)
+			readonly_token = feed.get_readonly_token()
+			context['readonly_token'] = readonly_token
+			activities = feed.get(limit=25)['results']
+			# notifications = enricher.enrich_activities(activities)
+			notifications = activities
+			notify = []
+			notification_count = 0
+			for notification in notifications:
+				if not notification['is_seen']:
+					notification_count += 1
+					activity = notification['activities'][0]
+					if notification['activity_count'] - 1 > 0:
+						activity['activity_count'] = notification['activity_count'] - 1
+					notify.append(activity)
+			context['notification_count'] = notification_count
+			context['notifications'] = notify
+		return context
+
+class EditProfileView(BaseViewList):
 	
 	def post(self, request, *args, **kwargs):
-		url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
+		url = reverse('login:editprofile', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
 		user = request.user
 		extendeduser = user.extendeduser
 		print(request.POST)
@@ -66,7 +133,7 @@ class EditProfileView(generic.ListView):
 				return HttpResponse(json.dumps(data),content_type='application/json')
 		return HttpResponseRedirect(url)
 
-class RedirectLoginView(generic.ListView):
+class RedirectLoginView(BaseViewList):
 
 	def get(self,request,*args,**kwargs):
 		user_slug = None
@@ -107,7 +174,7 @@ class RedirectLoginView(generic.ListView):
 			url = reverse('polls:index', kwargs={})
 		return HttpResponseRedirect(url)
 
-class LoggedInView(generic.DetailView):
+class LoggedInView(BaseViewDetail):
 	template_name = 'login/profile.html'
 	model = User
 	#model = settings.AUTH_USER_MODEL
@@ -116,13 +183,15 @@ class LoggedInView(generic.DetailView):
 	# template_name=request.path
 
 	def get_template_names(self, **kwargs):
-		request = self.request
-		user = self.request.user
-		context = super(LoggedInView, self).get_context_data(**kwargs)
-		context_user = context['context_user']
-		template_name = 'login/profile.html'
-		if user != context_user:
-			template_name = 'login/public_profile.html'
+		# request = self.request
+		# user = self.request.user
+		# context = super(LoggedInView, self).get_context_data(**kwargs)
+		# context_user = context['context_user']
+		# template_name = 'login/profile.html'
+		# if user != context_user:
+		template_name = 'login/public_profile.html'
+		if self.request.path.endswith('editprofile'):
+			template_name = 'login/profile.html'
 		return [template_name]
 
 	def get_context_data(self, **kwargs):
@@ -132,6 +201,8 @@ class LoggedInView(generic.DetailView):
 		public_profile = False
 		if request_user != user:
 			public_profile = True
+		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
+		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
 		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
 		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
@@ -149,11 +220,72 @@ class LoggedInView(generic.DetailView):
 			userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city,'categories':cat_list}
 			loggedInForm = MySignupForm(userFormData)
 			context["loggedInForm"] = loggedInForm
+			feed = feed_manager.get_notification_feed(user.id)
+			activities = feed.get(limit=25)['results']
+			notification_activities = []
+			for act in activities:
+				notification_activities.extend(act['activities'])
+			context['notification_activities'] = notification_activities
+		ssoData = {}
+
+		#if public_profile:
+		profilepicUrl = user.extendeduser.get_profile_pic_url()
+		if not profilepicUrl.startswith('http'):
+			profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+		data = {
+			"id":user.id,
+			"username":user.username,
+			"email":user.email,
+			"avatar":profilepicUrl
+		}
+		data = json.dumps(data)
+		message = base64.b64encode(data.encode('utf-8'))
+		timestamp = int(time.time())
+		key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+		msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+		digestmod = hashlib.sha1
+		sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+		ssoData = dict(
+			message=message,
+			timestamp=timestamp,
+			sig=sig,
+			pub_key=settings.DISQUS_API_KEY,
+		)
+		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
-		# if not user.is_anonymous():	
+		context['followed'] = Follow.objects.filter(user=request_user, target_id=user, deleted_at__isnull=True)
+		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc','following_user_img', 'followed_username', 'followed_user_img', 'actor_user_name', 'actor_user_url', 'actor_user_pic', 'target_user_name', 'target_user_pic', 'target_user_url'])
+		feed = feed_manager.get_user_feed(user.id)
+		activities = feed.get(limit=25)['results']
+		activities = enricher.enrich_activities(activities)
+		context["activities"] = activities
+		# print(dir(feed_manager))
+		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
+		feed_activities = flat_feed.get(limit=25)['results']
+		# print(feed_activities)
+		# aggregated_feed = feed_manager.get_news_feeds(user.id)['aggregated'] 
+		# feed_activities = aggregated_feed.get(limit=25)['results']
+		# print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",feed_activities)
+		context['flat_feed_activities'] = feed_activities
+		# for act in activities:
+		# 	print("____________________",act.activity_data)
+		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
+		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
+		context['token'] = token
+		print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
+		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
+		print(followers)
+		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
+		print(following)
+		context["followers"] = followers
+		context["following"] = following
+		connections = []
+		connections.extend(followers)
+		connections.extend(following)
+		context["connection_count"] = len(set(connections))
 		return context
 		
 # class DetailView(generic.DetailView):
@@ -188,3 +320,32 @@ class MyChangePasswordView(PasswordChangeView):
 		url = reverse('account_login')
 		return HttpResponseRedirect(url)
 		# return get_adapter().ajax_response(request, response, form=form, redirect_to=reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug}))
+
+class FollowView(BaseViewDetail):
+	def post(self,request,*args,**kwargs):
+	    '''
+	    A view to follow other users
+	    '''
+	    print("**********")
+	    print(request.POST)
+	    print("**********")
+	    output = {}
+	    if request.method == "POST":
+	        form = FollowForm(user=request.user, data=request.POST)
+
+	        if form.is_valid():
+	            follow = form.save()
+	            if follow:
+	                output['follow'] = dict(id=follow.id)
+	            if not request.is_ajax():
+	                return HttpResponseRedirect(request.POST.get("next"))
+	        else:
+	            output['errors'] = dict(form.errors.items())
+	    return HttpResponse(json.dumps(output), content_type='application/json')
+
+class MarkFeedSeen(BaseViewDetail):
+	def get(self,request,*args,**kwargs):
+		enricher = Enrich()
+		feed = feed_manager.get_notification_feed(request.user.id)
+		activities = feed.get(limit=25, mark_seen='all')['results']
+		return HttpResponse(json.dumps({}), content_type='application/json')

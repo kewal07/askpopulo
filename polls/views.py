@@ -4,7 +4,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -21,14 +21,19 @@ from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
-from login.models import ExtendedUser
+from login.models import ExtendedUser,Follow
+from login.views import BaseViewList,BaseViewDetail
 from login.forms import MySignupPartForm
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+from stream_django.feed_manager import feed_manager
+from stream_django.enrich import Enrich
+import stream
+client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
 
-class IndexView(generic.ListView):
+class IndexView(BaseViewList):
 	context_object_name = 'data'
 	paginate_by = 50
 
@@ -170,6 +175,7 @@ class IndexView(generic.ListView):
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
+			data['upvoteCount'] = mainquestion.upvoteCount
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -182,7 +188,7 @@ class IndexView(generic.ListView):
 		context['data'] = mainData
 		return mainData
 
-class VoteView(generic.DetailView):
+class VoteView(BaseViewDetail):
 	model = Question
 	
 	def get_template_names(self):
@@ -293,9 +299,19 @@ class VoteView(generic.DetailView):
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
+		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug}
+		following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
+		if user.id != question.user_id:
+			feed = client.feed('notification', question.user_id)
+			feed.add_activity(activity)
+		for following_id in following_id_list:
+			feed = client.feed('notification', following_id)
+			feed.add_activity(activity)
+		feed = client.feed('user', question.user_id)
+		feed.add_activity(activity)
 		return HttpResponseRedirect(url)
 		
-class EditView(generic.DetailView):
+class EditView(BaseViewDetail):
 	model = Question
 	
 	def get_template_names(self):
@@ -326,7 +342,7 @@ class EditView(generic.DetailView):
 		#print(context)
 		return context
 		
-class DeleteView(generic.DetailView):
+class DeleteView(BaseViewDetail):
 	model = Question
 	
 	def get_context_data(self, **kwargs):
@@ -338,7 +354,7 @@ class DeleteView(generic.DetailView):
 		question.delete()
 		return HttpResponseRedirect(url)
 
-class CreatePollView(generic.ListView):
+class CreatePollView(BaseViewList):
 	template_name = 'polls/createPoll.html'
 	context_object_name = 'data'
 	
@@ -539,6 +555,11 @@ class CreatePollView(generic.ListView):
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
+		activity = {'actor': user.username, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug}
+		following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
+		for following_id in following_id_list:
+			feed = client.feed('notification', following_id)
+			feed.add_activity(activity)
 		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 		return HttpResponseRedirect(url)
 
@@ -549,7 +570,7 @@ class PollsSearchView(SearchView):
         queryset = [x for x in queryset if x.object.privatePoll == 0]
         return {'query': queryset,}
 
-class FollowPollView(generic.ListView):
+class FollowPollView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
 		follow = request.POST.get('follow')
@@ -565,7 +586,7 @@ class FollowPollView(generic.ListView):
 		data['sub_count'] = question.subscriber_set.count()
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
-class ReportAbuse(generic.ListView):
+class ReportAbuse(BaseViewList):
 
 	def get(self,request,*args,**kwargs):
 		qIdBan = request.GET.get('qIdBan')
@@ -656,7 +677,7 @@ def error_CompanyName(request):
 def privacyPolicy(request):
 	return render(request,'privacyPolicy.html')
 
-class MyUnsubscribeView(generic.ListView):
+class MyUnsubscribeView(BaseViewList):
 	template_name = 'unsubscribe.html'
 
 	def get_queryset(self):
@@ -687,3 +708,56 @@ class MyUnsubscribeView(generic.ListView):
 				error['success'] = "You are successfully unsubscribed from all email notifications."
 				return HttpResponse(json.dumps(error), content_type='application/json')
 
+class QuestionUpvoteView(BaseViewList):
+	template_name = 'index.html'
+
+	def get_queryset(self):
+		context = {}
+		return context
+
+	def post(self,request,*args,**kwargs):
+		try:
+			error={}
+			response={}
+			votedQuestionId = int(request.GET.get("qId"))
+			vote = int(request.GET.get("vote"))
+
+			isAlreadyVotedByUser = QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId)
+
+			if(isAlreadyVotedByUser):
+				if((isAlreadyVotedByUser[0].vote and vote == 1) or (not(isAlreadyVotedByUser[0].vote) and vote == 0)):
+					response={"message":"Already voted by user"}
+				else:
+					questionVoted = Question.objects.filter(id=votedQuestionId)
+					currentCount = questionVoted[0].upvoteCount
+					if vote == 1:
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 2)
+						currentCount += 1
+					else:
+						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 2)
+						currentCount -= 1
+
+					countVotes = questionVoted[0].upvoteCount
+					QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId).update(vote = vote)
+					response = {"message":"Done", "count":countVotes}
+			else:
+				upVote = QuestionUpvotes(user_id=request.user.id, question_id = votedQuestionId, vote = vote)
+				questionUpVoted = Question.objects.filter(id=votedQuestionId)
+				currentCount = questionUpVoted[0].upvoteCount
+				if vote == 1:
+					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 1)
+					currentCount += 1
+				else:
+					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 1)
+					currentCount -= 1
+				upVote.save()
+				response={"message":"Question Upvoted", "count":currentCount}
+
+			return HttpResponse(json.dumps(response), content_type='application/json')
+
+		except Exception as e:
+			import os,sys
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			print(e)

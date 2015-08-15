@@ -371,7 +371,7 @@
 						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
 					</p>
 					<p>
-						<label for="categories">Category <i class="fa fa-info-circle"></i></label>
+						<label for="categories">Category <i id="category_tooltip_fa" class="fa fa-info-circle"></i></label>
 						<input id="categories" type="text" name="categories">
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
 					</p>
@@ -381,17 +381,20 @@
 					</p>
 					<p class="anonymous">
 						<input id="private" name="private" type="checkbox">
-						<label for="private">Make Poll as Private</label>
+						<label for="private">Make Poll as Private <i id="private_poll_fa" class="fa fa-info-circle"></i></label>
 					</p>
 					<input class="submit" type="submit" value="Create" id="createPollSubmit"/>
 				</form>
 				</div>
 			</div>
-			<div id="category_tooltip">
+			<div class="tooltip" id="category_tooltip">
 				<span>Categories list:<br></span>
 				{% for cat in data.categories %}
 					<span class="cat_title_tooltip">{{ cat }},    </span>
 				{% endfor %}
+			</div>
+			<div class="tooltip" id="private_poll_tooltip">
+				<span class="cat_title_tooltip">The question will not be publicly visible. Please share the question directly with the concerned users for votes</span>
 			</div>
 		</section>
 		<script>

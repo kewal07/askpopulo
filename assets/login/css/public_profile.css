@@ -1,0 +1,242 @@
+@font-face {
+  font-family: "custom-font-icons";
+  src: url("custom-font-icons.eot");
+  src: url("custom-font-icons.eot?#iefix") format("embedded-opentype"),
+       url("custom-font-icons.woff") format("woff"),
+       url("custom-font-icons.ttf") format("truetype"),
+       url("custom-font-icons.svg#custom-font-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "custom-font-icons";
+    src: url("custom-font-icons.svg#custom-font-icons") format("svg");
+  }
+}
+html{
+	background:url("/static/Spot-Light.jpg") no-repeat center center fixed;
+	background-size:cover;
+	/*background: #F0FFFF;*/
+}
+#content{
+	margin: 7rem 3rem 5rem 3rem;
+  	background: white;
+  	border: 2px solid black;
+    border-radius: 25px;
+    padding: 1rem;
+    opacity:0.9;
+    font-family: 'Arvo', serif;
+}
+.profileHeader{
+	width:90%;
+	margin:0 auto;
+	border-bottom: 2px dashed black;
+	padding:1rem;
+	position: relative;
+}
+.profilePicDiv{
+	float:left;
+	width:25%;
+}
+.profilePic{
+	height:175px;
+	width:175px;
+}
+.profileBrief{
+	width:75%;
+	float:left;
+	margin-top:4rem;
+}
+.detailHeader{
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+}
+.detailHeader h1{
+	text-align: center;
+}
+ul.profileBriefUl li{
+	float:left;
+	margin-right:1rem;
+}
+ul.profileBriefUl li:first-child{
+	float:none;
+	font-size:1.5rem;
+	margin-bottom: 1rem;
+}
+.profileBody{
+	margin: 0 1rem;
+    padding: 2rem 2rem;
+}
+.profileStats{
+	width:30%;
+	float:left;
+}
+.myProfileTabs{
+	cursor: pointer;
+}
+.displayDiv{
+	width:70%;
+	float:left;
+}
+.profileDetail{
+	display: none;
+}
+.myActivityDiv{
+	display: block;
+}
+ul.profileStatsUl li{
+	margin:1rem;
+}
+.profileStatsUl li i{
+	margin-right:0.5rem !important;
+}
+ul.profileDetailUl{
+	padding-top: 1rem;
+}
+p.main{
+	font-size:1rem;
+	position: relative;
+}
+p.desc{
+    font-size: 0.85rem;
+    margin: -0.5rem 1rem 1rem 4rem;
+}
+p.pollsDesc{
+    font-size: 0.85rem;
+    margin: 0.5rem 1rem 1rem 4rem;
+}
+.imgInFeed{
+	width:50px;
+	height:50px;
+	border-radius: 50%;
+}
+.activity_text{
+	position: absolute;
+    left: 4rem;
+    top: 1rem;
+}
+.activity_url{
+	color:orange;
+	cursor:pointer;
+}
+.category_figure{
+    display:inline-block;
+    margin:1rem;
+}
+.category_figurecaption{
+    font-size: 1rem;
+    text-align: center;
+}
+.category_imagethumbnails{
+    height:96px;
+    width:128px;
+}
+.fa-arrow-left{
+	display: none;
+}
+.myConnectionsDiv ul:first-child{
+	border-bottom:2px dashed;
+}
+ul.followers li{
+	display: inline-block;
+    position: relative;
+    width:5rem;
+    margin-bottom:1rem;
+}
+img.follow{
+	display: inline;
+    margin-bottom: 1rem;
+}
+.follow_url{
+	position: absolute;
+    bottom: 0;
+    left: 0;
+}
+ul.followers p{
+	margin-bottom:1rem;
+}
+@media only screen and (max-width: 960px){
+	#content{
+		margin:0 0 11rem 0;
+	}
+	.profilePicDiv{
+		float:none;
+		width:initial;
+	}
+	.profilePic{
+		display: block;
+	    margin: 0 auto;
+	    border-radius: 50%;
+	}
+	.profileBrief{
+		width:initial;
+		float:none;
+		margin-top:1rem;
+	}
+	.profileBriefUl{
+		font-size:1rem;
+	}
+	.detailHeader{
+		position: initial;
+    	margin-top: 1rem;
+	}
+	.profileBody{
+		margin:0;
+		padding:0rem;
+	}
+	.profileDetail{
+		display:none;
+	}
+	.profileStats{
+		width:100%;
+		float:none;
+	}
+	li.myProfileTabs img{
+		width:64px;
+		height: 61px;
+		margin-right: 0.5rem !important;
+		padding: 1rem;
+	}
+	.profileStatsUl{
+		width: 95%;
+		margin: 0 auto;
+	}
+	.profileStatsUl li i{
+		font-size: 64px;
+		margin-right: 0.5rem !important;
+		padding: 1rem;
+	}
+	ul.profileStatsUl li {
+    	margin: 1rem;
+    	position: relative;
+    	float: left;
+    	width:100px;
+    	border:2px dashed;
+    	border-radius: 25px;
+	}
+	.iCaption{
+		position: absolute;
+		bottom: -1.5rem;
+		left: 0;
+		font-size:0.8rem;
+		width:120px;
+	}
+	.fa-newspaper-o,.fa-users,.fa-comments{
+		/*padding:0.7rem !important;*/
+	}
+	.fa-coins{
+		font-size:61px !important;
+	}
+	.displayDiv{
+		width:100%;
+		float:none;
+	}
+	.fa-arrow-left{
+		cursor:pointer;
+		z-index: 100000;
+	}
+}

@@ -27,4 +27,5 @@ urlpatterns = patterns('',
 	url(r'^companyname$',views.error_CompanyName,name="error_CompanyName"),
 	url(r'^privacypolicy$',views.privacyPolicy,name="privacyPolicy"),
 	url(r'^unsubscribe$',views.MyUnsubscribeView.as_view(),name="unsubscribe"),
+	url(r'^upvoted/$',views.QuestionUpvoteView.as_view(),name="upvote"),
 )

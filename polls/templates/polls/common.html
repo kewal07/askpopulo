@@ -2,6 +2,7 @@
 <html itemscope itemtype="http://schema.org/Review">
     <head>
 		{% load staticfiles %}
+		{% load activity_tags %}
 		<title>A Social Info Polling Platform</title>
 		<meta itemprop="name" content="AskByPoll">
 		<meta itemprop="description" content="A Socio-Info-Polling platform providing users an interactive social tool to gather the public opinion on any question they have in a fun filled way.">
@@ -15,6 +16,7 @@
 		<link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
 		<link rel="icon" type="image/png" href="{% static 'favicon-32x32.png' %}" sizes="32x32" />
 		<link rel="icon" type="image/png" href="{% static 'favicon-16x16.png' %}" sizes="16x16" />
+		<!-- <link rel="stylesheet" type="text/css" href="{ % static 'polls/css/chat.css'% }" /> -->
 		<!-- <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'> -->
 		<!-- <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'> -->
 		<link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
@@ -27,6 +29,13 @@
 		<script src="{% static 'login/js/countryStateCityLoader.js' %}" ></script>
 		<script type='text/javascript' src="{% static 'js/jquery.plugin.js' %}"></script>
 		<script type='text/javascript' src="{% static 'js/jquery.countdown.js' %}"></script>
+		<script src="{% static 'js/getstream.js' %}" ></script>
+		<script src="{% static 'js/app.js' %}" ></script>
+		<!-- Firebase -->
+		<script src='https://cdn.firebase.com/js/client/2.1.0/firebase.js'></script>
+		<!-- Firechat -->
+		<!-- <link rel='stylesheet' href='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.css' /> -->
+		<!--<script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script> -->
 		{% block extra_js %}{% endblock %}
 		<script>
 		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -40,7 +49,7 @@
 		</script>
 	</head>
 	<body>
-		<div id="wrapper">
+		<div id="wrapper" class="clearfix">
 			<section id="header">
 				<div id="headerContent">
 					<div class="logo">
@@ -93,15 +102,33 @@
 								</div>
 							</li>
 					{% if user.is_authenticated %}
-							<li class="userInNav">
+							<li class="userInNav" id="notification-dropdown">
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
-							</li>
+								{% if notification_count == 0 %}
+									<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }}</span>
+	                    		{% else %}
+	                    			<span style="color:red;" id="notification_count_span">{{ notification_count }}</span>
+	                    		{% endif %}
+                    		</li>
 					{% endif %}
 						</ul>
 					{% if user.is_authenticated %}
 							<div class="dropDownBox">
-								<ul class="dropDownUL">
-									<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+								<ul id="notification-container" class="dropDownUL">
+									{% for notification in notifications %}
+		               					<li class="userInNot">
+			               					{% if notification.verb == "follow" or notification.verb == "followed" %}
+			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>followed you{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
+			               					{% elif notification.verb == "question" %}
+			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>asked <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
+			               					{% elif notification.verb == "voted" %}
+												<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
+			               					{% else %}
+			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ notification.actor_user_name }}</span> </a>{{ notification.verb }} <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
+			               					{% endif %}
+		               					</li>
+		               				{% endfor %}
+                    				<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
 									<li><a href="{% url 'login:logout' %}">Log Out</a></li>
 								</ul>
 							</div>
@@ -149,6 +176,7 @@
 						return false;
 					});
 				});
+				
 			});
 			</script>
 			{% endif %}
@@ -216,6 +244,108 @@
 							fjs.parentNode.insertBefore(js,fjs);
 						}
 					}(document, 'script', 'twitter-wjs');
+
+					function timeSince(date) {
+
+						var currentDate = new Date();
+						var offset = currentDate.getTimezoneOffset();
+						date = new Date(date - offset * 60000);
+						// date = date.minute - offset;
+
+						console.log(date);
+						console.log(Math.floor((currentDate - date) / 1000));
+
+					    var seconds = Math.floor((currentDate - date) / 1000);
+
+					    console.log(seconds);
+
+					    var interval = Math.floor(seconds / 31536000);
+
+					    console.log(interval);
+
+					    if (interval > 1) {
+					        return interval + " years";
+					    }
+					    interval = Math.floor(seconds / 2592000);
+					    if (interval > 1) {
+					        return interval + " months";
+					    }
+					    interval = Math.floor(seconds / 86400);
+					    if (interval > 1) {
+					        return interval + " days";
+					    }
+					    interval = Math.floor(seconds / 3600);
+					    if (interval > 1) {
+					        return interval + " hours";
+					    }
+					    interval = Math.floor(seconds / 60);
+					    if (interval > 1) {
+					        return interval + " minutes";
+					    }
+					    return Math.floor(seconds) + " seconds";
+					}
+
+					streamClient = stream.connect('{{ STREAM_API_KEY }}', null, {{ STREAM_APP_ID }});
+					// console.log('{{ STREAM_API_KEY }}',{{ STREAM_APP_ID }});
+					// console.log('{{ readonly_token }}');
+			
+					{% if request.user.is_authenticated %}
+						notification = streamClient.feed('notification', '{{ user.id }}','{{ readonly_token }}');
+
+						function updateNotificationCallback(data){
+						    // new activities will be available in the data argument
+						    // console.log(data);
+						    // console.log(data['unseen']);
+						    // console.log(data['new']);
+						    var element = "";
+						    var old_count = $("#notification_count_span")[0].innerHTML;
+						    var new_count = data['unseen'];
+						    // console.log(old_count);
+						    var notification_count = parseInt(old_count,10) + data['unseen'];
+						    // console.log(notification_count);
+						    $("#notification_count_span")[0].innerHTML = notification_count;
+						    $("#notification_count_span").show();
+						    var i = 0;
+						    var j = 0;
+						    var elem_count = 0;
+						    for(; i<data['new'].length;i++){
+						    	var activity_new_obj = data['new'][i];
+						    	// console.log(activity_new_obj['activities']);
+						    	for(; j<activity_new_obj['activities'].length;j++){
+						    		var activity = activity_new_obj['activities'][j]
+						    		if(elem_count === new_count){
+	               						break;
+	               					}
+						    		console.log(activity);
+						    		element +=	'<li class="userInNot">';
+		               					if( activity['verb'] === "follow" || activity['verb'] === "followed" )
+		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>followed you</span>'
+		               					else if( activity['verb'] === "question" )
+		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>asked <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
+		               					else if( activity['verb'] === "voted" )
+		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
+		               					else
+		               						element += activity["verb"] + ' ' + activity['actor'] + ' ' + timeSince(activity['time'].substring(0, 19));
+	               					element += "</li>"
+	               					elem_count += 1;	               					
+						    	}
+						    }
+						    console.log(element);
+						    var old_not_container = $("#notification-container")[0].innerHTML;
+						    $("#notification-container")[0].innerHTML = element + old_not_container;
+						}
+
+						notification.subscribe(function callback(data) {
+						    updateNotificationCallback(data);
+						});
+						// {% if false %}
+						// 	flat = new app.Realtime('{{ flat_feed.slug }}', '{{ flat_feed.user_id }}', '{{ flat_feed.token }}', '#flat');
+						// 	aggregated = new app.Realtime('{{ aggregated_feed.slug }}', '{{ aggregated_feed.user_id }}', '{{ aggregated_feed.token }}', '#aggregated');
+						// 	user = new app.Realtime('{{ user_feed.slug }}', '{{ user_feed.user_id }}', '{{ user_feed.token }}', '#user');
+						// {% endif %}
+						// notification = new app.Realtime('{{ notification.verb }}', '{{ notification.following_user.id }}', '{{ notification.time }}', '#notifications_inner');
+					{% endif %}
+
 				</script>
 		</div>
 	</body>

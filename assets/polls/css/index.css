@@ -1,6 +1,6 @@
 #content{
-	margin: 7rem 5rem 0rem 5rem;
-	padding-bottom:220px;
+	margin: 7rem 5rem 5rem 5rem;
+	padding-bottom:3rem;
 }
 .questions, .mypolltab{
 	position: relative;
@@ -297,9 +297,26 @@ button.followButton.unfollow{
     width: 86%;
     margin:24px 0px 0px 8px;*/
 }
+
+.upvote{
+	position: absolute;
+    top: 40%;
+    right: 4%;
+    width: 2%;
+    cursor: pointer;
+}
+
+.upvotemessage{
+	position: absolute;
+    right: -280%;
+    width: 600%;
+    background-color: antiquewhite;
+}
+
 @media only screen and (min-width:481px) and (max-width: 960px){
 	#content{
 		margin: 2rem 0.5rem;
+		margin-bottom:11rem;
 		/*margin-top:6.5rem;*/
 	}
 	.questions{
@@ -362,6 +379,13 @@ button.followButton.unfollow{
 	.is-countdown{
 	/*display:none;*/
 	}
+	.upvote{
+		position: absolute;
+	    top: 40%;
+	    right: 6%;
+	    width: 2%;
+	    cursor: pointer;
+	}
 }
 @media only screen and (min-width:481px) and (max-width: 730px){
 	.choice_image{
@@ -399,6 +423,7 @@ button.followButton.unfollow{
 @media only screen and (max-width: 480px){
 	#content{
 		margin: 2rem 0.5rem;
+		margin-bottom:11rem;
 		/*margin-top:6.5rem;*/
 	}
 	.questions{
