@@ -117,7 +117,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-class Follow(Activity,BaseModel):
+class Follow(BaseModel):
     '''
     A simple table mapping who a user is following.
     For example, if user is Kyle and Kyle is following Alex,
