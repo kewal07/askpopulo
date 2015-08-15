@@ -128,10 +128,10 @@ class Follow(Activity,BaseModel):
     target = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='follower_set')
 
-    @classmethod
-    def activity_related_models(cls):
-        return ['user', 'target']
+    # @classmethod
+    # def activity_related_models(cls):
+    #     return ['user', 'target']
 
-    @property
-    def activity_object_attr(self):
-        return self
+    # @property
+    # def activity_object_attr(self):
+    #     return self
