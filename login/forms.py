@@ -15,6 +15,7 @@ from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 from django.forms.extras.widgets import SelectDateWidget
 from login.models import Follow
+from stream_django.feed_manager import feed_manager
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
@@ -141,6 +142,7 @@ class FollowForm(forms.Form):
 			for follow in follows:
 				follow.deleted_at = now
 				follow.save()
+			feed_manager.unfollow_user(self.user.id, target)
 		else:
 			follow, created = Follow.objects.get_or_create(user=self.user, target_id=target)
 			if not created and follow.deleted_at is not None:
@@ -156,3 +158,5 @@ class FollowForm(forms.Form):
 			feed.add_activity(activity)
 			feed = client.feed('user',target)
 			feed.add_activity(activity)
+			feed_manager.follow_user(self.user.id, target_user.id)
+			
