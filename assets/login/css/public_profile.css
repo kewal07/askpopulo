@@ -240,3 +240,7 @@ ul.followers p{
 		z-index: 100000;
 	}
 }
+
+.fa-flag, .fa-comment{
+	display: none;
+}
