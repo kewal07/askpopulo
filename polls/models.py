@@ -22,7 +22,7 @@ def get_file_path(instance, filename):
 	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'choices'+os.sep+str(folder_day)))
 	return os.path.join(profilePath,filename)
 
-class Question(models.Model,Activity):
+class Question(models.Model):
 	que_pk = models.CharField(max_length=255)
 	question_text = models.CharField(max_length=200)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -36,14 +36,16 @@ class Question(models.Model,Activity):
 	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
 	upvoteCount = models.IntegerField(default=0)
 
-	@property
-	def extra_activity_data(self):
-		if not (self.isAnonymous or self.privatePoll):
-			return {'question_text': self.question_text,'question_url': "/polls/"+str(self.id)+"/"+self.que_slug,'question_desc': self.description,'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
-	@property
-	def activity_object_attr(self):
-		if not (self.isAnonymous or self.privatePoll):
-			return self.user.username
+	# @property
+	# def extra_activity_data(self):
+	# 	if not (self.isAnonymous or self.privatePoll):
+	# 		return {'question_text': self.question_text,'question_url': "/polls/"+str(self.id)+"/"+self.que_slug,'question_desc': self.description,'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
+	# 	return {'question_text': self.question_text,'question_url': "/polls/"+str(self.id)+"/"+self.que_slug,'question_desc': self.description,'actor_user_name':"Anonymous",'actor_user_pic':"/static/login/images/defaultAvatar.png",'actor_user_url':"" }
+	# @property
+	# def activity_object_attr(self):
+	# 	if not (self.isAnonymous or self.privatePoll):
+	# 		return self.user.username
+	# 	return None
 
 	def save(self, *args, **kwargs):
 		qText = self.question_text

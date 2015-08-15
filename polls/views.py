@@ -558,11 +558,18 @@ class CreatePollView(BaseViewList):
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
-		activity = {'actor': user.username, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug}
-		following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
-		for following_id in following_id_list:
-			feed = client.feed('notification', following_id)
+		
+		if not (question.isAnonymous or question.privatePoll):
+			actor_user_name = user.username
+			actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
+			actor_user_pic = user.extendeduser.get_profile_pic_url()
+			activity = {'actor': actor_user_name, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url}
+			following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
+			feed = client.feed('user',user.id)
 			feed.add_activity(activity)
+			for following_id in following_id_list:
+				feed = client.feed('notification', following_id)
+				feed.add_activity(activity)
 		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 		return HttpResponseRedirect(url)
 
