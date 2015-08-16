@@ -11,6 +11,8 @@ from django.forms import widgets
 from . import countryAndStateList
 import os
 import pymysql
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from categories.models import Category
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 from django.forms.extras.widgets import SelectDateWidget
@@ -159,4 +161,17 @@ class FollowForm(forms.Form):
 			feed = client.feed('user',target)
 			feed.add_activity(activity)
 			feed_manager.follow_user(self.user.id, target_user.id)
+			to_email = []
+			to_email.append(target_user.email)
+			follower_url ="www.askbypoll.com"+activity['actor_user_url']
+			msg = EmailMessage(subject="Someone just followed you !!!", from_email="askbypoll@gmail.com",to=to_email)
+			msg.template_name = "follownotification"           # A Mandrill template name
+			msg.global_merge_vars = {                       # Merge tags in your template
+		    	"FollowedUser" : self.user.username,
+		    	"FollowerUserUrl" : follower_url,
+		    	"FollowerUser" : target_user.username
+				}
+			msg.send()
+
+
 			
