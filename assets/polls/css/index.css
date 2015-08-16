@@ -79,6 +79,11 @@
   	overflow: hidden;
   	width: 100%;
 }
+
+.userBrief a{
+	color:orange;
+}
+
 .mainPoll{
 	padding:1rem;
 }
