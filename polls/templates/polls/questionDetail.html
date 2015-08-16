@@ -77,6 +77,12 @@
 							{% endfor %}
 						</p>
 						{% endif %}
+						<div class="upvoteDetailVote">
+							<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',1)"></i>
+							<span id="upvoteon{{ question.id }}"> {{ question.upvoteCount }} </span>
+							<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',0)"></i>
+							<div class="upvotemessage" id="upvotemessage{{ question.id }}"></div>
+						</div>
 						<p>
 						<div class="choices clearfix">
 						{% for choice in question.choice_set.all %}
@@ -146,47 +152,70 @@
 		</section>
 		<script type="text/javascript">
 			/* * * CONFIGURATION VARIABLES * * */
-var disqus_shortname = 'askbypoll';
+			var disqus_shortname = 'askbypoll';
 
-/* * * DON'T EDIT BELOW THIS LINE * * */
-(function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();
-var disqus_config = function() {
-	this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
-	this.page.api_key = "{{ ssoData.pub_key }}";
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+			    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			var disqus_config = function() {
+				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
+				this.page.api_key = "{{ ssoData.pub_key }}";
+				this.callbacks.onNewComment = [function(comment) { 
 
-	this.callbacks.onNewComment = [function(comment) { 
+				var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
 
-		var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
+				$.ajax({
+			            type: 'POST',
+			            url:'/comment_mail',
+			            data:data_dict,
+			            success:function(response)
+			            {
+			            }
+			        });
+				}];
+			};
 
-		$.ajax(
-				{
-                                            type: 'POST',
-                                            url:'/comment_mail',
-                                            data:data_dict,
-                                            success:function(response)
-                                            {
-                                            }
-                    	});
-			
-	}];
+			function upvoted(questionId,qslug,action){
+				{% if user.is_authenticated %}
+					$.ajax({
+						type: 'POST',
+						url:'/upvoted/?qId='+questionId+'&vote='+action.toString(),
+						data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
+						error:function(response){
+							console.log('error occured');
+						},
+						success:function(response)
+						{
+								count = response.count;
+								message = response.message;
+								if(typeof count === 'undefined'){
+									var id = "#upvotemessage"+questionId.toString();
+									$(id).append("<p>"+message+"</p>");
+									setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+								} else {
+									console.log(response);
+									spanId = '#upvoteon'+questionId.toString();
+									$(spanId).text(response.count.toString());
+								}
+						}
+					});
+				{% else %}
+					var id = "#upvotemessage"+questionId.toString();
+					$(id).append("<p> Login to upvote </p>");
+					setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+					url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
+					// console.log(url);
+					$(location).attr('href',url);
+				{% endif %}
+			}
 
-	/*this.sso = {
-          name:   "AskPopulo",
-          button: "http://127.0.0.1:8000/static/askpopulologo.png",
-          icon:   "http://127.0.0.1:8000/static/askpopulologo.png",
-          url:    "http://127.0.0.1:8000/accounts/login",
-          logout: "http://127.0.0.1:8000/accounts/logout",
-          width:  "800",
-          height: "400"
-    };
-	console.log("disqus_config called")
-	console.log(this.page.remote_auth_s3);
-	console.log(this.page.api_key);*/
-};
+			function clearUpvoteMessageDiv(id){
+				$(id).empty();
+			}
+
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			$(document).ready(function(){
 			 

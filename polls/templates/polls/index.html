@@ -179,10 +179,10 @@
 									</ul>
 								</div>
 							</div>
-							<div class="upvote">
-								<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}')"></i>
+							<div class="upvoteIndex">
+								<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
 								<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
-								<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="downvoted({{ question.question.id }},'{{ question.question.que_slug }}')"></i>
+								<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
 								<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
 							</div>
 					</div>
@@ -232,11 +232,11 @@
 	</section>
 	<script type="text/javascript">
 
-		function upvoted(questionId,qslug){
+		function upvoted(questionId,qslug,action){
 			{% if user.is_authenticated %}
 				$.ajax({
 					type: 'POST',
-					url:'/upvoted/?qId='+questionId+'&vote=1',
+					url:'/upvoted/?qId='+questionId+'&vote='+action.toString(),
 					data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
 					error:function(response){
 						console.log('error occured');
@@ -258,39 +258,6 @@
 			{% else %}
 				var id = "#upvotemessage"+questionId.toString();
 				$(id).append("<p> Login to upvote </p>");
-				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
-				// console.log(url);
-				$(location).attr('href',url);
-			{% endif %}
-		}
-
-		function downvoted(questionId,qslug){
-			{% if user.is_authenticated %}
-				$.ajax({
-					type: 'POST',
-					url:'/upvoted/?qId='+questionId+'&vote=0',
-					data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
-					error:function(response){
-						console.log('error occured');
-					},
-					success:function(response)
-					{
-							count = response.count;
-							message = response.message;
-							if(typeof count === 'undefined'){
-								var id = "#upvotemessage"+questionId.toString();
-								$(id).append("<p>"+message+"</p>");
-								setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-							} else {
-								spanId = '#upvoteon'+questionId.toString();
-								$(spanId).text(response.count.toString());
-							}
-					}
-				});
-			{% else %}
-				var id = "#upvotemessage"+questionId.toString();
-				$(id).append("<p> Login to downvote </p>");
 				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
 				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
 				// console.log(url);

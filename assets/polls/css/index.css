@@ -303,7 +303,7 @@ button.followButton.unfollow{
     margin:24px 0px 0px 8px;*/
 }
 
-.upvote{
+.upvoteIndex{
 	position: absolute;
     top: 40%;
     right: 4%;
@@ -316,6 +316,10 @@ button.followButton.unfollow{
     right: -280%;
     width: 600%;
     background-color: antiquewhite;
+}
+
+.mainPoll{
+	position:relative;
 }
 
 @media only screen and (min-width:481px) and (max-width: 960px){
@@ -384,10 +388,10 @@ button.followButton.unfollow{
 	.is-countdown{
 	/*display:none;*/
 	}
-	.upvote{
+	.upvoteIndex{
 		position: absolute;
 	    top: 40%;
-	    right: 6%;
+	    right: 7%;
 	    width: 2%;
 	    cursor: pointer;
 	}
@@ -402,6 +406,13 @@ button.followButton.unfollow{
 
 	.is-countdown{
 	    /*display:none;*/
+	}
+	.upvoteIndex{
+		position: absolute;
+	    top: 40%;
+	    right: 7%;
+	    width: 2%;
+	    cursor: pointer;
 	}
 }
 @media only screen and (min-width:481px) and (max-width: 645px){
@@ -423,6 +434,13 @@ button.followButton.unfollow{
 	}
 	.is-countdown{
 		/*display:none;*/
+	}
+	.upvoteIndex{
+		position: absolute;
+	    top: 40%;
+	    right: 7%;
+	    width: 2%;
+	    cursor: pointer;
 	}
 }
 @media only screen and (max-width: 480px){
@@ -517,6 +535,13 @@ button.followButton.unfollow{
 	    /*display:none;*/
 	    margin-left: 4rem;
     	margin-top: 0.5rem;
+	}
+	.upvoteIndex{
+		position: absolute;
+	    top: 40%;
+	    right: 10%;
+	    width: 2%;
+	    cursor: pointer;
 	}
 }
 

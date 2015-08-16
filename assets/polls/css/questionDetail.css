@@ -117,6 +117,17 @@ ul.share-buttons li{
 	position: relative;
 }
 
+.mainPoll{
+	position:relative;
+}
+
+.upvoteDetailVote{
+    width: 2%;
+    position: absolute;
+    right: 1rem;
+    top: 15rem;
+}
+
 @media only screen and (max-width: 660px){
 	#pollsChart{
 		height: 180px;

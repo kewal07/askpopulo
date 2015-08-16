@@ -70,6 +70,12 @@
 						{% endfor %}
 					</p>
 					{% endif %}
+					<div class="upvoteDetailVote">
+						<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',1)"></i>
+						<span id="upvoteon{{ question.id }}"> {{ question.upvoteCount }} </span>
+						<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',0)"></i>
+						<div class="upvotemessage" id="upvotemessage{{ question.id }}"></div>
+					</div>
 					<p>
 					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST" id="optionsForm{{ question.id }}">
 						{% csrf_token %}
@@ -169,6 +175,43 @@
 		</div>
 	</section>
 	<script type="text/javascript">
+		function upvoted(questionId,qslug,action){
+			{% if user.is_authenticated %}
+				$.ajax({
+					type: 'POST',
+					url:'/upvoted/?qId='+questionId+'&vote='+action.toString(),
+					data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
+					error:function(response){
+						console.log('error occured');
+					},
+					success:function(response)
+					{
+							count = response.count;
+							message = response.message;
+							if(typeof count === 'undefined'){
+								var id = "#upvotemessage"+questionId.toString();
+								$(id).append("<p>"+message+"</p>");
+								setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+							} else {
+								console.log(response);
+								spanId = '#upvoteon'+questionId.toString();
+								$(spanId).text(response.count.toString());
+							}
+					}
+				});
+			{% else %}
+				var id = "#upvotemessage"+questionId.toString();
+				$(id).append("<p> Login to upvote </p>");
+				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
+				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
+				// console.log(url);
+				$(location).attr('href',url);
+			{% endif %}
+		}
+
+		function clearUpvoteMessageDiv(id){
+			$(id).empty();
+		}
 		$(document).ready(function()
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
