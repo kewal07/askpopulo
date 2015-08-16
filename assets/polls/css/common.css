@@ -626,6 +626,7 @@ form.signupContentPartForm input{
 	color:orange;
 	cursor:pointer;
 }
+
 @media only screen and (max-width: 960px){
 	#header{
 		 position: relative;

@@ -203,7 +203,10 @@ class LoggedInView(BaseViewDetail):
 			public_profile = True
 		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
 		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
-		user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
+		if public_profile:
+			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')[:20]
+		else:
+			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
 		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
 		user_categories = []
@@ -260,7 +263,7 @@ class LoggedInView(BaseViewDetail):
 		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc','following_user_img', 'followed_username', 'followed_user_img', 'actor_user_name', 'actor_user_url', 'actor_user_pic', 'target_user_name', 'target_user_pic', 'target_user_url'])
 		feed = feed_manager.get_user_feed(user.id)
 		activities = feed.get(limit=25)['results']
-		activities = enricher.enrich_activities(activities)
+		# activities = enricher.enrich_activities(activities)
 		context["activities"] = activities
 		# print(dir(feed_manager))
 		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
@@ -326,9 +329,6 @@ class FollowView(BaseViewDetail):
 	    '''
 	    A view to follow other users
 	    '''
-	    print("**********")
-	    print(request.POST)
-	    print("**********")
 	    output = {}
 	    if request.method == "POST":
 	        form = FollowForm(user=request.user, data=request.POST)
