@@ -200,6 +200,7 @@ ul.followers p{
 		height: 61px;
 		margin-right: 0.5rem !important;
 		padding: 1rem;
+		display: block;
 	}
 	.profileStatsUl{
 		width: 95%;
@@ -209,12 +210,14 @@ ul.followers p{
 		font-size: 64px;
 		margin-right: 0.5rem !important;
 		padding: 1rem;
+		width:64px;
+		height: 61px;
 	}
 	ul.profileStatsUl li {
     	margin: 1rem;
     	position: relative;
     	float: left;
-    	width:100px;
+    	/*width:100px;*/
     	border:2px dashed;
     	border-radius: 25px;
 	}
