@@ -167,9 +167,9 @@ class FollowForm(forms.Form):
 			msg = EmailMessage(subject="Someone just followed you !!!", from_email="askbypoll@gmail.com",to=to_email)
 			msg.template_name = "follownotification"           # A Mandrill template name
 			msg.global_merge_vars = {                       # Merge tags in your template
-		    	"FollowedUser" : self.user.username,
+		    	"FollowedUser" : target_user.username,
 		    	"FollowerUserUrl" : follower_url,
-		    	"FollowerUser" : target_user.username
+		    	"FollowerUser" : self.user.username
 				}
 			msg.send()
 
