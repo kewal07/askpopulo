@@ -146,6 +146,7 @@ ul.followers li{
     position: relative;
     width:5rem;
     margin-bottom:1rem;
+    vertical-align: top;
 }
 img.follow{
 	display: inline;
