@@ -329,9 +329,6 @@ class FollowView(BaseViewDetail):
 	    '''
 	    A view to follow other users
 	    '''
-	    print("**********")
-	    print(request.POST)
-	    print("**********")
 	    output = {}
 	    if request.method == "POST":
 	        form = FollowForm(user=request.user, data=request.POST)
