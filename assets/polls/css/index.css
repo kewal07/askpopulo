@@ -312,14 +312,22 @@ button.followButton.unfollow{
 }
 
 .upvotemessage{
-	position: absolute;
+    position: absolute;
     right: -280%;
     width: 600%;
     background-color: antiquewhite;
 }
 
 .mainPoll{
-	position:relative;
+    position:relative;
+}
+
+.upvoteDetailVote{
+    cursor:pointer;
+    width: 2%;
+    position: absolute;
+    right: 4%;
+    top: 70%;
 }
 
 @media only screen and (min-width:481px) and (max-width: 960px){

@@ -122,6 +122,7 @@ ul.share-buttons li{
 }
 
 .upvoteDetailVote{
+    cursor:pointer;
     width: 2%;
     position: absolute;
     right: 1rem;
