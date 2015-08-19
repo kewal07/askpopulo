@@ -126,21 +126,7 @@
 			               					{% elif notification.verb == "voted" %}
 												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 											{% elif notification.verb == "credits" %}
-												{% if notification.action == "up_down_vote" %}
-													<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ user.username|getName:notification.actor_user_name }}</span> </a>earned {{ notification.points }}credits by rating <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a></span>
-												{% elif notification.action == "upvote" %}
-													<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ user.username|getName:notification.actor_user_name }}</span> </a>earned {{ notification.points }}credits as <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a> was upvoted</span>
-												{% elif notification.action == "downvote" %}
-													<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ user.username|getName:notification.actor_user_name }}</span> </a>lost {{ notification.points }}credits as <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a> was downvoted</span>
-												{% elif notification.action == "follow_user" %}
-													<a href="{{ notification.target_user_url }}"><img class="imgInFeed" src="{{ notification.target_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.target_user_url }}"><span class="activity_url">{{ user.username|getName:notification.target_user_name }}</span> </a>earned {{ notification.points }}credits as <a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ notification.actor_user_name }}</span></a> followed you</span>
-												{% elif notification.action == "unfollow_user" %}
-													<a href="{{ notification.target_user_url }}"><img class="imgInFeed" src="{{ notification.target_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.target_user_url }}"><span class="activity_url">{{ user.username|getName:notification.target_user_name }}</span> </a>lost {{ notification.points }}credits as you were unfollowed</span>
-												{% elif notification.action == "comment" %}
-													<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ user.username|getName:notification.actor_user_name }}</span> </a>earned {{ notification.points }}credits by commenting on <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a></span>
-												{% elif notification.action == "vote" %}
-													<a href="{{ notification.actor_user_url }}"><img class="imgInFeed" src="{{ notification.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ notification.actor_user_url }}"><span class="activity_url">{{ user.username|getName:notification.actor_user_name }}</span> </a>earned {{ notification.points }}credits by voting on <a href="{{ notification.question_url }}"><span class="activity_url">{{ notification.question_text }}</span></a></span>
-												{% endif %}
+												<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>
 			               					{% else %}
 			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>{{ notification.verb }} <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 			               					{% endif %}
@@ -343,7 +329,7 @@
 		               					else if( activity['verb'] === "voted" )
 		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
 		               					else if(activity['verb'] === "credits"){
-		               						element += '<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> You have earned some credits. Check it out on your profile page.</span> </a>'
+		               						element += '<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>'
 		               					}
 		               					else
 		               						element += activity["verb"] + ' ' + activity['actor'] + ' ' + timeSince(activity['time'].substring(0, 19));
