@@ -187,6 +187,7 @@
 					success:function(response)
 					{
 							count = response.count;
+							console.log(count);
 							message = response.message;
 							if(typeof count === 'undefined'){
 								var id = "#upvotemessage"+questionId.toString();

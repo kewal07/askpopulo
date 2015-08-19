@@ -35,6 +35,7 @@ class Question(models.Model):
 	featuredPoll = models.BooleanField(default=0)
 	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
 	upvoteCount = models.IntegerField(default=0)
+	isBet = models.BooleanField(default=0)
 
 	# @property
 	# def extra_activity_data(self):

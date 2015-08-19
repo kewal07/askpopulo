@@ -312,6 +312,17 @@ class VoteView(BaseViewDetail):
 			feed.add_activity(activity)
 		feed = client.feed('user', question.user_id)
 		feed.add_activity(activity)
+		if question.privatePoll:
+			points = 20
+		elif question.isBet:
+			points += 40
+		else:
+			points = 10
+		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote"}
+		feed = client.feed('notification', user.id)
+		feed.add_activity(activity)
+		user.extendeduser.credits += points
+		user.extendeduser.save()
 		return HttpResponseRedirect(url)
 		
 class EditView(BaseViewDetail):
@@ -375,6 +386,7 @@ class CreatePollView(BaseViewList):
 		user = request.user
 		edit = False
 		ajax = False
+		previousBet = True
 		errors = {}
 		question = None
 		curtime = datetime.datetime.now();
@@ -395,6 +407,7 @@ class CreatePollView(BaseViewList):
 				question = Question.objects.get(pk=request.GET.get("qid"))
 				if request.POST.get("oldExpiryTime") != "clean":
 					qExpiry = question.expiry
+				previousBet = question.isBet
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
 			qemonth = int(request.POST.getlist('qExpiry_month')[0])
 			qeday = int(request.POST.getlist('qExpiry_day')[0])
@@ -571,6 +584,15 @@ class CreatePollView(BaseViewList):
 				feed = client.feed('notification', following_id)
 				feed.add_activity(activity)
 		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
+		if not previousBet and question.isBet:
+			actor_user_name = user.username
+			actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
+			actor_user_pic = user.extendeduser.get_profile_pic_url()
+			activity = {'actor': actor_user_name, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url, "points":10, "action":"asked"}
+			feed = client.feed('notification', user.id)
+			feed.add_activity(activity)
+			user.extendeduser.credits += 10
+			user.extendeduser.save()
 		return HttpResponseRedirect(url)
 
 class PollsSearchView(SearchView):
@@ -679,6 +701,15 @@ def comment_mail(request):
 		    	"QuestionText" : que_text
 				}
 			msg.send()
+	user = request.user
+	actor_user_name = user.username
+	actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
+	actor_user_pic = user.extendeduser.get_profile_pic_url()
+	activity = {'actor': actor_user_name, 'verb': 'credits', 'object': que_text, 'question_text':que_text, 'question_url':que_url, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url, "points":20, "action":"comment"}
+	feed = client.feed('notification', user.id)
+	feed.add_activity(activity)
+	request.user.extendeduser.credits += 20
+	request.user.extendeduser.save()
 	return HttpResponse(json.dumps({}),content_type='application/json')
 
 def error_CompanyName(request):
@@ -733,36 +764,52 @@ class QuestionUpvoteView(BaseViewList):
 			vote = int(request.GET.get("vote"))
 
 			isAlreadyVotedByUser = QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId)
-
+			questionVoted = Question.objects.get(pk=votedQuestionId)
 			if(isAlreadyVotedByUser):
 				if((isAlreadyVotedByUser[0].vote and vote == 1) or (not(isAlreadyVotedByUser[0].vote) and vote == 0)):
-					response={"message":"Already voted by user"}
-				else:
-					questionVoted = Question.objects.filter(id=votedQuestionId)
-					currentCount = questionVoted[0].upvoteCount
-					if vote == 1:
-						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 2)
-						currentCount += 1
-					else:
-						Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 2)
-						currentCount -= 1
-
-					countVotes = questionVoted[0].upvoteCount
-					QuestionUpvotes.objects.filter(user_id = request.user.id, question_id = votedQuestionId).update(vote = vote)
-					response = {"message":"Done", "count":countVotes}
+					response={"message":"You already voted"}
+					return HttpResponse(json.dumps(response), content_type='application/json')
+				diff = 2
 			else:
-				upVote = QuestionUpvotes(user_id=request.user.id, question_id = votedQuestionId, vote = vote)
-				questionUpVoted = Question.objects.filter(id=votedQuestionId)
-				currentCount = questionUpVoted[0].upvoteCount
-				if vote == 1:
-					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + 1)
-					currentCount += 1
-				else:
-					Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - 1)
-					currentCount -= 1
-				upVote.save()
-				response={"message":"Question Upvoted", "count":currentCount}
-
+				diff = 1
+				request.user.extendeduser.credits += 10
+				request.user.extendeduser.save()
+				user = request.user
+				question = questionVoted
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":10, "action":"up_down_vote"}
+				feed = client.feed('notification', user.id)
+				feed.add_activity(activity)	
+			upVote, created = QuestionUpvotes.objects.get_or_create(user_id=request.user.id, question_id = votedQuestionId)
+			print(upVote)
+			print(created)
+			print(questionVoted)
+			print("*******")
+			# currentCount = questionVoted.upvoteCount
+			if vote == 1:
+				questionVoted.upvoteCount += diff
+				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + diff)
+				# currentCount += 1
+				questionVoted.user.extendeduser.credits += diff * 10
+				user = questionVoted.user
+				question = questionVoted
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"upvote"}
+			else:
+				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - diff)
+				# currentCount -= 1
+				questionVoted.upvoteCount -= diff
+				questionVoted.user.extendeduser.credits -= diff * 10
+				user = questionVoted.user
+				question = questionVoted
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"dowvote"}
+			questionVoted.save()
+			questionVoted.user.extendeduser.save()
+			feed = client.feed('notification', questionVoted.user.id)
+			feed.add_activity(activity)	
+			countVotes = questionVoted.upvoteCount
+			upVote.vote = vote
+			upVote.save()
+			response = {"message":"Done", "count":countVotes}
+				
 			return HttpResponse(json.dumps(response), content_type='application/json')
 
 		except Exception as e:

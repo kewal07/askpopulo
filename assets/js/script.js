@@ -187,6 +187,21 @@ $(document).ready(function(){
 		$("#oldExpiryTimeinput").attr("value","clean");
 	});
 	/* end */
+
+
+	$(".myProfileTabs").click(function(){
+		var elemId = $(this)[0].id;
+		// console.log(elemId);
+		$(".profileDetail").hide();
+		var divElemId = "." + elemId + "Div";
+		$(".profileDetail").hide();
+		$(".detailHeader h1").text(headerText[elemId]);
+		$(divElemId).slideToggle("slow");
+		if($(window).width() < 960){
+			$(".profileStats").slideToggle("slow");
+			$(".fa-arrow-left").show();
+		}
+	});
 });
 
 function activateMenuLink () {
