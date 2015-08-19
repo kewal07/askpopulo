@@ -289,6 +289,7 @@ class LoggedInView(BaseViewDetail):
 		connections.extend(followers)
 		connections.extend(following)
 		context["connection_count"] = len(set(connections))
+		context["credits"] = user.extendeduser.credits
 		return context
 		
 # class DetailView(generic.DetailView):

@@ -137,7 +137,8 @@ class FollowForm(forms.Form):
 		target = self.cleaned_data['target']
 		remove = bool(int(self.cleaned_data.get('remove', 0) or 0))
 		print(target,remove,self.user)
-		
+		target_user = User.objects.get(pk=target)
+		action =""
 		if remove:
 			follows = Follow.objects.filter(user=self.user, target_id=target)
 			now = datetime.now()
@@ -145,12 +146,15 @@ class FollowForm(forms.Form):
 				follow.deleted_at = now
 				follow.save()
 			feed_manager.unfollow_user(self.user.id, target)
+			target_user.extendeduser.credits -= 20
+			action = "unfollow_user"
 		else:
+			action = "follow_user"
 			follow, created = Follow.objects.get_or_create(user=self.user, target_id=target)
 			if not created and follow.deleted_at is not None:
 				follow.deleted_at = None
 				follow.save()
-			target_user = User.objects.get(pk=target)
+			target_user.extendeduser.credits += 20
 			# print(target_user)
 			# object will have 
 			activity = {'actor': self.user.username, 'verb': 'followed', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
@@ -172,6 +176,10 @@ class FollowForm(forms.Form):
 		    	"FollowerUser" : self.user.username
 				}
 			msg.send()
+		target_user.extendeduser.save()
+		activity = {'actor': self.user.username, 'verb': 'credits', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug, "points":20,"action":action }
+		feed = client.feed('notification', target)
+		feed.add_activity(activity)
 
 
 			
