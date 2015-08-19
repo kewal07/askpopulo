@@ -85,7 +85,7 @@
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
-	    							{% if not activity.verb == "credits"  %}
+	    							{% if activity.verb != "credits"  %}
 										<p class="desc">{{ activity.question_desc }}</p>
 									{% endif %}
 								</div> 
@@ -117,7 +117,9 @@
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
-									<p class="desc">{{ activity.question_desc }}</p>
+									{% if activity.verb != "credits"  %}
+										<p class="desc">{{ activity.question_desc }}</p>
+									{% endif %}
 								</div>
 								<script>
 									var currentDate = new Date();
@@ -147,7 +149,9 @@
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
-									<p class="desc">{{ activity.question_desc }}</p>
+									{% if activity.verb != "credits"  %}
+										<p class="desc">{{ activity.question_desc }}</p>
+									{% endif %}
 								</div>
 								<script>
 									var currentDate = new Date();
@@ -229,7 +233,6 @@
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
-									<p class="desc">{{ activity.question_desc }}</p>
 								</div>
 								<script>
 									var currentDate = new Date();
