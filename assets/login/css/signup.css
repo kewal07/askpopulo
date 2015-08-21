@@ -86,7 +86,7 @@ span#cats{
 @media only screen and (max-width: 960px){
 	#signup{
 		margin:0;
-		margin-bottom:2rem;
+		margin-bottom:11rem;
 	}
 	.signup p{
 		font-size: 1rem;
