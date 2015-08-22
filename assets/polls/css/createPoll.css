@@ -176,6 +176,16 @@ form.createPollContentForm label{
 .choice_image:hover{
 	border-color: #00ff00;
 }
+
+.createBet{
+  display:none;
+  border: 2px solid;
+  text-align: center;
+  padding-top: 1rem;
+  width: 30rem;
+  margin: 0 auto;
+  height: 3rem;
+}
 @media only screen and (max-width:960px){
   #createPoll{
     margin:0;
