@@ -498,6 +498,7 @@ class CreatePollView(BaseViewList):
 				images.append(choice4Image)
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
+			isBet = request.POST.get('bet')
 			if isAnon:
 				anonymous = 1
 			else:
@@ -506,7 +507,18 @@ class CreatePollView(BaseViewList):
 				private = 1
 			else:
 				private = 0
+			if isBet:
+				bet = 1
+			else:
+				bet = 0
 			# return if any errors
+			betError = ""
+			if bet and isPrivate:
+				betError += "Bets cannot be private. "
+			if bet and not qExpiry:
+				betError += "Bets should have expiry"
+			if betError:
+				errors['betError'] = betError
 			if not (choice1.strip() or choice1Image) or not (choice2.strip() or choice2Image):
 				errors['choiceError'] = "Choice required"
 			if len(choices)!=len(set(choices)):
@@ -528,6 +540,9 @@ class CreatePollView(BaseViewList):
 			"""
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
+			# mark bet poll as private untill verified by admin
+			if bet and not user.is_superuser:
+				private = 1
 			if edit:
 				# question = Question.objects.get(pk=request.GET.get("qid"))
 				question.question_text=qText
@@ -535,8 +550,9 @@ class CreatePollView(BaseViewList):
 				question.expiry=qExpiry
 				question.isAnonymous=anonymous
 				question.privatePoll=private
+				question.isBet = bet
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet)
 			question.save()
 			sub = Subscriber(user=user,question=question)
 			sub.save()
@@ -571,8 +587,18 @@ class CreatePollView(BaseViewList):
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
-		
+		# send mail to the admin for verification
+		if bet and not user.is_superuser:
+			qIdBet = question.id
+			qSlugBet = question.que_slug
+			qUrlBet = "https://www.askbypoll.com/polls/"+str(qIdBet)+"/"+qSlugBet
+			qUserBet = question.user
+			qTextBet = question.question_text
+			subject = "Verify Bet Question"
+			message = str(qUserBet)+" created bet on %s url %s"%(qTextBet,qUrlBet)
+			send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
 		if not (question.isAnonymous or question.privatePoll):
+			user = question.user
 			actor_user_name = user.username
 			actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
 			actor_user_pic = user.extendeduser.get_profile_pic_url()
@@ -584,7 +610,9 @@ class CreatePollView(BaseViewList):
 				feed = client.feed('notification', following_id)
 				feed.add_activity(activity)
 		url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
-		if not previousBet and question.isBet:
+		# add credits only when the poll has been made public by the super user
+		if not private and question.isBet and request.user.is_superuser:
+			user = question.user
 			actor_user_name = user.username
 			actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
 			actor_user_pic = user.extendeduser.get_profile_pic_url()

@@ -383,6 +383,10 @@
 						<input id="private" name="private" type="checkbox">
 						<label for="private">Make Poll as Private <i id="private_poll_fa" class="fa fa-info-circle"></i></label>
 					</p>
+					<p class="anonymous">
+						<input id="bet" name="bet" type="checkbox">
+						<label for="bet">Start a Bet on this Poll</label>
+					</p>
 					<input class="submit" type="submit" value="Create" id="createPollSubmit"/>
 				</form>
 				</div>
@@ -438,7 +442,8 @@
 								var dup_image = response.duplicateImage;
 								var expiry_error = response.expiryError;
 								var category_error = response.categoryError;
-								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined'){
+								var bet_error = response.betError;
+								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined' && typeof bet_error === 'undefined'){
 									 $(elemid).unbind('submit').submit();
 								}else{
 									if(typeof que_error === 'undefined')
@@ -451,14 +456,17 @@
 		                        	 	dup_image = "";
 									if(typeof expiry_error === 'undefined')
 		                        	 	expiry_error = "";
-		                        	 if(typeof category_error === 'undefined')
+		                        	if(typeof category_error === 'undefined')
 		                        	 	category_error = "";
+		                        	if(typeof bet_error === 'undefined')
+		                        	 	bet_error = "";
 									$(".errorlist").remove();
 			                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span><span class="errorlist"><br>'+dup_choice+'</span><span class="errorlist"><br>'+dup_image+'</span>');
 			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#choice2").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
 			                        $("#qExpiry_ap").parent().children().first().append('<span class="errorlist"><br>'+expiry_error+'</span>');
 			                        $("#categories").parent().parent().children().first().append('<span class="errorlist"><br>'+category_error+'</span>');
+			                        $("#bet").parent().append('<span style="position:absolute" class="errorlist"><br>'+bet_error+'</span>');
 			                        $("#createPollSubmit").removeAttr('disabled');
 								}
 							}
