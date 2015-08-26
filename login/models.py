@@ -79,20 +79,24 @@ class ExtendedUser(models.Model):
 		
 	def get_profile_pic_url(self):
 		default_pic_url = "/static/login/images/defaultAvatar.png"
-		if self.user.socialaccount_set.all():
-			if self.imageUrl:
+		# if self.user.socialaccount_set.all():
+		if self.imageUrl:
+			img_url = self.imageUrl.path
+			print(img_url)
+			# img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
+			# print(img_url)
+			if img_url.find("https://") != -1:
 				img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
-				# print(img_url)
-				if img_url.startswith("https"):
-					return r"https://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/https:/","")
-				elif img_url.startswith("http"):
-					return r"http://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/http:/","")
-				else:
-					# print("/media/profile/"+self.get_profile_pic_name())
-					return "/media/profile/"+self.get_folder_day()+os.sep+self.get_profile_pic_name()
-		else:
-			if self.imageUrl:
+				return r"https://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/https:/","")
+			elif img_url.find("http:/") != -1:
+				img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
+				return r"http://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/http:/","")
+			else:
+				# print("/media/profile/"+self.get_profile_pic_name())
 				return "/media/profile/"+self.get_folder_day()+os.sep+self.get_profile_pic_name()
+		# else:
+		# 	if self.imageUrl:
+		# 		return "/media/profile/"+self.get_folder_day()+os.sep+self.get_profile_pic_name()
 		return default_pic_url	
 
 	def calculate_age(self):

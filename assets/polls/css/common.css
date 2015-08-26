@@ -383,7 +383,7 @@ li.first{
     padding: 15px 30px 30px;
 	text-align: center;
 }
-#overlay-inAbox, #overlay-inAbox2{
+#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox4{
 	display:none;
 	margin-left: 25%;
 }
@@ -417,31 +417,31 @@ li.first{
   display: block;
   margin: 0 auto;
 }
-.push_button:hover{
-	/* color:#dfe7ea; */
-	letter-spacing:.05rem;
-	/*reduce the size of the shadow to give a pushed effect*/
-	-webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-	-moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
-}
-#yes, #no{
+#yes, #no, #okay4, #cancel4{
 	margin: 0;
 	display: inline-block;
 }
-#yes{
+#yes, #okay4{
 	background: red;
 	border: 1px solid red;
 	-webkit-box-shadow: inset 0px 1px 0px red, 0px 5px 0px 0px #900000, 0px 10px 5px #999;
 	-moz-box-shadow: inset 0px 1px 0px red, 0px 5px 0px 0px #900000, 0px 10px 5px #999;
 	box-shadow: inset 0px 1px 0px red, 0px 5px 0px 0px #900000, 0px 10px 5px #999;
 }
-#no{
+#no, #cancel4{
 	background: green;
 	border: 1px solid green;
 	-webkit-box-shadow: inset 0px 1px 0px green, 0px 5px 0px 0px #003300, 0px 10px 5px #999;
 	-moz-box-shadow: inset 0px 1px 0px green, 0px 5px 0px 0px #003300, 0px 10px 5px #999;
 	box-shadow: inset 0px 1px 0px green, 0px 5px 0px 0px #003300, 0px 10px 5px #999;
+}
+.push_button:hover{
+	/* color:#dfe7ea; */
+	letter-spacing:.05rem;
+	/*reduce the size of the shadow to give a pushed effect*/
+	-webkit-box-shadow: inset 0px 1px 0px #205c73, 0px 2px 0px 0px #205c73, 0px 2px 5px #999 !important;
+	-moz-box-shadow: inset 0px 1px 0px #205c73, 0px 2px 0px 0px #205c73, 0px 2px 5px #999 !important;
+	box-shadow: inset 0px 1px 0px #205c73, 0px 2px 0px 0px #205c73, 0px 2px 5px #999 !important;
 }
 
 #display_message_section{
@@ -468,11 +468,18 @@ li.first{
 }
 .submit:hover,.fileLabel:hover{
 	/* color:#dfe7ea; */
-	letter-spacing:.05rem;
+	/*letter-spacing:.05rem;*/
 	/*reduce the size of the shadow to give a pushed effect*/
-	-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+	/*-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
   -moz-box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
-  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;
+  box-shadow: inset 0px 1px 0px #000005, 0px 5px 0px 0px #020F13, 0px 10px 5px #999;*/
+  /* color:#dfe7ea; */
+	/*letter-spacing:.05rem;*/
+	/*reduce the size of the shadow to give a pushed effect*/
+	margin-top: 0.9rem;
+	-webkit-box-shadow: inset 0px 1px 0px #000005, 0px 2px 0px 0px #020F13, 0px 2px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #000005, 0px 2px 0px 0px #020F13, 0px 2px 5px #999;
+	box-shadow: inset 0px 1px 0px #000005, 0px 2px 0px 0px #020F13, 0px 2px 5px #999;
 }
 .fileLabel{
   padding: 0.2rem;

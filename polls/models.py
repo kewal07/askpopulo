@@ -36,6 +36,8 @@ class Question(models.Model):
 	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
 	upvoteCount = models.IntegerField(default=0)
 	isBet = models.BooleanField(default=0)
+	winning_choice = models.IntegerField(blank=True,null=True)
+	# betMail = models.BooleanField(default=0)
 
 	# @property
 	# def extra_activity_data(self):
@@ -120,6 +122,9 @@ class Vote(models.Model):
 	vote_pk = models.CharField(max_length=255)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	choice = models.ForeignKey(Choice)
+	created_at = models.DateTimeField(auto_now_add=True,null=True)
+	betCredit = models.IntegerField(default=0)
+	earnCredit = models.IntegerField(default=0)
 	def __str__(self):
 		return self.choice.choice_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
@@ -142,17 +147,17 @@ class Subscriber(models.Model):
 		self.subscriber_pk = sig
 		super(Subscriber, self).save(*args, **kwargs)
 		
-class Voted(models.Model,Activity):
+class Voted(models.Model):
 	voted_pk = models.CharField(max_length=255)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	created_at = models.DateTimeField(auto_now_add=True)
-	@property
-	def extra_activity_data(self):
-		return {'question_text': self.question.question_text,'question_url': "/polls/"+str(self.question.id)+"/"+self.question.que_slug,'question_desc': self.question.description,'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug,'target_user_name':self.question.user.username,'target_user_pic':self.question.user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(self.question.user.id)+"/"+self.question.user.extendeduser.user_slug }
-	@property
-	def activity_object_attr(self):
-		return self.user.username
+	# @property
+	# def extra_activity_data(self):
+	# 	return {'question_text': self.question.question_text,'question_url': "/polls/"+str(self.question.id)+"/"+self.question.que_slug,'question_desc': self.question.description,'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug,'target_user_name':self.question.user.username,'target_user_pic':self.question.user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(self.question.user.id)+"/"+self.question.user.extendeduser.user_slug }
+	# @property
+	# def activity_object_attr(self):
+	# 	return self.user.username
 	def __str__(self):
 		return self.question.question_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
@@ -160,7 +165,7 @@ class Voted(models.Model,Activity):
 		msg = ("%s %s %s"%(self.question.question_text,self.user.username,datetime.datetime.now())).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.voted_pk = sig
-		print("Voted")
+		# print("Voted")
 		super(Voted, self).save(*args, **kwargs)
 
 class QuestionWithCategory(models.Model):

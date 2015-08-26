@@ -401,6 +401,13 @@
 						{% endif %}
 						<label for="bet">Make it a Prediction Poll</label>
 					</p>
+					<div class="createBet">
+						<p>
+							<input placeholder=">10 and <{{ user.extendeduser.credits }} " onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="betAmount" id="betAmount" type="text"> <i class="fa fa-coins"></i> On	<select name="betChoice" id="betChoice">
+								<option value="------">------</option>
+							</select>
+						</p>
+					</div>
 					<p>
 					<input class="submit" type="submit" value="Update" id="createPollSubmit"/>
 					</p>
@@ -429,6 +436,39 @@
 				maxselection: 5
 			});
 		$(document).ready(function(){
+			{% if question.isBet %}
+				{% if user.extendeduser.credits > 10 %}
+					$(".createBet").css({
+						"display":"block",
+					});
+				{% endif %}
+			{% endif %}
+			$('#bet').click(function() {
+    			{% if user.extendeduser.credits > 10 %}
+    				$(".createBet").toggle();
+    			{% endif %}
+			});
+			$('.createBet').hover(function() {
+				var innerHval = '';
+    			for(i=1;i<5;i++){
+    				// console.log($("#imagetextchoice"+i)[0]);
+    				var prevImgElem = $("#imagetextchoice"+i)[0];
+    				var value = $('[name="choice'+i+'"]')[0].value;
+    				var imgValue = $('[name="choice'+i+'"]')[1].value;
+    				var prevImgValue = "";
+    				if(prevImgElem)
+    					prevImgValue = $("#imagetextchoice"+i)[0].value;
+    				// console.log(value);
+    				// console.log(imgValue);
+    				if(value || imgValue || prevImgValue){
+	    				var elem = '<option value="choice'+i+'">Choice'+i+'</option>';
+	    				// console.log(elem);
+	    				innerHval += elem;
+    				}
+    			}
+    			$("#betChoice")[0].innerHTML= innerHval;
+    			// console.log($("#betChoice")[0]);
+			});
 			$(".fileButtonClass").click(function(){
 				$("#image"+$(this)[0].id.replace("file","")).hide();
 				$("#imagetext"+$(this)[0].id.replace("file","")).val("");

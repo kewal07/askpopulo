@@ -389,12 +389,9 @@
 					</p>
 					<div class="createBet">
 						<p>
-							<input placeholder="0" name="betAmount" id="betAmount" type="text"> <i class="fa fa-coins"></i> On 
-							<select name="qExpiry_ap" id="qExpiry_ap">
-								<option value="choice1">Choice 1</option>
-								<option value="choice2">Choice 2</option>
-								<option value="choice3">Choice 3</option>
-								<option value="choice4">Choice 4</option>
+							<input placeholder=">10 and <{{ user.extendeduser.credits }} " onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="betAmount" id="betAmount" type="text"> <i class="fa fa-coins"></i> On 
+							<select name="betChoice" id="betChoice">
+								<option value="------">------</option>
 							</select>
 						</p>
 					</div>
@@ -425,7 +422,26 @@
 		$(document).ready(function()
 		{
 			$('#bet').click(function() {
+				{% if user.extendeduser.credits > 10 %}
     			$(".createBet").toggle();
+    			{% endif %}
+			});
+			$('.createBet').hover(function() {
+				var innerHval = '';
+    			for(i=1;i<5;i++){
+    				// console.log($('[name="choice'+i+'"]'));
+    				var value = $('[name="choice'+i+'"]')[0].value;
+    				var imgValue = $('[name="choice'+i+'"]')[1].value;
+    				console.log(value);
+    				console.log(imgValue);
+    				if(value || imgValue){
+	    				var elem = '<option value="choice'+i+'">Choice'+i+'</option>';
+	    				// console.log(elem);
+	    				innerHval += elem;
+    				}
+    			}
+    			$("#betChoice")[0].innerHTML= innerHval;
+    			// console.log($("#betChoice")[0]);
 			});
 
 			$('.submit').bind('click', function()

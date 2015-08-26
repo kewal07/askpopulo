@@ -183,6 +183,7 @@ class IndexView(BaseViewList):
 				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
 				if question_user_vote:
 					user_already_voted = True
+			# print(mainquestion,user_already_voted,user)
 			data['user_already_voted'] = user_already_voted
 			mainData.append(data)
 		context['data'] = mainData
@@ -256,6 +257,9 @@ class VoteView(BaseViewDetail):
 		questionId = request.POST.get('question')
 		question = Question.objects.get(pk=questionId)
 		queSlug = question.que_slug
+		queBet = request.POST.get('betAmountHidden')
+		if queBet:
+			queBet = int(queBet)
 		# print(request.is_ajax())
 		# queSlug = "None"
 		# print(user,user.is_authenticated())
@@ -276,7 +280,12 @@ class VoteView(BaseViewDetail):
 				# queSlug = question.que_slug
 				voted_questions = user.voted_set.filter(user=user,question=question)
 				if not voted_questions:
-					vote = Vote(user=user, choice=choice)
+					if question.isBet and queBet:
+						vote = Vote(user=user, choice=choice, betCredit=queBet)
+						user.extendeduser.credits -= queBet
+						user.extendeduser.save()
+					else:
+						vote = Vote(user=user, choice=choice)
 					voted = Voted(user=user, question=question)
 					# subscribed = Subscriber(user=user, question=question)
 					subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
@@ -300,7 +309,18 @@ class VoteView(BaseViewDetail):
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
-		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug}
+		visible_public = True
+		if question.privatePoll:
+			visible_public = False
+			points = 20
+		else:
+			points = 10
+		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug,"visible_public":visible_public}
+		if question.isBet and queBet:
+			activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet, "action":"voteBet","visible_public":visible_public}
+			feed = client.feed('notification', user.id)
+			feed.add_activity(activity)
+			activity = {'actor': user.username, 'verb': 'votedBet', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet,"visible_public":visible_public}
 		following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
 		while user.id in following_id_list:
 			following_id_list.remove(user.id)
@@ -312,13 +332,11 @@ class VoteView(BaseViewDetail):
 			feed.add_activity(activity)
 		feed = client.feed('user', question.user_id)
 		feed.add_activity(activity)
-		if question.privatePoll:
-			points = 20
-		elif question.isBet:
-			points += 40
-		else:
-			points = 10
-		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote"}
+		feed = client.feed('user', user.id)
+		feed.add_activity(activity)
+		feed = client.feed('flat', user.id)
+		feed.add_activity(activity)
+		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote","visible_public":visible_public}
 		feed = client.feed('notification', user.id)
 		feed.add_activity(activity)
 		user.extendeduser.credits += points
@@ -331,30 +349,39 @@ class EditView(BaseViewDetail):
 	def get_template_names(self):
 		template_name = 'polls/editQuestion.html'
 		return [template_name]
-	
-	def get_context_data(self, **kwargs):
-		context = super(EditView, self).get_context_data(**kwargs)
-		question = self.get_object()
-		context["data"] = Category.objects.all()
-		if question.expiry:
-			tim = question.expiry#.strftime("%Y-%m-%d %H:%M:%S")
-			# context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
-			context["qExpiry_year"]= tim.year
-			context["qExpiry_month"]= tim.month
-			context["qExpiry_day"]= tim.day
-			context["qExpiry_hr"]= tim.hour
-			context["qExpiry_min"]= tim.minute
-			context["qExpiry_ap"] = "AM"
-			if tim.hour > 11:
-				context["qExpiry_ap"] = "PM"
-				if tim.hour > 12:
-					context["qExpiry_hr"] -= 12
-		categories = ""
-		for cat in question.questionwithcategory_set.all():
-			categories += cat.category.category_title+","
-		context["question_categories"] = categories
-		#print(context)
-		return context
+
+	def get(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		context = super(EditView, self).get_context_data(object=self.object)
+		question = context['question']
+		canEdit = True
+		if (question.voted_set.count() > 0 and not request.user.is_superuser):
+			canEdit = False
+		if question.user != request.user and not request.user.is_superuser:
+			canEdit = False
+		if not canEdit:
+			url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
+			return HttpResponseRedirect(url)
+		else:
+			context["data"] = Category.objects.all()
+			if question.expiry:
+				tim = question.expiry#.strftime("%Y-%m-%d %H:%M:%S")
+				# context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+				context["qExpiry_year"]= tim.year
+				context["qExpiry_month"]= tim.month
+				context["qExpiry_day"]= tim.day
+				context["qExpiry_hr"]= tim.hour
+				context["qExpiry_min"]= tim.minute
+				context["qExpiry_ap"] = "AM"
+				if tim.hour > 11:
+					context["qExpiry_ap"] = "PM"
+					if tim.hour > 12:
+						context["qExpiry_hr"] -= 12
+			categories = ""
+			for cat in question.questionwithcategory_set.all():
+				categories += cat.category.category_title+","
+			context["question_categories"] = categories
+			return self.render_to_response(context)
 		
 class DeleteView(BaseViewDetail):
 	model = Question
@@ -365,7 +392,8 @@ class DeleteView(BaseViewDetail):
 	def get(self, request, *args, **kwargs):
 		url = reverse('polls:index')
 		question = self.get_object()
-		question.delete()
+		if question.user == request.user or request.user.is_superuser:
+			question.delete()
 		return HttpResponseRedirect(url)
 
 class CreatePollView(BaseViewList):
@@ -389,6 +417,13 @@ class CreatePollView(BaseViewList):
 		previousBet = True
 		errors = {}
 		question = None
+		# print(request.POST)
+		queBetAmount = request.POST.get("betAmount")
+		if queBetAmount:
+			queBetAmount = int(queBetAmount)
+		queBetChoiceText = request.POST.get("betChoice")
+		queBetChoice = None
+		# print("BET AMOUNT",queBetAmount)
 		curtime = datetime.datetime.now();
 		if request.GET.get("ajax"):
 			ajax = True
@@ -414,7 +449,7 @@ class CreatePollView(BaseViewList):
 			qehr = int(request.POST.getlist('qExpiry_hr')[0])
 			qemin = int(request.POST.getlist('qExpiry_min')[0])
 			qeap = request.POST.getlist('qExpiry_ap')[0]
-			print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+			# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1: 
 				if qeap.lower() == 'pm' and qehr != 12:
 					qehr = qehr + 12
@@ -428,6 +463,7 @@ class CreatePollView(BaseViewList):
 						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
+			print(qExpiry)
 			# if not qExpiry:
 			# 	qExpiry = None
 			choice1 = ""
@@ -514,9 +550,16 @@ class CreatePollView(BaseViewList):
 			# return if any errors
 			betError = ""
 			if bet and isPrivate:
-				betError += "Bets cannot be private. "
+				betError += "Prediction Poll cannot be private.<br>"
 			if bet and not qExpiry:
-				betError += "Bets should have expiry"
+				betError += "Prediction Poll should have expiry.<br>"
+			if bet and qExpiry and (qExpiry - curtime).days > 7:
+				betError += "Prediction Poll expiry should not be more that 7 days.<br>"
+			# if qExpiry:
+			# 	print((qExpiry - curtime).days, curtime, qExpiry)
+			# print("0000000000000000000000000",queBetAmount)
+			if queBetAmount and (queBetAmount < 10 or queBetAmount > user.extendeduser.credits):
+				betError += "Prediction Poll credits between 10 and %s"%(user.extendeduser.credits)
 			if betError:
 				errors['betError'] = betError
 			if not (choice1.strip() or choice1Image) or not (choice2.strip() or choice2Image):
@@ -578,15 +621,30 @@ class CreatePollView(BaseViewList):
 			if choice1 or choice1Image:
 				choice = Choice(question=question,choice_text=choice1,choice_image=choice1Image)
 				choice.save()
+				if queBetAmount and queBetChoiceText == "choice1":
+					queBetChoice = choice
 			if choice2 or choice2Image:
 				choice = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
 				choice.save()
+				if queBetAmount and queBetChoiceText == "choice1":
+					queBetChoice = choice
 			if choice3 or choice3Image:
 				choice = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
 				choice.save()
+				if queBetAmount and queBetChoiceText == "choice1":
+					queBetChoice = choice
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
+				if queBetAmount and queBetChoiceText == "choice1":
+					queBetChoice = choice
+		if queBetChoice:
+			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)
+			vote.save()
+			voted = Voted(user=question.user,question=question)
+			voted.save()
+			question.user.extendeduser.credits -= queBetAmount
+			question.user.extendeduser.save()
 		# send mail to the admin for verification
 		if bet and not user.is_superuser:
 			qIdBet = question.id
@@ -597,14 +655,25 @@ class CreatePollView(BaseViewList):
 			subject = "Verify Bet Question"
 			message = str(qUserBet)+" created bet on %s url %s"%(qTextBet,qUrlBet)
 			send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
-		if not (question.isAnonymous or question.privatePoll):
-			user = question.user
-			actor_user_name = user.username
-			actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
-			actor_user_pic = user.extendeduser.get_profile_pic_url()
-			activity = {'actor': actor_user_name, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url}
-			following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
-			feed = client.feed('user',user.id)
+		visible_public = True
+		if question.privatePoll or question.isAnonymous:
+			visible_public = False
+		# if not (question.isAnonymous or question.privatePoll):
+		user = question.user
+		actor_user_name = user.username
+		actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
+		actor_user_pic = user.extendeduser.get_profile_pic_url()
+		activity = {'actor': actor_user_name, 'verb': 'question', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url,"visible_public":visible_public}
+		if queBetChoice:
+			activity = {'actor': actor_user_name, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url, "points":queBetAmount, "action":"questionBet","visible_public":visible_public}
+			feed = client.feed('notification', user.id)
+			feed.add_activity(activity)
+			activity = {'actor': actor_user_name, 'verb': 'questionBet', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url, 'points':queBetAmount,"visible_public":visible_public}
+		following_id_list = [ x.user_id for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True)]
+		feed = client.feed('user',user.id)
+		feed.add_activity(activity)
+		if visible_public:
+			feed = client.feed('flat',user.id)
 			feed.add_activity(activity)
 			for following_id in following_id_list:
 				feed = client.feed('notification', following_id)

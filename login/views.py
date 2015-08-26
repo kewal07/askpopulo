@@ -91,7 +91,7 @@ class EditProfileView(BaseViewList):
 		url = reverse('login:editprofile', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
 		user = request.user
 		extendeduser = user.extendeduser
-		print(request.POST)
+		# print(request.POST)
 		# print(request.POST.get('name'))
 		if request.POST.get('first_name'):
 			user.first_name = request.POST.get('first_name')
@@ -223,12 +223,12 @@ class LoggedInView(BaseViewDetail):
 			userFormData = {"first_name":user.first_name,"last_name":user.last_name,"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"bio":user.extendeduser.bio,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city,'categories':cat_list}
 			loggedInForm = MySignupForm(userFormData)
 			context["loggedInForm"] = loggedInForm
-			feed = feed_manager.get_notification_feed(user.id)
-			activities = feed.get(limit=25)['results']
-			notification_activities = []
-			for act in activities:
-				notification_activities.extend(act['activities'])
-			context['notification_activities'] = notification_activities
+		feed = feed_manager.get_notification_feed(user.id)
+		activities = feed.get(limit=25)['results']
+		notification_activities = []
+		for act in activities:
+			notification_activities.extend(act['activities'])
+		context['notification_activities'] = notification_activities
 		ssoData = {}
 
 		#if public_profile:
@@ -278,11 +278,11 @@ class LoggedInView(BaseViewDetail):
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
-		print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
+		# print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
-		print(followers)
+		# print(followers)
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
-		print(following)
+		# print(following)
 		context["followers"] = followers
 		context["following"] = following
 		connections = []

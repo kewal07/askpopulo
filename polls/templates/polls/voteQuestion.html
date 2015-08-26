@@ -80,6 +80,7 @@
 					<form class="optionsForm" action="{% url 'polls:polls_vote' question.id question.que_slug %}" method="POST" id="optionsForm{{ question.id }}">
 						{% csrf_token %}
 						<input type="hidden" name="question" value="{{ question.id }}" />
+						<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
 						{% for choice in question.choice_set.all %}
 							<p>
 								<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
@@ -107,7 +108,7 @@
 							{% if expired %}
 								<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.id }}---{{ question.que_slug }}" disabled="disabled"/>
 							{% else %}
-								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}"/>
+								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}---{{ question.isBet }}"/>
 							{% endif %}
 							{% if user.is_authenticated and user.id == question.user.id or expired %}
 								{% if user.is_authenticated %}
@@ -221,6 +222,9 @@
 				var voteSubmitId = $(this)[0].id;
 				var queid = $(this)[0].id.replace('vote','').split("---")[0];
 				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
+				var quebet = $(this)[0].id.replace('vote','').split("---")[2];
+				var betValue = 0;
+				// console.log(quebet);
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
 				$(elemid).bind('submit', function()
 				{
@@ -236,7 +240,30 @@
 							var form_errors = response.form_errors;
 							
 							if(typeof form_errors === 'undefined'){
-								 $(elemid).unbind('submit').submit();
+								{% if user.extendeduser.credits > 10 %}
+									if(quebet){
+										openOverlay("#overlay-inAbox4");
+										$("#betAmount")[0].value = "";
+										/* close overlay call */
+										$("#cancel4").click(function(){
+											closeOverlay();
+											$("#"+voteSubmitId).removeAttr("disabled");
+										});
+										$("#okay4").click(function(){
+											betValue = $("#betAmount")[0].value;
+											console.log(betValue);
+											if(betValue === "" || (betValue > 9 && betValue <= {{ user.extendeduser.credits }})){
+												$("#betAmountHidden")[0].value = betValue;
+												closeOverlay();
+												$("#"+voteSubmitId).removeAttr("disabled");
+												$(elemid).unbind('submit').submit();
+											}
+										});
+										/* close overlay call end */
+									}
+								{% else %}
+								 	$(elemid).unbind('submit').submit();
+								{% endif %}
 							}else{
 								openOverlay("#overlay-inAbox");
 								$("#"+voteSubmitId).removeAttr("disabled");

@@ -80,7 +80,8 @@
 											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{  user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.target_user_name }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "credits" %}
 										{% else %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ user.username|getName:activity.target_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+											{{ activity.verb }}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ user.username|getName:activity.actor_user_name }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 										{% endif %}
 									</p>
 	    						<!--  render_activity activity -->
@@ -106,9 +107,30 @@
 								<div class="liDetail">
 									<p class="main">
 										{% if activity.verb == "question" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span>
-										{% elif activity.verb == "voted" %}</span>
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a><span id="activity{{ activity.id }}"> </span></span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked {% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %}
+											<span id="activity{{ activity.id }}"> </span>
+										{% elif activity.verb == "questionBet" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked {% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %} putting {{ activity.points }} credits <span id="activity{{ activity.id }}"> </span></span>
+										{% elif activity.verb == "voted" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} {% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %}<span id="activity{{ activity.id }}"> </span></span>
+										{% elif activity.verb == "votedBet" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %} putting {{ activity.points }} credits<span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
 											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{  user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span></a><span id="activity{{ activity.id }}"> </span></span>
 										{% else %}
@@ -138,9 +160,25 @@
 								<div class="liDetail">
 									<p class="main">
 										{% if activity.verb == "question" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked 
+											{% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %}
+											<span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "voted" %}
-											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
+											a private poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %} <span id="activity{{ activity.id }}"> </span></span>
+										{% elif activity.verb == "votedBet" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
+											a private poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %} putting {{ activity.points }} credits <span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
 											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 										{% else %}
@@ -215,19 +253,52 @@
 									<p class="main">
 										{% if activity.verb == "credits" %}
 											{% if activity.action == "up_down_vote" %}
-												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }}credits by rating <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits by rating <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 											{% elif activity.action == "upvote" %}
-												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }}credits as <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> was upvoted</span><span id="activity{{ activity.id }}"> </span>
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits as <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> was upvoted</span><span id="activity{{ activity.id }}"> </span>
 											{% elif activity.action == "downvote" %}
-												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>lost {{ activity.points }}credits as <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> was downvoted</span><span id="activity{{ activity.id }}"> </span> 
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>lost {{ activity.points }} credits as <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> was downvoted</span><span id="activity{{ activity.id }}"> </span> 
 											{% elif activity.action == "follow_user" %}
-												<a href="{{ activity.target_user_url }}"><img class="imgInFeed" src="{{ activity.target_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span> </a>earned {{ activity.points }}credits as <a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span></a> followed you</span><span id="activity{{ activity.id }}"> </span> 
+												<a href="{{ activity.target_user_url }}"><img class="imgInFeed" src="{{ activity.target_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span> </a>earned {{ activity.points }} credits as <a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ activity.actor_user_name }}</span></a> followed you</span><span id="activity{{ activity.id }}"> </span> 
 											{% elif activity.action == "unfollow_user" %}
-												<a href="{{ activity.target_user_url }}"><img class="imgInFeed" src="{{ activity.target_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span> </a>lost {{ activity.points }}credits as you were unfollowed</span><span id="activity{{ activity.id }}"> </span>
+												<a href="{{ activity.target_user_url }}"><img class="imgInFeed" src="{{ activity.target_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.target_user_url }}"><span class="activity_url">{{ user.username|getName:activity.target_user_name }}</span> </a>lost {{ activity.points }} credits as you were unfollowed</span><span id="activity{{ activity.id }}"> </span>
 											{% elif activity.action == "comment" %}
-												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }}credits by commenting on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits by commenting on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 											{% elif activity.action == "vote" %}
-												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }}credits by voting on <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits by voting on 
+												{% if user.id != context_user.id and not activity.visible_public %}
+												a private poll
+												{% else %}
+												<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
+												{% endif %}
+												<span id="activity{{ activity.id }}"> </span></span>
+											{% elif activity.action == "voteBet" %}
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>put {{ activity.points }} credits by voting on 
+												{% if user.id != context_user.id and not activity.visible_public %}
+												a private bet poll
+												{% else %}
+												<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
+												{% endif %}
+												<span id="activity{{ activity.id }}"> </span></span>
+											{% elif activity.action == "wonBet" %}
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits by predicting on
+												<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+												<span id="activity{{ activity.id }}"> </span></span>
+											{% elif activity.action == "lostBet" %}
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>lost {{ activity.points }} credits by predicting on
+												<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+												<span id="activity{{ activity.id }}"> </span></span>
+											{% elif activity.action == "questionBet" %}
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>put {{ activity.points }} credits by asking and predicting on 
+												{% if user.id != context_user.id and not activity.visible_public %}
+												a private bet poll
+												{% else %}
+												<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
+												{% endif %}
+												<span id="activity{{ activity.id }}"> </span></span>
+											{% elif activity.action == "asked" %}
+												<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>earned {{ activity.points }} credits by asking the prediction poll <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
+												<span id="activity{{ activity.id }}"> </span></span>
 											{% endif %}
 										{% endif %}
 									</p>
