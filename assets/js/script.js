@@ -197,10 +197,18 @@ $(document).ready(function(){
 		$(".profileDetail").hide();
 		$(".detailHeader h1").text(headerText[elemId]);
 		$(divElemId).slideToggle("slow");
+		if(divElemId === ".myABPInboxDiv"){
+			$(".myABPInboxDiv").html('<object data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"/>');
+		}
 		if($(window).width() < 960){
 			$(".profileStats").slideToggle("slow");
 			$(".fa-arrow-left").show();
 		}
+	});
+
+
+	$('.fa-envelope').click(function(){
+		openOverlay("#overlay-inAbox4");
 	});
 });
 
@@ -215,7 +223,6 @@ function activateMenuLink () {
 	});
 }
 function openOverlay(olEl) {
-	console.log("In overlay");
 	toppx = 130;
 	if(olEl === "#overlay-inAbox3")
 		toppx = 100;

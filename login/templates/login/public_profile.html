@@ -4,7 +4,7 @@
 {% load get_name %}
 		{% block extra_css %}
 			<link rel="stylesheet" type="text/css" href="{% static 'login/css/public_profile.css' %}" />
-			<link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" />
+			<!-- <link rel="stylesheet" type="text/css" href="{% static 'login/css/easy-responsive-tabs.css' %}" /> -->
 		{% endblock %}
 		{% block extra_js %}
 			<script src="{% static 'login/js/countryStateCityLoader.js' %}" ></script>
@@ -34,6 +34,7 @@
 					            <input name="next" type="hidden" value="{{ request.path }}">
 					        </form>
 					    </li>
+					    <li><i class="fa fa-envelope" style="cursor:pointer"></i></li>
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
 						{% if context_user == user %}
@@ -58,6 +59,9 @@
 						{% endif %}
 						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption">{{ credits }} Credits</span></li>
 						<li class="myProfileTabs" id="myConnections"><i class="fa fa-users"></i><span class="iCaption"> {{ connection_count }} Connections</span></li>
+						{% if context_user == user %}
+						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption"> Inbox</span></li>
+						{% endif %}
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
 						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments" class="iCaption"> 0 Comments</span></li>
@@ -209,7 +213,6 @@
 									<p class="main">
 										<a class="activity_url" id="qTextDesc{{ question.id }}" href="{% url 'polls:polls_vote' question.id question.que_slug %}">{{question.question_text}}</a>
 									</p>
-	    						<!--  render_activity activity -->
 									<p class="pollsDesc">{{ question.description }}</p>
 								</div>
 							</li>
@@ -231,6 +234,9 @@
 							{% endfor %}
 						</ul>
 					</div>
+					<!-- <div class="profileDetail myInboxDiv">
+						<object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;">
+					</div> -->
 					<div class="profileDetail myCategoriesDiv">
 						{% for category in categories %}
 				    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
@@ -320,6 +326,11 @@
 							Coming Soon !!!
 						</ul>
 					</div>
+					<div class="profileDetail myABPInboxDiv">
+						<ul class="profileDetailUl">
+							<!-- <object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"> -->
+						</ul>
+					</div>
 					<div class="profileDetail myConnectionsDiv">
 						<ul class="profileDetailUl followers">
 							<p>Followers</p>
@@ -369,8 +380,14 @@
 				  var chat = new FirechatUI(chatRef, document.getElementById('firechat-wrapper'));
 				  chat.setUser(authData.uid, 'kewal');
 				}
-				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Stake Polls","myCredits":"Credits", "myCategories":"My Categories", "myComments":"Commentend Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "myConnections":"Connections"};
+				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Stake Polls","myCredits":"Credits", "myCategories":"My Categories", "myComments":"Commented Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "myConnections":"Connections", "myABPInbox":"Inbox"};
 				$(document).ready(function(){
+
+						
+					// $(".myABPInboxDiv").html('<object data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"/>');
+					// $(".overlaySendMessage").html('<object data="http://localhost:8000/messages/write/" style="height:25rem; width:30rem;"/>');
+
+
 					var disqusPublicKey = "{{ DISQUS_API_KEY }}";
 					var disqusShortname = "{{ DISQUS_WEBSITE_SHORTNAME }}";
 					$.ajax({
@@ -439,4 +456,9 @@
 			</script>
 		{% endif %}
 		</section>
+		<div id="overlay-inAbox4" class="sendMessageOverlay overlay">
+			<div class="wrapper">
+				<object id="sendMessageOverlay" data="http://localhost:8000/messages/write/?recipients={{ context_user.username }}" style="height:25rem; width:50rem;"></object>
+			</div>
+		</div>
 		{% endblock %}
