@@ -630,17 +630,17 @@ class CreatePollView(BaseViewList):
 			if choice2 or choice2Image:
 				choice = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice2":
 					queBetChoice = choice
 			if choice3 or choice3Image:
 				choice = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice3":
 					queBetChoice = choice
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice4":
 					queBetChoice = choice
 		if queBetChoice:
 			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)

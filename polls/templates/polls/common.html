@@ -156,7 +156,7 @@
 				{% if user.is_authenticated %}
 				<div id="overlay-inAbox5" class="overlay">
 					<div class="wrapper">
-						<p class="overlaytext">Please Enter a value in the Box below if you would like to place a bet!! You can enter numbers between 10 and {{ user.extendeduser.credits }}</p>
+						<p class="overlaytext">Please Enter a value in the Box below if you would like to make a prediction!! You can enter numbers between 10 and {{ user.extendeduser.credits }}</p>
 						<p><input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="betAmount" id="betAmount" placeholder=">10 and <{{ user.extendeduser.credits }}" /></p>
 						<button id = "okay4" class="push_button">Okay</button>
 						<button id = "cancel4" class="push_button">Cancel</button>
