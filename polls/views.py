@@ -601,7 +601,7 @@ class CreatePollView(BaseViewList):
 			else:
 				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet)
 			question.save()
-			sub,created = Subscriber.get_or_create(user=user,question=question)
+			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
 			if edit:
 				for choice in question.choice_set.all():

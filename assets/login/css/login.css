@@ -126,7 +126,7 @@ label[for="id_password"] { display:none !important; }
 @media only screen and (max-width: 960px){
 	#login{
 		margin:0;
-		margin-bottom:2rem;
+		margin-bottom:11rem;
 	}
 	.loginContentTable{
 		display: block;
