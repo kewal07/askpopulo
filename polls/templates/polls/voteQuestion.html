@@ -173,9 +173,38 @@
 			<p style="text-align:center;font-size:1rem;margin-top:1rem">
 				Login/Vote to see the results
 			</p>
+			<div id="disqus_thread">
+			</div>
 		</div>
 	</section>
 	<script type="text/javascript">
+		{% if user.is_authenticated %}
+			var disqus_shortname = 'askbypoll';
+
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+			    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			var disqus_config = function() {
+				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
+				this.page.api_key = "{{ ssoData.pub_key }}";
+				this.callbacks.onNewComment = [function(comment) { 
+
+				var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
+
+				$.ajax({
+			            type: 'POST',
+			            url:'/comment_mail',
+			            data:data_dict,
+			            success:function(response)
+			            {
+			            }
+			        });
+				}];
+			};
+		{% endif %}
 		function upvoted(questionId,qslug,action){
 			{% if user.is_authenticated %}
 				$.ajax({

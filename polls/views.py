@@ -217,7 +217,7 @@ class VoteView(BaseViewDetail):
 				context['signup_part_form'] = MySignupPartForm(userFormData)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
-				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+				profilepicUrl = r"https://www.askbypoll.com"+profilepicUrl
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
 				"id":user.id,
