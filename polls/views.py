@@ -1,4 +1,5 @@
 import os
+import sys
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
@@ -28,6 +29,7 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
+from django.utils import timezone
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
@@ -417,6 +419,7 @@ class CreatePollView(BaseViewList):
 		previousBet = True
 		errors = {}
 		question = None
+		curtime = None
 		# print(request.POST)
 		queBetAmount = request.POST.get("betAmount")
 		if queBetAmount:
@@ -424,7 +427,6 @@ class CreatePollView(BaseViewList):
 		queBetChoiceText = request.POST.get("betChoice")
 		queBetChoice = None
 		# print("BET AMOUNT",queBetAmount)
-		curtime = datetime.datetime.now();
 		if request.GET.get("ajax"):
 			ajax = True
 		if request.GET.get("qid"):
@@ -441,6 +443,7 @@ class CreatePollView(BaseViewList):
 			if edit:
 				question = Question.objects.get(pk=request.GET.get("qid"))
 				if request.POST.get("oldExpiryTime") != "clean":
+					curtime = timezone.now();
 					qExpiry = question.expiry
 				previousBet = question.isBet
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
@@ -458,12 +461,13 @@ class CreatePollView(BaseViewList):
 				# qExpiry = request.POST.get('qExpiry')
 				print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
+					curtime = datetime.datetime.now();
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
 					if qExpiry < curtime:
 						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
-			print(qExpiry)
+			# print(qExpiry)
 			# if not qExpiry:
 			# 	qExpiry = None
 			choice1 = ""
@@ -553,7 +557,7 @@ class CreatePollView(BaseViewList):
 				betError += "Prediction Poll cannot be private.<br>"
 			if bet and not qExpiry:
 				betError += "Prediction Poll should have expiry.<br>"
-			if bet and qExpiry and (qExpiry - curtime).days > 7:
+			if bet and qExpiry and (qExpiry > curtime + datetime.timedelta(days=7)):
 				betError += "Prediction Poll expiry should not be more that 7 days.<br>"
 			# if qExpiry:
 			# 	print((qExpiry - curtime).days, curtime, qExpiry)
