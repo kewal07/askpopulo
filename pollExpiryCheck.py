@@ -178,15 +178,16 @@ def sendExpirationNotification():
 				for row in userBetVotedCur:
 					temp = list(row)
 					user_id_list_vote.append(temp[0])
-				query = "select email,first_name,auth_user.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where mailSubscriptionFlag=0 and auth_user.id in (%s )"%(",".join( str(x) for x in user_id_list_vote))
-				userToSendCur.execute(query)
-				for row in userToSendCur:
-					# send expiry mail
-					temp = list(row)
-					to_email = temp[0]
-					que_voter = temp[1]
-					# print("expiry bet",temp)
-					send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,"expiry")
+				if user_id_list_vote:
+					query = "select email,first_name,auth_user.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where mailSubscriptionFlag=0 and auth_user.id in (%s )"%(",".join( str(x) for x in user_id_list_vote))
+					userToSendCur.execute(query)
+					for row in userToSendCur:
+						# send expiry mail
+						temp = list(row)
+						to_email = temp[0]
+						que_voter = temp[1]
+						# print("expiry bet",temp)
+						send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,"expiry")
 				insertQuery = "INSERT INTO pollexpiry_mail(pollid) VALUES (%s)" %poll
 				insertCursor.execute(insertQuery)
 			else:
