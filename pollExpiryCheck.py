@@ -236,7 +236,7 @@ def send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,mail_ty
 		msg = EmailMessage(subject="Poll timed out notification from AskByPoll", from_email="askbypoll@gmail.com",to=[to_email])
 		msg.template_name = "expiryemailnotification" #mandrill template name
 	elif mail_type == "bet":
-		msg = EmailMessage(subject="Bet Poll results out notification from AskByPoll", from_email="askbypoll@gmail.com",to=[to_email])
+		msg = EmailMessage(subject="Prediction Poll results out notification from AskByPoll", from_email="askbypoll@gmail.com",to=[to_email])
 		msg.template_name = "predictionresults" #mandrill template name
 		if action == "won":
 			SalutoryMessage = "Hurray"
