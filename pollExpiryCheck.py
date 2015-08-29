@@ -72,6 +72,10 @@ def sendExpirationNotification():
 		for bets in betPollsList:
 			poll = bets[0]
 			winning_choice = bets[1]
+			choice_count = {}
+			returnBets = False
+			if winning_choice == -2:
+				returnBets = True
 			query = "select que_slug, question_text, description from polls_question where id = %s" %poll
 			questionSlugCur.execute(query)
 			for row in questionSlugCur:
@@ -80,7 +84,10 @@ def sendExpirationNotification():
 				que_desc = row[2]
 			if winning_choice:
 				#send mail to betters
-				user_credit_choice = "select user_id, betCredit, choice_id, id from polls_vote where betCredit>0 and choice_id in (select id from polls_choice where question_id=%s)"%poll
+				findMax = False
+				if winning_choice == -1:
+					findMax = True
+				user_credit_choice = "select user_id, betCredit, choice_id, id from polls_vote where choice_id in (select id from polls_choice where question_id=%s)"%poll
 				userToBetCur.execute(user_credit_choice)
 				user_credit_choice = "select user_id from polls_vote where betCredit=0 and choice_id in (select id from polls_choice where question_id=%s)"%poll
 				userBetVotedCur.execute(user_credit_choice)
@@ -90,18 +97,30 @@ def sendExpirationNotification():
 				total_pot = 0
 				for row in userToBetCur:
 					temp = list(row)
-					user_id_list_bet.append(temp[0])
-					user_id_choice_credit[temp[0]] = {
-						"credit":temp[1],
-						"choice":temp[2],
-						"vote_id":temp[3]
-					}
-					# total_pot = temp[3]
-				# print("total",total_pot)
-				# print("bet people",user_id_list_bet)
-				for row in userBetVotedCur:
-					temp = list(row)
-					user_id_list_vote.append(temp[0])
+					choice_id = temp[2]
+					credit = temp[1]
+					if findMax and not returnBets:
+						choice_count[choice_id] = choice_count.get(choice_id,0) + 1
+					if credit > 0:
+						user_id_list_bet.append(temp[0])
+						user_id_choice_credit[temp[0]] = {
+							"credit":credit,
+							"choice":choice_id,
+							"vote_id":temp[3]
+						}
+				max_choice = -1
+				votes_list = []
+				max_votes = -1
+				if findMax and not returnBets:
+					for choice,vote_count in choice_count.items():
+						if vote_count in votes_list:
+							returnBets = True
+							break
+						elif vote_count > max_votes:
+							max_votes = vote_count
+							max_choice = choice
+						votes_list.append(vote_count)
+					winning_choice = max_choice
 				# print("voted people",user_id_list_vote)
 				query = "select email,first_name,auth_user.id,login_extendeduser.mailSubscriptionFlag, login_extendeduser.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where auth_user.id in ( %s )"%(','.join(str(x) for x in user_id_list_bet))
 				userToSendCur.execute(query)
@@ -120,7 +139,7 @@ def sendExpirationNotification():
 					user_dict['name'] = que_voter
 					user_dict['mailSubscriptionFlag'] = mailSubscriptionFlag
 					user_dict["extendeduser_id"] = extendeduser_id;
-					if user_dict.get("choice") == winning_choice:
+					if user_dict.get("choice") == winning_choice or returnBets:
 						user_dict['action'] = "won"
 						winners_pot +=  user_dict["credit"]
 					else:
@@ -156,6 +175,9 @@ def sendExpirationNotification():
 						insertCursor.execute(updateQuery)
 						updateQuery = "UPDATE polls_vote SET earnCredit=%s WHERE id=%s"%(earned_credit,user_dict['vote_id'])
 						insertCursor.execute(updateQuery)
+				for row in userBetVotedCur:
+					temp = list(row)
+					user_id_list_vote.append(temp[0])
 				query = "select email,first_name,auth_user.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where mailSubscriptionFlag=0 and auth_user.id in (%s )"%(",".join( str(x) for x in user_id_list_vote))
 				userToSendCur.execute(query)
 				for row in userToSendCur:
@@ -201,8 +223,8 @@ def sendExpirationNotification():
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		err = ' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj)
-		# print(err)
-		# print(traceback.format_exc())
+		print(err)
+		print(traceback.format_exc())
 
 def send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,mail_type,action="",betAmount=0):
 	msg = None
