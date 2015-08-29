@@ -155,7 +155,7 @@ def sendExpirationNotification():
 					que_voter = user_dict['name']
 					# print("calc mail",user_dict)
 					earned_credit = 0
-					if user_dict['action'] == 'won':
+					if user_dict['action'] == 'won' and not returnBets:
 						earned_credit = user_dict['credit'] + ((loosers_pot/winners_pot) * user_dict['credit'])
 					user_dict['credit'] += earned_credit
 					# print("You %s %s credits"%(user_dict['action'],user_dict['credit']))
