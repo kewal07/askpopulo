@@ -198,7 +198,7 @@ $(document).ready(function(){
 		$(".detailHeader h1").text(headerText[elemId]);
 		$(divElemId).slideToggle("slow");
 		if(divElemId === ".myABPInboxDiv"){
-			$(".myABPInboxDiv").html('<object data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"/>');
+			$(".myABPInboxDiv").html('<object data="https://www.askbypoll.com/messages/inbox/" style="height:25rem; width:30rem;"/>');
 		}
 		if($(window).width() < 960){
 			$(".profileStats").slideToggle("slow");

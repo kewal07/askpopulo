@@ -71,12 +71,12 @@ body{
 {% block content %}
 <div style="position:relative; width:100%; margin:0 auto;" id="postman">
 <h1 id="sendMessageHeader">Send Message</h1>
-<form class="writeMessageForm" action="{% if next_url %}?next={% url 'postman:messagesent' %}{% endif %}" method="post">{% csrf_token %}
+<form class="writeMessageForm"  method="post">{% csrf_token %}
 <table style= "margin-bottom:1rem;">
 {% block pm_write_recipient %}{% endblock %}
 {{ form.as_p }}
 </table>
-<button class="overlayButton" type="submit">{% trans "Send" %}</button>
+<button class="overlayButton" type="submit" onClick="closeOverlay()" >{% trans "Send" %}</button>
 </form>
 <button class="overlayButton" type="submit" onClick="closeOverlay()" >Close</button>
 </div>

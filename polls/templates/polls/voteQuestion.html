@@ -270,7 +270,7 @@
 							
 							if(typeof form_errors === 'undefined'){
 								{% if user.extendeduser.credits > 10 %}
-									if(quebet){
+									if(quebet === "1"){
 										openOverlay("#overlay-inAbox5");
 										$("#betAmount")[0].value = "";
 										/* close overlay call */
@@ -289,6 +289,10 @@
 											}
 										});
 										/* close overlay call end */
+									}
+									else{
+										$("#"+voteSubmitId).removeAttr("disabled");
+										$(elemid).unbind('submit').submit();
 									}
 								{% else %}
 								 	$(elemid).unbind('submit').submit();

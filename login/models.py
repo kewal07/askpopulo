@@ -82,10 +82,10 @@ class ExtendedUser(models.Model):
 		# if self.user.socialaccount_set.all():
 		if self.imageUrl:
 			img_url = self.imageUrl.path
-			print(img_url)
+			#print(img_url)
 			# img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
 			# print(img_url)
-			if img_url.find("https://") != -1:
+			if img_url.find("https:/") != -1:
 				img_url = self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/","")
 				return r"https://"+self.imageUrl.path.replace("/home/ubuntu/askpopulo/media/https:/","")
 			elif img_url.find("http:/") != -1:
