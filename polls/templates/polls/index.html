@@ -306,7 +306,7 @@
 				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
 				var quebet = $(this)[0].id.replace('vote','').split("---")[2];
 				var betValue = 0;
-				// console.log(quebet);
+				// console.log(quebet === "True");
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
 				$(elemid).bind('submit', function()
 				{
@@ -324,7 +324,7 @@
 							
 							if(typeof form_errors === 'undefined'){
 								{% if user.extendeduser.credits > 10 %}
-									if(quebet === "1"){
+									if(quebet === "True"){
 										openOverlay("#overlay-inAbox5");
 										$("#betAmount")[0].value = "";
 										/* close overlay call */
