@@ -127,9 +127,7 @@
 			               					{% elif notification.verb == "voted" %}
 												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 											{% elif notification.verb == "votedBet" %}
-												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ user.username|getName:notification.actor_user_name }}</span> </a>voted on 
-												<a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a> 
-												{% endif %} putting {{ notification.points }} credits </span>
+												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a> putting {{ notification.points }} credits {% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 											{% elif notification.verb == "credits" %}
 												<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>
 			               					{% else %}
