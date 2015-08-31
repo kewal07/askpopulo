@@ -101,13 +101,17 @@ ul.profileStatsUl li{
 ul.profileDetailUl{
 	padding-top: 1rem;
 }
+.liDetail{
+	display: flex;
+}
 p.main{
 	font-size:1rem;
 	position: relative;
+	margin: 0.8rem 0.8rem;
 }
 p.desc{
     font-size: 0.85rem;
-    margin: -0.5rem 1rem 1rem 4rem;
+    margin: 0.5rem 1rem 1rem 4rem;
 }
 p.pollsDesc{
     font-size: 0.85rem;
@@ -119,9 +123,9 @@ p.pollsDesc{
 	border-radius: 50%;
 }
 .activity_text{
-	position: absolute;
+	/*position: absolute;
     left: 4rem;
-    top: 1rem;
+    top: 1rem;*/
 }
 .activity_url{
 	color:orange;
