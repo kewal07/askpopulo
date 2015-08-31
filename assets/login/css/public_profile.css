@@ -228,6 +228,9 @@ ul.followers p{
     	border:2px dashed;
     	border-radius: 25px;
 	}
+	p.desc{
+	    margin: 0.5rem 1rem 1rem 4rem;
+	}
 	.iCaption{
 		position: absolute;
 		bottom: -1.5rem;
