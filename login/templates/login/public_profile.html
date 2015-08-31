@@ -82,6 +82,12 @@
 											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} <a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "follow" or activity.verb == "followed" %}
 											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{  user.username|getName:activity.actor_user_name }}</span> </a>followed <a href="{{ activity.target_user_url }}"><span class="activity_url"> {{ user.username|getName:activity.target_user_name }}</span></a> <span id="activity{{ activity.id }}"> </span></span>
+										{% elif activity.verb == "votedBet" %}
+											<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
+											a private/anonymous poll 
+											{% else %}
+											<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+											{% endif %} putting {{ activity.points }} credits<span id="activity{{ activity.id }}"> </span></span>
 										{% elif activity.verb == "credits" %}
 										{% else %}
 											{{ activity.verb }}
