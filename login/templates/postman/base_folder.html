@@ -32,7 +32,7 @@ in the INSTALLED_APPS setting.
 </div>{% endblock pm_by_modes %}
 <form action="{% block pm_form_action %}{% endblock %}" method="post">{% csrf_token %}
 {% block pm_form_buttons %}<span id="pm_buttons">
-{% block pm_delete_button %}<button type="submit" onclick="this.form.action='{% url 'postman:delete' %}'" style="display: block; padding: 0 1rem; border-radius: 25px; -webkit-border-radius: 25px; -moz-border-radius: 25px; box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; color: #fff;letter-spacing: .1rem;font-size: 1rem;cursor: pointer;margin-top: 1rem; border: 1px solid #3e9cbf;background: #3e9cbf;">{% trans "Delete" %}</button>{% endblock %}
+{% block pm_delete_button %}<button type="submit" onclick="this.form.action='{% url 'postman:delete' %}?next=https://www.askbypoll.com/messages/inbox/'" style="display: block; padding: 0 1rem; border-radius: 25px; -webkit-border-radius: 25px; -moz-border-radius: 25px; box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; -moz-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; -webkit-box-shadow: inset 0px 1px 0px #3e9cbf, 0px 5px 0px 0px #205c73, 0px 10px 5px #999; color: #fff;letter-spacing: .1rem;font-size: 1rem;cursor: pointer;margin-top: 1rem; border: 1px solid #3e9cbf;background: #3e9cbf;">{% trans "Delete" %}</button>{% endblock %}
 <!-- {% block pm_archive_button %}<button type="submit" onclick="this.form.action='{% url 'postman:archive' %}'">{% trans "Archive" %}</button>{% endblock %} -->
 {% block pm_undelete_button %}<button id="inboxDeleteButton" type="submit" onclick="this.form.action='{% url 'postman:undelete' %}'">{% trans "Undelete" %}</button>{% endblock %}
 </span>{% endblock %}
@@ -53,7 +53,7 @@ in the INSTALLED_APPS setting.
 {% block pm_recipient_cell %}   <td>{{ message.obfuscated_recipient|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %}</td>{% endblock %}
    <td>{% if message.is_new %}<strong>{% endif %}{% if message.is_replied %}<em>{% endif %}
 {% block pm_subject %}
-    <a href="{% if by_conversation and message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+    <a href="{% if by_conversation and message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}">
     {% include "postman/inc_subject_ex.html" %}
     </a>
 {% endblock %}

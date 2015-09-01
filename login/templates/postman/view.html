@@ -26,19 +26,21 @@
 </form>
 {% if reply_to_pk %}<hr />
 <h2>{% trans 'Reply' %}</h2>
-<form action="{% url 'postman:reply' reply_to_pk %}" method="post">{% csrf_token %}
+<form class="messageReplyForm" action="{% url 'postman:reply' reply_to_pk %}?next=https://www.askbypoll.com/messages/inbox/" method="post">{% csrf_token %}
 <div id="pm_reply">{{ form.body }}</div>
-<button  onClick="openInbox()" id="messageReply"  type="submit">{% trans 'Reply' %}</button>
+<button  id="messageReply" type="submit" >{% trans 'Reply' %}</button>
 </form>{% endif %}
 {% endif %}
 {% endfor %}
 </div>
 <script>
 	function openInbox() {
+	console.log($('.messageReplyForm'))
+	$('.messageReplyForm')[0].submit();
+	console.log("Called this part too");	
 	var inboxButton = parent.document.getElementById('myABPInbox');
-	console.log(inboxButton);
-	console.log("Inbox Clicked");
-	inboxButton.click();
+	setTimeout(inboxButton.click(),1500);
+	/*inboxButton.click();*/
 }
 </script>
 {% endblock %}

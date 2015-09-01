@@ -198,7 +198,8 @@ $(document).ready(function(){
 		$(".detailHeader h1").text(headerText[elemId]);
 		$(divElemId).slideToggle("slow");
 		if(divElemId === ".myABPInboxDiv"){
-			$(".myABPInboxDiv").html('<object data="https://www.askbypoll.com/messages/inbox/" style="height:25rem; width:30rem;"/>');
+			console.log("nbox Loaded for user");
+			$(".myABPInboxDiv").html('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
 		}
 		if($(window).width() < 960){
 			$(".profileStats").slideToggle("slow");

@@ -1,3 +1,4 @@
+<html>
 {% load i18n %}
 {% block extrahead %}
 <meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
@@ -82,8 +83,8 @@ body{
 </div>
 <script>
 function closeOverlay() {
+	console.log('close overlay called');
 	var overlay = parent.document.getElementsByClassName('sendMessageOverlay');
-	console.log(overlay);
 	var overlay_shade = parent.document.getElementById('overlay-shade');
 	console.log(overlay_shade);
 	$(overlay_shade).fadeOut(300);
@@ -91,3 +92,4 @@ function closeOverlay() {
 }
 </script>
 {% endblock %}
+</html>
