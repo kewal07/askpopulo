@@ -121,7 +121,7 @@
 										{% if question.expired %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 										{% else %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
 										{% endif %}
 										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 											{% if user.is_authenticated %}

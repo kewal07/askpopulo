@@ -108,7 +108,7 @@
 							{% if expired %}
 								<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.id }}---{{ question.que_slug }}" disabled="disabled"/>
 							{% else %}
-								<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.id }}---{{ question.que_slug }}---{{ question.isBet }}"/>
+								<input class="submit voteSubmit" type="submit" value={% if question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.id }}---{{ question.que_slug }}---{{ question.isBet }}"/>
 							{% endif %}
 							{% if user.is_authenticated and user.id == question.user.id or expired %}
 								{% if user.is_authenticated %}
