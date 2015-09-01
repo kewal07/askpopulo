@@ -52,10 +52,12 @@ html{
 .insideTabs{
   margin:0 auto;
   width:62%;
+  text-align: center;
 }
 .tabs li{
-    float: left;
+    /*float: left;*/
     width:33%;
+    display: inline-block;
 }
 
 .tabs label.tabsLabel{
@@ -108,6 +110,7 @@ html{
   }
 .tabs [id^="tab"]:checked ~ [id^="tabContent"] {
     display: block;
+    text-align: left;
 	/* margin: 0 5rem; */
 }
 form.profileForm{
@@ -224,7 +227,7 @@ ul.ul-easy-tabs-polls li{
 	box-shadow: inset 0px 1px 0px #3e9cbf, 0px 2px 0px 0px #205c73, 0px 2px 5px #999;
 }
 #changePassword{
-    width: 40%;
+    /*width: 40%;*/
   margin: 0 auto;
     text-align: center;
 }
@@ -293,7 +296,7 @@ li.secondChildResponsive{
   #profile{
     margin:0;
     width:100%;
-    margin-bottom:85rem;
+    margin-bottom:125rem;
   }
   .tabs{
     margin:0;
@@ -361,7 +364,7 @@ li.secondChildResponsive{
   }
   #changePassword label{
     width:100%;
-    display:block;
+    /*display:block;*/
     margin-bottom: 0.5rem;
   }
   #changePassword .submit{
