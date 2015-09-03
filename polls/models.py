@@ -26,7 +26,7 @@ class Question(models.Model):
 	que_pk = models.CharField(max_length=255)
 	question_text = models.CharField(max_length=200)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	pub_date = models.DateTimeField('Date Published', auto_now_add=True)
+	pub_date = models.DateTimeField('Date Published')
 	expiry =  models.DateTimeField(null=True,blank=True)
 	description = models.CharField(max_length=400,null=True,blank=True)
 	isAnonymous = models.BooleanField(default=0)

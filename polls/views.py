@@ -419,7 +419,7 @@ class CreatePollView(BaseViewList):
 		previousBet = True
 		errors = {}
 		question = None
-		curtime = None
+		curtime = datetime.datetime.now();
 		# print(request.POST)
 		queBetAmount = request.POST.get("betAmount")
 		if queBetAmount:
