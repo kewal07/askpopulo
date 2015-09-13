@@ -234,7 +234,7 @@ class LoggedInView(BaseViewDetail):
 		#if public_profile:
 		profilepicUrl = user.extendeduser.get_profile_pic_url()
 		if not profilepicUrl.startswith('http'):
-			profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+			profilepicUrl = r"https://askbypoll.com"+profilepicUrl
 		data = {
 			"id":user.id,
 			"username":user.username,

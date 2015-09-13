@@ -122,59 +122,60 @@ def sendExpirationNotification():
 						votes_list.append(vote_count)
 					winning_choice = max_choice
 				# print("voted people",user_id_list_vote)
-				query = "select email,first_name,auth_user.id,login_extendeduser.mailSubscriptionFlag, login_extendeduser.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where auth_user.id in ( %s )"%(','.join(str(x) for x in user_id_list_bet))
-				userToSendCur.execute(query)
-				winners_pot = 0
-				total_pot = 0
-				for row in userToSendCur:
-					# send bet mail
-					temp = list(row)
-					to_email = temp[0]
-					que_voter = temp[1]
-					que_voter_id = temp[2]
-					mailSubscriptionFlag = temp[3]
-					extendeduser_id = temp[4]
-					user_dict = user_id_choice_credit.get(que_voter_id)
-					user_dict['email'] = to_email
-					user_dict['name'] = que_voter
-					user_dict['mailSubscriptionFlag'] = mailSubscriptionFlag
-					user_dict["extendeduser_id"] = extendeduser_id;
-					if user_dict.get("choice") == winning_choice or returnBets:
-						user_dict['action'] = "won"
-						winners_pot +=  user_dict["credit"]
-					else:
-						user_dict['action'] = "lost"
-					total_pot += user_dict["credit"]
-				loosers_pot = total_pot - winners_pot
-				# print("total",total_pot)
-				# print("win",winners_pot)
-				# print("lost",loosers_pot)
-				# print(user_id_choice_credit)
-				for que_voter_id,user_dict in user_id_choice_credit.items():
-					to_email = user_dict['email']
-					que_voter = user_dict['name']
-					# print("calc mail",user_dict)
-					earned_credit = 0
-					if user_dict['action'] == 'won':
-						earned_credit = ((loosers_pot/winners_pot) * user_dict['credit'])
-					user_dict['credit'] += earned_credit
-					# print("You %s %s credits"%(user_dict['action'],user_dict['credit']))
-					if user_dict['mailSubscriptionFlag'] == 0:
-						send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,"bet",user_dict['action'],user_dict['credit'])
-					# print("exted",que_voter_id,type(que_voter_id))
-					extendeduser = ExtendedUser.objects.get(pk=user_dict['extendeduser_id'])
-					# print(extendeduser.credits)
-					activity = {'actor': que_voter, 'verb': 'credits', 'object': poll, 'question_text':que_text, 'question_desc':que_desc, 'question_url':'/polls/'+str(poll)+'/'+que_slug, 'actor_user_name':que_voter,'actor_user_pic':extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(que_voter_id)+"/"+extendeduser.user_slug, "points":user_dict['credit'], "action":user_dict['action']+"Bet","visible_public":True}
-					# print(activity)
-					feed = client.feed('notification', que_voter_id)
-					feed.add_activity(activity)
-					if earned_credit > 0:
-						# update user credits table
-						new_credits = extendeduser.credits + user_dict['credit']
-						updateQuery = "UPDATE login_extendeduser SET credits=%s WHERE id=%s"%(new_credits,user_dict['extendeduser_id'])
-						insertCursor.execute(updateQuery)
-						updateQuery = "UPDATE polls_vote SET earnCredit=%s WHERE id=%s"%(earned_credit,user_dict['vote_id'])
-						insertCursor.execute(updateQuery)
+				if user_id_list_bet:
+					query = "select email,first_name,auth_user.id,login_extendeduser.mailSubscriptionFlag, login_extendeduser.id from auth_user inner join login_extendeduser on auth_user.id = login_extendeduser.user_id where auth_user.id in ( %s )"%(','.join(str(x) for x in user_id_list_bet))
+					userToSendCur.execute(query)
+					winners_pot = 0
+					total_pot = 0
+					for row in userToSendCur:
+						# send bet mail
+						temp = list(row)
+						to_email = temp[0]
+						que_voter = temp[1]
+						que_voter_id = temp[2]
+						mailSubscriptionFlag = temp[3]
+						extendeduser_id = temp[4]
+						user_dict = user_id_choice_credit.get(que_voter_id)
+						user_dict['email'] = to_email
+						user_dict['name'] = que_voter
+						user_dict['mailSubscriptionFlag'] = mailSubscriptionFlag
+						user_dict["extendeduser_id"] = extendeduser_id;
+						if user_dict.get("choice") == winning_choice or returnBets:
+							user_dict['action'] = "won"
+							winners_pot +=  user_dict["credit"]
+						else:
+							user_dict['action'] = "lost"
+						total_pot += user_dict["credit"]
+					loosers_pot = total_pot - winners_pot
+					# print("total",total_pot)
+					# print("win",winners_pot)
+					# print("lost",loosers_pot)
+					# print(user_id_choice_credit)
+					for que_voter_id,user_dict in user_id_choice_credit.items():
+						to_email = user_dict['email']
+						que_voter = user_dict['name']
+						# print("calc mail",user_dict)
+						earned_credit = 0
+						if user_dict['action'] == 'won':
+							earned_credit = ((loosers_pot/winners_pot) * user_dict['credit'])
+						user_dict['credit'] += earned_credit
+						# print("You %s %s credits"%(user_dict['action'],user_dict['credit']))
+						if user_dict['mailSubscriptionFlag'] == 0:
+							send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,"bet",user_dict['action'],user_dict['credit'])
+						# print("exted",que_voter_id,type(que_voter_id))
+						extendeduser = ExtendedUser.objects.get(pk=user_dict['extendeduser_id'])
+						# print(extendeduser.credits)
+						activity = {'actor': que_voter, 'verb': 'credits', 'object': poll, 'question_text':que_text, 'question_desc':que_desc, 'question_url':'/polls/'+str(poll)+'/'+que_slug, 'actor_user_name':que_voter,'actor_user_pic':extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(que_voter_id)+"/"+extendeduser.user_slug, "points":user_dict['credit'], "action":user_dict['action']+"Bet","visible_public":True}
+						# print(activity)
+						feed = client.feed('notification', que_voter_id)
+						feed.add_activity(activity)
+						if earned_credit > 0:
+							# update user credits table
+							new_credits = extendeduser.credits + user_dict['credit']
+							updateQuery = "UPDATE login_extendeduser SET credits=%s WHERE id=%s"%(new_credits,user_dict['extendeduser_id'])
+							insertCursor.execute(updateQuery)
+							updateQuery = "UPDATE polls_vote SET earnCredit=%s WHERE id=%s"%(earned_credit,user_dict['vote_id'])
+							insertCursor.execute(updateQuery)
 				for row in userBetVotedCur:
 					temp = list(row)
 					user_id_list_vote.append(temp[0])
