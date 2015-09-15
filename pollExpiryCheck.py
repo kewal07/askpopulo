@@ -225,8 +225,6 @@ def sendExpirationNotification():
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		err = ' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj)
-		print(err)
-		print(traceback.format_exc())
 
 def send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,mail_type,action="",betAmount=0):
 	msg = None
