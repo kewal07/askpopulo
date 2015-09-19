@@ -35,6 +35,11 @@ client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
 
+class TeamView(BaseViewList):
+	template_name = 'polls/team.html'
+	def get_queryset(self):
+		return {}
+
 class IndexView(BaseViewList):
 	context_object_name = 'data'
 	paginate_by = 50
