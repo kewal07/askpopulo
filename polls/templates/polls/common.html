@@ -166,9 +166,50 @@
 				</div>
 				{% endif %}
 			</section>
+			{% if user.is_authenticated %}
+				<div style="display:none" class="user_not_credit_message">
+					<ul class="user_not_credit_message_ul">
+						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i></li>
+						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i></li>
+						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i></li>
+					</ul>
+				</div>
+				<script type="text/javascript">
+				$(document).ready(function(){
+
+					$(".user_not_credit_message_li").click(function(){
+						console.log("clicked li");
+						var elemId = $(this)[0].id;
+						console.log(elemId);
+						window.location.href = "{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}";
+						// var profile_page = window.open("{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}","_top");
+						// profile_page.opener.document.getElementById("notifications").click();
+						// console.log(profile_page);
+						window.onload = function(){
+							console.log("loaded");
+						    console.log(profile_page.document.getElementById("notifications"))
+						    // profile_page.document.write("Hello")
+						    window.document.getElementById("notifications").click();
+						};
+						if(elemId === "common_notifications"){
+							console.log("open notifications");
+							// $("#notifications").click();
+						}else if(elemId === "common_credits"){
+							console.log("open credits");
+							// $("#myCredits").click();
+						}else if(elemId === "common_inbox"){
+							console.log("open inbox");
+							// $("#myABPInbox").click();
+						}
+					});
+					
+				});
+				</script>
+			{% endif %}
 			{% if signup_part_form or data.signup_part_form %}
 			<script type="text/javascript">
 			$(document).ready(function(){
+
 				openOverlay("#overlay-inAbox3");
 				$('.submit').bind('click', function()
 				{
@@ -231,6 +272,7 @@
 							<li><a href="/privacypolicy" target="_blank">Privacy</a></li>
 							<li><a href="{% url 'faq' %}" target="_blank">FAQ</a></li>
 							<li><a href="mailto:support@askbypoll.com?Subject=Hello" target="_top">Write To Us</a></li>
+							<li><a href="{% url 'polls:aboutus' %}" target="_top">About Us</a></li>
 						</ul>
 					</div>
 				</div> 

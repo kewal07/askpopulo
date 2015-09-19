@@ -634,6 +634,20 @@ form.signupContentPartForm input{
 	color:orange;
 	cursor:pointer;
 }
+.user_not_credit_message{
+	position: fixed;
+    top: 6rem;
+    right: 3rem;
+    color: black;
+}
+.user_not_credit_message_li{
+	font-size: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+    z-index: 1010;
+}
 
 @media only screen and (max-width: 960px){
 	#header{
@@ -819,3 +833,4 @@ form.signupContentPartForm input{
 		height: 75px;
 	}
 }
+

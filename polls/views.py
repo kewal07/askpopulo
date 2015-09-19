@@ -35,6 +35,11 @@ client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
 
+class TeamView(BaseViewList):
+	template_name = 'polls/team.html'
+	def get_queryset(self):
+		return {}
+
 class IndexView(BaseViewList):
 	context_object_name = 'data'
 	paginate_by = 50
@@ -901,7 +906,7 @@ class QuestionUpvoteView(BaseViewList):
 				questionVoted.user.extendeduser.credits -= diff * 10
 				user = questionVoted.user
 				question = questionVoted
-				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"dowvote"}
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"downvote"}
 			questionVoted.save()
 			questionVoted.user.extendeduser.save()
 			feed = client.feed('notification', questionVoted.user.id)
