@@ -33,7 +33,7 @@ def sendExpirationNotification():
 		expiredPollsCur.execute("SELECT id FROM polls_question WHERE expiry is not null and NOW() > expiry")
 
 		betPollsCur = conn.cursor()
-		betPollsCur.execute("SELECT id,winning_choice FROM polls_question WHERE isBet=1 and privatePoll=0 and expiry is not null and NOW() > expiry")
+		betPollsCur.execute("SELECT id,winning_choice FROM polls_question WHERE isBet=1 and privatePoll=0 and expiry is not null and NOW() > expiry and id not in (select pollid from pollexpiry_mail)")
 
 		userToSendCur = conn.cursor()
 		questionSlugCur = conn.cursor()
