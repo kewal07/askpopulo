@@ -1,3 +1,4 @@
+<html>
 {% load i18n %}
 {% block extrahead %}
 <meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
@@ -71,19 +72,19 @@ body{
 {% block content %}
 <div style="position:relative; width:100%; margin:0 auto;" id="postman">
 <h1 id="sendMessageHeader">Send Message</h1>
-<form class="writeMessageForm" action="{% if next_url %}?next={% url 'postman:messagesent' %}{% endif %}" method="post">{% csrf_token %}
+<form class="writeMessageForm"  method="post">{% csrf_token %}
 <table style= "margin-bottom:1rem;">
 {% block pm_write_recipient %}{% endblock %}
 {{ form.as_p }}
 </table>
-<button class="overlayButton" type="submit">{% trans "Send" %}</button>
+<button class="overlayButton" type="submit" onClick="closeOverlay()" >{% trans "Send" %}</button>
 </form>
 <button class="overlayButton" type="submit" onClick="closeOverlay()" >Close</button>
 </div>
 <script>
 function closeOverlay() {
+	console.log('close overlay called');
 	var overlay = parent.document.getElementsByClassName('sendMessageOverlay');
-	console.log(overlay);
 	var overlay_shade = parent.document.getElementById('overlay-shade');
 	console.log(overlay_shade);
 	$(overlay_shade).fadeOut(300);
@@ -91,3 +92,4 @@ function closeOverlay() {
 }
 </script>
 {% endblock %}
+</html>

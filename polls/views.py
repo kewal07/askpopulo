@@ -1,4 +1,5 @@
 import os
+import sys
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
@@ -28,10 +29,16 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
+from django.utils import timezone
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
 # Create your views here.
+
+class TeamView(BaseViewList):
+	template_name = 'polls/team.html'
+	def get_queryset(self):
+		return {}
 
 class IndexView(BaseViewList):
 	context_object_name = 'data'
@@ -217,7 +224,7 @@ class VoteView(BaseViewDetail):
 				context['signup_part_form'] = MySignupPartForm(userFormData)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
-				profilepicUrl = r"http://askbypoll.com"+profilepicUrl
+				profilepicUrl = r"https://www.askbypoll.com"+profilepicUrl
 			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
 			data = {
 				"id":user.id,
@@ -417,6 +424,7 @@ class CreatePollView(BaseViewList):
 		previousBet = True
 		errors = {}
 		question = None
+		curtime = datetime.datetime.now();
 		# print(request.POST)
 		queBetAmount = request.POST.get("betAmount")
 		if queBetAmount:
@@ -424,7 +432,6 @@ class CreatePollView(BaseViewList):
 		queBetChoiceText = request.POST.get("betChoice")
 		queBetChoice = None
 		# print("BET AMOUNT",queBetAmount)
-		curtime = datetime.datetime.now();
 		if request.GET.get("ajax"):
 			ajax = True
 		if request.GET.get("qid"):
@@ -441,6 +448,7 @@ class CreatePollView(BaseViewList):
 			if edit:
 				question = Question.objects.get(pk=request.GET.get("qid"))
 				if request.POST.get("oldExpiryTime") != "clean":
+					curtime = timezone.now();
 					qExpiry = question.expiry
 				previousBet = question.isBet
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
@@ -458,12 +466,13 @@ class CreatePollView(BaseViewList):
 				# qExpiry = request.POST.get('qExpiry')
 				print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
+					curtime = datetime.datetime.now();
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
 					if qExpiry < curtime:
 						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
-			print(qExpiry)
+			# print(qExpiry)
 			# if not qExpiry:
 			# 	qExpiry = None
 			choice1 = ""
@@ -553,7 +562,7 @@ class CreatePollView(BaseViewList):
 				betError += "Prediction Poll cannot be private.<br>"
 			if bet and not qExpiry:
 				betError += "Prediction Poll should have expiry.<br>"
-			if bet and qExpiry and (qExpiry - curtime).days > 7:
+			if bet and qExpiry and (qExpiry > curtime + datetime.timedelta(days=7)):
 				betError += "Prediction Poll expiry should not be more that 7 days.<br>"
 			# if qExpiry:
 			# 	print((qExpiry - curtime).days, curtime, qExpiry)
@@ -597,8 +606,8 @@ class CreatePollView(BaseViewList):
 			else:
 				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet)
 			question.save()
-			sub = Subscriber(user=user,question=question)
-			sub.save()
+			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
+			# sub.save()
 			if edit:
 				for choice in question.choice_set.all():
 					if choice.choice_image:
@@ -626,17 +635,17 @@ class CreatePollView(BaseViewList):
 			if choice2 or choice2Image:
 				choice = Choice(question=question,choice_text=choice2,choice_image=choice2Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice2":
 					queBetChoice = choice
 			if choice3 or choice3Image:
 				choice = Choice(question=question,choice_text=choice3,choice_image=choice3Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice3":
 					queBetChoice = choice
 			if choice4 or choice4Image:
 				choice = Choice(question=question,choice_text=choice4,choice_image=choice4Image)
 				choice.save()
-				if queBetAmount and queBetChoiceText == "choice1":
+				if queBetAmount and queBetChoiceText == "choice4":
 					queBetChoice = choice
 		if queBetChoice:
 			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)
@@ -897,7 +906,7 @@ class QuestionUpvoteView(BaseViewList):
 				questionVoted.user.extendeduser.credits -= diff * 10
 				user = questionVoted.user
 				question = questionVoted
-				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"dowvote"}
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"downvote"}
 			questionVoted.save()
 			questionVoted.user.extendeduser.save()
 			feed = client.feed('notification', questionVoted.user.id)

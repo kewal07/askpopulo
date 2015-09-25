@@ -90,7 +90,7 @@
 										<a class="que_desc_cat_span catOnIndex" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
 									{% endfor %}
 								</p>
-								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}">
+								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}" >
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
@@ -121,7 +121,7 @@
 										{% if question.expired %}
 											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 										{% else %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Vote" id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
+											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
 										{% endif %}
 										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
 											{% if user.is_authenticated %}
@@ -308,7 +308,7 @@
 				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
 				var quebet = $(this)[0].id.replace('vote','').split("---")[2];
 				var betValue = 0;
-				// console.log(quebet);
+				// console.log(quebet === "True");
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
 				$(elemid).bind('submit', function()
 				{
@@ -326,7 +326,7 @@
 							
 							if(typeof form_errors === 'undefined'){
 								{% if user.extendeduser.credits > 10 %}
-									if(quebet){
+									if(quebet === "True"){
 										openOverlay("#overlay-inAbox5");
 										$("#betAmount")[0].value = "";
 										/* close overlay call */
@@ -345,6 +345,10 @@
 											}
 										});
 										/* close overlay call end */
+									}
+									else{
+										$("#"+voteSubmitId).removeAttr("disabled");
+										$(elemid).unbind('submit').submit();
 									}
 								{% else %}
 								 	$(elemid).unbind('submit').submit();

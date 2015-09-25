@@ -7,6 +7,15 @@
 		<title>A Social Info Polling Platform</title>
 		<meta itemprop="name" content="AskByPoll">
 		<meta itemprop="description" content="A Socio-Info-Polling platform providing users an interactive social tool to gather the public opinion on any question they have in a fun filled way.">
+		<meta name="keywords" content="Polling,Poll,Health,Vote,Ask,Question,Opinion,Best,Worst">
+		<meta name="copyright"content="AskByPoll">
+		<meta name="summary" content="AskByPoll is a social polling platform whose intent is to provide a meaningful opinion on any question a person might have. We make Polling fun & Informative, Gathering Public Opinion Easy.">
+		<meta name="Classification" content="Social">
+		<meta name="author" content="AskByPoll, support@askbypoll.com">
+		<meta name="coverage" content="Worldwide">
+		<meta name="distribution" content="Global">
+		<meta name="rating" content="General">
+		<meta name="revisit-after" content="1 days">
 		<meta itemprop="image" content="https://{{ request.META.HTTP_HOST }}/static/pollsLogo.png">
 		<meta charset="UTF-8" name="viewport" content="width=device-width, intial-scale=1.0">
 		<meta property="og:type" content="article"/>
@@ -126,6 +135,8 @@
 			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>asked <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 			               					{% elif notification.verb == "voted" %}
 												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
+											{% elif notification.verb == "votedBet" %}
+												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a> putting {{ notification.points }} credits {% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
 											{% elif notification.verb == "credits" %}
 												<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>
 			               					{% else %}
@@ -157,7 +168,7 @@
 				{% if user.is_authenticated %}
 				<div id="overlay-inAbox5" class="overlay">
 					<div class="wrapper">
-						<p class="overlaytext">Please Enter a value in the Box below if you would like to place a bet!! You can enter numbers between 10 and {{ user.extendeduser.credits }}</p>
+						<p class="overlaytext">Please enter the number of pCoins you would want to put at stake. You can enter pCoins between 10 and {{ user.extendeduser.credits }}</p>
 						<p><input type="text" onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="betAmount" id="betAmount" placeholder=">10 and <{{ user.extendeduser.credits }}" /></p>
 						<button id = "okay4" class="push_button">Okay</button>
 						<button id = "cancel4" class="push_button">Cancel</button>
@@ -165,9 +176,50 @@
 				</div>
 				{% endif %}
 			</section>
+			{% if user.is_authenticated %}
+				<div style="display:none" class="user_not_credit_message">
+					<ul class="user_not_credit_message_ul">
+						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i></li>
+						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i></li>
+						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i></li>
+					</ul>
+				</div>
+				<script type="text/javascript">
+				$(document).ready(function(){
+
+					$(".user_not_credit_message_li").click(function(){
+						console.log("clicked li");
+						var elemId = $(this)[0].id;
+						console.log(elemId);
+						window.location.href = "{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}";
+						// var profile_page = window.open("{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}","_top");
+						// profile_page.opener.document.getElementById("notifications").click();
+						// console.log(profile_page);
+						window.onload = function(){
+							console.log("loaded");
+						    console.log(profile_page.document.getElementById("notifications"))
+						    // profile_page.document.write("Hello")
+						    window.document.getElementById("notifications").click();
+						};
+						if(elemId === "common_notifications"){
+							console.log("open notifications");
+							// $("#notifications").click();
+						}else if(elemId === "common_credits"){
+							console.log("open credits");
+							// $("#myCredits").click();
+						}else if(elemId === "common_inbox"){
+							console.log("open inbox");
+							// $("#myABPInbox").click();
+						}
+					});
+					
+				});
+				</script>
+			{% endif %}
 			{% if signup_part_form or data.signup_part_form %}
 			<script type="text/javascript">
 			$(document).ready(function(){
+
 				openOverlay("#overlay-inAbox3");
 				$('.submit').bind('click', function()
 				{
@@ -198,7 +250,8 @@
 			{% endif %}
 			<div id="overlay-inAbox3" class="overlay">
 				<div class="wrapper">
-					<p class="overlaytext">Please complete your profile</p>
+					<p class="overlaytext">Please complete your profile. You need to do this only once.</p>
+					<p>Your data will be private & will never be misused.</p>
 					<form class="signupContentPartForm" id="part_signup_form" method="post" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
 					  {% csrf_token %}
 					  {{ signup_part_form.as_p }}
@@ -223,16 +276,14 @@
 					</div>
 					<div class="menuF">
 						<ul class="menuF-nav">
-							<li class="first"><a href="#">Facebook</a></li>
-							<li class="first"><a href="#">Twitter</a></li>
-							<li class="first"><a href="#">Google</a></li><br>
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
 							<li><a href="{% url 'polls:featured' %}">Featured</a></li>
 							<li><a href="/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a>
 							<li><a href="/privacypolicy" target="_blank">Privacy</a></li>
-							<li><a class="helpChardin" href="#">Help</a></li>
+							<li><a href="{% url 'faq' %}" target="_blank">FAQ</a></li>
 							<li><a href="mailto:support@askbypoll.com?Subject=Hello" target="_top">Write To Us</a></li>
+							<li><a href="{% url 'polls:aboutus' %}" target="_top">About Us</a></li>
 						</ul>
 					</div>
 				</div> 
@@ -340,6 +391,8 @@
 		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>asked <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
 		               					else if( activity['verb'] === "voted" )
 		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
+		               					else if( activity['verb'] === "votedBet" )
+		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a> putting '+activity['points']+' credits </span>'
 		               					else if(activity['verb'] === "credits"){
 		               						element += '<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>'
 		               					}
