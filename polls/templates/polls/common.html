@@ -134,6 +134,7 @@
 		               					</li>
 		               				{% endfor %}
                     				<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+                    				<li><a href="{% url 'login:adminDashboard' user.id user.extendeduser.user_slug %}">Dashboard</a></li>
 									<li><a href="{% url 'login:logout' %}">Log Out</a></li>
 								</ul>
 							</div>

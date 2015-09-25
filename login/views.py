@@ -25,7 +25,8 @@ from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
 from firebase_token_generator import create_token
-
+from rolepermissions.verifications import has_permission
+from askpopulo.roles import PageAdmin
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -230,7 +231,6 @@ class LoggedInView(BaseViewDetail):
 			notification_activities.extend(act['activities'])
 		context['notification_activities'] = notification_activities
 		ssoData = {}
-
 		#if public_profile:
 		profilepicUrl = user.extendeduser.get_profile_pic_url()
 		if not profilepicUrl.startswith('http'):
@@ -263,26 +263,15 @@ class LoggedInView(BaseViewDetail):
 		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc','following_user_img', 'followed_username', 'followed_user_img', 'actor_user_name', 'actor_user_url', 'actor_user_pic', 'target_user_name', 'target_user_pic', 'target_user_url'])
 		feed = feed_manager.get_user_feed(user.id)
 		activities = feed.get(limit=25)['results']
-		# activities = enricher.enrich_activities(activities)
 		context["activities"] = activities
-		# print(dir(feed_manager))
 		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
 		feed_activities = flat_feed.get(limit=25)['results']
-		# print(feed_activities)
-		# aggregated_feed = feed_manager.get_news_feeds(user.id)['aggregated'] 
-		# feed_activities = aggregated_feed.get(limit=25)['results']
-		# print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",feed_activities)
 		context['flat_feed_activities'] = feed_activities
-		# for act in activities:
-		# 	print("____________________",act.activity_data)
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
-		# print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
-		# print(followers)
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
-		# print(following)
 		context["followers"] = followers
 		context["following"] = following
 		connections = []
@@ -292,10 +281,6 @@ class LoggedInView(BaseViewDetail):
 		context["credits"] = user.extendeduser.credits
 		return context
 		
-# class DetailView(generic.DetailView):
-	# template_name = 'polls/index.html'
-
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/')
@@ -350,3 +335,24 @@ class MarkFeedSeen(BaseViewDetail):
 		feed = feed_manager.get_notification_feed(request.user.id)
 		activities = feed.get(limit=25, mark_seen='all')['results']
 		return HttpResponse(json.dumps({}), content_type='application/json')
+
+class AdminDashboard(BaseViewList):
+	print("OK")
+	template_name = 'login/company_admin.html'
+	model = User
+	context_object_name = 'data'
+	
+	def get_queryset(self):
+	 	dashboard = []
+	 	data = {}
+	 	user = self.request.user
+	 	print(user)
+	 	polls_count = Question.objects.filter(user_id = user.id).count()
+	 	votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
+	 	print(type(polls_count))
+	 	print(type(votes_count))
+	 	data['polls_count'] = polls_count
+	 	data['votes_count'] = votes_count
+	 	dashboard.append(data)
+	 	print(dashboard)
+	 	return dashboard

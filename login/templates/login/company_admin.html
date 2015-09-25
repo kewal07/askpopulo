@@ -1,0 +1,47 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
+{% endblock %}
+{% block extra_js %}
+	<script src="{% static 'login/js/Chart.js' %}" ></script>
+	<script type="text/javascript" src="{% static 'login/js/company_admin.js' %}"></script>
+{% endblock %}
+{% block content %}
+	<section id="admin-dashboard" class="clearfix">
+		<div id="dashboard-menu" class="clearfix">
+			<ul class="dashboard-menu-items clearfix">
+				<li>Dashboard</li>
+				<li>Polls</li>
+				<li>Followers</li>
+				<li>Activity</li>
+				<li>Analytics</li>
+				<li>Export</li>
+				<li>Billing</li>
+			</ul>
+		</div>
+		<div id="dashboard-content" class="clearfix">
+			<div class="dashboard-header">
+				<p>Dashboard</p>
+			</div>
+			<div class="dashboard-stats">
+				<ul class="dashboard-stats-ul">
+					<li>121 Polls <span class="see-more-details">Details</span></li>
+					<li>1345 Followers <span class="see-more-details">Details</span></li>
+					<li>1287 Votes <span class="see-more-details">Details</span></li>
+				</ul>
+				<ul class="dashboard-stats-ul">
+					<li class="first"><canvas id="votes-chart"></canvas></li>
+					<li class="timed-polls">Timed Polls</li>
+				</ul>
+				<ul class="dashboard-recent">
+					<li>Recent Activity</li>
+					<li>You created "What should we do to serve you better" poll 4 hours ago</li>
+					<li>You purchased 3000 pCoins from pStore</li>
+					<li>You created "What should we do to serve you better" poll 4 hours ago</li>
+					<li>You purchased 3000 pCoins from pStore</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+{% endblock %}

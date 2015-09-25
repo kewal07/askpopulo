@@ -44,15 +44,15 @@
 								<div class="userImage">
 									{% if question.question.user.extendeduser %}
 										{% if question.question.isAnonymous %}
-											<img src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
+											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
 										{% else %}
-											<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
-												<img src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
+											<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
+												<img class ="userIndexImage" src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
 											</a>
 										{% endif %}
 									{% else %}
-										<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
-											<img src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
+										<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
+											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
 										</a>
 									{% endif %}
 								</div>
@@ -73,7 +73,7 @@
 								</div>
 							</div> 
 							<div class="mainPoll">
-								<p>
+								<p class="firstP">
 									<a class="qTextDesc" id="qTextDesc{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
 									<a class="descIndex" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{ question.question.description }}</a>
 									{% if user.is_authenticated %}
@@ -81,7 +81,7 @@
 									{% if question.question.voted_set.count < 1 or user.is_superuser %}
 									<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 									{% endif %}
-									<a href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
+									<a class="delete-icon" href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
 									{% endif %}
 									{% endif %}
 								</p>
@@ -114,7 +114,7 @@
 											</label>
 										</p>
 									{% endfor %}
-									<p>
+									<p class="last-p">
 									{% if question.user_already_voted %}
 										<a class="submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 									{% else %}
@@ -143,11 +143,13 @@
 										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> <i title="interested" class="fa fa-users"></i></li>
 										<li>{% if question.question.id in question.subscribed %}
 												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
+												<button class="btn btnMobile followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}"><i class="fa fa-rss"></i></button>
 											{% else %}
 												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom">Follow</button>
+												<button class="btn btnMobile followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom"><i class="fa fa-rss"></i></button>
 											{% endif %}
 										</li>
-										<li><i id="ban{{ question.question.id }}" title="Report Spam" class="fa fa-ban" style="color:red; cursor:pointer"></i></li>
+										<li><i id="ban{{ question.question.id }}" title="Report Spam" class="fa fa-ban" style=" cursor:pointer"></i></li>
 										<li>
 											{% if question.question.expiry and not question.expired %}
 												<!-- Time Left:<br> -->

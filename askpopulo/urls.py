@@ -4,6 +4,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns,static
 from . import settings
 
 urlpatterns = patterns('',
+	url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^user/',include('login.urls',namespace="login")),
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^accounts/', include('allauth.urls')),
