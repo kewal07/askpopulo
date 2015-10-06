@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser,Follow
+from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -25,6 +25,9 @@ from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
 from firebase_token_generator import create_token
+import os
+import sys
+from django.core.mail import send_mail
 
 
 class BaseViewList(generic.ListView):
@@ -350,3 +353,73 @@ class MarkFeedSeen(BaseViewDetail):
 		feed = feed_manager.get_notification_feed(request.user.id)
 		activities = feed.get(limit=25, mark_seen='all')['results']
 		return HttpResponse(json.dumps({}), content_type='application/json')
+
+class RedeemView(BaseViewList):
+	model = RedemptionScheme
+	template_name = 'redeem.html'
+	context_object_name = 'redemptionData'
+	def get_context_data(self, **kwargs):
+		context = super(RedeemView, self).get_context_data(**kwargs)
+		context['user'] = self.request.user
+		context['schemes'] = RedemptionScheme.objects.all()
+		return context
+	def post(self,request,*args,**kwargs):
+		try:
+			request_user = self.request.user
+			orderList = "Request from " + request_user.first_name + " " + request_user.last_name + "( " +request_user.username + " )\n"
+			availablepCoins = int(self.request.user.extendeduser.credits)
+			availableSchemes = RedemptionScheme.objects.all()
+			couponRequest = []
+			response = {}
+			print(request.POST)
+			totalOrder = 0
+			for scheme in availableSchemes:
+				orderQty = 0
+				if request.POST.get(scheme.schemeName):
+						orderQty = int(request.POST.get(scheme.schemeName))
+				if(orderQty > 0):
+					newCouponRequest = RedemptionCouponsSent(schemeName=scheme.schemeName,quantity=orderQty,to=self.request.user.email,sent=0)
+					couponRequest.append(newCouponRequest)
+					# create order list to send mail here
+					orderList += newCouponRequest.schemeName + " ::: " + str(newCouponRequest.quantity) + "\n"
+					availablepCoins -= int(orderQty * scheme.schemeCostInPCoins)
+					totalOrder += int(orderQty * scheme.schemeCostInPCoins)
+					print(orderList)
+
+			#orderList += 'send to'+request.user.email
+
+			if(totalOrder > 0):
+				if(availablepCoins < 100):
+					response['insufficientpCoins'] = 'You have insuficient pCoins. Remove some selections and try again'
+					return HttpResponse(json.dumps(response), content_type='application/json')
+				else:
+					response['validationPassed'] = 'All Coupons are valid'
+					response['remainingCredits'] = availablepCoins
+					response['successMessage'] = 'You will receive coupons in your mail box within 6 hours.'
+					currentUser = ExtendedUser.objects.filter(pk = request.user.extendeduser.id)[0]
+					currentUser.credits = availablepCoins
+					currentUser.save()
+					for req in couponRequest:
+						req.save();
+					# send Mail Here
+					# send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
+					return HttpResponse(json.dumps(response), content_type='application/json')
+			elif totalOrder <= 0:
+				response['insufficientpCoins'] = 'No schemes were selected'
+				return HttpResponse(json.dumps(response), content_type='application/json')
+			return HttpResponse(json.dumps(response), content_type='application/json')
+			# else:
+			# 	if(availablepCoins < 100):
+			# 		response['insufficientpCoins'] = 'You have insuficient pCoins. Remove some selections and try again'
+			# 		return HttpResponse(json.dumps(response), content_type='application/json')
+			# 	else:
+			# 		response['successMessage'] = 'You will receive coupons in your mail box within 6 hours.'
+			# 		currentUser = ExtendedUser.objects.filter(pk = request.user.extendeduser.id)[0]
+			# 		currentUser.credits = availablepCoins
+			# 		currentUser.save()
+			# 		send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['goyal.ankit.049@gmail.com'])
+			# 		return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)

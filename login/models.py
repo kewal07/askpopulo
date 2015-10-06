@@ -133,10 +133,17 @@ class Follow(BaseModel):
     target = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='follower_set')
 
-    # @classmethod
-    # def activity_related_models(cls):
-    #     return ['user', 'target']
+class RedemptionScheme(models.Model):
+	schemeName = models.CharField(max_length=512,blank=True,null=True)
+	schemeImageUrl = models.CharField(max_length=512,blank=True,null=True)
+	schemeDisplayName = models.CharField(max_length=512,blank=True,null=True)
+	schemeCostInRupees = models.IntegerField(default=0)
+	schemeCostInPCoins = models.IntegerField(default=0)
 
-    # @property
-    # def activity_object_attr(self):
-    #     return self
+class RedemptionCouponsSent(models.Model):
+	schemeName = models.CharField(max_length=512,blank=True,null=True)
+	quantity = models.IntegerField(default=0)
+	to = models.CharField(max_length=512,blank=True,null=True)
+	sent = models.BooleanField(default=0)
+	def __unicode__(self):
+		return self.quantity+' '+self.schemeName + 'to' + self.to

@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     #url(r'^', views.index),
-	url(r'^$',views.IndexView.as_view(),name='index'),
+	url(r'^$',login_required(views.IndexView.as_view()),name='index'),
 	url(r'^mypolls/(?P<pk>\d+)/(?P<user_name>[\w\-]+)$',login_required(views.IndexView.as_view()),name='mypolls'),
 	url(r'^category$',views.IndexView.as_view(),name='polls_category'),
 	url(r'^polls/featuredpolls$',views.IndexView.as_view(),name='featured'),

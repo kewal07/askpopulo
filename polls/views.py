@@ -794,9 +794,6 @@ def comment_mail(request):
 	# print(to_email)
 	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
 	for index,to_mail in enumerate(to_email):
-		# print(index,to_mail)
-		# print("&&&&&&&&&&&&")
-		# print(que_author[index])
 		if (not to_email in doNotSendList):
 			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
 			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name

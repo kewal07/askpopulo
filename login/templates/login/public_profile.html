@@ -38,7 +38,8 @@
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
 						{% if context_user == user %}
-							<li><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></li>
+							<li><span title="Edit Profile"><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></span></li>
+							<li><span title="Redeem"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i></a></span></li>
 						{% endif %}
 					</ul>
 				</div>
