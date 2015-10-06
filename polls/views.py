@@ -202,6 +202,8 @@ class VoteView(BaseViewDetail):
 	def get_template_names(self):
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
+		question.numViews +=1
+		question.save()
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
