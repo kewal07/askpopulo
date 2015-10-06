@@ -116,36 +116,18 @@
 					{% if user.is_authenticated %}
 							<li class="userInNav" id="notification-dropdown">
 								<img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
-								{% if notification_count == 0 %}
-									<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }}</span>
-	                    		{% else %}
-	                    			<span style="color:red;" id="notification_count_span">{{ notification_count }}</span>
-	                    		{% endif %}
                     		</li>
 					{% endif %}
 						</ul>
 					{% if user.is_authenticated %}
 							<div class="dropDownBox">
 								<ul id="notification-container" class="dropDownUL">
-									{% for notification in notifications %}
-		               					<li class="userInNot">
-			               					{% if notification.verb == "follow" or notification.verb == "followed" %}
-			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>followed you{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
-			               					{% elif notification.verb == "question" %}
-			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>asked <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
-			               					{% elif notification.verb == "voted" %}
-												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
-											{% elif notification.verb == "votedBet" %}
-												<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>voted on <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a> putting {{ notification.points }} credits {% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
-											{% elif notification.verb == "credits" %}
-												<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>
-			               					{% else %}
-			               						<a href="{{ notification.actor_user_url }}"><img class="imgInFeednot" src="{{ notification.actor_user_pic }}"> </a><span class="activity_textNot"><a href="{{ notification.actor_user_url }}"><span class="activity_urlNot">{{ notification.actor_user_name }}</span> </a>{{ notification.verb }} <a href="{{ notification.question_url }}"><span class="activity_urlNot">{{ notification.question_text }}</span></a>{% if notification.activity_count %} and {{ notification.activity_count }} other{{ notification.activity_count|pluralize }}{% endif %}</span>
-			               					{% endif %}
-		               					</li>
-		               				{% endfor %}
-                    				<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
-									<li><a href="{% url 'login:logout' %}">Log Out</a></li>
+		               				{% if user.extendeduser.company_id > 1 %}
+                    					<li><a href="{% url 'login:adminDashboard' user.id user.extendeduser.user_slug %}">Dashboard</a></li>
+                    				{% else %}
+										<li><a id="profile_page_url_in_common" href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
+									{% endif %}
+                    				<li><a href="{% url 'login:logout' %}">Log Out</a></li>
 								</ul>
 							</div>
 					{% endif %}
@@ -175,45 +157,22 @@
 				</div>
 				{% endif %}
 			</section>
-			{% if user.is_authenticated %}
-				<div style="display:none" class="user_not_credit_message">
+			{% if user.is_authenticated and user.extendeduser.company_id < 2 %}
+				<div class="user_not_credit_message">
 					<ul class="user_not_credit_message_ul">
-						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i></li>
-						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i></li>
+						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i>
+							{% if notification_count == 0 %}
+								<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }}</span>
+                    		{% else %}
+                    			<span style="color:red;" id="notification_count_span">{{ notification_count }}</span>
+                    		{% endif %}
+                    	</li>
+						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i>
+							<span style="color:red;" >{{ user.extendeduser.credits }}</span>
+						</li>
 						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i></li>
 					</ul>
 				</div>
-				<script type="text/javascript">
-				$(document).ready(function(){
-
-					$(".user_not_credit_message_li").click(function(){
-						console.log("clicked li");
-						var elemId = $(this)[0].id;
-						console.log(elemId);
-						window.location.href = "{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}";
-						// var profile_page = window.open("{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}","_top");
-						// profile_page.opener.document.getElementById("notifications").click();
-						// console.log(profile_page);
-						window.onload = function(){
-							console.log("loaded");
-						    console.log(profile_page.document.getElementById("notifications"))
-						    // profile_page.document.write("Hello")
-						    window.document.getElementById("notifications").click();
-						};
-						if(elemId === "common_notifications"){
-							console.log("open notifications");
-							// $("#notifications").click();
-						}else if(elemId === "common_credits"){
-							console.log("open credits");
-							// $("#myCredits").click();
-						}else if(elemId === "common_inbox"){
-							console.log("open inbox");
-							// $("#myABPInbox").click();
-						}
-					});
-					
-				});
-				</script>
 			{% endif %}
 			{% if signup_part_form or data.signup_part_form %}
 			<script type="text/javascript">
@@ -371,39 +330,39 @@
 						    // console.log(notification_count);
 						    $("#notification_count_span")[0].innerHTML = notification_count;
 						    $("#notification_count_span").show();
-						    var i = 0;
-						    var j = 0;
-						    var elem_count = 0;
-						    for(; i<data['new'].length;i++){
-						    	var activity_new_obj = data['new'][i];
-						    	// console.log(activity_new_obj['activities']);
-						    	for(; j<activity_new_obj['activities'].length;j++){
-						    		var activity = activity_new_obj['activities'][j]
-						    		if(elem_count === new_count){
-	               						break;
-	               					}
-						    		console.log(activity);
-						    		element +=	'<li class="userInNot">';
-		               					if( activity['verb'] === "follow" || activity['verb'] === "followed" )
-		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>followed you</span>'
-		               					else if( activity['verb'] === "question" )
-		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>asked <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
-		               					else if( activity['verb'] === "voted" )
-		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
-		               					else if( activity['verb'] === "votedBet" )
-		               						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a> putting '+activity['points']+' credits </span>'
-		               					else if(activity['verb'] === "credits"){
-		               						element += '<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>'
-		               					}
-		               					else
-		               						element += activity["verb"] + ' ' + activity['actor'] + ' ' + timeSince(activity['time'].substring(0, 19));
-	               					element += "</li>"
-	               					elem_count += 1;	               					
-						    	}
-						    }
-						    console.log(element);
-						    var old_not_container = $("#notification-container")[0].innerHTML;
-						    $("#notification-container")[0].innerHTML = element + old_not_container;
+						    // var i = 0;
+						    // var j = 0;
+						    // var elem_count = 0;
+						    // for(; i<data['new'].length;i++){
+						    // 	var activity_new_obj = data['new'][i];
+						    // 	// console.log(activity_new_obj['activities']);
+						    // 	for(; j<activity_new_obj['activities'].length;j++){
+						    // 		var activity = activity_new_obj['activities'][j]
+						    // 		if(elem_count === new_count){
+	         //       						break;
+	         //       					}
+						    // 		console.log(activity);
+						    // 		element +=	'<li class="userInNot">';
+		        //        					if( activity['verb'] === "follow" || activity['verb'] === "followed" )
+		        //        						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>followed you</span>'
+		        //        					else if( activity['verb'] === "question" )
+		        //        						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>asked <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
+		        //        					else if( activity['verb'] === "voted" )
+		        //        						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a></span>'
+		        //        					else if( activity['verb'] === "votedBet" )
+		        //        						element += '<a href="'+ activity['actor_user_url']+'"><img class="imgInFeednot" src="'+ activity['actor_user_pic']+'"> </a><span class="activity_textNot"><a href="'+ activity['actor_user_url']+'"><span class="activity_urlNot">'+activity['actor_user_name']+'</span> </a>voted on <a href="'+activity['question_url'] +'"><span class="activity_urlNot">'+activity['question_text']+'</span></a> putting '+activity['points']+' credits </span>'
+		        //        					else if(activity['verb'] === "credits"){
+		        //        						element += '<a href="{% url "login:loggedIn" user.id user.extendeduser.user_slug %}"><span class="activity_textNot"> New Credits. Check your profile !</span> </a>'
+		        //        					}
+		        //        					else
+		        //        						element += activity["verb"] + ' ' + activity['actor'] + ' ' + timeSince(activity['time'].substring(0, 19));
+	         //       					element += "</li>"
+	         //       					elem_count += 1;	               					
+						    // 	}
+						    // }
+						    // console.log(element);
+						    // var old_not_container = $("#notification-container")[0].innerHTML;
+						    // $("#notification-container")[0].innerHTML = element + old_not_container;
 						}
 
 						notification.subscribe(function callback(data) {

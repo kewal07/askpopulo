@@ -21,6 +21,7 @@ import hashlib
 from login.forms import MySignupForm,FollowForm
 from django.contrib.auth.models import User
 from datetime import date
+import datetime
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
@@ -28,7 +29,8 @@ from firebase_token_generator import create_token
 import os
 import sys
 from django.core.mail import send_mail
-
+from rolepermissions.verifications import has_permission
+from askpopulo.roles import PageAdmin
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -233,7 +235,6 @@ class LoggedInView(BaseViewDetail):
 			notification_activities.extend(act['activities'])
 		context['notification_activities'] = notification_activities
 		ssoData = {}
-
 		#if public_profile:
 		profilepicUrl = user.extendeduser.get_profile_pic_url()
 		if not profilepicUrl.startswith('http'):
@@ -266,26 +267,15 @@ class LoggedInView(BaseViewDetail):
 		enricher = Enrich(fields=['actor', 'object', 'question_text', 'question_url', 'question_desc','following_user_img', 'followed_username', 'followed_user_img', 'actor_user_name', 'actor_user_url', 'actor_user_pic', 'target_user_name', 'target_user_pic', 'target_user_url'])
 		feed = feed_manager.get_user_feed(user.id)
 		activities = feed.get(limit=25)['results']
-		# activities = enricher.enrich_activities(activities)
 		context["activities"] = activities
-		# print(dir(feed_manager))
 		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
 		feed_activities = flat_feed.get(limit=25)['results']
-		# print(feed_activities)
-		# aggregated_feed = feed_manager.get_news_feeds(user.id)['aggregated'] 
-		# feed_activities = aggregated_feed.get(limit=25)['results']
-		# print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",feed_activities)
 		context['flat_feed_activities'] = feed_activities
-		# for act in activities:
-		# 	print("____________________",act.activity_data)
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
 		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
 		context['token'] = token
-		# print(Follow.objects.filter(target_id=user.id),Follow.objects.filter(user_id=user.id))
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
-		# print(followers)
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
-		# print(following)
 		context["followers"] = followers
 		context["following"] = following
 		connections = []
@@ -295,10 +285,6 @@ class LoggedInView(BaseViewDetail):
 		context["credits"] = user.extendeduser.credits
 		return context
 		
-# class DetailView(generic.DetailView):
-	# template_name = 'polls/index.html'
-
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/')
@@ -384,9 +370,6 @@ class RedeemView(BaseViewList):
 					orderList += newCouponRequest.schemeName + " ::: " + str(newCouponRequest.quantity) + "\n"
 					availablepCoins -= int(orderQty * scheme.schemeCostInPCoins)
 					totalOrder += int(orderQty * scheme.schemeCostInPCoins)
-					print(orderList)
-
-			#orderList += 'send to'+request.user.email
 
 			if(totalOrder > 0):
 				if(availablepCoins < 100):
@@ -408,18 +391,77 @@ class RedeemView(BaseViewList):
 				response['insufficientpCoins'] = 'No schemes were selected'
 				return HttpResponse(json.dumps(response), content_type='application/json')
 			return HttpResponse(json.dumps(response), content_type='application/json')
-			# else:
-			# 	if(availablepCoins < 100):
-			# 		response['insufficientpCoins'] = 'You have insuficient pCoins. Remove some selections and try again'
-			# 		return HttpResponse(json.dumps(response), content_type='application/json')
-			# 	else:
-			# 		response['successMessage'] = 'You will receive coupons in your mail box within 6 hours.'
-			# 		currentUser = ExtendedUser.objects.filter(pk = request.user.extendeduser.id)[0]
-			# 		currentUser.credits = availablepCoins
-			# 		currentUser.save()
-			# 		send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['goyal.ankit.049@gmail.com'])
-			# 		return HttpResponse(json.dumps(response), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
+
+class AdminDashboard(BaseViewDetail):
+	model = User
+
+	def get_template_names(self, **kwargs):
+		template_name = 'login/company_admin.html'
+		# if self.request.is_ajax():
+		# 	template_name = ''
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+		data = super(AdminDashboard, self).get_context_data(**kwargs)
+		user = self.request.user
+		print(user)
+		polls_vote_list = []
+		polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+		total_views = 0
+		dash_graph = []
+		cur_time = datetime.datetime.now()
+		month_names = ['Jan','Feb','March','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
+		for i in range(3):
+			month_num = cur_time.month - i
+			month_name = month_names[month_num-1]
+			print(user.id,month_num)
+			# dash_polls = Question.objects.filter(user_id = user.id,pub_date__month=month_num)
+			dash_polls = [ x for x in polls if x.pub_date.month == month_num]
+			dash_polls_count = len(dash_polls)
+			dash_views = 0
+			dash_votes = 0
+			for poll in dash_polls:
+				dash_views += poll.numViews
+				dash_votes += Voted.objects.filter(question_id=poll.id).count()
+			dash_dict = {}
+			dash_dict['month_name'] = month_name
+			dash_dict['polls'] = dash_polls_count+12
+			dash_dict['views'] = dash_views+89
+			dash_dict['votes'] = dash_votes+78
+			dash_graph.append(dash_dict)
+		data['dash_graph'] = dash_graph
+		for que in polls:
+			pole_dict = {}
+			pole_dict['poll'] = que
+			pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
+			total_views += que.numViews
+			polls_vote_list.append(pole_dict)
+		polls_count = len(polls)
+		votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
+		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
+		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
+		credits = user.extendeduser.credits
+		feed = feed_manager.get_user_feed(user.id)
+		activities = feed.get(limit=25)['results']
+		data["activities"] = activities
+		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
+		feed_activities = flat_feed.get(limit=25)['results']
+		data['flat_feed_activities'] = feed_activities
+		data["followers"] = followers
+		data["following"] = following
+		followers_count = len(followers)
+		following_count = len(following)
+		data['followers_count'] = followers_count
+		data['following_count'] = following_count
+		data['credits'] = credits
+		print(type(polls_count))
+		print(type(votes_count))
+		data['polls'] = polls_vote_list
+		data['polls_count'] = polls_count
+		data['votes_count'] = votes_count
+		data['total_views'] = total_views
+		return data

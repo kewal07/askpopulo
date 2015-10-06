@@ -6,6 +6,7 @@ from . import settings
 from django.http import HttpResponseRedirect
 
 urlpatterns = patterns('',
+	url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^user/',include('login.urls',namespace="login")),
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^accounts/', include('allauth.urls')),
