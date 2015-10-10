@@ -87,7 +87,7 @@ ul.share-buttons li{
 	height: 30%;
 }
 
-#genderChart,#ageChart,#othersChart{
+#genderChart,#ageChart,#othersChart,.question_analyse_chart{
   height: 500px;
   overflow: hidden;
   width: 46%;
@@ -96,7 +96,7 @@ ul.share-buttons li{
   position:relative;
 }
 
-#locationChart{
+#locationChart,.question_analyse_chart_loc{
 	height: 500px;
 }
 
@@ -152,7 +152,7 @@ ul.share-buttons li{
 		margin:0 auto;
 	}
 	
-	#genderChart,#ageChart,#othersChart{
+	#genderChart,#ageChart,#othersChart,.question_analyse_chart{
 		height: 250px;
 		overflow: hidden;
 		width: 100%;
@@ -161,7 +161,7 @@ ul.share-buttons li{
 		position:relative;
 	}
 	
-	#locationChart{
+	#locationChart,.question_analyse_chart_loc{
 		height: 200px;
 		overflow: hidden;
 		width: 100%;
@@ -240,7 +240,7 @@ ul.share-buttons li{
 		margin:0 auto;
 	}
 	
-	#genderChart,#ageChart,#othersChart{
+	#genderChart,#ageChart,#othersChart,.question_analyse_chart{
 		height: 250px;
 		overflow: hidden;
 		width: 100%;
@@ -249,7 +249,7 @@ ul.share-buttons li{
 		position:relative;
 	}
 	
-	#locationChart{
+	#locationChart,.question_analyse_chart_loc{
 		height: 300px;
 		overflow: hidden;
 		width: 100%;

@@ -162,15 +162,15 @@
 					<ul class="user_not_credit_message_ul">
 						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i>
 							{% if notification_count == 0 %}
-								<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }}</span>
+								<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }} Alerts</span>
                     		{% else %}
-                    			<span style="color:red;" id="notification_count_span">{{ notification_count }}</span>
+                    			<span style="color:red;" id="notification_count_span">{{ notification_count }} Alerts</span>
                     		{% endif %}
                     	</li>
 						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i>
-							<span style="color:red;" >{{ user.extendeduser.credits }}</span>
+							<span style="color:red;" >{{ user.extendeduser.credits }} Credits</span>
 						</li>
-						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i></li>
+						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i> UnRead</li>
 					</ul>
 				</div>
 			{% endif %}
