@@ -31,6 +31,7 @@ import sys
 from django.core.mail import send_mail
 from rolepermissions.verifications import has_permission
 from askpopulo.roles import PageAdmin
+from postman.models import Message
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -42,6 +43,8 @@ class BaseViewList(generic.ListView):
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
+			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
+			context['messageCount'] = messageCount
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token

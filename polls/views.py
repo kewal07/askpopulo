@@ -779,7 +779,6 @@ def createExtendedUser(user):
 				extendedUser.save()
 
 def comment_mail(request):
-	# print("comment mail")
 	to_email = []
 	que_text = request.POST.get('que_text')
 	que_url = request.POST.get('que_url')
@@ -885,22 +884,13 @@ class QuestionUpvoteView(BaseViewList):
 				feed = client.feed('notification', user.id)
 				feed.add_activity(activity)	
 			upVote, created = QuestionUpvotes.objects.get_or_create(user_id=request.user.id, question_id = votedQuestionId)
-			print(upVote)
-			print(created)
-			print(questionVoted)
-			print("*******")
-			# currentCount = questionVoted.upvoteCount
 			if vote == 1:
 				questionVoted.upvoteCount += diff
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + diff)
-				# currentCount += 1
 				questionVoted.user.extendeduser.credits += diff * 10
 				user = questionVoted.user
 				question = questionVoted
 				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"upvote"}
 			else:
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - diff)
-				# currentCount -= 1
 				questionVoted.upvoteCount -= diff
 				questionVoted.user.extendeduser.credits -= diff * 10
 				user = questionVoted.user
