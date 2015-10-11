@@ -305,9 +305,9 @@ button.followButton.unfollow{
 
 .upvoteIndex{
 	position: absolute;
-    top: 40%;
-    right: 4%;
-    width: 2%;
+    top: 60%;
+    right: 0%;
+    width: 6%;
     cursor: pointer;
 }
 

@@ -5,6 +5,9 @@ html{
 body{
 	max-width: initial;
 }
+#wrapper{
+	max-width: initial;
+}
 #admin-dashboard{
 	margin: 7rem 5rem 5rem 5rem;
 	padding-bottom: 3rem;

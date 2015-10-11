@@ -1,0 +1,44 @@
+#cover-image{
+	height: 300px;
+    border: 2px solid wheat;
+    width: 98%;
+    margin: 0 auto;
+    margin-top: 5rem;
+    position: relative;
+    background-size: 100% !important;
+}
+.company-icons{
+	display: inline-block;
+    position: absolute;
+    bottom: 0;
+    right: 2rem;
+    font-size: 2rem;
+}
+#company-name{
+	position: absolute;
+    bottom: 0rem;
+    color: white;
+    left: 2rem;
+    font-size: 2rem;
+}
+.company-icons .fa{
+	margin-right: 2rem;
+    color: white;
+    background-color: #666;
+    padding: 0.5rem;
+    border-radius: 25%;
+}
+.company-logo{
+	width: 32px;
+    height: 32px;
+    display: inline-block;
+    margin-bottom: -13px;
+}
+.company-desc{
+	display:none;
+	position: absolute;
+    border: 2px solid wheat;
+    padding: 1rem;
+    background-color: whitesmoke;
+    opacity: 0.8;
+}

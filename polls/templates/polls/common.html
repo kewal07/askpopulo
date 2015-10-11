@@ -98,7 +98,11 @@
 							</li>
 							<li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li>
 					{% if user.is_authenticated %}
+						{% if user.extendeduser.company.id > 1 %}
+							<li><a class="menuanchor" href="{% url 'company_page' user.extendeduser.company.name %}" data-intro="Type in your query and we will get you your results" data-position="bottom">{{ user.extendeduser.company.name}}</a></li>
+						{% else %}
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
+						{% endif %}
 					{% else %}
 						{% if request.GET.urlencode %}
 							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}">Login</a></li>
@@ -161,16 +165,12 @@
 				<div class="user_not_credit_message">
 					<ul class="user_not_credit_message_ul">
 						<li id="common_notifications" class="user_not_credit_message_li"><i class="fa fa-bell"></i>
-							{% if notification_count == 0 %}
-								<span style="color:red;display:none;" id="notification_count_span">{{ notification_count }} Alerts</span>
-                    		{% else %}
-                    			<span style="color:red;" id="notification_count_span">{{ notification_count }} Alerts</span>
-                    		{% endif %}
+							<span style="color:red;" id="notification_count_span">{{ notification_count }}</span>
                     	</li>
 						<li id="common_credits" class="user_not_credit_message_li"><i class="fa fa-coins"></i>
-							<span style="color:red;" >{{ user.extendeduser.credits }} Credits</span>
+							<span style="color:red;" id="notification_credit_span">{{ user.extendeduser.credits }}</span>
 						</li>
-						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i> UnRead</li>
+						<li id="common_inbox" class="user_not_credit_message_li"><i class="fa fa-inbox"></i><span style="color:red;" ></span></li>
 					</ul>
 				</div>
 			{% endif %}
@@ -330,6 +330,7 @@
 						    // console.log(notification_count);
 						    $("#notification_count_span")[0].innerHTML = notification_count;
 						    $("#notification_count_span").show();
+						    $("#notification_credit_span")[0].innerHTML = {{ user.extendeduser.credits }};
 						    // var i = 0;
 						    // var j = 0;
 						    // var elem_count = 0;

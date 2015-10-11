@@ -313,22 +313,42 @@ class MyChangePasswordView(PasswordChangeView):
 
 class FollowView(BaseViewDetail):
 	def post(self,request,*args,**kwargs):
-	    '''
-	    A view to follow other users
-	    '''
-	    output = {}
-	    if request.method == "POST":
-	        form = FollowForm(user=request.user, data=request.POST)
+		'''
+		A view to follow other users
+		'''
+		output = {}
+		data_form = {}
+		data_form['target'] = request.POST.get('target')
+		data_form['next'] = request.POST.get('next')
+		data_form['company'] = request.POST.get('company',0)
+		data_form['remove'] = request.POST.get('remove')
+		follow_company = False
+		if int(data_form.get("company",0)) == 1:
+			# data_form.remove("company")
+			follow_company = True
+		data_list = []
+		data_list.append(data_form)
+		print(data_list)
+		if follow_company:
+			company_id = int(request.POST.get("target"))
+			user_id_list = [x.user_id for x in ExtendedUser.objects.filter(company_id=company_id)]
+			data_list = []
+			for userid in user_id_list:
+				data_form['target'] = userid
+				data_list.append(data_form)
+		if request.method == "POST":
+			for data in data_list:
+				form = FollowForm(user=request.user, data=data)
 
-	        if form.is_valid():
-	            follow = form.save()
-	            if follow:
-	                output['follow'] = dict(id=follow.id)
-	            if not request.is_ajax():
-	                return HttpResponseRedirect(request.POST.get("next"))
-	        else:
-	            output['errors'] = dict(form.errors.items())
-	    return HttpResponse(json.dumps(output), content_type='application/json')
+				if form.is_valid():
+					follow = form.save()
+				if follow:
+					output['follow'] = dict(id=follow.id)
+				else:
+					output['errors'] = dict(form.errors.items())
+			if not request.is_ajax():
+				return HttpResponseRedirect(request.POST.get("next"))
+			return HttpResponse(json.dumps(output), content_type='application/json')
 
 class MarkFeedSeen(BaseViewDetail):
 	def get(self,request,*args,**kwargs):

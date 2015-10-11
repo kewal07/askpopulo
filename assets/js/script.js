@@ -289,6 +289,10 @@ $(document).ready(function(){
 	$('.fa-envelope').click(function(){
 		openOverlay("#overlay-inAbox4");
 	});
+	$('body').on("click",".fa-envelope",function(){
+		console.log("open message block");
+		openOverlay("#overlay-inAbox4");
+	});
 });
 
 function getCookie(cname) {

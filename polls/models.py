@@ -39,6 +39,7 @@ class Question(models.Model):
 	winning_choice = models.IntegerField(blank=True,null=True)
 	numViews = models.IntegerField(blank=True,null=True,default=0)
 	last_accessed = models.DateTimeField(null=True,blank=True)
+	home_visible = models.BooleanField(default=1)
 	# betMail = models.BooleanField(default=0)
 
 	# @property
