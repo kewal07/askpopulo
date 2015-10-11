@@ -74,6 +74,8 @@ class BaseViewDetail(generic.DetailView):
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
+			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
+			context['messageCount'] = messageCount
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
