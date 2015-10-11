@@ -38,7 +38,8 @@
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
 						{% if context_user == user %}
-							<li><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></li>
+							<li><span title="Edit Profile"><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></span></li>
+							<li><span title="Redeem"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i></a></span></li>
 						{% endif %}
 					</ul>
 				</div>
@@ -60,7 +61,7 @@
 						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption">{{ credits }} Credits</span></li>
 						<li class="myProfileTabs" id="myConnections"><i class="fa fa-users"></i><span class="iCaption"> {{ connection_count }} Connections</span></li>
 						{% if context_user == user %}
-						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption"> Inbox</span></li>
+						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption">{{ messageCount }} Messages</span></li>
 						{% endif %}
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>

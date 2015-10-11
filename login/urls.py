@@ -17,5 +17,6 @@ urlpatterns = patterns('',
 	url(r'^changepassword$',login_required(views.MyChangePasswordView.as_view()),name="change_password"),
 	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/follow$',login_required(views.FollowView.as_view()),name='follow'),
 	url(r'^notifications_read$',login_required(views.MarkFeedSeen.as_view()),name='notifications_read'),
+	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/redemption$',login_required(views.RedeemView.as_view()),name='redeem'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

@@ -176,6 +176,10 @@ class IndexView(BaseViewList):
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
 			data = {}
+			followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
+			following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
+			data['connection'] = len(followers) + len(following)
+			print(data['connection'])
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
@@ -782,7 +786,6 @@ def createExtendedUser(user):
 				extendedUser.save()
 
 def comment_mail(request):
-	# print("comment mail")
 	to_email = []
 	que_text = request.POST.get('que_text')
 	que_url = request.POST.get('que_url')
@@ -799,9 +802,6 @@ def comment_mail(request):
 	# print(to_email)
 	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
 	for index,to_mail in enumerate(to_email):
-		# print(index,to_mail)
-		# print("&&&&&&&&&&&&")
-		# print(que_author[index])
 		if (not to_email in doNotSendList):
 			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
 			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
@@ -891,22 +891,13 @@ class QuestionUpvoteView(BaseViewList):
 				feed = client.feed('notification', user.id)
 				feed.add_activity(activity)	
 			upVote, created = QuestionUpvotes.objects.get_or_create(user_id=request.user.id, question_id = votedQuestionId)
-			print(upVote)
-			print(created)
-			print(questionVoted)
-			print("*******")
-			# currentCount = questionVoted.upvoteCount
 			if vote == 1:
 				questionVoted.upvoteCount += diff
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + diff)
-				# currentCount += 1
 				questionVoted.user.extendeduser.credits += diff * 10
 				user = questionVoted.user
 				question = questionVoted
 				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"upvote"}
 			else:
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - diff)
-				# currentCount -= 1
 				questionVoted.upvoteCount -= diff
 				questionVoted.user.extendeduser.credits -= diff * 10
 				user = questionVoted.user

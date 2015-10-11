@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser,Follow
+from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -26,8 +26,12 @@ from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
 from firebase_token_generator import create_token
+import os
+import sys
+from django.core.mail import send_mail
 from rolepermissions.verifications import has_permission
 from askpopulo.roles import PageAdmin
+from postman.models import Message
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -39,6 +43,8 @@ class BaseViewList(generic.ListView):
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
+			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
+			context['messageCount'] = messageCount
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
@@ -68,6 +74,8 @@ class BaseViewDetail(generic.DetailView):
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
 			enricher = Enrich()
+			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
+			context['messageCount'] = messageCount
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
@@ -357,6 +365,61 @@ class MarkFeedSeen(BaseViewDetail):
 		activities = feed.get(limit=25, mark_seen='all')['results']
 		return HttpResponse(json.dumps({}), content_type='application/json')
 
+class RedeemView(BaseViewList):
+	model = RedemptionScheme
+	template_name = 'redeem.html'
+	context_object_name = 'redemptionData'
+	def get_context_data(self, **kwargs):
+		context = super(RedeemView, self).get_context_data(**kwargs)
+		context['user'] = self.request.user
+		context['schemes'] = RedemptionScheme.objects.all()
+		return context
+	def post(self,request,*args,**kwargs):
+		try:
+			request_user = self.request.user
+			orderList = "Request from " + request_user.first_name + " " + request_user.last_name + "( " +request_user.username + " )\n"
+			availablepCoins = int(self.request.user.extendeduser.credits)
+			availableSchemes = RedemptionScheme.objects.all()
+			couponRequest = []
+			response = {}
+			print(request.POST)
+			totalOrder = 0
+			for scheme in availableSchemes:
+				orderQty = 0
+				if request.POST.get(scheme.schemeName):
+						orderQty = int(request.POST.get(scheme.schemeName))
+				if(orderQty > 0):
+					newCouponRequest = RedemptionCouponsSent(schemeName=scheme.schemeName,quantity=orderQty,to=self.request.user.email,sent=0)
+					couponRequest.append(newCouponRequest)
+					# create order list to send mail here
+					orderList += newCouponRequest.schemeName + " ::: " + str(newCouponRequest.quantity) + "\n"
+					availablepCoins -= int(orderQty * scheme.schemeCostInPCoins)
+					totalOrder += int(orderQty * scheme.schemeCostInPCoins)
+
+			if(totalOrder > 0):
+				if(availablepCoins < 100):
+					response['insufficientpCoins'] = 'You have insuficient pCoins. Remove some selections and try again'
+					return HttpResponse(json.dumps(response), content_type='application/json')
+				else:
+					response['validationPassed'] = 'All Coupons are valid'
+					response['remainingCredits'] = availablepCoins
+					response['successMessage'] = 'You will receive coupons in your mail box within 6 hours.'
+					currentUser = ExtendedUser.objects.filter(pk = request.user.extendeduser.id)[0]
+					currentUser.credits = availablepCoins
+					currentUser.save()
+					for req in couponRequest:
+						req.save();
+					# send Mail Here
+					# send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
+					return HttpResponse(json.dumps(response), content_type='application/json')
+			elif totalOrder <= 0:
+				response['insufficientpCoins'] = 'No schemes were selected'
+				return HttpResponse(json.dumps(response), content_type='application/json')
+			return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
 
 class AdminDashboard(BaseViewDetail):
 	model = User
@@ -427,4 +490,3 @@ class AdminDashboard(BaseViewDetail):
 		data['votes_count'] = votes_count
 		data['total_views'] = total_views
 		return data
-

@@ -288,10 +288,22 @@ span#cats{
 }
 li.secondChildResponsive{
     display: none;
-  }
+}
 #tabContentResponsive{
     display: none;
-  }
+}
+#coinCreditDetails{
+    max-width:100%;
+}
+.pCoinstatus{
+    width:50%;
+    max-width:50%;
+    float:right;
+}
+.qtyText{
+    width:3rem;
+    height:2rem;
+}
 @media only screen and (max-width: 960px){
   #profile{
     margin:0;

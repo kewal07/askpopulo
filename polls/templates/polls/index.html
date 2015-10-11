@@ -66,6 +66,13 @@
 											</a>
 										{% endif %}
 									</p>
+									<p>
+										{% if not question.question.isAnonymous %}
+											{{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i>
+											&nbsp
+											{{ question.connection }} <i class="fa fa-users"></i>
+										{% endif %}
+									</p>
 									<p class="askedOnInfo">
 										Asked on:<br>
 										<span id="{{ question.question.id }}pubdate"></span><br>

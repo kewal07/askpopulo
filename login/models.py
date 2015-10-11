@@ -209,3 +209,18 @@ class ExtendedUser(models.Model):
 			# print(today.year - born.year)
 			return today.year - born.year
 
+
+class RedemptionScheme(models.Model):
+	schemeName = models.CharField(max_length=512,blank=True,null=True)
+	schemeImageUrl = models.CharField(max_length=512,blank=True,null=True)
+	schemeDisplayName = models.CharField(max_length=512,blank=True,null=True)
+	schemeCostInRupees = models.IntegerField(default=0)
+	schemeCostInPCoins = models.IntegerField(default=0)
+
+class RedemptionCouponsSent(models.Model):
+	schemeName = models.CharField(max_length=512,blank=True,null=True)
+	quantity = models.IntegerField(default=0)
+	to = models.CharField(max_length=512,blank=True,null=True)
+	sent = models.BooleanField(default=0)
+	def __unicode__(self):
+		return self.quantity+' '+self.schemeName + 'to' + self.to
