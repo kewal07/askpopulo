@@ -45,6 +45,10 @@
 									{% if question.question.user.extendeduser %}
 										{% if question.question.isAnonymous %}
 											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
+										{% elif question.question.user.extendeduser.company.id > 1 %}
+											<a class ="userIndexA" href="{% url 'company_page' user.extendeduser.company.name %}">
+												<img class ="userIndexImage" src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
+											</a>
 										{% else %}
 											<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
 												<img class ="userIndexImage" src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
