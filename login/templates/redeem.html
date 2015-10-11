@@ -9,9 +9,9 @@
     
 	<div class="categoriesList clearfix">
 		<div id="coinCreditDetails">
-				<p>
+				<!-- <p>
 					100 pCoins = <i class="fa fa-inr"></i> 10
-				</p>
+				</p> -->
 				<p id="userCreditsRemaining">
 					User Credits Remaining :: {{ user.extendeduser.credits }}
 				</p>
@@ -29,7 +29,7 @@
 					<label for = "{{ scheme.schemeName }}">
 						<figure class="category_figure">
 							<img class="category_imagethumbnails" src="{{ scheme.schemeImageUrl }}" alt="{{ scheme.schemeName }}">
-							<figcaption class="category_figurecaption">{{ scheme.schemeDisplayName }}<br><label for = "text---{{ scheme.schemeName }}">Quantity</label>
+							<figcaption class="category_figurecaption">{{ scheme.schemeDisplayName }} : {{ scheme.schemeCostInPCoins }} <i class="fa fa-coins"></i><br><label for = "text---{{ scheme.schemeName }}">Quantity</label>
 					<input name="{{ scheme.schemeName }}" class="qtyText" type="text" id="text---{{ scheme.schemeName }}" value="0" placeholder="0"></figcaption>
 						</figure>
 					</label>
