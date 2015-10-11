@@ -213,6 +213,11 @@
 				</ul>
 			</div>
 		</div>
+		<div id="messages-content" class="admin-dash-div clearfix">
+			<div class="dashboard-header">
+				<p>Messages</p>
+			</div>
+		</div>
 		<div id="activity-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
 				<p>Activity</p>
@@ -287,39 +292,45 @@
 					$(this).addClass("selectedLi");
 					// console.log($(this)[0].innerHTML);
 					var elem_id = $(this)[0].innerHTML.toLowerCase() + "-content";
-					// console.log(elem_id);
+					 // console.log(elem_id);
 					var new_elem_html = "";
-					$.ajax({
-				        url: "{{ request.path }}",
-				        type: 'GET',
-				        async: false,
-				        cache: false,
-				        timeout: 30000,
-				        error: function(){
-				            return true;
-				        },
-				        success: function(msg){
-				        	var new_html = document.createElement('html');
-				        	new_html.innerHTML = msg;
-				        	// console.log(new_html);
-				        	// console.log(typeof(new_html));
-				        	// console.log(new_html.getElementsByTagName("div"));
-				        	var new_divs = new_html.getElementsByTagName("div");
-				        	for (var i = 0, len = new_divs.length; i < len; i++) {
-							    if (new_divs[i].id === elem_id) {
-							        var result = new_divs[i];
-							        // console.log(result)
-							        new_elem_html = result.innerHTML;
-							        break;
-							    }
-							}
-							// console.log($("#"+elem_id));
-				            $("#"+elem_id)[0].innerHTML = new_elem_html;
-				            // console.log($("#"+elem_id));
-				            $(".admin-dash-div").hide();
-				            $("#"+elem_id).show();
-				        }
-				    });
+					if(elem_id == "messages-content"){
+						$("#messages-content").append('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
+						$(".admin-dash-div").hide();
+					    $("#"+elem_id).show();
+			        }
+					else
+						$.ajax({
+					        url: "{{ request.path }}",
+					        type: 'GET',
+					        async: false,
+					        cache: false,
+					        timeout: 30000,
+					        error: function(){
+					            return true;
+					        },
+					        success: function(msg){
+					        	var new_html = document.createElement('html');
+					        	new_html.innerHTML = msg;
+					        	// console.log(new_html);
+					        	// console.log(typeof(new_html));
+					        	// console.log(new_html.getElementsByTagName("div"));
+					        	var new_divs = new_html.getElementsByTagName("div");
+					        	for (var i = 0, len = new_divs.length; i < len; i++) {
+								    if (new_divs[i].id === elem_id) {
+								        var result = new_divs[i];
+								        // console.log(result)
+								        new_elem_html = result.innerHTML;
+								        break;
+								    }
+								}
+								// console.log($("#"+elem_id));
+					            $("#"+elem_id)[0].innerHTML = new_elem_html;
+					            // console.log($("#"+elem_id));
+					            $(".admin-dash-div").hide();
+					            $("#"+elem_id).show();
+					        }
+					    });
 				});
 
 				$('#polls-content').on("click","p.analyse_question_text",function(){
