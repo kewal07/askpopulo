@@ -51,7 +51,7 @@ def sendFeed():
 		for idNumEmail in userIdCur:
 			idNum = idNumEmail[0]
 			to_email = idNumEmail[1]
-			print(to_email)
+			#print(to_email)
 			query = "SELECT auth_user.id, auth_user.email, polls_subscriber.question_id, question_text, que_slug FROM auth_user INNER JOIN polls_subscriber ON   auth_user.id = polls_subscriber.user_id INNER JOIN polls_question ON polls_subscriber.question_id = polls_question.id WHERE auth_user.id = %s AND polls_question.privatePoll = 0 order by RAND() LIMIT 3" %idNum
 			count = userCur.execute(query)
 			if count!= 0:
