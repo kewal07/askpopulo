@@ -38,7 +38,8 @@
 						<li><i class="fa fa-comment"></i></li>
 						<li><i class="fa fa-flag"></i></li>
 						{% if context_user == user %}
-							<li><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></li>
+							<li><span title="Edit Profile"><a href="{% url 'login:editprofile' user.id user.extendeduser.user_slug %}"><i class="fa fa-pencil-square-o"></i></a></span></li>
+							<li><span title="Redeem"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i></a></span></li>
 						{% endif %}
 					</ul>
 				</div>
@@ -60,7 +61,7 @@
 						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption">{{ credits }} Credits</span></li>
 						<li class="myProfileTabs" id="myConnections"><i class="fa fa-users"></i><span class="iCaption"> {{ connection_count }} Connections</span></li>
 						{% if context_user == user %}
-						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption"> Inbox</span></li>
+						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption">{{ messageCount }} Messages</span></li>
 						{% endif %}
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
@@ -70,7 +71,7 @@
 					</ul>
 				</div>
 				<div class="displayDiv">
-					<div class="profileDetail notificationsDiv">
+					<div class="profileDetail" id="notificationsDiv">
 						<ul class="profileDetailUl">
 							{% for activity in notification_activities %}
 							<li>
@@ -114,9 +115,10 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail myActivityDiv">
+					<div class="profileDetail" id="myActivityDiv">
 						<ul class="profileDetailUl">
 							{% for activity in activities %}
+							{% if activity.actor_user_name == context_user.username %}
 							<li>
 								<div class="liDetail">
 									{% if activity.verb == "question" %}
@@ -169,10 +171,11 @@
 									$('#activity{{ activity.id }}').text(' '+jQuery.timeago(localActvityDate).toString());
 								</script>
 							</li>
+							{% endif %}
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail newsFeedDiv">
+					<div class="profileDetail" id="newsFeedDiv">
 						<ul class="profileDetailUl">
 							{% for activity in flat_feed_activities %}
 							<li>
@@ -224,7 +227,7 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail myPollsDiv">
+					<div class="profileDetail" id="myPollsDiv">
 						<ul class="profileDetailUl">
 							{% for question in questions %}
 							<li>
@@ -240,7 +243,7 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail myVotesDiv">
+					<div class="profileDetail" id="myVotesDiv">
 						<ul class="profileDetailUl">
 							{% for question in voted %}
 							<li>
@@ -260,7 +263,7 @@
 					<!-- <div class="profileDetail myInboxDiv">
 						<object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;">
 					</div> -->
-					<div class="profileDetail myCategoriesDiv">
+					<div class="profileDetail" id="myCategoriesDiv">
 						{% for category in categories %}
 				    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
 				    		<figure class="category_figure">
@@ -270,11 +273,11 @@
 							</a>
 				    	{% endfor %}
 					</div>
-					<div class="profileDetail myCommentsDiv">
+					<div class="profileDetail" id="myCommentsDiv">
 						<ul class="profileDetailUl commentList">
 						</ul>
 					</div>
-					<div class="profileDetail myCreditsDiv">
+					<div class="profileDetail" id="myCreditsDiv">
 						<ul class="profileDetailUl">
 							{% for activity in notification_activities %}
 							<li>
@@ -361,17 +364,17 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail myBetsDiv">
+					<div class="profileDetail" id="myBetsDiv">
 						<ul class="profileDetailUl">
 							Coming Soon !!!
 						</ul>
 					</div>
-					<div class="profileDetail myABPInboxDiv">
+					<div class="profileDetail" id="myABPInboxDiv">
 						<ul class="profileDetailUl">
 							<!-- <object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"> -->
 						</ul>
 					</div>
-					<div class="profileDetail myConnectionsDiv">
+					<div class="profileDetail" id="myConnectionsDiv">
 						<ul class="profileDetailUl followers">
 							<p>Followers</p>
 							{% for act_user in followers %}
@@ -422,6 +425,16 @@
 				}
 				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Stake Polls","myCredits":"Credits", "myCategories":"My Categories", "myComments":"Commented Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "myConnections":"Connections", "myABPInbox":"Inbox"};
 				$(document).ready(function(){
+
+					// alert(getCookie("public_profile"));
+					var divElemLi = getCookie("public_profile");
+					if(typeof divElemLi === "undefined" || divElemLi === ""){
+
+					}
+					else{
+						$("#"+divElemLi).click();
+						document.cookie = "public_profile=; path=/";
+					}
 
 						
 					// $(".myABPInboxDiv").html('<object data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"/>');

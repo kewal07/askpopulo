@@ -29,6 +29,16 @@
 	margin:auto;
 }
 */
+.information-video{
+	width: 50%;
+}
+iframe.video{
+	width: 97%;
+    height: 329px;
+    margin: 0 auto;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #666;
+}
 .loginContent{
 	margin: 0 auto;
 }
@@ -36,17 +46,10 @@
     vertical-align: top;
 }*/
 form.loginContentForm{
-	/* width:60%; */
-	 -webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
-  -moz-box-flex: 1;         /* OLD - Firefox 19- */
-  width: 20%;               /* For old syntax, otherwise collapses. */
-  -webkit-flex: 1;          /* Chrome */
-  -ms-flex: 1;              /* IE 10 */
-  flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
-	margin:1rem 0;
-	/* padding: 2rem 4rem 2rem 4rem; */
-	/* margin:0 auto; */
-	/* margin-left:21rem; */
+	border-top: 2px dashed #666;
+    padding-top: 3rem;
+    margin-left: 1rem;
+    margin-top: 3rem;
 }
 form.loginContentForm label{
 	display: inline-block;
@@ -54,6 +57,9 @@ form.loginContentForm label{
 	color: #666;
     font-size: 1.5rem;
 	padding-right: 1rem;
+}
+.socialaccount_ballot{
+	 border-left: 4px solid #666;
 }
 form.loginContentForm label[for=id_remember]{
     font-size: 1rem;
@@ -103,15 +109,17 @@ form.loginContentForm input{
   	display: flex;
 	padding: 1rem 2rem 2rem 2rem;
 }
-
+.social_providers{
+	margin-left: 2rem;
+}
 .socialaccount_ballot{
-	-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
-  -moz-box-flex: 1;         /* OLD - Firefox 19- */
-  width: 20%;               /* For old syntax, otherwise collapses. */
-  -webkit-flex: 1;          /* Chrome */
-  -ms-flex: 1;              /* IE 10 */
-  flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
-	border-right: 4px solid #666;
+	/*-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
+  /*-moz-box-flex: 1;         /* OLD - Firefox 19- */
+  /*width: 20%;               /* For old syntax, otherwise collapses. */
+  /*-webkit-flex: 1;          /* Chrome */
+ /* -ms-flex: 1;              /* IE 10 */
+  /*flex: 1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+	/*border-right: 4px solid #666;*/
 }
 
 .forgotPass{
@@ -128,12 +136,14 @@ label[for="id_password"] { display:none !important; }
 		margin:0;
 		margin-bottom:11rem;
 	}
+	.information-video{
+		display: none;
+	}
 	.loginContentTable{
 		display: block;
 	}
 	.socialaccount_ballot{
-		border-right: none;
-		border-bottom: 4px solid #666;
+		border: none;
 		width: 100%
 	}
 	#login img{

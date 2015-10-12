@@ -22,7 +22,7 @@ from django.conf import settings
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
-from login.models import ExtendedUser,Follow
+from login.models import ExtendedUser,Follow,Company
 from login.views import BaseViewList,BaseViewDetail
 from login.forms import MySignupPartForm
 from django.contrib.auth.models import User
@@ -81,8 +81,8 @@ class IndexView(BaseViewList):
 			mainData = Category.objects.all()
 			return mainData
 		elif request.path.endswith('featuredpolls'):
-			adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
-			featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0).order_by('-pub_date')
+			adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0,home_visible=1).order_by('-pub_date')
+			featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0,home_visible=1).order_by('-pub_date')
 			latest_questions.extend(featuredpolls)
 			latest_questions.extend(adminpolls)
 			if latest_questions:
@@ -112,7 +112,7 @@ class IndexView(BaseViewList):
 					user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
 					user_categories = Category.objects.filter(pk__in=user_categories_list)
 					que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-					category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0]
+					category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0 and x.question.home_visible == 1]
 					latest_questions.extend(category_questions)
 			elif request.GET.get('tab') == 'followed':
 				followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
@@ -129,7 +129,7 @@ class IndexView(BaseViewList):
 		elif request.GET.get('category'):
 			category_title = request.GET.get('category')
 			category = Category.objects.filter(category_title=category_title)[0]
-			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
+			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0 and que_cat.question.home_visible == 1]
 			latest_questions = latest_questions[::-1]
 			if request.GET.get('tab') == 'mostvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
@@ -148,7 +148,7 @@ class IndexView(BaseViewList):
 				if expired_polls:
 					latest_questions.extend(expired_polls)
 		else:
-			latest_questions = Question.objects.filter(privatePoll=0).order_by('-pub_date')
+			latest_questions = Question.objects.filter(privatePoll=0,home_visible=1).order_by('-pub_date')
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
 			if request.GET.get('tab') == 'mostvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
@@ -176,6 +176,10 @@ class IndexView(BaseViewList):
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
 			data = {}
+			followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
+			following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
+			data['connection'] = len(followers) + len(following)
+			print(data['connection'])
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
@@ -202,6 +206,8 @@ class VoteView(BaseViewDetail):
 	def get_template_names(self):
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
+		question.numViews +=1
+		question.save()
 		user = self.request.user
 		if user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
@@ -425,6 +431,9 @@ class CreatePollView(BaseViewList):
 		errors = {}
 		question = None
 		curtime = datetime.datetime.now();
+		home_visible = 1
+		if user.extendeduser.company_id > 1:
+			home_visible=0
 		# print(request.POST)
 		queBetAmount = request.POST.get("betAmount")
 		if queBetAmount:
@@ -604,7 +613,7 @@ class CreatePollView(BaseViewList):
 				question.privatePoll=private
 				question.isBet = bet
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
@@ -777,7 +786,6 @@ def createExtendedUser(user):
 				extendedUser.save()
 
 def comment_mail(request):
-	# print("comment mail")
 	to_email = []
 	que_text = request.POST.get('que_text')
 	que_url = request.POST.get('que_url')
@@ -794,9 +802,6 @@ def comment_mail(request):
 	# print(to_email)
 	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
 	for index,to_mail in enumerate(to_email):
-		# print(index,to_mail)
-		# print("&&&&&&&&&&&&")
-		# print(que_author[index])
 		if (not to_email in doNotSendList):
 			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
 			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
@@ -886,22 +891,13 @@ class QuestionUpvoteView(BaseViewList):
 				feed = client.feed('notification', user.id)
 				feed.add_activity(activity)	
 			upVote, created = QuestionUpvotes.objects.get_or_create(user_id=request.user.id, question_id = votedQuestionId)
-			print(upVote)
-			print(created)
-			print(questionVoted)
-			print("*******")
-			# currentCount = questionVoted.upvoteCount
 			if vote == 1:
 				questionVoted.upvoteCount += diff
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount + diff)
-				# currentCount += 1
 				questionVoted.user.extendeduser.credits += diff * 10
 				user = questionVoted.user
 				question = questionVoted
 				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"upvote"}
 			else:
-				# Question.objects.filter(id=votedQuestionId).update(upvoteCount = currentCount - diff)
-				# currentCount -= 1
 				questionVoted.upvoteCount -= diff
 				questionVoted.user.extendeduser.credits -= diff * 10
 				user = questionVoted.user
@@ -924,3 +920,177 @@ class QuestionUpvoteView(BaseViewList):
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
 			print(e)
+
+class CompanyIndexView(BaseViewList):
+	context_object_name = 'data'
+	paginate_by = 50
+
+	def render_to_response(self, context, **response_kwargs):
+		response = super(CompanyIndexView, self).render_to_response(context, **response_kwargs)
+		# # print(self.request.COOKIES.get("location"))
+		# if not self.request.COOKIES.get("location"):
+		# 	# print("setting location cookie")
+		# 	response.set_cookie("location","global")
+		return response
+
+	def get_template_names(self):
+		request = self.request
+		template_name = 'polls/company.html'
+		# if request.path.endswith('category') and not request.GET.get('category'):
+		# 	template_name = 'polls/categories.html'
+		return [template_name]
+	
+	def get_queryset(self):
+		createExtendedUser(self.request.user)
+		request = self.request
+		user = request.user
+		context = {}
+		mainData = []
+		latest_questions = []
+		curtime = timezone.now()
+		# print(request.path.replace("/",""))
+		company_name = request.path.replace("/","")
+		company_obj = Company.objects.filter(name=company_name)
+		if company_obj:
+			company_obj = company_obj[0]
+		else:
+			return HttpResponseRedirect("/") #this should be a 404 page
+		# if user.is_authenticated():
+		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
+		# global_location = ""
+		# country_list =[]
+		# if request.COOKIES.get("location","global").lower() != "global":
+		# 	global_location = request.COOKIES.get("location").lower()
+		# 	country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
+		# print(global_location)
+		# print(country_list)
+
+		# if request.path.endswith('category') and not request.GET.get('category'):
+		# 	mainData = Category.objects.all()
+		# 	return mainData
+		# elif request.path.endswith('featuredpolls'):
+		# 	adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
+		# 	featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0).order_by('-pub_date')
+		# 	latest_questions.extend(featuredpolls)
+		# 	latest_questions.extend(adminpolls)
+		# 	if latest_questions:
+		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
+		# 		if request.GET.get('tab') == 'mostvoted':
+		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+		# 		elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+		# 			latest_questions = latest_questions
+		# 		elif request.GET.get('tab') == 'leastvoted':
+		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+		# 		elif request.GET.get('tab') == 'withexpiry':
+		# 			toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+		# 			expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+		# 			toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+		# 			expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+		# 			latest_questions = []
+		# 			if toexpire_polls:
+		# 				latest_questions.extend(toexpire_polls)
+		# 			if expired_polls:
+		# 				latest_questions.extend(expired_polls)
+		# 		# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
+		# 	# sendFeed()
+		# elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
+		# 	if request.GET.get('tab') == 'mycategories':
+		# 		category_questions = []
+		# 		if user.extendeduser.categories:
+		# 			user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
+		# 			user_categories = Category.objects.filter(pk__in=user_categories_list)
+		# 			que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
+		# 			category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0]
+		# 			latest_questions.extend(category_questions)
+		# 	elif request.GET.get('tab') == 'followed':
+		# 		followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
+		# 		latest_questions.extend(followed_questions)
+		# 	elif request.GET.get('tab') == 'voted':
+		# 		voted_questions = [x.question for x in Voted.objects.filter(user=user)]
+		# 		latest_questions.extend(voted_questions)
+		# 	elif request.GET.get('tab') == 'mypolls' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+		# 		asked_polls = Question.objects.filter(user=user)
+		# 		latest_questions.extend(asked_polls)
+		# 	if latest_questions:
+		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
+		# 		latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
+		# elif request.GET.get('category'):
+		# 	category_title = request.GET.get('category')
+		# 	category = Category.objects.filter(category_title=category_title)[0]
+		# 	latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
+		# 	latest_questions = latest_questions[::-1]
+		# 	if request.GET.get('tab') == 'mostvoted':
+		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+		# 	elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+		# 		latest_questions = latest_questions
+		# 	elif request.GET.get('tab') == 'leastvoted':
+		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+		# 	elif request.GET.get('tab') == 'withexpiry':
+		# 		toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+		# 		expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+		# 		toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+		# 		expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+		# 		latest_questions = []
+		# 		if toexpire_polls:
+		# 			latest_questions.extend(toexpire_polls)
+		# 		if expired_polls:
+		# 			latest_questions.extend(expired_polls)
+		# else:
+		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
+		company_user_list = [x.user_id for x in company_user_list]
+		company_admin_list = User.objects.filter(id__in = company_user_list)
+		company_admin_list = [x.username for x in company_admin_list]
+		followed = Follow.objects.filter(user_id=user.id,target_id__in=company_user_list, deleted_at__isnull=True)
+		latest_questions = Question.objects.filter(privatePoll=0,user_id__in=company_user_list).order_by('-pub_date')
+		latest_questions = list(OrderedDict.fromkeys(latest_questions))
+		if request.GET.get('tab') == 'mostvoted':
+			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
+		elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
+			latest_questions = latest_questions
+		elif request.GET.get('tab') == 'leastvoted':
+			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
+		elif request.GET.get('tab') == 'withexpiry':
+			toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
+			expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
+			toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
+			expired_polls.sort(key=lambda x: x.expiry, reverse=True)
+			latest_questions = []
+			if toexpire_polls:
+				latest_questions.extend(toexpire_polls)
+			if expired_polls:
+				latest_questions.extend(expired_polls)
+		subscribed_questions = []
+		if user.is_authenticated():
+			subscribed_questions = Subscriber.objects.filter(user=request.user)
+		sub_que = []
+		for sub in subscribed_questions:
+			sub_que.append(sub.question.id)
+		# if country_list:
+		# 	latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
+		for mainquestion in latest_questions:
+			data = {}
+			data ['question'] = mainquestion
+			subscribers = mainquestion.subscriber_set.count()
+			data['votes'] = mainquestion.voted_set.count()
+			data['subscribers'] = subscribers
+			data['subscribed'] = sub_que
+			data['expired'] = False
+			data['upvoteCount'] = mainquestion.upvoteCount
+			if mainquestion.expiry and mainquestion.expiry < curtime:
+				data['expired'] = True
+			user_already_voted = False
+			if user.is_authenticated():
+				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
+				if question_user_vote:
+					user_already_voted = True
+			# print(mainquestion,user_already_voted,user)
+			data['user_already_voted'] = user_already_voted
+			data['company_obj'] = company_obj
+			data['followed'] = followed
+			print(company_user_list)
+			data['companyAdmins'] = str(';'.join(company_admin_list))
+			mainData.append(data)
+		context['data'] = mainData
+		print(context)
+		return mainData
+

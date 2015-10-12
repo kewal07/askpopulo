@@ -94,18 +94,7 @@ $(document).ready(function(){
 		$('.dropDownLoc').hide();
 		// $('.dropDownBox').hide();
 		$(".dropDownBox").slideToggle("slow");
-		$("#notification_count_span")[0].innerHTML = 0;
-		$("#notification_count_span").hide();
-  		$.ajax(
-		{
-			type: 'GET',
-			url:"/user/notifications_read",
-			// data:$(elemid).serialize(),
-			success:function(response)
-			{
-				console.log("marked read");
-			}
-		});     
+		
 	});
 	/* end of Dropdownbox on click of user image in nav */
 
@@ -188,18 +177,68 @@ $(document).ready(function(){
 	});
 	/* end */
 
-
 	$(".myProfileTabs").click(function(){
 		var elemId = $(this)[0].id;
-		// console.log(elemId);
+		console.log("profile tabs clicked");
+		console.log(elemId);
 		$(".profileDetail").hide();
-		var divElemId = "." + elemId + "Div";
+		// var divElemId = "." + elemId + "Div";
+		var divElemId = elemId + "Div";
 		$(".profileDetail").hide();
 		$(".detailHeader h1").text(headerText[elemId]);
-		$(divElemId).slideToggle("slow");
-		if(divElemId === ".myABPInboxDiv"){
+		// $(divElemId).slideToggle("slow");
+		if(divElemId === "notifications"){
+			$("#notification_count_span")[0].innerHTML = 0;
+			$("#notification_count_span").hide();
+	  		$.ajax(
+			{
+				type: 'GET',
+				url:"/user/notifications_read",
+				// data:$(elemid).serialize(),
+				success:function(response)
+				{
+					console.log("marked read");
+				}
+			});     
+		}
+		if(divElemId === "myABPInboxDiv"){
 			console.log("nbox Loaded for user");
-			$(".myABPInboxDiv").html('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
+			$("#myABPInboxDiv").html('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
+		}
+		else{
+			var new_elem_html = "";
+			var path = location.pathname;
+			$.ajax({
+		        url: path,
+		        type: 'GET',
+		        async: false,
+		        cache: false,
+		        timeout: 30000,
+		        error: function(){
+		            return true;
+		        },
+		        success: function(msg){
+		        	var new_html = document.createElement('html');
+		        	new_html.innerHTML = msg;
+		        	// console.log(new_html);
+		        	// console.log(typeof(new_html));
+		        	// console.log(new_html.getElementsByTagName("div"));
+		        	var new_divs = new_html.getElementsByTagName("div");
+		        	for (var i = 0, len = new_divs.length; i < len; i++) {
+					    if (new_divs[i].id === divElemId) {
+					        var result = new_divs[i];
+					        // console.log(result)
+					        new_elem_html = result.innerHTML;
+					        break;
+					    }
+					}
+					// console.log($("#"+divElemId));
+		            $("#"+divElemId)[0].innerHTML = new_elem_html;
+		            // console.log($("#"+divElemId));
+		            // $(".admin-dash-div").hide();
+		            $("#"+divElemId).slideToggle("slow");
+		        }
+		    });
 		}
 		if($(window).width() < 960){
 			$(".profileStats").slideToggle("slow");
@@ -207,11 +246,65 @@ $(document).ready(function(){
 		}
 	});
 
+	$(".user_not_credit_message_li").click(function(){
+		console.log("clicked li");
+		var elemId = $(this)[0].id;
+		console.log(elemId);
+		var profile_path = $("#profile_page_url_in_common")[0].href;
+		console.log(profile_path);
+		// history.pushState('data', '', profile_path);
+		// var new_elem_html = "";
+		// var path = location.pathname;
+		if(elemId === "common_notifications"){
+			document.cookie = "public_profile=notifications; path=/";
+			$("#notification_count_span")[0].innerHTML = 0;
+			$("#notification_count_span").hide();
+	  		$.ajax(
+			{
+				type: 'GET',
+				url:"/user/notifications_read",
+				// data:$(elemid).serialize(),
+				success:function(response)
+				{
+					console.log("marked read");
+				}
+			});     
+			console.log("open notifications");
+			// profileLoadDiv("notifications");
+			// $("#notifications")[0].click();
+		}else if(elemId === "common_credits"){
+			document.cookie = "public_profile=myCredits; path=/";
+			console.log("open credits");
+			// profileLoadDiv("myCredits");
+			// $("#myCredits")[0].click();
+		}else if(elemId === "common_inbox"){
+			document.cookie = "public_profile=myABPInbox; path=/";
+			console.log("open inbox");
+			// profileLoadDiv("myABPInbox");
+			// $("#myABPInbox")[0].click();
+		}
+		var profile_page = window.open(profile_path,"_top");
+	});
 
 	$('.fa-envelope').click(function(){
 		openOverlay("#overlay-inAbox4");
 	});
+	$('body').on("click",".fa-envelope",function(){
+		console.log("open message block");
+		openOverlay("#overlay-inAbox4");
+	});
 });
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
 
 function activateMenuLink () {
 	$( ".menuanchor" ).each(function( ) {

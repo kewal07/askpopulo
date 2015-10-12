@@ -37,6 +37,9 @@ class Question(models.Model):
 	upvoteCount = models.IntegerField(default=0)
 	isBet = models.BooleanField(default=0)
 	winning_choice = models.IntegerField(blank=True,null=True)
+	numViews = models.IntegerField(blank=True,null=True,default=0)
+	last_accessed = models.DateTimeField(null=True,blank=True)
+	home_visible = models.BooleanField(default=1)
 	# betMail = models.BooleanField(default=0)
 
 	# @property
@@ -64,6 +67,8 @@ class Question(models.Model):
 		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.que_pk = sig
+		# self.numViews = 0
+		self.last_accessed = datetime.datetime.now()
 		super(Question, self).save(*args, **kwargs)
 	def __str__(self):
 		return self.question_text
