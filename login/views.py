@@ -454,9 +454,9 @@ class AdminDashboard(BaseViewDetail):
 				dash_votes += Voted.objects.filter(question_id=poll.id).count()
 			dash_dict = {}
 			dash_dict['month_name'] = month_name
-			dash_dict['polls'] = dash_polls_count+12
-			dash_dict['views'] = dash_views+89
-			dash_dict['votes'] = dash_votes+78
+			dash_dict['polls'] = dash_polls_count
+			dash_dict['views'] = dash_views
+			dash_dict['votes'] = dash_votes
 			dash_graph.append(dash_dict)
 		data['dash_graph'] = dash_graph
 		for que in polls:

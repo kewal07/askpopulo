@@ -9,11 +9,15 @@
 {% endblock %}
 {% block extra_js %}
 	<!--Remove this and also chart.js<script src="{% static 'login/js/Chart.js' %}" ></script> -->
-	<script type='text/javascript' src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['bar','PieChart']}]}"></script>
+	<!--<script type='text/javascript' src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['bar','PieChart']}]}"></script>-->
 	<script type="text/javascript" src="{% static 'js/d3.js' %}"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" src="{% static 'login/js/company_admin.js' %}"></script>
 {% endblock %}
 {% block content %}
+	<div id="mobile-dashboard">
+		<p>Dashboard is currently available only on Desktops and would be coming soon to mobiles as well. If you require special assistance please contact support.</p>
+	</div>
 	<section id="admin-dashboard" class="clearfix">
 		<div id="dashboard-menu" class="clearfix">
 			<ul class="dashboard-menu-items clearfix">
@@ -22,7 +26,7 @@
 				<li class="dashboard-menu-li">Followers</li>
 				<li class="dashboard-menu-li">Messages</li>
 				<li class="dashboard-menu-li">Activity</li>
-				<li class="dashboard-menu-li">Analytics</li>
+				<li class="dashboard-menu-li">Advanced</li>
 				<li class="dashboard-menu-li">Export</li>
 				<li class="dashboard-menu-li">Billing</li>
 			</ul>
@@ -153,6 +157,27 @@
 							</div>
 						</div>
 						<div class="analysis" id="analyse---{{ question.poll.id }}Div">
+							<div class="choices clearfix">
+							{% for choice in question.poll.choice_set.all %}
+							{% if choice.choice_image %}
+								<figure>
+									<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+									<figcaption class="choiceFigCaption">
+										{% if choice.choice_text %}
+											Choice{{ forloop.counter }} : {{ choice.choice_text }}
+										{% else %}
+											Choice{{ forloop.counter }}
+										{% endif %}
+									</figcaption>
+								</figure>
+							{% else %}
+								Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+								<br/>
+							{% endif %}
+							{% endfor %}
+							</div>
+							<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass">
+							</div>
 							<select class="analyseSelect" id="analyse---{{ question.poll.id }}Select">
 								<option value="nochoice">Select</option>
 								{% for choice in question.poll.choice_set.all %}
@@ -199,16 +224,17 @@
 			</div>
 			<div class="dashboard-stats clearfix">
 				<ul class="dashboard-recent">
-					<li> Followers</li>
 					{% for act_user in followers %}
-						<a href="{% url 'login:loggedIn' act_user.id act_user.extendeduser.user_slug %}"><li>
-							<figure>
-								<img class="imgInFeed follow" src="{{ act_user.extendeduser.get_profile_pic_url }}">
-								<figcaption class="activity_url follow_url">
-									{{ act_user.username }}
-								</figcaption>
-							</figure>
-						</li></a>
+						<li class="followers">	
+							<a href="{% url 'login:loggedIn' act_user.id act_user.extendeduser.user_slug %}">
+								<figure>
+									<img class="imgInFeed follow" src="{{ act_user.extendeduser.get_profile_pic_url }}">
+									<figcaption class="activity_url follow_url">
+										{{ act_user.username }}
+									</figcaption>
+								</figure>
+							</a>
+						</li>
 					{% endfor %}
 				</ul>
 			</div>
@@ -226,7 +252,6 @@
 				<ul class="dashboard-recent">
 					<li> My Activity</li>
 					{% for activity in activities %}
-					{% if activity.actor_user_name == user.username %}
 					<li>
 						<div class="liDetail">
 							{% if activity.verb == "question" %}
@@ -267,7 +292,9 @@
 							{% endif %}
 							{% if activity.verb != "credits"  %}
 								</p>
-								<p class="desc">{{ activity.question_desc }}</p>
+								{% if activity.visible_public %}
+									<p class="desc">{{ activity.question_desc }}</p>
+								{% endif %}
 								</div>
 							{% endif %}
 						</div>
@@ -279,14 +306,31 @@
 							$('#activity{{ activity.id }}').text(' '+jQuery.timeago(localActvityDate).toString());
 						</script>
 					</li>
-					{% endif %}
 					{% endfor %}
 				</ul>
 			</div>
 		</div>
+		<div id="advanced-content" class="admin-dash-div clearfix">
+			<div class="dashboard-header">
+				Coming Soon!
+			</div>
+			<p class="coming-soon">Advacned Analytics and Data Mining coming soon. Please contact support for accelerated development.</p>
+		</div>
+		<div id="export-content" class="admin-dash-div clearfix">
+			<div class="dashboard-header">
+				Coming Soon!
+			</div>
+			<p class="coming-soon">Export of raw data coming soon.Please contact support for accelerated development.</p>
+		</div>
+		<div id="billing-content" class="admin-dash-div clearfix">
+			<div class="dashboard-header">
+				<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
+			</div>
+		</div>
 		<script>
+			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			$(document).ready(function(){
-
+				// google.load("visualization", "1", {packages:["corechart"]});
 				$(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
 					$(this).addClass("selectedLi");
@@ -348,6 +392,7 @@
 					setTimeout(function(){
 					//your code to be executed after 1 seconds
 					if($(analysisDivId).is(':visible')){
+					  drawPollsChart(parseInt(pollId))
 					  drawGenderChart(parseInt(pollId));
 					  drawAgeChart(parseInt(pollId));
 					  drawOthersChart(parseInt(pollId));
@@ -367,11 +412,11 @@
 					console.log(selectedChoice);
 					if(selectedChoice != "nochoice"){
 						var selectedChoiceId = parseInt(selectedChoice.replace("choice",""));
-						$(analysisDivId).hide();
-						$(analysisDivId).toggle("slow");
+						// $(analysisDivId).hide();
+						// $(analysisDivId).toggle("slow");
 						console.log(selectedChoiceId);
 						var delay=2000; //1 seconds
-						setTimeout(function(){
+						// setTimeout(function(){
 						//your code to be executed after 1 seconds
 						if($(analysisDivId).is(':visible')){
 						  drawGenderChart(parseInt(pollId),selectedChoiceId);
@@ -379,10 +424,125 @@
 						  drawOthersChart(parseInt(pollId),selectedChoiceId);
 						  drawLocationChart(parseInt(pollId),selectedChoiceId);
 						}
-						}, delay); 
+						// }, delay); 
+					}else{
+						if($(analysisDivId).is(':visible')){
+						  drawGenderChart(parseInt(pollId));
+						  drawAgeChart(parseInt(pollId));
+						  drawOthersChart(parseInt(pollId));
+						  drawLocationChart(parseInt(pollId));
+						}
 					}
 				});  
 			});
+			function drawPollsChart(pollId) {
+				// console.log("{{question.choice_set.all}}");
+				var pollsData = [];
+				var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
+				var colCount = 0;
+				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+				{% for questions in polls %}
+				   {% with questions.poll as question %}
+				   		if(pollId === {{ question.id }}){
+							{% for choice in question.choice_set.all %}
+								var inData = [];
+								var choice_text = "";
+								choice_text = 'Choice{{ forloop.counter }}';
+								inData.push(choice_text);
+								inData.push({{ choice.vote_set.count }});
+								inData.push(pollsColors[colCount++]);
+								var percent = 0;
+								if({{ question.voted_set.count }} > 0)
+									percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);;
+								inData.push(percent+"%");
+								//console.log(inData);
+								pollsData.push(inData);
+							{% endfor %}
+						}
+					{% endwith %}
+			  	{% endfor %}
+				var data = google.visualization.arrayToDataTable(pollsData);
+				var options = {
+			          chartArea: {left:80,width: '60%'},
+			          fontSize:14,
+			          bars: {
+			            groupWidth: 100
+			          },
+			          annotations:{
+			          	textStyle: {
+					      opacity: 0         // The transparency of the text.
+					    }	        
+			          },
+			          hAxis: {
+			            title: '',
+			            minValue: 0,
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			            textPosition: 'none',
+			            baselineColor: 'transparent'
+			          },
+			          vAxis: {
+			            title: '',
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			          },
+			          legend:{
+			              position:'none'
+			          },
+			           animation:{
+			              startup:true,
+			              duration: 3000,
+			              easing: 'inAndOut',
+			         },
+			        };
+
+			        var chart = new google.visualization.BarChart(document.getElementById('pollsChart---'+pollId));
+			        chart.draw(data, options);
+			        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
+
+			        function displayAnnotation(e){
+			        data = google.visualization.arrayToDataTable(pollsData);
+			        options = {
+			          chartArea: {left:80,width: '60%'},
+			          fontSize:14,
+			          bars: {
+			            groupWidth: 100
+			          },
+			          annotations:{
+			          	textStyle: {
+					      opacity: 1         // The transparency of the text.
+					    }	        
+			          },
+			          hAxis: {
+			            title: '',
+			            minValue: 0,
+			            gridlines: {
+			              color: 'transparent'
+			            },
+			            textPosition: 'none',
+			            baselineColor: 'transparent'
+			          },
+			          vAxis: {
+			            title: '',
+			            gridlines: {
+			              color: 'transparent'
+			              },
+			          },
+			          legend:{
+			              position:'none'
+			          },
+			           animation:{
+			              startup:true,
+			              duration: 1,
+			              easing: 'inAndOut',
+			         },
+			        };
+
+			        chart.draw(data,options);
+			      }
+			  }
 			function drawGenderChart(pollId,choiceId) {
 			  var genderData = [['Gender', 'Votes']];
 			  var m = 0;
@@ -424,9 +584,12 @@
 					}
 				{% endwith %}
 			  {% endfor %}
-			  genderData.push(['Male',m]);
-			  genderData.push(['Female',f]);
-			  genderData.push(['Not Disclosed',d])
+			  if(m>0)
+			  	genderData.push(['Male',m]);
+			  if(f>0)
+			  	genderData.push(['Female',f]);
+			  if(d>0)
+			  	genderData.push(['Not Disclosed',d])
 			  console.log(genderData);
 			  var data = google.visualization.arrayToDataTable(genderData);
 			  var options = {
@@ -454,7 +617,6 @@
 			  					if ({{ choice.id }} == choiceId ){
 				  				 	console.log("----------{{ choice.id }}");
 								  	{% for vote in choice.vote_set.all %}
-								  		{% if vote.choice_id == choiceId %}
 									  		{% if vote.user.extendeduser.calculate_age > 50 %}
 										  		over_50++;
 										  	{% elif vote.user.extendeduser.calculate_age > 35 %}
@@ -470,7 +632,6 @@
 											{% else %}
 										  		console.log("Age wrong");
 										  	{% endif %}
-								  		{% endif %}
 									{% endfor %}
 								}
 							{% endfor %}
@@ -497,12 +658,18 @@
 					}
 				{% endwith %}
 			  {% endfor %}
-			  ageData.push(['Upto 19',under_19]);
-			  ageData.push(['20-25',bet_20_25]);
-			  ageData.push(['26-30',bet_26_30]);
-			  ageData.push(['31-35',bet_31_35]);
-			  ageData.push(['36-50',bet_36_50]);
-			  ageData.push(['50+',over_50]);
+			  if(under_19 > 0)
+			  	ageData.push(['Upto 19',under_19]);
+			  if(bet_20_25 > 0)
+			  	ageData.push(['20-25',bet_20_25]);
+			  if(bet_26_30 > 0)
+			  	ageData.push(['26-30',bet_26_30]);
+			  if(bet_31_35 > 0)
+			  	ageData.push(['31-35',bet_31_35]);
+			  if(bet_36_50 > 0)
+			  	ageData.push(['36-50',bet_36_50]);
+			  if(over_50 > 0)
+			  	ageData.push(['50+',over_50]);
 			  var data = google.visualization.arrayToDataTable(ageData);
 			  var options = {
 			    pieHole: 0.4,
@@ -524,14 +691,12 @@
 			  					if ({{ choice.id }} == choiceId ){
 				  				 	console.log("{{ choice.id }}");
 								  	{% for vote in choice.vote_set.all %}
-								  		{% if vote.choice_id == choiceId %}
-									  		{% if vote.user.extendeduser.profession %}
-												var prof = "{{ vote.user.extendeduser.profession }}";
-												if(prof in profDict)
-													profDict[prof] = profDict[prof]+1;
-												else
-													profDict[prof] = 1;
-											{% endif %}
+								  		{% if vote.user.extendeduser.profession %}
+											var prof = "{{ vote.user.extendeduser.profession }}";
+											if(prof in profDict)
+												profDict[prof] = profDict[prof]+1;
+											else
+												profDict[prof] = 1;
 										{% endif %}
 									{% endfor %}
 								}
@@ -575,18 +740,16 @@
 			  					if ({{ choice.id }} == choiceId ){
 				  				 	console.log("{{ choice.id }}");
 								  	{% for vote in choice.vote_set.all %}
-								  		{% if vote.choice_id == choiceId %}
-									  		{% if vote.user.extendeduser.country %}
-												var country = "{{ vote.user.extendeduser.country }}";
-												if(country == 'United Kingdom' || country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
-													country = 'United Kingdom'
-												}
-												if(country in conDict)
-													conDict[country] = conDict[country]+1;
-												else
-													conDict[country] = 1;
-											{% endif %}
-							  			{% endif %}
+								  		{% if vote.user.extendeduser.country %}
+											var country = "{{ vote.user.extendeduser.country }}";
+											if(country == 'United Kingdom' || country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
+												country = 'United Kingdom'
+											}
+											if(country in conDict)
+												conDict[country] = conDict[country]+1;
+											else
+												conDict[country] = 1;
+										{% endif %}
 									{% endfor %}
 								}
 							{% endfor %}

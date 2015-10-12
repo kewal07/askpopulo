@@ -136,12 +136,14 @@ label[for="id_password"] { display:none !important; }
 		margin:0;
 		margin-bottom:11rem;
 	}
+	.information-video{
+		display: none;
+	}
 	.loginContentTable{
 		display: block;
 	}
 	.socialaccount_ballot{
-		border-right: none;
-		border-bottom: 4px solid #666;
+		border: none;
 		width: 100%
 	}
 	#login img{

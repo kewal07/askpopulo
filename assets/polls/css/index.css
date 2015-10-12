@@ -106,6 +106,7 @@ ul.pollInfoUl li {
 	float:left;
 	margin-right:4%;
 	font-size:1.15rem;
+	margin-bottom: 0.5rem;
 }
 .choice_image{
 	height: 120px;
@@ -305,7 +306,7 @@ button.followButton.unfollow{
 
 .upvoteIndex{
 	position: absolute;
-    top: 60%;
+    top: 45%;
     right: 0%;
     width: 6%;
     cursor: pointer;
@@ -332,9 +333,17 @@ button.followButton.unfollow{
 .btnMobile{
 	display:none;
 }
+.qTextDesc:first-letter{
+		text-transform: capitalize;
+	}
+.usr-creds-msg{
+    width: 54%;
+    margin: 0 auto;
+}
 @media only screen and (max-width: 480px){
 	#content{
 		margin:0;
+		margin-bottom:5rem;
 	}
 	.questions{
 		padding:0;
@@ -345,11 +354,16 @@ button.followButton.unfollow{
 		display: block;
 	}
 	.userInfo{
-		width:100%;
+		/*width:100%;*/
 		display: block;
 		margin:0;
 		padding-left:1rem;
 		position: relative;
+		width:95%;
+		margin:0 auto;
+	}
+	.userBrief p{
+		text-align: initial;
 	}
 	.userImage{
 		display:inline-block;
@@ -367,8 +381,11 @@ button.followButton.unfollow{
 	    top: 2rem;
 	    left:8rem;
 	}
+	.usr-creds-msg{
+		width:initial;
+	}
 	.askedOnInfo{
-		margin-top:-1rem;
+		display: none;
 	}
 	.mainPoll{
 		padding:0.5rem;
@@ -416,11 +433,12 @@ button.followButton.unfollow{
 	a.anchor_submit{
 		position: absolute;
     	top: 0.5rem;
-    	right: 0rem;
+    	right: 1rem;
     	margin-top: 0.6rem;
 	}
 	.pollInfo{
 		width:100%;
+		padding-bottom: 0.5rem;
 	}
 	.followButton{
 		display: none;
@@ -431,5 +449,83 @@ button.followButton.unfollow{
 	.pollInfoData{
 		width:85%;
 	}
+	.upvoteIndex{
+		top:59%;
+	}
+	.expiry-li{
+		width:100%;
+		margin-top:0.5rem;
+	}
 }
-
+@media only screen and (min-width:481px) and (max-width: 960px){
+	.user_not_credit_message {
+		display: none;
+	}
+	.qTextDesc:first-letter{
+		text-transform: capitalize !important;
+	}
+	#content{
+		margin:0;
+	}
+	.questions{
+		padding: 0;
+	}
+	.questionContent{
+		width:95%;
+		margin:0 auto;
+		display: block;
+	}
+	.questionContent>div{
+		webkit-box-flex: none;
+	    -moz-box-flex: none;
+	    -ms-flex: none;
+	    flex: none;
+	}
+	.userInfo{
+		margin:0;
+		width:initial;
+		flex:none;
+		display:block; 
+		border-bottom: 2px dashed#666;
+	}
+	.userImage{
+		display:inline-block;
+		margin-right:1rem;
+	}
+	.userBrief{
+		width:65%;
+		display:inline-block;
+	}
+	.userBrief p{
+		text-align: initial;
+	}
+	.mainPoll{
+		border-bottom:2px dashed #666;
+		padding-bottom:0;
+	}
+	.mainPoll p{
+		font-size: 1rem;
+	}
+	.submit{
+		margin-bottom:0;
+	}
+	.pollInfo{
+		padding-top: 1rem;
+		padding-bottom:0.5rem;
+	}
+	.pollInfoData{
+		width:initial;
+	}
+	.optionsForm{
+		padding:1rem 0 !important;
+	}
+	.choice_image {
+	    height: 175px !important;
+	    width: 190px !important;
+	    border: 3px solid #666;
+	    margin-right:0;
+	}
+	.upvoteIndex{
+		top:65% !important;
+	}
+}

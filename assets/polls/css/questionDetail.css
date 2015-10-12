@@ -9,17 +9,9 @@ html{
 .questions{
 	display:block;
 }
-.userImage img {
-  border-radius: 50%;
-  padding: 0;
-  width: 100%;
-  z-index: 99999;
-  position: relative;
-}
 #pollsChart{
   height: 200px;
   position: relative;
-  left: -3%;
   text-transform: capitalize;
 }
 .choices figure{
@@ -127,15 +119,34 @@ ul.share-buttons li{
     position: absolute;
     right: 1rem;
     top: 15rem;
+    z-index: 100;
 }
-
+.que_text:first-letter{
+	text-transform: capitalize;
+}
+#disqus_thread{
+	display: block;
+    width: 95%;
+    margin: 0 auto;
+}
 @media only screen and (max-width: 660px){
 	#pollsChart{
 		height: 180px;
 		position: relative;
-		left: -9%;
 	}
-
+	.userInfo{
+		padding:1rem;
+		border-bottom:2px dashed #666;
+	}
+	.userBrief {
+		display: inline-block;
+		position: initial; 
+		top: 0rem; 
+		left: 0rem; 
+	}
+	.que_text,.mainPoll p{
+		margin-left:0rem;
+	}
 	#submit{
 		padding: 0 1rem 0 1rem;
 		font-size:1rem;
@@ -145,6 +156,7 @@ ul.share-buttons li{
 		-moz-border-radius: 20px;
 		-webkit-border-radius: 20px;
 		border-radius: 20px;
+		margin-bottom:1rem;
 	}
 	
 	.graphContainer{
@@ -187,20 +199,19 @@ ul.share-buttons li{
 	}
 	.gender,.age,.location,.others{
 		border:#666 solid;
-		margin-bottom: 5rem;
+		margin-bottom: 1rem;
 		margin-left:1rem;
 		margin-right:1rem;
 	}
-	
 	.analyzeAndShare{
-		margin-left:-10%;
 		margin-bottom:2rem;
 	}
-	
 	.fa{
 		font-size:15px !important;
 	}
-	
+	.analysis{
+		margin-top:0;
+	}
 	.back {
 		width: 5%;
 		height: 10%;

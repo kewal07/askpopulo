@@ -734,6 +734,9 @@ form.signupContentPartForm input{
 	#display_message_section{
 		margin:0 !important;
 	}
+	.user_not_credit_message_ul{
+		display: none;
+	}
 	#footer{
 	margin:0;
 	background: black;

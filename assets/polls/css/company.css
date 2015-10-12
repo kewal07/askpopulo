@@ -1,3 +1,6 @@
+#cover-image-mobile{
+	display: none;
+}
 #cover-image{
 	height: 300px;
     border: 2px solid wheat;
@@ -41,4 +44,38 @@
     padding: 1rem;
     background-color: whitesmoke;
     opacity: 0.8;
+}
+@media only screen and (max-width: 960px){
+	#cover-image{
+		display: none;
+	}
+	#cover-image-mobile{
+		display: block;
+		margin-bottom: 5rem;
+    	height: 10rem;
+    	position: relative;
+	}
+	.company-icons-mobile{
+		position: absolute;
+	    bottom: -2rem;
+	    right: 0;
+	    left: 0;
+	    margin: 0 auto;
+	    width: 65%;
+	}
+	.company-icons-mobile .fa {
+	    margin-right: 1rem;
+	    color: white;
+	    background-color: #666;
+	    padding: 0.5rem;
+	    border-radius: 25%;
+	}
+	.company-desc-mobile{
+		display: none;
+		position: absolute;
+	    border: 2px solid wheat;
+	    background-color: whitesmoke;
+	    opacity: 0.8;
+	}
+	
 }

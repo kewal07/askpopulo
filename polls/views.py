@@ -1038,6 +1038,8 @@ class CompanyIndexView(BaseViewList):
 		# else:
 		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
 		company_user_list = [x.user_id for x in company_user_list]
+		company_admin_list = User.objects.filter(id__in = company_user_list)
+		company_admin_list = [x.username for x in company_admin_list]
 		followed = Follow.objects.filter(user_id=user.id,target_id__in=company_user_list, deleted_at__isnull=True)
 		latest_questions = Question.objects.filter(privatePoll=0,user_id__in=company_user_list).order_by('-pub_date')
 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
@@ -1085,6 +1087,8 @@ class CompanyIndexView(BaseViewList):
 			data['user_already_voted'] = user_already_voted
 			data['company_obj'] = company_obj
 			data['followed'] = followed
+			print(company_user_list)
+			data['companyAdmins'] = str(';'.join(company_admin_list))
 			mainData.append(data)
 		context['data'] = mainData
 		print(context)

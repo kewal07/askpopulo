@@ -70,13 +70,12 @@
 											</a>
 										{% endif %}
 									</p>
-									<p>
-										{% if not question.question.isAnonymous %}
-											{{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i>
-											&nbsp
-											{{ question.connection }} <i class="fa fa-users"></i>
-										{% endif %}
-									</p>
+									{% if not question.question.isAnonymous %}
+										<div class="usr-creds-msg">
+											<span class="usr-det">{{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span>
+											<span class="usr-det">{{ question.connection }} <i class="fa fa-users"></i></span>
+										</div>
+									{% endif %}
 									<p class="askedOnInfo">
 										Asked on:<br>
 										<span id="{{ question.question.id }}pubdate"></span><br>
@@ -161,7 +160,7 @@
 											{% endif %}
 										</li>
 										<li><i id="ban{{ question.question.id }}" title="Report Spam" class="fa fa-ban" style=" cursor:pointer"></i></li>
-										<li>
+										<li class="expiry-li">
 											{% if question.question.expiry and not question.expired %}
 												<!-- Time Left:<br> -->
 												<div id="{{ question.question.id }}timer" class="timerClass countdownIndex"></div>
