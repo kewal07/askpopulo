@@ -159,6 +159,7 @@ def sendExpirationNotification():
 						if user_dict['action'] == 'won':
 							earned_credit = ((loosers_pot/winners_pot) * user_dict['credit'])
 						user_dict['credit'] += earned_credit
+						user_dict['credit'] = int(user_dict['credit'])
 						# print("You %s %s credits"%(user_dict['action'],user_dict['credit']))
 						if user_dict['mailSubscriptionFlag'] == 0:
 							send_expiry_bet_admin_mail(to_email,poll,que_voter,que_text,que_slug,"bet",user_dict['action'],user_dict['credit'])

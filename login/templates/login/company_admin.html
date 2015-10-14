@@ -48,6 +48,7 @@
 							<script>
 								 google.setOnLoadCallback(drawChart);
 						      	function drawChart() {
+								console.log("chart draw called");
 						      		var dashboardData = [['Month', 'Polls', 'Views', 'Votes']];
 									{% for dash_dict in dash_graph %}
 										var dash_list = ["{{ dash_dict.month_name }}",{{ dash_dict.polls }},{{ dash_dict.views }},{{ dash_dict.votes }}];
@@ -55,6 +56,7 @@
 									{% endfor %}
 									// console.log(dashboardData);
 									var data = google.visualization.arrayToDataTable(dashboardData);
+									console.log(dashboardData);
 
 							        var options = {
 							          chart: {
@@ -67,8 +69,10 @@
 							        };
 
 							        var chart = new google.charts.Bar(document.getElementById('chart_div'));
+									console.log(dashboardData);
 
 							        chart.draw(data, google.charts.Bar.convertOptions(options));
+									console.log(dashboardData);
 						      }
 							</script>
 						</div>
@@ -429,8 +433,9 @@
 		</div>
 		<div id="billing-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
+				Coming Soon!
 			</div>
+			<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
 		</div>
 		<script>
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
@@ -449,6 +454,9 @@
 						$("#messages-content").append('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
 						$(".admin-dash-div").hide();
 					    $("#"+elem_id).show();
+			        }
+					else if(elem_id == "dashboard-content"){
+						location.reload();
 			        }
 					else
 						$.ajax({
@@ -493,6 +501,11 @@
 										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country");
 									{% endfor %}
 								}
+
+						 //    if(elem_id == "dashboard-content"){
+							// google.setOnLoadCallback(drawChart);
+					  //           	drawChart();
+					  //           }
 					        }
 					    });
 				});

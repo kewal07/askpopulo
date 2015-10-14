@@ -204,6 +204,7 @@ $(document).ready(function(){
 		if(divElemId === "myABPInboxDiv"){
 			console.log("nbox Loaded for user");
 			$("#myABPInboxDiv").html('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
+			$("#myABPInboxDiv").toggle();
 		}
 		else{
 			var new_elem_html = "";

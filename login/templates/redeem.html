@@ -13,7 +13,10 @@
 					100 pCoins = <i class="fa fa-inr"></i> 10
 				</p> -->
 				<p id="userCreditsRemaining">
-					User Credits Remaining :: {{ user.extendeduser.credits }}
+					pCoins redeemable :: {{ user.extendeduser.credits }} <i class="fa fa-coins"></i> 
+				</p>
+				<p>
+					100 <i class="fa fa-coins"></i> = <i class="fa fa-inr"></i> 10 
 				</p>
 		</div>
 		<div id="redemptionSchemesMessage">
@@ -29,7 +32,7 @@
 					<label for = "{{ scheme.schemeName }}">
 						<figure class="category_figure">
 							<img class="category_imagethumbnails" src="{{ scheme.schemeImageUrl }}" alt="{{ scheme.schemeName }}">
-							<figcaption class="category_figurecaption">{{ scheme.schemeDisplayName }} : {{ scheme.schemeCostInPCoins }} <i class="fa fa-coins"></i><br><label for = "text---{{ scheme.schemeName }}">Quantity</label>
+							<figcaption class="category_figurecaption">{{ scheme.schemeDisplayName }} (<i class="fa fa-inr"></i> {{scheme.schemeCostInRupees }} coupon) : {{ scheme.schemeCostInPCoins }} <i class="fa fa-coins"></i><br><label for = "text---{{ scheme.schemeName }}">Quantity</label>
 					<input name="{{ scheme.schemeName }}" class="qtyText" type="text" id="text---{{ scheme.schemeName }}" value="0" placeholder="0"></figcaption>
 						</figure>
 					</label>

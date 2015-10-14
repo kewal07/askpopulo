@@ -84,6 +84,9 @@ class Company(BaseModel):
 			cslug = None
 		self.company_slug = cslug
 		super(Company, self).save(*args, **kwargs)
+
+	def __str__(self):
+		return self.name
 		
 	def get_profile_pic_name(self,imageUrl):
 		return imageUrl.path.split(os.sep)[-1]
@@ -97,7 +100,7 @@ class Company(BaseModel):
 			pass
 		return folder_day
 
-	def get_pic_url(imageUrl):
+	def get_pic_url(self,imageUrl):
 		if imageUrl:
 			return "/media/company/"+self.get_folder_day(imageUrl)+os.sep+self.get_profile_pic_name(imageUrl)
 		
@@ -138,6 +141,9 @@ class ExtendedUser(models.Model):
 	credits = models.IntegerField(default=100)
 	company = models.OneToOneField(Company,default=get_company_default)
 	
+	def __str__(self):
+		return self.user.username
+
 	def save(self, *args, **kwargs):
 		uname = self.user.username
 		# uname = ''.join(e for e in uname if e.isalnum())
