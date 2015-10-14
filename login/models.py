@@ -15,7 +15,7 @@ from stream_django.activity import Activity
 
 def get_company_default():
 	return Company.objects.get(id=1)
-
+	
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
 	filename = "profilepic%s.%s" % (instance.user_pk, ext)

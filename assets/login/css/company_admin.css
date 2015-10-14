@@ -224,7 +224,12 @@ li.followers{
 	border-bottom: 2px dashed;
     padding-bottom: 1.5rem;
 }
-.analyseSelect{
+#advancedAna{
+	width:90%;
+	margin:0 auto;
+	text-align: center;
+}
+.analyseSelect,.advancedanalyseSelect{
 	width: 10%;
     margin: 0 auto;
     display: block;
@@ -234,6 +239,9 @@ li.followers{
     font-family: 'Arvo',serif;
     background-color: wheat;
     color: black;
+}
+.advancedanalyseSelect{
+	display: inline-block;
 }
 .pollsChartClass{
 	width: 76%;
@@ -253,6 +261,9 @@ span.cube-num{
 	text-align: center;
     font-size: 2rem;
     margin-top: 10rem;
+}
+.feed-admin{
+	border-bottom: none !important;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{

@@ -13,16 +13,22 @@
 .company-icons{
 	display: inline-block;
     position: absolute;
-    bottom: 0;
-    right: 2rem;
+    bottom: -69px;
+    right: -2px;
     font-size: 2rem;
+    padding: 0.5rem;
+    border: 2px solid wheat;
+    background-color: black;
 }
 #company-name{
 	position: absolute;
-    bottom: 0rem;
+    bottom: -53px;
     color: white;
-    left: 2rem;
+    left: -2px;
     font-size: 2rem;
+    background-color: black;
+    border: 2px solid wheat;
+    padding: 0.5rem;
 }
 .company-icons .fa{
 	margin-right: 2rem;
@@ -43,7 +49,7 @@
     border: 2px solid wheat;
     padding: 1rem;
     background-color: whitesmoke;
-    opacity: 0.8;
+    z-index:10;
 }
 @media only screen and (max-width: 960px){
 	#cover-image{

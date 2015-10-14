@@ -303,13 +303,13 @@ button.followButton.unfollow{
     width: 86%;
     margin:24px 0px 0px 8px;*/
 }
-
 .upvoteIndex{
-	position: absolute;
-    top: 45%;
-    right: 0%;
-    width: 6%;
-    cursor: pointer;
+	cursor: pointer;
+    width: 3%;
+    position: absolute;
+    right: 2rem;
+    top: 6rem;
+    z-index: 100;
 }
 
 .upvotemessage{
@@ -337,8 +337,12 @@ button.followButton.unfollow{
 		text-transform: capitalize;
 	}
 .usr-creds-msg{
-    width: 54%;
+    width: 99%;
     margin: 0 auto;
+}
+.connections{
+	display: inline-block;
+    width: 130%;
 }
 @media only screen and (max-width: 480px){
 	#content{
@@ -459,10 +463,16 @@ button.followButton.unfollow{
 		width:100%;
 		margin-top:0.5rem;
 	}
+	.upvoteIndex,.upvoteDetailVote .fa-2x{
+		font-size:1rem;
+	}
 }
 @media only screen and (min-width:481px) and (max-width: 960px){
 	.user_not_credit_message {
 		display: none;
+	}
+	.upvoteIndex .fa-2x{
+		font-size:1rem;
 	}
 	.qTextDesc:first-letter{
 		text-transform: capitalize !important;

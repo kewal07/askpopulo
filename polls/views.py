@@ -1094,3 +1094,71 @@ class CompanyIndexView(BaseViewList):
 		print(context)
 		return mainData
 
+class AccessDBView(BaseViewList):
+
+	def post(self,request,*args,**kwargs):
+		# print(request.path,request.POST)
+		if request.path == "/advanced_analyse":
+			pollId = request.POST.get("question")
+			# poll = Question.objects.get(pk=pollId)
+			min_age = 0
+			max_age = 9999
+			if request.POST.get("age") != "nochoice":
+				if request.POST.get("age") == "<19":
+					max_age = 19
+				elif request.POST.get("age") == "20-25":
+					min_age = 20
+					max_age = 25
+				elif request.POST.get("age") == "26-30":
+					min_age = 26
+					max_age = 30
+				elif request.POST.get("age") == "31-35":
+					min_age = 31
+					max_age = 35
+				elif request.POST.get("age") == "36-50":
+					min_age = 36
+					max_age = 50
+				elif request.POST.get("age") == ">50":
+					min_age = 50
+			gender = ""
+			if request.POST.get("gender") != "nochoice":
+				gender = request.POST.get("gender").lower()
+			profession = ""
+			if request.POST.get("profession") != "nochoice":
+				profession = request.POST.get("profession").lower()
+			country = ""
+			if request.POST.get("country") != "nochoice":
+				country = request.POST.get("country").lower()
+			state = ""
+			if request.POST.get("state") != "nochoice":
+				state = request.POST.get("state").lower()
+			response_dic = {}
+			total_votes = 0
+			# print(min_age,max_age,gender,profession)
+			for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
+				choice_text = "Choice"+str(idx+1)
+				response_dic[choice_text] = 0
+				for vote in Vote.objects.filter(choice_id=choice.id):
+					user_age = vote.user.extendeduser.calculate_age()
+					user_gender = vote.user.extendeduser.gender.lower()
+					user_prof = vote.user.extendeduser.profession.lower()
+					user_country = vote.user.extendeduser.country.lower()
+					user_state = vote.user.extendeduser.state.lower()
+					add_cnt = True
+					# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
+					if not (user_age >= min_age and user_age <= max_age):
+						add_cnt = False
+					if gender and user_gender != gender:
+						add_cnt = False
+					if profession and user_prof != profession:
+						add_cnt = False
+					if state and user_state != state:
+						add_cnt = False
+					if country and user_country != country:
+						add_cnt = False
+					if add_cnt:
+						response_dic[choice_text] += 1
+						total_votes += 1
+			response_dic['total_votes'] = total_votes
+			# print(response_dic)
+			return HttpResponse(json.dumps(response_dic), content_type='application/json')
