@@ -13,6 +13,9 @@ from stream_django.activity import Activity
 #from django.contrib.auth.models import User
 # Create your models here.
 
+def get_company_default():
+	return Company.objects.get(id=1)
+	
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
 	filename = "profilepic%s.%s" % (instance.user_pk, ext)
@@ -133,7 +136,7 @@ class ExtendedUser(models.Model):
 	categories = models.CharField(max_length=100,default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26',blank=True,null=True)
 	mailSubscriptionFlag = models.BooleanField(default=0)
 	credits = models.IntegerField(default=100)
-	company = models.OneToOneField(Company)
+	company = models.OneToOneField(Company,default=get_company_default)
 	
 	def save(self, *args, **kwargs):
 		uname = self.user.username

@@ -72,8 +72,8 @@
 									</p>
 									{% if not question.question.isAnonymous %}
 										<div class="usr-creds-msg">
-											<span class="usr-det">{{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span>
-											<span class="usr-det">{{ question.connection }} <i class="fa fa-users"></i></span>
+											<span class="usr-det">pCoins : {{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
+											<span class="usr-det connections">Connection{{ question.connection|pluralize }} : {{ question.connection }} <i class="fa fa-users"></i></span>
 										</div>
 									{% endif %}
 									<p class="askedOnInfo">
@@ -193,9 +193,9 @@
 								</div>
 							</div>
 							<div class="upvoteIndex">
-								<i class="fa fa-thumbs-up upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
+								<i class="fa fa-2x fa-thumbs-up upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
 								<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
-								<i class="fa fa-thumbs-down upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
+								<i class="fa fa-2x fa-thumbs-down upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
 								<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
 							</div>
 					</div>

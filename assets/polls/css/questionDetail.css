@@ -144,6 +144,10 @@ ul.share-buttons li{
 		top: 0rem; 
 		left: 0rem; 
 	}
+	img.usr-detail-img{
+		width: 100px;
+    	height: 100px;
+	}
 	.que_text,.mainPoll p{
 		margin-left:0rem;
 	}

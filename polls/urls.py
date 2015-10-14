@@ -35,4 +35,5 @@ urlpatterns = patterns('',
 	url(r'^shradha$',views.TeamView.as_view(),name='shradha'),
 	url(r'^ankit$',views.TeamView.as_view(),name='ankit'),
 	url(r'^abhinav$',views.TeamView.as_view(),name='abhinav'),
+	url(r'^advanced_analyse$',views.AccessDBView.as_view(),name='advanced_analyse'),
 )

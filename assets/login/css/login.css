@@ -131,6 +131,11 @@ form.loginContentForm input{
 }
 label[for="id_login"] { display:none !important; }
 label[for="id_password"] { display:none !important; }
+.slider-img{
+	display: inline-block;
+    width: 97%;
+    margin-top: 1rem;
+}
 @media only screen and (max-width: 960px){
 	#login{
 		margin:0;

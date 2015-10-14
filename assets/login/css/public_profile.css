@@ -86,9 +86,6 @@ ul.profileBriefUl li:first-child{
 	width:70%;
 	float:left;
 }
-.profileDetail{
-	display: none;
-}
 .myActivityDiv{
 	display: block;
 }
