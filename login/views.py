@@ -403,14 +403,14 @@ class RedeemView(BaseViewList):
 				else:
 					response['validationPassed'] = 'All Coupons are valid'
 					response['remainingCredits'] = availablepCoins
-					response['successMessage'] = 'You will receive coupons in your mail box within 6 hours.'
+					response['successMessage'] = 'You will receive coupons in your mail box within 2 working days.'
 					currentUser = ExtendedUser.objects.filter(pk = request.user.extendeduser.id)[0]
 					currentUser.credits = availablepCoins
 					currentUser.save()
 					for req in couponRequest:
 						req.save();
 					# send Mail Here
-					# send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
+					send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
 					return HttpResponse(json.dumps(response), content_type='application/json')
 			elif totalOrder <= 0:
 				response['insufficientpCoins'] = 'No schemes were selected'
