@@ -13,6 +13,9 @@ from stream_django.activity import Activity
 #from django.contrib.auth.models import User
 # Create your models here.
 
+def get_company_default():
+	return Company.objects.get(id=1)
+
 def get_file_path(instance, filename):
 	ext = filename.split('.')[-1]
 	filename = "profilepic%s.%s" % (instance.user_pk, ext)
@@ -81,6 +84,9 @@ class Company(BaseModel):
 			cslug = None
 		self.company_slug = cslug
 		super(Company, self).save(*args, **kwargs)
+
+	def __str__(self):
+		return self.name
 		
 	def get_profile_pic_name(self,imageUrl):
 		return imageUrl.path.split(os.sep)[-1]
@@ -94,7 +100,7 @@ class Company(BaseModel):
 			pass
 		return folder_day
 
-	def get_pic_url(imageUrl):
+	def get_pic_url(self,imageUrl):
 		if imageUrl:
 			return "/media/company/"+self.get_folder_day(imageUrl)+os.sep+self.get_profile_pic_name(imageUrl)
 		
@@ -133,8 +139,11 @@ class ExtendedUser(models.Model):
 	categories = models.CharField(max_length=100,default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26',blank=True,null=True)
 	mailSubscriptionFlag = models.BooleanField(default=0)
 	credits = models.IntegerField(default=100)
-	company = models.OneToOneField(Company)
+	company = models.OneToOneField(Company,default=get_company_default)
 	
+	def __str__(self):
+		return self.user.username
+
 	def save(self, *args, **kwargs):
 		uname = self.user.username
 		# uname = ''.join(e for e in uname if e.isalnum())

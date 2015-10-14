@@ -432,9 +432,12 @@ button.followButton.unfollow{
 	}
 	a.anchor_submit{
 		position: absolute;
-    	top: 0.5rem;
-    	right: 1rem;
-    	margin-top: 0.6rem;
+    		top: 0.5rem;
+    		right: 1rem;
+    		margin-top: 0.6rem;
+	}
+	.resultsButton {
+		font-size:1rem;
 	}
 	.pollInfo{
 		width:100%;
