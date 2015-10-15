@@ -7,6 +7,9 @@
 		body{
 			font-family: 'Arvo', serif;
 		}
+		.questions{
+			padding-bottom: 5rem;
+		}
 		.abt-us-img{
 			width: 200px;
 		    height: 265px;
@@ -14,7 +17,7 @@
 		    display: inline-block;
 		}
 		.abt-us-text{
-			width: 70%;
+			width: 69%;
 		    display: inline-block;
 		    float: right;
 		    font-family: 'Arvo',serif;
@@ -22,6 +25,9 @@
 		.abt-us-text p{
 			padding:1rem;
 		}
+		.kewal{
+				float:left;
+			}
 		@media only screen and (max-width: 960px){
 			.abt-us-img{
 				width: 90%;
@@ -29,14 +35,17 @@
 			    padding: 1rem;
 				display: initial;
 			}
-		.abt-us-text{
+			.abt-us-text{
 				width: 100%;
 			    display: initial;
 			    float: none;
 			    font-family: 'Arvo',serif;
 			}
-		.abt-us-text p{
+			.abt-us-text p{
 				padding:1rem;
+			}
+			.kewal{
+				float:none;
 			}
 		}
 	</style>
@@ -56,8 +65,7 @@
 			</div>
 		</div>
 		<div class="questions">
-			<img class="abt-us-img" src="/static/kewal.png">
-			<div class="abt-us-text">
+			<div class="abt-us-text kewal">
 				<p>Kewal is a Computer Science Engineer from NIST and deeply passionate about start-ups.
 				</p>
 				<p> He led the team that won the Google Chrome App Developer Challenge, 2014. He was also a project 	student at IIT Kharagpur. His interest in academics is evident by the fact that he has 2 			technical papers published and presented at International Conference in Bangkok and New Delhi. 
@@ -66,6 +74,7 @@
 				<p>He is also an avid reader and writer and was one of the most beloved and awarded writer during 	   his college days. While not immersed in AskByPoll, he can be found with a novel or busy playing 	   Fifa on his PS3.
 				</p>
 			</div>
+			<img class="abt-us-img" src="/static/kewal.png">
 		</div>
 	</section>
 {% endblock %}
