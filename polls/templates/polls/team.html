@@ -2,11 +2,70 @@
 {% load static %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+	<style>
+		body{
+			font-family: 'Arvo', serif;
+		}
+		.abt-us-img{
+			width: 200px;
+		    height: 265px;
+		    padding: 1rem;
+		    display: inline-block;
+		}
+		.abt-us-text{
+			width: 70%;
+		    display: inline-block;
+		    float: right;
+		    font-family: 'Arvo',serif;
+		}
+		.abt-us-text p{
+			padding:1rem;
+		}
+		@media only screen and (max-width: 960px){
+			.abt-us-img{
+				width: 90%;
+			    height: 265px;
+			    padding: 1rem;
+				display: initial;
+			}
+		.abt-us-text{
+				width: 100%;
+			    display: initial;
+			    float: none;
+			    font-family: 'Arvo',serif;
+			}
+		.abt-us-text p{
+				padding:1rem;
+			}
+		}
+	</style>
 {% endblock %}
 {% block content %}
 	<section id="content">
 		<div class="questions">
-			<img style="display:block;margin:0 auto" src="/static/Team.JPG">
+			<img class="abt-us-img" src="/static/sandeep.png">
+			<div class="abt-us-text">
+				<p>Sandeep is and MBA from IIM Bangalore, and did is engineering in Computer Science from BIT Mesra.
+				</p>
+				<p> While he was buying a car, he was confused about the various options and was not able to decide. 		This was how AskByPoll was conceived. With his passion for Analytics & Operations, he believed there 	surely could be a better platform to address such concerns and thus, he set out to work on AskByPoll.</p>
+				<p>Before AskByPoll, he worked for 3 Years in Akamai Technologies,BD & Strategic Planning in Domestic & 	International Markets, & was awarded the Akamai Sales Titan. He also has a Research Paper while he 		was in IIM on Consumer Buying Behavior & Buyer Personas.
+				</p>
+				<p>He is also deeply interesetd in photography and when he is not busy working on AskByPoll, he 		could be found trying to capture all and sundry moments on his DSLR.
+				</p>
+			</div>
+		</div>
+		<div class="questions">
+			<img class="abt-us-img" src="/static/kewal.png">
+			<div class="abt-us-text">
+				<p>Kewal is a Computer Science Engineer from NIST and deeply passionate about start-ups.
+				</p>
+				<p> He led the team that won the Google Chrome App Developer Challenge, 2014. He was also a project 	student at IIT Kharagpur. His interest in academics is evident by the fact that he has 2 			technical papers published and presented at International Conference in Bangkok and New Delhi. 
+				</p>
+				<p>Before AskByPoll, he was working at Philips Research, India and a couple of other start-ups. He 		has one patent at Philips on MRI Machines Analysis and Alerting System. He has won best employee 	 awards at his earlier organisations.
+				<p>He is also an avid reader and writer and was one of the most beloved and awarded writer during 	   his college days. While not immersed in AskByPoll, he can be found with a novel or busy playing 	   Fifa on his PS3.
+				</p>
+			</div>
 		</div>
 	</section>
 {% endblock %}
