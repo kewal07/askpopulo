@@ -638,7 +638,7 @@ form.signupContentPartForm input{
 }
 .user_not_credit_message{
 	position: fixed;
-    top: 25rem;
+    top: 30rem;
     right: 3rem;
     color: black;
 }

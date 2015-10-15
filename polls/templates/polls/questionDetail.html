@@ -48,9 +48,9 @@
 									</a>
 								{% endif %}
 							</p>
-							{% if not question.question.isAnonymous %}
+							{% if not question.isAnonymous %}
 										<div class="usr-creds-msg">
-											<span class="usr-det">pCoins : {{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
+											<span class="usr-det">pCoins : {{ question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
 											<span class="usr-det .connections">Connection{{ question.connection|pluralize }} : {{ question.connection }} <i class="fa fa-users"></i></span>
 										</div>
 									{% endif %}

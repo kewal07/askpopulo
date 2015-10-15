@@ -184,9 +184,9 @@
 						</div>
 					</div>
 					<div class="upvoteIndex">
-						<i class="fa fa-thumbs-up upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
+						<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
 						<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
-						<i class="fa fa-thumbs-down upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
+						<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
 						<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
 					</div>
 			</div>
