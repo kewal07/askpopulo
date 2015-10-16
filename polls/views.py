@@ -261,6 +261,9 @@ class VoteView(BaseViewDetail):
 			sub_que.append(sub.question.id)
 		context['subscribed'] = sub_que
 		context['expired'] = False
+		followers = [ x.user for x in Follow.objects.filter(target_id=context['question'].user.id,deleted_at__isnull=True) ]
+		following = [ x.target for x in Follow.objects.filter(user_id=context['question'].user.id,deleted_at__isnull=True) ]
+		context['connection'] = len(followers) + len(following)
 		if context['question'].expiry and context['question'].expiry < timezone.now():
 			context['expired'] = True
 		return context
