@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/redeem.css' %}" />
 {% endblock %}
 {% block content %}
-<section id="myCategories">
+<section id="myCategories" style="width:1100px;margin:0 auto;">
     
 	<div class="categoriesList clearfix">
 		<div id="coinCreditDetails">
@@ -25,7 +25,7 @@
 		<div class="messagesDiv clearfix">
 		</div>
 
-		<form class="redemptionForm" method="POST" action="{% url 'login:redeem' user.id user.extendeduser.user_slug %}">
+		<form class="redemptionForm" method="POST" action="{% url 'login:redeem' user.id user.extendeduser.user_slug %}" style="margin-rigth:-5rem;">
 			{% csrf_token %}
 			{% for scheme in schemes %}
 				<div class="couponContainer">
@@ -41,7 +41,7 @@
 				</div>
 			{% endfor %}
 			<br><br>
-			<input value="Redeem" class="submit" id="submit" type="submit" style="margin-top:35rem; margin-bottom:4rem;"/>
+			<input value="Redeem" class="submit" id="submit" type="submit" style="margin-left:39%;"/>
 		</form>
 		<script>
 			$(document).ready(function()
