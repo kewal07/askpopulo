@@ -15,7 +15,7 @@
 		<div class="signupContent">
 			<p class="headingSignup">{% blocktrans %}Already have an account ? Then please <a href="{{ login_url }}"><span class="anchorSpan">Sign in</span></a>.{% endblocktrans %}</p>
 
-			<form class="signupContentForm" id="signup_form" method="post" action="{% url 'account_signup' %}" enctype="multipart/form-data">
+			<form class="signupContentForm" id="signup_form" method="post" action="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}" enctype="multipart/form-data">
 			  {% csrf_token %}
 			  {{ form.as_p }}
 			  {% if redirect_field_value %}

@@ -14,7 +14,7 @@
 
 			{% if socialaccount.providers  %}
 			{% if request.GET.next %}
-				<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+				<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
 			{% else %}
 				<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
 			{% endif %}
