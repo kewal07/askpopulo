@@ -420,7 +420,7 @@ class RedeemView(BaseViewList):
 					for req in couponRequest:
 						req.save();
 					# send Mail Here
-					send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
+					send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','sandeep.singh.2328@gmail.com','kewal07@gmail.com'])
 					return HttpResponse(json.dumps(response), content_type='application/json')
 			elif totalOrder <= 0:
 				response['insufficientpCoins'] = 'No schemes were selected'
