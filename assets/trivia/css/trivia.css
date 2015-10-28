@@ -32,6 +32,8 @@
 }
 .trivia-per-stamp{
     position: relative;
+    padding-bottom:0.5rem;
+    border-bottom: 1px solid;
 }
 .trivia-stamp{
     max-width: 30%;
@@ -39,6 +41,7 @@
     display: block;
     padding: 1rem 0;
     margin: 0 auto;
+    padding-bottom:0rem;
 }
 .trivia-percentage{
     text-align: center;
