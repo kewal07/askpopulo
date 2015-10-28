@@ -1,0 +1,28 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
+{% endblock %}
+{% block extra_js %}
+{% endblock %}
+{% block content %}
+	<section id="trivia">
+		{% if trivias %}
+			<div class="masonry">
+				{% for trivia in trivias %}
+			   		<div class="item">
+			   			<div class="trivia-title">
+							{{ trivia.trivia_title }}
+						</div>
+						{% if trivia.trivia_image %}
+							<img class="trivia-image" src="{{ trivia.get_img_url }}">
+						{% endif %}
+						<div class="trivia-description">
+							{{ trivia.trivia_header }}, {{ trivia.trivia_body }}</span>
+						</div>
+			   		</div>
+			   	{% endfor %}
+			</div>
+		{% endif %}
+	</section>
+{% endblock %}
