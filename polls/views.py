@@ -30,6 +30,7 @@ from django.core.mail import EmailMessage
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.utils import timezone
+from trivia.models import Trivia
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 
@@ -1165,3 +1166,19 @@ class AccessDBView(BaseViewList):
 			response_dic['total_votes'] = total_votes
 			# print(response_dic)
 			return HttpResponse(json.dumps(response_dic), content_type='application/json')
+
+class TriviaPView(BaseViewList):
+	context_object_name = 'trivias'
+	
+	def get_template_names(self, **kwargs):
+		template_name = 'trivia/trivia.html'
+		return [template_name]
+
+	def get_queryset(self):
+		context = {}
+		triviaList = Trivia.objects.order_by('-pub_date')
+		for trivia in triviaList:
+			print(trivia.trivia_body)
+		context['trivias'] = triviaList
+		return triviaList
+	
