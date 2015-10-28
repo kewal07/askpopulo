@@ -175,6 +175,19 @@ ul.followers p{
 #myVotesDiv{
 	display:none;
 }
+#myCommentsDiv{
+	display:none;
+}
+#notificationsDiv{
+	display:none;
+}
+#myBetsDiv{
+	display:none;
+}
+#newsFeedDiv{
+	display:none;
+}
+
 @media only screen and (max-width: 960px){
 	#content{
 		margin:0 0 11rem 0;
