@@ -3,5 +3,5 @@ from django.contrib.auth.decorators import login_required
 from trivia import views
 
 urlpatterns = patterns('',
-    url(r'^$',login_required(views.TriviaView.as_view()),name='trivia'),
+    url(r'^$',views.TriviaView.as_view(),name='trivia'),
 	)
