@@ -12,13 +12,21 @@
 				{% for trivia in trivias %}
 			   		<div class="item">
 			   			<div class="trivia-title">
-							{{ trivia.trivia_title }}
+							<a href="{% url 'polls:polls_vote' trivia.question.id trivia.question.que_slug %}">{{ trivia.trivia_title }}</a>
 						</div>
+						{% if trivia.trivia_percentage %}
+							<div class="trivia-per-stamp">
+								<img class="trivia-stamp" src="{% static 'trivia/images/stamp.png' %}">
+								<p class="trivia-percentage">
+									{{ trivia.trivia_percentage }}%
+								</p>
+							</div>
+						{% endif %}
 						{% if trivia.trivia_image %}
 							<img class="trivia-image" src="{{ trivia.get_img_url }}">
 						{% endif %}
 						<div class="trivia-description">
-							{{ trivia.trivia_header }}, {{ trivia.trivia_body }}</span>
+							{{ trivia.trivia_header }}, {{ trivia.trivia_body }}
 						</div>
 			   		</div>
 			   	{% endfor %}

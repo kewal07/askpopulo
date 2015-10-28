@@ -28,6 +28,7 @@ class Trivia(models.Model):
 	trivia_body = models.CharField(max_length=400,null=True,blank=True)
 	trivia_slug = models.SlugField(null=True,blank=True)
 	trivia_image = models.ImageField(upload_to=get_file_path,blank=True,null=True)
+	trivia_percentage = models.IntegerField(blank=True,null=True,default=0)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	pub_date = models.DateTimeField('Date Published')
