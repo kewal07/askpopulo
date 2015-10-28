@@ -166,6 +166,27 @@ img.follow{
 ul.followers p{
 	margin-bottom:1rem;
 }
+#myCategoriesDiv{
+	display:none;
+}
+#myConnectionsDiv{
+	display:none;
+}
+#myVotesDiv{
+	display:none;
+}
+#myCommentsDiv{
+	display:none;
+}
+#notificationsDiv{
+	display:none;
+}
+#myBetsDiv{
+	display:none;
+}
+#newsFeedDiv{
+	display:none;
+}
 
 @media only screen and (max-width: 960px){
 	#content{

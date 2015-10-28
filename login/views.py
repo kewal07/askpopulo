@@ -32,6 +32,7 @@ from django.core.mail import send_mail
 from rolepermissions.verifications import has_permission
 from askpopulo.roles import PageAdmin
 from postman.models import Message
+from referral.models import UserReferrer
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -41,7 +42,10 @@ class BaseViewList(generic.ListView):
 		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
 		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
+		print(str(self.request.session.get('referrer')))
 		if self.request.user.is_authenticated():
+			if not UserReferrer.objects.filter(user_id=self.request.user.id) and self.request.session.get('referrer'): 
+				UserReferrer.objects.apply_referrer(self.request.user, self.request)
 			enricher = Enrich()
 			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
 			context['messageCount'] = messageCount
@@ -73,6 +77,8 @@ class BaseViewDetail(generic.DetailView):
 		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
 		if self.request.user.is_authenticated():
+			if not UserReferrer.objects.filter(user_id=self.request.user.id) and self.request.session.get('referrer'): 
+				UserReferrer.objects.apply_referrer(self.request.user, self.request)
 			enricher = Enrich()
 			messageCount = Message.objects.filter(recipient_id = self.request.user.id, read_at__isnull=True).count()
 			context['messageCount'] = messageCount
@@ -143,7 +149,7 @@ class EditProfileView(BaseViewList):
 				return HttpResponse(json.dumps(data),content_type='application/json')
 		return HttpResponseRedirect(url)
 
-class RedirectLoginView(BaseViewList):
+class RedirectLoginView(generic.ListView):
 
 	def get(self,request,*args,**kwargs):
 		user_slug = None
@@ -178,11 +184,15 @@ class RedirectLoginView(BaseViewList):
 					city_data = twitter_data.get('location','')
 					extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 					extendedUser.save()
+				if not UserReferrer.objects.filter(user_id=request.user.id) and  request.session.get('referrer'):
+					UserReferrer.objects.apply_referrer(request.user, request)
 				user_slug = request.user.extendeduser.user_slug
 				url = reverse('login:loggedIn', kwargs={'pk':request.user.id,'user_slug':user_slug})
 		else:
 			url = reverse('polls:index', kwargs={})
 		return HttpResponseRedirect(url)
+	def get_context_data(self,**kwargs):
+		return {}
 
 class LoggedInView(BaseViewDetail):
 	template_name = 'login/profile.html'
@@ -410,7 +420,7 @@ class RedeemView(BaseViewList):
 					for req in couponRequest:
 						req.save();
 					# send Mail Here
-					send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'])
+					send_mail('RedemptionOrder',orderList,'support@askbypoll.com',['support@askbypoll.com','sandeep.singh.2328@gmail.com','kewal07@gmail.com'])
 					return HttpResponse(json.dumps(response), content_type='application/json')
 			elif totalOrder <= 0:
 				response['insufficientpCoins'] = 'No schemes were selected'

@@ -261,6 +261,9 @@ class VoteView(BaseViewDetail):
 			sub_que.append(sub.question.id)
 		context['subscribed'] = sub_que
 		context['expired'] = False
+		followers = [ x.user for x in Follow.objects.filter(target_id=context['question'].user.id,deleted_at__isnull=True) ]
+		following = [ x.target for x in Follow.objects.filter(user_id=context['question'].user.id,deleted_at__isnull=True) ]
+		context['connection'] = len(followers) + len(following)
 		if context['question'].expiry and context['question'].expiry < timezone.now():
 			context['expired'] = True
 		return context
@@ -883,26 +886,26 @@ class QuestionUpvoteView(BaseViewList):
 				diff = 2
 			else:
 				diff = 1
-				request.user.extendeduser.credits += 10
+				request.user.extendeduser.credits += 2 
 				request.user.extendeduser.save()
 				user = request.user
 				question = questionVoted
-				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":10, "action":"up_down_vote"}
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":2, "action":"up_down_vote"}
 				feed = client.feed('notification', user.id)
 				feed.add_activity(activity)	
 			upVote, created = QuestionUpvotes.objects.get_or_create(user_id=request.user.id, question_id = votedQuestionId)
 			if vote == 1:
 				questionVoted.upvoteCount += diff
-				questionVoted.user.extendeduser.credits += diff * 10
+				questionVoted.user.extendeduser.credits += diff * 2
 				user = questionVoted.user
 				question = questionVoted
-				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"upvote"}
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 2, "action":"upvote"}
 			else:
 				questionVoted.upvoteCount -= diff
-				questionVoted.user.extendeduser.credits -= diff * 10
+				questionVoted.user.extendeduser.credits -= diff * 2
 				user = questionVoted.user
 				question = questionVoted
-				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 10, "action":"downvote"}
+				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 2, "action":"downvote"}
 			questionVoted.save()
 			questionVoted.user.extendeduser.save()
 			feed = client.feed('notification', questionVoted.user.id)
