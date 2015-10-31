@@ -1071,6 +1071,12 @@ class CompanyIndexView(BaseViewList):
 			sub_que.append(sub.question.id)
 		# if country_list:
 		# 	latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
+		data = {}
+		data['company_obj'] = company_obj
+		data['followed'] = followed
+		#print(company_user_list)
+		data['companyAdmins'] = str(';'.join(company_admin_list))
+		mainData.append(data)
 		for mainquestion in latest_questions:
 			data = {}
 			data ['question'] = mainquestion
@@ -1089,13 +1095,9 @@ class CompanyIndexView(BaseViewList):
 					user_already_voted = True
 			# print(mainquestion,user_already_voted,user)
 			data['user_already_voted'] = user_already_voted
-			data['company_obj'] = company_obj
-			data['followed'] = followed
-			print(company_user_list)
-			data['companyAdmins'] = str(';'.join(company_admin_list))
 			mainData.append(data)
 		context['data'] = mainData
-		print(context)
+		#print(context)
 		return mainData
 
 class AccessDBView(BaseViewList):
