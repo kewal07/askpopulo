@@ -38,7 +38,9 @@
 					<div class="company-desc-mobile"><p>{{ data.0.company_obj.description }}</p></div>
 				</div>
 			</div>
+			{% if data|length > 1 %}
 			{% for question in data %}
+			{% if forloop.counter > 1 %}
 			<div class="questions">
 				<div class="questionContent">
 					<div class="userInfo">
@@ -190,7 +192,9 @@
 						<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
 					</div>
 			</div>
+			{% endif %}
 			{% endfor %}
+			{% endif %}
 			{% if is_paginated %}
 		        <div class="pagination">
 		            <span class="page-links">
