@@ -2,7 +2,6 @@
 {% load static %}
 {% load activity_tags %}
 {% load get_name %}
-{% load get_random %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/public_profile.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
@@ -248,9 +247,57 @@
 		</div>
 		<div id="groups-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Coming Soon!
+				Groups
 			</div>
-			<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
+			<div class="dashboard-stats clearfix">
+				<p id="create-new-group" onclick="createGroup()"> Create New </p>
+				<ul class="dashboard-recent">
+					<li> Groups</li>
+					{% for group in groups %}
+						<li class="li-margin-polls">
+							<div class="liDetail">
+								<div class="check_analyse">
+									<p class="main activity_url analyse_question_text" id="analyse---{{ question.poll.id }}">
+										{{group.groupName}}
+									</p>
+								</div>
+							</div>
+							<div class="analysis group-ana-member" id="analyse---{{ group.id }}Div">
+								<div class="groupMemebers clearfix">
+									{% for member in group.groupMembers %}
+										<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
+											<figure class="members-figure">
+											  <img class="groupsMemberProfilePic" src="{{ member.extendeduser.get_profile_pic_url }}" alt="{{ member.first_name }}">
+											  <figcaption class="members-figcaption">{{ member.first_name }} {{ member.last_name }}</figcaption>
+											</figure>
+										</a>
+									{% endfor %}
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="create-group">
+				<form id="create-group-form" class="create-group-content-form" method="POST" action="{% url 'login:create_group' %}"  enctype="multipart/form-data">
+					{% csrf_token %}
+					<p class="form-p">
+						<label class="required" for="groupName">Name</label>
+						<input type="text" id ="groupName" name="groupName" placeholder="Group Name" maxlength="64"></input>
+					</p>
+					<p class="form-p">
+						<label class="required" for="groupMembers">Members</label>
+						<textarea id ="groupMembers" name="groupMembers" placeholder="Group Members" maxlength="64"></textarea>
+					</p>
+					<div id="dvImportSegments" class="fileupload ">
+					    <fieldset>
+					        <legend>Upload your CSV File</legend>
+					            <input type="file" name="File Upload" id="txtFileUpload" accept=".csv" />
+					   </fieldset>
+					</div>
+					<input class="submit groupSubmit" type="submit" value="Create" id="createGroupSubmit"/>
+				</form>
+			</div>
 		</div>
 		<div id="messages-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
@@ -449,7 +496,60 @@
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			var profList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"];
 			var i;
+
+			function validateEmail(field) {
+    			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
+    			return (regex.test(field)) ? true : false;
+			}
+
+			function validateMultipleEmailsCommaSeparated(emailcntl, seperator) {
+    			var value = emailcntl;
+			    if (value != '') {
+			        var result = value.split(seperator);
+			        for (var i = 0; i < result.length; i++) {
+			            if (result[i] != '') {
+			                if (!validateEmail(result[i])) {
+			                    alert('Please check, `' + result[i] + '` email addresses not valid!');
+			                    return false;
+			                }
+			            }
+			        }
+			    }
+    			return true;
+			}
+
+			function createGroup(){
+				$(".create-group").toggle("slow");
+				$('.groupSubmit').bind('click', function(event)
+				{
+					event.preventDefault();
+					var elemid = "#create-group-form";
+					var form_data = new FormData($(elemid)[0]);
+					var emailIdList = $('#groupMembers').val()
+					validateMultipleEmailsCommaSeparated(emailIdList,';');
+					$("#createGroupSubmit").attr("disabled","disabled");
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/user/creategroup",
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(response)
+							{
+								console.log(response);
+							}
+						});
+					{% else %}
+						$(location).attr('href',create_url);
+					{% endif %}
+				});
+			}
+
+	
 			$(document).ready(function(){
+			
 				// google.load("visualization", "1", {packages:["corechart"]});
 				$	(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
@@ -517,8 +617,10 @@
 					        }
 					    });
 				});
+				
 
-				$('#polls-content, #advanced-content').on("click","p.analyse_question_text",function(){
+
+				$('#polls-content,#groups-content, #advanced-content').on("click","p.analyse_question_text",function(){
 					// console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 					// console.log($(this)[0].id);
 					var elemId = $(this)[0].id;

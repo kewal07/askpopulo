@@ -18,5 +18,6 @@ urlpatterns = patterns('',
 	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/follow$',login_required(views.FollowView.as_view()),name='follow'),
 	url(r'^notifications_read$',login_required(views.MarkFeedSeen.as_view()),name='notifications_read'),
 	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/redemption$',login_required(views.RedeemView.as_view()),name='redeem'),
+	url(r'^creategroup$',login_required(views.CreateGroup.as_view()),name='create_group'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

@@ -8,6 +8,7 @@ from PIL import Image
 import hmac
 import hashlib
 from stream_django.activity import Activity
+from django.contrib.auth.models import Group
 # from stream_django.feed_manager import feed_manager
 # from django.db.models.signals import post_delete, post_save
 #from django.contrib.auth.models import User
@@ -66,6 +67,11 @@ class Follow(BaseModel):
     target = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='follower_set')
 
+class ExtendedGroup(BaseModel):
+	user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='groupauthor_set')
+	group = models.ForeignKey(Group, related_name='createdgroup_set')
+	
 class Company(BaseModel):
 	name = models.CharField(max_length=255)
 	description = models.CharField(max_length=255,null=True,blank=True)

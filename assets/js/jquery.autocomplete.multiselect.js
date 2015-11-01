@@ -3,13 +3,15 @@
 $.widget("ui.autocomplete", $.ui.autocomplete, {
     options : $.extend({}, this.options, {
         multiselect: false,
-        maxselection: 5
+        maxselection: 5,
+        elemId: ""
     }),
     _create: function(){
         this._super();
-        var itemsAdded = $('#selectedCategories').val();
         var self = this,
-            o = self.options;
+        o = self.options;
+        var itemsAdded = $('#'+o.elemId).val();
+        
 
         if (o.multiselect) {
             self.selectedItems = {};           
@@ -39,7 +41,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
 										var item = $(this).parent();
 										delete self.selectedItems[item.text()];
 										itemsAdded=itemsAdded.replace(item.text()+",","");
-										$('#selectedCategories').val(itemsAdded);
+										$('#'+o.elemId).val(itemsAdded);
 										item.remove();
 									})
 							)
@@ -62,7 +64,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                         var prev = self.element.prev();
                         delete self.selectedItems[prev.text()];
                         itemsAdded=itemsAdded.replace(prev.text()+",","");
-                        $('#selectedCategories').val(itemsAdded);
+                        $('#'+o.elemId).val(itemsAdded);
                         o.maxselection++;
                         prev.remove();
                     }
@@ -77,7 +79,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
             o.select = o.select || function(e, ui) {
                 if(!(ui.item.label in self.selectedItems) && o.maxselection > 0){
                     itemsAdded = itemsAdded+(ui.item.label+",");//append(ui.item.label+",");
-                    $('#selectedCategories').val(itemsAdded);
+                    $('#'+o.elemId).val(itemsAdded);
                     o.maxselection--;
                     $("<div></div>")
                         .addClass("ui-autocomplete-multiselect-item")
@@ -90,7 +92,7 @@ $.widget("ui.autocomplete", $.ui.autocomplete, {
                                     var item = $(this).parent();
                                     delete self.selectedItems[item.text()];
                                     itemsAdded=itemsAdded.replace(item.text()+",","");
-                                    $('#selectedCategories').val(itemsAdded);
+                                    $('#'+o.elemId).val(itemsAdded);
                                     item.remove();
                                 })
                         )

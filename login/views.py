@@ -33,6 +33,9 @@ from rolepermissions.verifications import has_permission
 from askpopulo.roles import PageAdmin
 from postman.models import Message
 from referral.models import UserReferrer
+from django.contrib.auth.models import Group
+from django.core.mail import EmailMessage
+from login.models import ExtendedGroup
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -443,7 +446,6 @@ class AdminDashboard(BaseViewDetail):
 	def get_context_data(self, **kwargs):
 		data = super(AdminDashboard, self).get_context_data(**kwargs)
 		user = self.request.user
-		print(user)
 		polls_vote_list = []
 		polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
 		total_views = 0
@@ -475,7 +477,17 @@ class AdminDashboard(BaseViewDetail):
 			pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
 			total_views += que.numViews
 			polls_vote_list.append(pole_dict)
+		groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
+		print(groups)
+		group_list = []
+		for group in groups:
+			group_dict = {}
+			tempGroup = Group.objects.get(pk=group['group_id'])
+			group_dict['groupName'] = tempGroup.name
+			group_dict['groupMembers'] = tempGroup.user_set.all()
+			group_list.append(group_dict)
 		polls_count = len(polls)
+		groups_count = len(groups)
 		votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
@@ -497,6 +509,35 @@ class AdminDashboard(BaseViewDetail):
 		print(type(votes_count))
 		data['polls'] = polls_vote_list
 		data['polls_count'] = polls_count
+		data['groups'] = group_list
+		data['groups_count'] = groups_count
 		data['votes_count'] = votes_count
 		data['total_views'] = total_views
 		return data
+
+class CreateGroup(BaseViewList):
+	def post(self, request, *args, **kwargs):
+		groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
+		emailList = request.POST.get('groupMembers').split(';')
+		try:
+			newgroup = Group.objects.create(name = groupName)
+		except:
+			response['error'] = 'Group name already exists.'
+			return HttpResponse(json.dumps(response), content_type='application/json')
+		group = Group.objects.get(name=groupName)
+		extendedGroup = ExtendedGroup(user=request.user, group = group)
+		extendedGroup.save()
+		for email in emailList:
+			user = User.objects.filter(email = email)
+			if user:
+				user = list(user)[0]
+				user.groups.add(group)
+			else:
+				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
+				msg.template_name = "invitation-mail"
+				msg.global_merge_vars = {
+                    'inviter': request.user.first_name,
+                    'companyname':request.user.extendeduser.company.name
+                }
+				msg.send()
+				

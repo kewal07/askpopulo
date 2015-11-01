@@ -33,13 +33,15 @@ form.createPollContentForm label{
 	width:20%;
 	color: #666;
 }
-
 .createPollContentForm input[type="text"]{
 		height: 2rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
 		background: transparent;
 		overflow:hidden;
+}
+#groups{
+  border:none;
 }
 .createPollText{
 	margin-right: 1rem;
