@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" src="{% static 'login/js/company_admin.js' %}"></script>
 	<script type="text/javascript" src="{% static 'login/js/countryStateCityLoader.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jquery.csv-0.71.min.js' %}"></script>
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -289,12 +290,10 @@
 						<label class="required" for="groupMembers">Members</label>
 						<textarea id ="groupMembers" name="groupMembers" placeholder="Group Members" maxlength="64"></textarea>
 					</p>
-					<div id="dvImportSegments" class="fileupload ">
-					    <fieldset>
-					        <legend>Upload your CSV File</legend>
-					            <input type="file" name="File Upload" id="txtFileUpload" accept=".csv" />
-					   </fieldset>
-					</div>
+					<p>
+				        <label for="csvUpload">Upload your CSV File</label>
+				        <input type="file" name="File Upload" id="csvUpload" accept=".csv" />
+					</p>
 					<input class="submit groupSubmit" type="submit" value="Create" id="createGroupSubmit"/>
 				</form>
 			</div>
@@ -518,8 +517,46 @@
     			return true;
 			}
 
+			 // Method that checks that the browser supports the HTML5 File API
+		    function browserSupportFileUpload() {
+		        var isCompatible = false;
+		        if (window.File && window.FileReader && window.FileList && window.Blob) {
+		        isCompatible = true;
+		        }
+		        return isCompatible;
+		    }
+
 			function createGroup(){
 				$(".create-group").toggle("slow");
+				// Method that reads and processes the selected file
+				$("#csvUpload").change(function(evt){
+					if (!browserSupportFileUpload()) {
+				        alert('The File APIs are not fully supported in this browser!');
+				        } else {
+				            var data = null;
+				            var file = evt.target.files[0];
+				            var reader = new FileReader();
+				            reader.readAsText(file);
+				            reader.onload = function(event) {
+				                var csvData = event.target.result;
+				                data = $.csv.toArrays(csvData);
+				                if (data && data.length > 0) {
+				                	var tempEmail="";
+				                  	data.forEach(function(entry) {
+									   tempEmail += entry+";";
+									});
+									console.log(tempEmail);
+									$("#groupMembers").val(tempEmail);
+				                } else {
+				                    alert('No data to import!');
+				                }
+				            };
+				            reader.onerror = function() {
+				                alert('Unable to read ' + file.fileName);
+				            };
+				        }
+
+				});
 				$('.groupSubmit').bind('click', function(event)
 				{
 					event.preventDefault();
