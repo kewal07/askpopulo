@@ -345,6 +345,16 @@ form#create-group-form textarea{
 :-ms-input-placeholder {
     text-align: center;
 }
+#csvUpload{
+	padding: 0.5rem;
+    display: inline-block;
+    background: #fff;
+    border: 1px solid;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #000000;
+    border-radius: 10px;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;
