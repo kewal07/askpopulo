@@ -110,10 +110,17 @@
 						{% endfor %}
 						</div>
 						</p>
+						{% if question.protectResult and user != question.user %}
+						<p style="font-size:1.5rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;"> Thanks for Voting. Results have been protected by Admin.</p>
+						{% else %}
 						<div id="pollsChart">
 						</div>
+						{% endif %}
 						<div class="analyzeAndShare">
+							{% if question.protectResult and user != question.user %}
+							{% else %}
 							<input class="submit detailSubmit" type="submit" value="Analyse" />
+							{% endif %}
 							<ul class="share-buttons">
 								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
@@ -122,6 +129,8 @@
 						</div>
 					</div>
 				</div>
+				{% if question.protectResult and user != question.user %}
+				{% else %}
 				<div class="analysis">
 					<div class="gender">
 						<div class="graphContainer">
@@ -152,6 +161,7 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
 				<div id="disqus_thread">
 				</div>
 			</div>

@@ -265,6 +265,86 @@ span.cube-num{
 .feed-admin{
 	border-bottom: none !important;
 }
+.create-group{
+	display: none;
+	/*position:relative;*/
+}
+#create-new-group{
+	position: absolute;
+    right: 131px;
+    top: 8rem;
+    border: 2px solid;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index:10;
+}
+figure.members-figure {
+     position: relative;
+     display: inline;
+     padding: 1rem;
+     cursor:pointer;
+}
+figure img.groupsMemberProfilePic {
+	width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: block;
+    display: inline;
+}
+figcaption.members-figcaption {
+    color: orange;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+.group-ana-member{
+	margin-top: 2rem;
+}
+form#create-group-form{
+	padding: 2rem 0rem 0 2rem;
+    margin: 0 auto;
+    border: 2px dashed #666;
+    margin-left: 1rem;
+}
+form#create-group-form p.form-p{
+	margin-bottom:3rem;
+}
+form#create-group-form label{
+	display: inline-block;
+	width:20%;
+	color: #666;
+}
+#create-group-form input[type="text"]{
+		height: 2rem;
+		border-radius: 10px;
+		border: 1px solid #4c4c4c;
+		background: transparent;
+		overflow:hidden;
+}
+form#create-group-form textarea{
+	border-radius: 10px;
+    border: 1px solid #666;
+    background: transparent;
+    overflow: hidden;
+	width:50%;
+	height: 3rem;
+}
+::-webkit-input-placeholder {
+    text-align: center;
+}
+:-moz-placeholder {
+    /* Firefox 18- */
+    text-align: center;
+}
+::-moz-placeholder {
+    /* Firefox 19+ */
+    text-align: center;
+}
+:-ms-input-placeholder {
+    text-align: center;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;

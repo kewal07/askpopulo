@@ -18,7 +18,7 @@ urlpatterns = patterns('',
 	#url(r'^sitemap.xml$', redirect_to, {'url': '/static/sitemap.xml'}),
 	url(r'^(?P<company_name>[\w\-]+)$',views.CompanyIndexView.as_view(),name='company_page'),
 	#url(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
-#	url(r'^comments/', include('django_comments.urls')),
+	#url(r'^comments/', include('django_comments.urls')),
 	url(r'^trivia/',include('trivia.urls',namespace="trivia")),
 )
 urlpatterns += staticfiles_urlpatterns()

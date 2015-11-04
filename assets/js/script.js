@@ -130,6 +130,17 @@ $(document).ready(function(){
   		$("#category_tooltip").toggle();
   	});
 
+  	$("#groups_tooltip_fa").hover(function(e){
+  		// console.log($(this));
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#groups_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  		});
+  		$("#groups_tooltip").toggle();
+  	});
+
   	$("#private_poll_fa").hover(function(e){
   		// console.log("category_tooltip");
   		var elem_pos = $(this).offset();
@@ -140,6 +151,17 @@ $(document).ready(function(){
   			"width":"30%",
   		});
   		$("#private_poll_tooltip").toggle();
+  	});
+  	$("#protectResult_fa").hover(function(e){
+  		// console.log("category_tooltip");
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#protectResult_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  			"width":"30%",
+  		});
+  		$("#protectResult_tooltip").toggle();
   	});
 
 	/*help*/

@@ -128,6 +128,7 @@ ul.share-buttons li{
 	display: block;
     width: 95%;
     margin: 0 auto;
+    margin-top:2rem;
 }
 @media only screen and (max-width: 660px){
 	#pollsChart{

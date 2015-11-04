@@ -375,6 +375,19 @@
 						<input id="categories" type="text" name="categories">
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
 					</p>
+					{% if user.extendeduser.company.id > 1 %}
+						<p>
+							<label for="groups">Group <i id="groups_tooltip_fa" class="fa fa-info-circle"></i></label>
+							<input id="groups" type="text" name="groups">
+							<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
+						</p>
+					{% endif %}
+					{% if user.extendeduser.company.id > 1 %}
+						<p class="anonymous">
+						<input id="protectResult" name="protectResult" type="checkbox">
+						<label for="protectResult">Protect Result <i id="protectResult_fa" class="fa fa-info-circle"></i></label>
+					</p>
+					{% endif %}
 					<p class="anonymous">
 						<input id="anonymous" name="anonymous" type="checkbox">
 						<label for="anonymous">Ask as Anonymous</label>
@@ -405,8 +418,14 @@
 					<span class="cat_title_tooltip">{{ cat }},    </span>
 				{% endfor %}
 			</div>
+			<div class="tooltip" id="groups_tooltip">
+				<span class="cat_title_tooltip">You can select the Group and the question would be sent to them directly.</span>
+			</div>
 			<div class="tooltip" id="private_poll_tooltip">
 				<span class="cat_title_tooltip">The question will not be publicly visible. Please share the question directly with the concerned users for votes</span>
+			</div>
+			<div class="tooltip" id="protectResult_tooltip">
+				<span class="cat_title_tooltip">The Results would not be publicly visible. Only you would be able to see the results</span>
 			</div>
 		</section>
 		<script>
@@ -417,7 +436,18 @@
 			$( "#categories" ).autocomplete({
 				source: availableTags,
 				multiselect: true,
-				maxselection: 5
+				maxselection: 5,
+				elemId: "selectedCategories"
+			});
+		var availableGroupTags = []
+			{% for group in data.groups %}
+				availableGroupTags.push("{{ group }}");
+			{% endfor %}
+			$( "#groups" ).autocomplete({
+				source: availableGroupTags,
+				multiselect: true,
+				maxselection: 5,
+				elemId: "selectedGroups"
 			});
 		$(document).ready(function()
 		{

@@ -33,6 +33,8 @@ from django.utils import timezone
 from trivia.models import Trivia
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
+from login.models import ExtendedGroup
+from django.contrib.auth.models import Group
 
 # Create your views here.
 
@@ -425,6 +427,8 @@ class CreatePollView(BaseViewList):
 			userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
 			context['signup_part_form'] = MySignupPartForm(userFormData)
 		context['categories'] = Category.objects.all()
+		groups = [x.group.name for x in ExtendedGroup.objects.filter(user_id = user.id)]
+		context['groups'] = groups
 		return context
 	
 	def post(self, request, *args, **kwargs):
@@ -506,6 +510,7 @@ class CreatePollView(BaseViewList):
 			images = []
 			choices = []
 			selectedCats = request.POST.get('selectedCategories','').split(",")
+			selectedGnames = request.POST.get('selectedGroups','').split(",")
 			if not list(filter(bool, selectedCats)):
 				errors['categoryError'] = "Please Select a category"
 			choice1 = request.POST.getlist('choice1')[0].strip()
@@ -557,6 +562,7 @@ class CreatePollView(BaseViewList):
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			isBet = request.POST.get('bet')
+			isProtectResult = request.POST.get('protectResult',False)
 			if isAnon:
 				anonymous = 1
 			else:
@@ -569,6 +575,10 @@ class CreatePollView(BaseViewList):
 				bet = 1
 			else:
 				bet = 0
+			if isProtectResult:
+				protectResult = 1
+			else:
+				protectResult = 0
 			# return if any errors
 			betError = ""
 			if bet and isPrivate:
@@ -616,8 +626,9 @@ class CreatePollView(BaseViewList):
 				question.isAnonymous=anonymous
 				question.privatePoll=private
 				question.isBet = bet
+				question.protectResult = protectResult
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
@@ -712,6 +723,22 @@ class CreatePollView(BaseViewList):
 			feed.add_activity(activity)
 			user.extendeduser.credits += 10
 			user.extendeduser.save()
+		if not edit:
+			if list(filter(bool, selectedGnames)):
+				for gName in selectedGnames:
+					if gName:
+						group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
+						for group_user in group_user_set:
+							group_user_email = group_user.email
+							msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
+							msg.template_name = "group-mail-question"
+							msg.global_merge_vars = {
+			                    'inviter': request.user.first_name,
+			                    'companyname':request.user.extendeduser.company.name,
+			                    'questionUrl':"www.askbypoll.com"+url,
+			                    'questionText':question.question_text
+			                }
+							msg.send()
 		return HttpResponseRedirect(url)
 
 class PollsSearchView(SearchView):
