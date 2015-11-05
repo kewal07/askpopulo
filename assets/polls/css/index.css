@@ -20,6 +20,9 @@
 .questions {
 	display: block;
 }
+.compQuestions{
+	background: #FFFF99; 
+}
 /*.questions>div{
 	flex:1;
 }*/

@@ -38,7 +38,11 @@
 			{% endif %}
 			{% if data %}
 					{% for question in data %}
+					{% if question.question.user.extendeduser.company.id > 1 %}
+					<div class="questions compQuestions">
+					{% else %}
 					<div class="questions">
+					{% endif %}
 						<div class="questionContent">
 							<div class="userInfo">
 								<div class="userImage">
