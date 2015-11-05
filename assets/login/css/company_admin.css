@@ -75,7 +75,7 @@ ul.dashboard-stats-ul li{
 	background-color: rgb(99, 95, 152);
 }
 .see-more-details{
-    font-size: 0.8rem;
+       font-size: 0.8rem;
     position: absolute;
     bottom: 0;
     right: 2px;
@@ -269,6 +269,10 @@ span.cube-num{
 	display: none;
 	/*position:relative;*/
 }
+.groupMembers{
+	padding-bottom:1rem;
+}
+
 #create-new-group{
 	position: absolute;
     right: 131px;
@@ -297,6 +301,7 @@ figcaption.members-figcaption {
     bottom: 0;
     left: 0;
     right: 0;
+    top:2rem;
     text-align: center;
 }
 .group-ana-member{

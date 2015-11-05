@@ -281,16 +281,9 @@
 						date = new Date(date - offset * 60000);
 						// date = date.minute - offset;
 
-						console.log(date);
-						console.log(Math.floor((currentDate - date) / 1000));
-
 					    var seconds = Math.floor((currentDate - date) / 1000);
 
-					    console.log(seconds);
-
 					    var interval = Math.floor(seconds / 31536000);
-
-					    console.log(interval);
 
 					    if (interval > 1) {
 					        return interval + " years";

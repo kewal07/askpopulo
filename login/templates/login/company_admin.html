@@ -264,7 +264,7 @@
 								</div>
 							</div>
 							<div class="analysis group-ana-member" id="analyse---{{ group.id }}Div">
-								<div class="groupMemebers clearfix">
+								<div class="groupMembers clearfix">
 									{% for member in group.groupMembers %}
 										<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
 											<figure class="members-figure">
@@ -288,7 +288,7 @@
 					</p>
 					<p class="form-p">
 						<label class="required" for="groupMembers">Members</label>
-						<textarea id ="groupMembers" name="groupMembers" placeholder="Group Members" maxlength="64"></textarea>
+						<textarea id ="groupMembers" name="groupMembers" placeholder="Group Members"></textarea>
 					</p>
 					<p>
 				        <label for="csvUpload">Upload your CSV File</label>
