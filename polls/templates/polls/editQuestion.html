@@ -378,39 +378,50 @@
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="{{ question_categories }}">
 					</p>
 					{% if user.extendeduser.company.id > 1 %}
-						<p class="anonymous">
-						{% if question.protectResult %}
-							<input id="protectResult" name="protectResult" type="checkbox" checked>
-						{% else %}
-							<input id="protectResult" name="protectResult" type="checkbox">
-						{% endif %}
-						<label for="protectResult">Protect Result <i id="protectResult_fa" class="fa fa-info-circle"></i></label>
-					</p>
+						<div class="admin-checkbox">
+							<p class="anonymous">
+							{% if question.home_visible %}
+								<input id="makeFeatured" name="makeFeatured" type="checkbox" checked>
+							{% else %}
+								<input id="makeFeatured" name="makeFeatured" type="checkbox">
+							{% endif %}
+							<label for="makeFeatured">Featured <i id="makeFeatured_fa" class="fa fa-info-circle"></i></label>
+							<p class="anonymous">
+							{% if question.protectResult %}
+								<input id="protectResult" name="protectResult" type="checkbox" checked>
+							{% else %}
+								<input id="protectResult" name="protectResult" type="checkbox">
+							{% endif %}
+							<label for="protectResult">Protect Result <i id="protectResult_fa" class="fa fa-info-circle"></i></label>
+							</p>
+						</div>
 					{% endif %}
-					<p class="anonymous">
-						{% if question.isAnonymous %}
-							<input id="anonymous" name="anonymous" type="checkbox" checked>
-						{% else %}
-							<input id="anonymous" name="anonymous" type="checkbox">
-						{% endif %}
-						<label for="anonymous">Ask as Anonymous</label>
-					</p>
-					<p class="anonymous">
-						{% if question.privatePoll %}
-							<input id="private" name="private" type="checkbox" checked>
-						{% else %}
-							<input id="private" name="private" type="checkbox">
-						{% endif %}
-						<label for="private">Make Poll as Private <i id="private_poll_fa" class="fa fa-info-circle"></i></label>
-					</p>
-					<p class="anonymous">
-						{% if question.isBet %}
-							<input id="bet" name="bet" type="checkbox" checked>
-						{% else %}
-							<input id="bet" name="bet" type="checkbox">
-						{% endif %}
-						<label for="bet">Make it a Prediction Poll</label>
-					</p>
+					<div class="user-checkbox">
+						<p class="anonymous">
+							{% if question.isAnonymous %}
+								<input id="anonymous" name="anonymous" type="checkbox" checked>
+							{% else %}
+								<input id="anonymous" name="anonymous" type="checkbox">
+							{% endif %}
+							<label for="anonymous">Ask as Anonymous</label>
+						</p>
+						<p class="anonymous">
+							{% if question.privatePoll %}
+								<input id="private" name="private" type="checkbox" checked>
+							{% else %}
+								<input id="private" name="private" type="checkbox">
+							{% endif %}
+							<label for="private">Make Poll as Private <i id="private_poll_fa" class="fa fa-info-circle"></i></label>
+						</p>
+						<p class="anonymous">
+							{% if question.isBet %}
+								<input id="bet" name="bet" type="checkbox" checked>
+							{% else %}
+								<input id="bet" name="bet" type="checkbox">
+							{% endif %}
+							<label for="bet">Make it a Prediction Poll</label>
+						</p>
+					</div>
 					<div class="createBet">
 						<p>
 							<input placeholder=">10 and <{{ user.extendeduser.credits }} " onkeypress='return event.charCode >= 48 && event.charCode <= 57' name="betAmount" id="betAmount" type="text"> <i class="fa fa-coins"></i> On	<select name="betChoice" id="betChoice">
@@ -436,6 +447,9 @@
 			<div class="tooltip" id="protectResult_tooltip">
 				<span class="cat_title_tooltip">The Results would not be publicly visible. Only you would be able to see the results</span>
 			</div>
+			<div class="tooltip" id="makeFeatured_tooltip">
+				<span class="cat_title_tooltip">The Question would be sent to the Home page and 100 pCoins would be deducted. </span>
+			</div>
 		</section>
 		<script>
 		var availableTags = []
@@ -446,7 +460,8 @@
 			$( "#categories" ).autocomplete({
 				source: availableTags,
 				multiselect: true,
-				maxselection: 5
+				maxselection: 5,
+				elemId: "selectedCategories"
 			});
 		$(document).ready(function(){
 			{% if question.isBet %}
@@ -492,9 +507,9 @@
 			});
 			$('.submit').bind('click', function()
 			{
-				//console.log("click called..........");
+				// console.log("click called..........");
 				var elemid = "#createPollForm";//$(this)[0].id
-				//console.log($(elemid)); 
+				// console.log($(elemid)); 
 				var form_data = new FormData($(elemid)[0]);
 				$(elemid).bind('submit', function()
 				{
@@ -506,7 +521,7 @@
 						$.ajax(
 						{
 							type: 'POST',
-							url:"/createpoll?qid={{ question.id }}&&ajax=1",
+							url:"/createpoll?ajax=1&&qid={{ question.id }}",
 							data:form_data,
 							processData: false,
 							contentType: false,
@@ -519,7 +534,9 @@
 								var expiry_error = response.expiryError;
 								var category_error = response.categoryError;
 								var bet_error = response.betError;
-								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined' && typeof bet_error === 'undefined'){
+								var makeFeatured_error = response.makeFeaturedError;
+								console.log(response);
+								if(typeof que_error === 'undefined' && typeof choice_error === 'undefined' && typeof dup_choice === 'undefined' && typeof dup_image === 'undefined' && typeof expiry_error === 'undefined' && typeof category_error === 'undefined' && typeof bet_error === 'undefined' && typeof makeFeatured_error === 'undefined'){
 									 $(elemid).unbind('submit').submit();
 								}else{
 									if(typeof que_error === 'undefined')
@@ -536,6 +553,8 @@
 		                        	 	category_error = "";
 		                        	if(typeof bet_error === 'undefined')
 		                        	 	bet_error = "";
+		                        	if(typeof makeFeatured_error === 'undefined')
+		                        	 	makeFeatured_error = "";
 									$(".errorlist").remove();
 			                        $("#qText").parent().children().first().append('<span class="errorlist"><br>'+que_error+'</span><span class="errorlist"><br>'+dup_choice+'</span><span class="errorlist"><br>'+dup_image+'</span>');
 			                        $("#choice1").parent().children().first().append('<span class="errorlist"><br>'+choice_error+'</span>');
@@ -543,6 +562,7 @@
 			                        $("#qExpiry_ap").parent().children().first().append('<span class="errorlist"><br>'+expiry_error+'</span>');
 			                        $("#categories").parent().parent().children().first().append('<span class="errorlist"><br>'+category_error+'</span>');
 			                        $("#bet").parent().append('<span style="position:absolute" class="errorlist"><br>'+bet_error+'</span>');
+			                        $("#makeFeatured").parent().append('<span style="position:absolute" class="errorlist"><br>'+makeFeatured_error+'</span>');
 			                        $("#createPollSubmit").removeAttr('disabled');
 								}
 							}

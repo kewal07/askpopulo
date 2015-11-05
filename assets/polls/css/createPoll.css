@@ -146,8 +146,18 @@ form.createPollContentForm label{
   background-image: url('/static/polls/images/ui-icons_ef8c08_256x240.png') !important;
 }
 /*end*/
+.admin-checkbox,.user-checkbox{
+  text-align: center;
+  margin-bottom: 2rem;
+  /*position: relative;*/
+}
+.errorlist{
+  margin-top:0.8rem;
+}
 .anonymous{
 	text-align: center;
+  display: inline;
+  margin:1 0.5rem !important;
 }
 .anonymous input[type="checkbox"]{
 	width:30px;

@@ -449,7 +449,7 @@ class CreatePollView(BaseViewList):
 		queBetChoiceText = request.POST.get("betChoice")
 		queBetChoice = None
 		# print("BET AMOUNT",queBetAmount)
-		if request.GET.get("ajax"):
+		if request.is_ajax():
 			ajax = True
 		if request.GET.get("qid"):
 			edit = True
@@ -563,6 +563,7 @@ class CreatePollView(BaseViewList):
 			isPrivate = request.POST.get('private')
 			isBet = request.POST.get('bet')
 			isProtectResult = request.POST.get('protectResult',False)
+			makeFeatured = request.POST.get('makeFeatured',False)
 			if isAnon:
 				anonymous = 1
 			else:
@@ -579,6 +580,15 @@ class CreatePollView(BaseViewList):
 				protectResult = 1
 			else:
 				protectResult = 0
+			makeFeaturedError = ""
+			if makeFeatured and user.extendeduser.credits - 100 >= 0:
+				home_visible = 1
+				if not (edit and question.home_visible == 1):
+					user.extendeduser.credits -= 100
+					user.extendeduser.save()
+			elif makeFeatured:
+				if not (edit and question.home_visible == 1):
+					makeFeaturedError += "Not Enough pCoins. Please contact support.<br>"
 			# return if any errors
 			betError = ""
 			if bet and isPrivate:
@@ -587,6 +597,10 @@ class CreatePollView(BaseViewList):
 				betError += "Prediction Poll should have expiry.<br>"
 			if bet and qExpiry and (qExpiry > curtime + datetime.timedelta(days=7)):
 				betError += "Prediction Poll expiry should not be more that 7 days.<br>"
+			if makeFeatured and isPrivate:
+				makeFeaturedError += "Featured Poll cannot be private.<br>"
+			if makeFeaturedError:
+				errors['makeFeaturedError'] = makeFeaturedError
 			# if qExpiry:
 			# 	print((qExpiry - curtime).days, curtime, qExpiry)
 			# print("0000000000000000000000000",queBetAmount)
@@ -613,6 +627,7 @@ class CreatePollView(BaseViewList):
 				if 'duplicateImage' in errors:
 					break
 			"""
+			print("--------------------------------",errors or ajax,errors,ajax)
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			# mark bet poll as private untill verified by admin
@@ -627,6 +642,7 @@ class CreatePollView(BaseViewList):
 				question.privatePoll=private
 				question.isBet = bet
 				question.protectResult = protectResult
+				question.home_visible = home_visible
 			else:
 				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult)
 			question.save()
