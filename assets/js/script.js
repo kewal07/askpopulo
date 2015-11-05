@@ -163,6 +163,17 @@ $(document).ready(function(){
   		});
   		$("#protectResult_tooltip").toggle();
   	});
+  	$("#makeFeatured_fa").hover(function(e){
+  		// console.log("category_tooltip");
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#makeFeatured_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  			"width":"30%",
+  		});
+  		$("#makeFeatured_tooltip").toggle();
+  	});
 
 	/*help*/
 	$(".helpChardin").click(function(e){

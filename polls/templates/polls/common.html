@@ -130,9 +130,8 @@
 								<ul id="notification-container" class="dropDownUL">
 		               				{% if user.extendeduser.company_id > 1 %}
                     					<li><a href="{% url 'login:adminDashboard' user.id user.extendeduser.user_slug %}">Dashboard</a></li>
-                    				{% else %}
-										<li><a id="profile_page_url_in_common" href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
-									{% endif %}
+                    				{% endif %}
+									<li><a id="profile_page_url_in_common" href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
                     				<li><a href="{% url 'login:logout' %}">Log Out</a></li>
 								</ul>
 							</div>
