@@ -67,7 +67,7 @@
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
 						<li class="myProfileTabs" id="myComments"><i class="fa fa-comments"></i><span id="numComments" class="iCaption"> 0 Comments</span></li>
 						<li class="myProfileTabs" id="myCategories"><i class="fa fa-th-large"></i><span class="iCaption"> {{ categories|length }} Categories</span></li>
-						<li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i><span class="iCaption"> Stakes</span></li>
+						<!-- <li class="myProfileTabs" id="myBets"><i class="fa fa-coin-bag"></i><span class="iCaption"> Stakes</span></li> -->
 					</ul>
 				</div>
 				<div class="displayDiv">
@@ -364,11 +364,11 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<div class="profileDetail" id="myBetsDiv">
+					<!-- <div class="profileDetail" id="myBetsDiv">
 						<ul class="profileDetailUl">
 							Coming Soon !!!
 						</ul>
-					</div>
+					</div> -->
 					<div class="profileDetail" id="myABPInboxDiv">
 						<ul class="profileDetailUl">
 							<!-- <object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"> -->
@@ -388,7 +388,7 @@
 								</li></a>
 							{% endfor %}
 						</ul>
-						<ul class="profileDetailUl followers">
+						<ul class="profileDetailUl followers following">
 							<p>Following</p>
 							{% for act_user in following %}
 							<a href="{% url 'login:loggedIn' act_user.id act_user.extendeduser.user_slug %}"><li>
@@ -429,7 +429,7 @@
 					// alert(getCookie("public_profile"));
 					var divElemLi = getCookie("public_profile");
 					if(typeof divElemLi === "undefined" || divElemLi === ""){
-
+						$("#myActivity").click();
 					}
 					else{
 						$("#"+divElemLi).click();
