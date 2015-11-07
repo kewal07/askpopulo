@@ -866,7 +866,8 @@ def comment_mail(request):
 	activity = {'actor': actor_user_name, 'verb': 'credits', 'object': que_text, 'question_text':que_text, 'question_url':que_url, 'actor_user_name':actor_user_name,'actor_user_pic':actor_user_pic,'actor_user_url': actor_user_url, "points":20, "action":"comment"}
 	feed = client.feed('notification', user.id)
 	feed.add_activity(activity)
-	request.user.extendeduser.credits += 20
+	if int(request.POST.get('commentLength')) > 100:
+		request.user.extendeduser.credits += 20
 	request.user.extendeduser.save()
 	return HttpResponse(json.dumps({}),content_type='application/json')
 

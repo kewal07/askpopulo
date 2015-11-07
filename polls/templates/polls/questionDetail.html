@@ -180,8 +180,10 @@
 				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				this.callbacks.onNewComment = [function(comment) { 
-
-				var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}","to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
+			
+				var commentLength = comment.text.length;
+				
+				var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}", "commentLength":commentLength, "to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
 
 				$.ajax({
 			            type: 'POST',
