@@ -90,6 +90,51 @@ class Question(models.Model):
 				return choice.get_file_name()
 		return False
 
+class Survey(models.Model):
+	survey_pk = models.CharField(max_length=255)
+	survey_name = models.CharField(max_length=200)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	pub_date = models.DateTimeField('Date Published')
+	expiry =  models.DateTimeField(null=True,blank=True)
+	description = models.CharField(max_length=400,null=True,blank=True)
+	survey_slug = models.SlugField(null=True,blank=True)
+	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+	numViews = models.IntegerField(blank=True,null=True,default=0)
+	last_accessed = models.DateTimeField(null=True,blank=True)
+	home_visible = models.BooleanField(default=0)
+
+	def save(self, *args, **kwargs):
+		qText = self.survey_name
+		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
+		short_q_text = qText[:50]
+		if not short_q_text.strip():
+			short_q_text = None
+		qslug = slugify(short_q_text)
+		if not qslug and not qslug.strip():
+			qslug = None
+		self.survey_slug = qslug
+		digestmod = hashlib.sha1
+		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
+		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+		self.survey_pk = sig
+		# self.numViews = 0
+		self.last_accessed = datetime.datetime.now()
+		super(Survey, self).save(*args, **kwargs)
+	def __str__(self):
+		return self.survey_name
+	def was_published_recently(self):
+		return self.pub_date>=timezone.now()-datetime.timedelta(days=1)
+		was_published_recently.admin_order_field = 'pub_date'
+		was_published_recently.boolean = True
+		was_published_recently.short_description = 'Published recently'
+
+class Survey_Question(models.Model):
+	survey = models.ForeignKey(Survey)
+	question = models.ForeignKey(Question)
+	question_type = models.CharField(max_length=20)
+	def __str__(self):
+		return self.survey+"_"+self.question+"_"+self.question_type
+
 class Choice(models.Model):
 	choice_pk = models.CharField(max_length=255)
 	question = models.ForeignKey(Question)

@@ -265,15 +265,15 @@ span.cube-num{
 .feed-admin{
 	border-bottom: none !important;
 }
-.create-group{
+.create-group,.create-survey{
 	display: none;
 	/*position:relative;*/
 }
-.groupMembers{
+.groupMembers,.surveyDescription{
 	padding-bottom:1rem;
 }
 
-#create-new-group{
+#create-new-group,#create-new-survey{
 	position: absolute;
     right: 131px;
     top: 8rem;
@@ -307,28 +307,28 @@ figcaption.members-figcaption {
 .group-ana-member{
 	margin-top: 2rem;
 }
-form#create-group-form{
+form#create-group-form,form#create-survey-form{
 	padding: 2rem 0rem 0 2rem;
     margin: 0 auto;
     border: 2px dashed #666;
     margin-left: 1rem;
 }
-form#create-group-form p.form-p{
+form#create-group-form p.form-p,form#create-survey-form p.form-p{
 	margin-bottom:3rem;
 }
-form#create-group-form label{
+form#create-group-form label,form#create-survey-form label{
 	display: inline-block;
 	width:20%;
 	color: #666;
 }
-#create-group-form input[type="text"]{
+#create-group-form input[type="text"],#create-survey-form input[type="text"]{
 		height: 2rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
 		background: transparent;
 		overflow:hidden;
 }
-form#create-group-form textarea{
+form#create-group-form textarea,form#create-survey-form textarea{
 	border-radius: 10px;
     border: 1px solid #666;
     background: transparent;
@@ -359,6 +359,13 @@ form#create-group-form textarea{
     font-size: 1rem;
     color: #000000;
     border-radius: 10px;
+}
+.create-questions{
+	display: none;
+}
+li.questions-li{
+	display: inline;
+	margin:0 1rem;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
