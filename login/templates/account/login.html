@@ -53,8 +53,33 @@
 				
 
 				{% else %}
-				<p>{% blocktrans %}If you have not created an account yet, then please
-				<a href="{{ login_url }}">sign up</a> first.{% endblocktrans %}</p>
+				<p>{{ socialaccount.providers }}If you have not created an account yet, then please
+				<a href="{% url 'account_signup' %}"><span class="anchorSpan">sign up</a> first.</p>
+				<div class="loginContentTable">
+				<div class="information-video">
+					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
+					<div class="slider">
+						<img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg">
+					</div>
+				</div>
+				<div class="socialaccount_ballot">
+					<div class="social_providers">
+					  <!-- <ul class="socialaccount_providers"> -->
+						{% include "socialaccount/snippets/provider_list.html" with process="login" %}
+					  <!-- </ul> -->
+					 </div>
+				  <form class="loginContentForm" method="POST" action="{% url 'account_login' %}">
+					  {% csrf_token %}
+					  {{ form.as_p }}
+					  {% if redirect_field_value %}
+					  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+					  {% endif %}
+					  <p>
+					  <a class="forgotPass" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+					  <button class="submit loginSubmit" type="submit">{% trans "Sign In" %}</button>
+					  </p>
+					</form>
+				</div>
 				{% endif %}
 
 				

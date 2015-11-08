@@ -25,7 +25,7 @@ import datetime
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
-from firebase_token_generator import create_token
+# from firebase_token_generator import create_token
 import os
 import sys
 from django.core.mail import send_mail
@@ -519,25 +519,33 @@ class CreateGroup(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
 		emailList = request.POST.get('groupMembers').split(';')
+		response = {}
 		try:
 			newgroup = Group.objects.create(name = groupName)
 		except:
 			response['error'] = 'Group name already exists.'
 			return HttpResponse(json.dumps(response), content_type='application/json')
-		group = Group.objects.get(name=groupName)
-		extendedGroup = ExtendedGroup(user=request.user, group = group)
-		extendedGroup.save()
-		for email in emailList:
-			user = User.objects.filter(email = email)
-			if user:
-				user = list(user)[0]
-				user.groups.add(group)
-			else:
-				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
-				msg.template_name = "invitation-mail"
-				msg.global_merge_vars = {
-                    'inviter': request.user.first_name,
-                    'companyname':request.user.extendeduser.company.name
-                }
-				msg.send()
+		try:
+			group = Group.objects.get(name=groupName)
+			extendedGroup = ExtendedGroup(user=request.user, group = group)
+			extendedGroup.save()
+			for email in emailList:
+				user = User.objects.filter(email = email)
+				if user:
+					user = list(user)[0]
+					user.groups.add(group)
+				else:
+					msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
+					msg.template_name = "invitation-mail"
+					msg.global_merge_vars = {
+	                    'inviter': request.user.first_name,
+	                    'companyname':request.user.extendeduser.company.name
+	                }
+					msg.send()
+			response['success'] = 'Group created successfully.'
+			return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
 				

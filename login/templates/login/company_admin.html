@@ -26,7 +26,7 @@
 				<li class="dashboard-menu-li selectedLi">Dashboard</li>
 				<li class="dashboard-menu-li">Polls</li>
 				<li class="dashboard-menu-li">Followers</li>
-				<li class="dashboard-menu-li">Groups</li>
+				<li id="dashboard-groups-tab" class="dashboard-menu-li">Groups</li>
 				<li class="dashboard-menu-li">Messages</li>
 				<li class="dashboard-menu-li">Feed</li>
 				<li class="dashboard-menu-li">Advanced</li>
@@ -256,13 +256,9 @@
 					<li> Groups</li>
 					{% for group in groups %}
 						<li class="li-margin-polls">
-							<div class="liDetail">
-								<div class="check_analyse">
-									<p class="main activity_url analyse_question_text" id="analyse---{{ question.poll.id }}">
-										{{group.groupName}}
-									</p>
-								</div>
-							</div>
+							<p class="main activity_url analyse_question_text" id="analyse---{{ group.id }}">
+								{{group.groupName}}
+							</p>
 							<div class="analysis group-ana-member" id="analyse---{{ group.id }}Div">
 								<div class="groupMembers clearfix">
 									{% for member in group.groupMembers %}
@@ -277,6 +273,7 @@
 							</div>
 						</li>
 					{% endfor %}
+					
 				</ul>
 			</div>
 			<div class="create-group">
@@ -576,6 +573,15 @@
 							success:function(response)
 							{
 								console.log(response);
+								$('.create-group').html('');
+								if(typeof response.error === 'undefined'){
+									$('.create-group').html("<p> <i class='fa fa-check-circle' style='color:green;'></i> "+ response.success +"</p>");
+									response = {};
+									$('#dashboard-groups-tab').trigger("click");
+								} else {
+									$('.create-group').html("<p> <i class='fa fa-times-circle' style='color:red;'></i> "+ response.error +"</p>");
+									response = {};
+								}
 							}
 						});
 					{% else %}
@@ -586,8 +592,7 @@
 
 	
 			$(document).ready(function(){
-			
-				// google.load("visualization", "1", {packages:["corechart"]});
+
 				$	(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
 					$(this).addClass("selectedLi");
@@ -657,7 +662,7 @@
 				
 
 
-				$('#polls-content,#groups-content, #advanced-content').on("click","p.analyse_question_text",function(){
+				$('#polls-content,#advanced-content').on("click","p.analyse_question_text",function(){
 					// console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 					// console.log($(this)[0].id);
 					var elemId = $(this)[0].id;

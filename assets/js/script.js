@@ -1,12 +1,4 @@
 $(document).ready(function(){
-	//$('input[type=text], textarea').bind('keypress', function (event) {
-	//    var regex = new RegExp("^[a-zA-Z0-9]+$");
-	//    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-	//    if (!regex.test(key)) {
-	//       event.preventDefault();
-	//       return false;
-	//    }
-	//});
 
 	$("#id_categories").addClass("clearfix");
 	

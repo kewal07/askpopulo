@@ -1228,3 +1228,113 @@ class TriviaPView(BaseViewList):
 		context['trivias'] = triviaList
 		return triviaList
 	
+def createPollSurvey(user, request):
+	edit = False
+	ajax = False
+	errors = {}
+	question = None
+	curtime = datetime.datetime.now();
+	home_visible = 0
+	# print(request.POST)
+	if request.is_ajax():
+		ajax = True
+	if request.GET.get("qid"):
+		edit = True
+	if request.POST:
+		qText = request.POST.get('qText')	
+		qText = qText.replace('\n', ' ').replace('\r', '')
+		if not qText.strip():
+			errors['qTextError'] = "Question required"
+		qDesc = request.POST.get('qDesc')
+		qExpiry = None
+		if edit:
+			question = Question.objects.get(pk=request.GET.get("qid"))
+		imagePathList = []
+		images = []
+		choices = []
+		choice_text = []
+		choice_files = []
+		choice_counter = int(request.POST.get("choice_counter"))
+		for index in range(1,choice_counter+1):
+			choice_name = "choice"+str(index)
+			imagechoice_name = "imagechoice" + str(index)
+			choice = request.POST.getlist(choice_name)[0].strip()
+			choice_text.append(choice.strip())
+			choiceImage = ""
+			if choice:
+				choices.append(choice)
+			if edit and request.POST.get(imagechoice_name,""):
+				choiceid = request.POST.get(imagechoice_name).split("---")[1]
+				choiceImage = Choice.objects.get(pk=choiceid).choice_image
+				imagePathList.append(choiceImage.path)
+			else:
+				choiceImage = request.FILES.get(choice_name)
+			if choiceImage:
+				images.append(choiceImage)
+			choice_files.append(choiceImage)
+		anonymous = 0
+		isProtectResult = request.POST.get('protectResult',False)
+		private = 0
+		bet = 0
+		if isProtectResult:
+			protectResult = 1
+		else:
+			protectResult = 0
+		if len(choice_text) < 2 and len(choice_files) < 2:
+			errors['choiceError'] = "Choice required"
+		elif not (choice_text[0].strip() or choice_files[0]) or not (choice_text[1].strip() or choice_files[1]):
+			errors['choiceError'] = "Choice required"
+		if len(choices)!=len(set(choices)):
+			errors['duplicateChoice'] = "Please provide different choices"
+		imageSize = 128, 128
+		"""
+		for i,image1 in enumerate(images):
+			for j,image2 in enumerate(images):
+				if i != j:
+					image1obj = Image.open(image1)
+					image2obj = Image.open(image2)
+					#image2obj.load()
+					#image1obj.load()
+					if not ImageChops.difference(image1obj,image2obj).getbbox():
+						errors['duplicateImage'] = "Please provide different images as choice"
+						break
+			if 'duplicateImage' in errors:
+				break
+		"""
+		print("--------------------------------",errors or ajax,errors,ajax)
+		if errors:
+			return HttpResponse(json.dumps(errors), content_type='application/json')
+		if edit:
+			question.question_text=qText
+			question.description=qDesc
+			question.expiry=qExpiry
+			question.isAnonymous=anonymous
+			question.privatePoll=private
+			question.isBet = bet
+			question.protectResult = protectResult
+			question.home_visible = home_visible
+		else:
+			question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult)
+		question.save()
+		sub,created = Subscriber.objects.get_or_create(user=user,question=question)
+		# sub.save()
+		if edit:
+			for choice in question.choice_set.all():
+				if choice.choice_image:
+					if os.path.isfile(choice.choice_image.path) and choice.choice_image.path not in imagePathList:
+						os.remove(choice.choice_image.path)
+				choice.delete()
+		if list(filter(bool, selectedCats)):
+			for cat in selectedCats:
+				if cat:
+					category = Category.objects.filter(category_title=cat)[0]
+					qWcat = QuestionWithCategory(question=question,category=category)
+					qWcat.save()
+		else:
+			category = Category.objects.filter(category_title="Miscellaneous")[0]
+			qWcat = QuestionWithCategory(question=question,category=category)
+			qWcat.save()
+		for index in range(1,choice_counter+1):
+			choice = Choice(question=question,choice_text=choice_text[index-1],choice_image=choice_files[index-1])
+			choice.save()
+	return HttpResponseRedirect(url)
