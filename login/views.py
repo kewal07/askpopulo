@@ -513,6 +513,7 @@ class AdminDashboard(BaseViewDetail):
 		data['groups_count'] = groups_count
 		data['votes_count'] = votes_count
 		data['total_views'] = total_views
+		data['categories'] = Category.objects.all()
 		return data
 
 class CreateGroup(BaseViewList):
