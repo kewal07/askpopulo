@@ -982,8 +982,8 @@
 					event.preventDefault();
 					var elemid = "#create-survey-form";
 					var form_data = new FormData($(elemid)[0]);
-					form_data['question_count'] = question_count;
-					form_data['choice_count'] = choice_count;
+					form_data.append('question_count', JSON.stringify(question_count));
+					form_data.append('choice_count', JSON.stringify(choice_count));
 					$("#createSurveySubmit").attr("disabled","disabled");
 					{% if user.is_authenticated %}
 						$.ajax(

@@ -1337,7 +1337,8 @@ def createPollSurvey(user, request):
 		for index in range(1,choice_counter+1):
 			choice = Choice(question=question,choice_text=choice_text[index-1],choice_image=choice_files[index-1])
 			choice.save()
-	return HttpResponseRedirect(url
+	return HttpResponseRedirect(url)
+	
 class CreateSurveyView(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		print(request.POST)
