@@ -534,10 +534,10 @@
 					<li> Groups</li>
 					{% for group in groups %}
 						<li class="li-margin-polls">
-							<p class="main activity_url analyse_question_text" id="analyse---{{ group.id }}">
+							<p class="main activity_url analyse_question_text" id="analyse---{{ group.groupName }}" onclick="displayGroupMembers('analyse---{{ group.groupName }}Div')">
 								{{group.groupName}}
 							</p>
-							<div class="analysis group-ana-member" id="analyse---{{ group.id }}Div">
+							<div class="analysis group-ana-member" id="analyse---{{ group.groupName }}Div">
 								<div class="groupMembers clearfix">
 									{% for member in group.groupMembers %}
 										<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
@@ -771,13 +771,17 @@
 			var profList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"];
 			var i;
 
+			function displayGroupMembers(groupId){
+				var elemId = '#'+groupId;
+				$(elemId).toggle('slow');
+			}
+
 			var availableTags = [];
 			{% for category in categories %}
 				console.log(" {{ category.category_title }} ");
 				availableTags.push("{{ category.category_title }}");
 				console.log(" {{ category.category_title }} ");
 			{% endfor %}
-			console.log(availableTags);
 			
 			function validateEmail(field) {
     			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
