@@ -486,9 +486,11 @@ class AdminDashboard(BaseViewDetail):
 			print(groups)
 			group_list = []
 			for group in groups:
+				groupNamePrefixLength = len(user.username+'_'+user.extendeduser.company.name+'-')
 				group_dict = {}
 				tempGroup = Group.objects.get(pk=group['group_id'])
-				group_dict['groupName'] = tempGroup.name
+				group_dict['groupId'] = tempGroup.id
+				group_dict['groupName'] = tempGroup.name[groupNamePrefixLength:]
 				group_dict['groupMembers'] = tempGroup.user_set.all()
 				group_list.append(group_dict)
 			polls_count = len(polls)
@@ -545,14 +547,32 @@ class AdminDashboard(BaseViewDetail):
 
 class CreateGroup(BaseViewList):
 	def post(self, request, *args, **kwargs):
-		groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
 		emailList = request.POST.get('groupMembers').split(';')
+		isEdit = request.POST.get('isGroupEdit')
+		if isEdit == 'no':
+			groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
+		else:
+			groupName = request.POST.get("groupName")
+		print(isEdit)
+		print(groupName)
 		response = {}
 		try:
 			newgroup = Group.objects.create(name = groupName)
 		except:
-			response['error'] = 'Group name already exists.'
-			return HttpResponse(json.dumps(response), content_type='application/json')
+			if isEdit == 'no':
+				response['error'] = 'Group name already exists.'
+				return HttpResponse(json.dumps(response), content_type='application/json')
+			else:
+				try:
+					group = Group.objects.get(name=groupName)
+					extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
+					extendedGroupCreater.delete()
+					group.delete()
+					newgroup = Group.objects.create(name = groupName)
+				except Exception as e:
+					exc_type, exc_obj, exc_tb = sys.exc_info()
+					fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+					print(exc_type, fname, exc_tb.tb_lineno)
 		try:
 			group = Group.objects.get(name=groupName)
 			extendedGroup = ExtendedGroup(user=request.user, group = group)
@@ -569,11 +589,30 @@ class CreateGroup(BaseViewList):
 	                    'inviter': request.user.first_name,
 	                    'companyname':request.user.extendeduser.company.name
 	                }
-					msg.send()
-			response['success'] = 'Group created successfully.'
+					#msg.send()
+			if(isEdit == 'yes'):
+				response['success'] = 'Group edited successfully.'
+			else:
+				response['success'] = 'Group created successfully.'
 			return HttpResponse(json.dumps(response), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
-				
+
+class EditGroup(BaseViewList):
+	def get(self, request, *args, **kwargs):
+		groupId = request.GET.get('groupId','')
+		response = {}
+		try:
+			if(groupId or not groupId==''):
+				group = Group.objects.get(pk = groupId)
+				response['groupName'] = group.name
+				response['mailList'] = ''
+				for user in group.user_set.all():
+					response['mailList'] += user.email +';'
+				return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)	

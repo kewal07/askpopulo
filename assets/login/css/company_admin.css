@@ -25,6 +25,10 @@ body{
 	float:left;
 	margin-top:5rem;
 }
+.group-action-icons{
+	float:right;
+	cursor:pointer;
+}
 ul.dashboard-menu-items li{
 	font-size:1.5rem;
 	font-family:'Arvo', serif;
