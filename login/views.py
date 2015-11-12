@@ -1,4 +1,4 @@
-import os
+import os,linecache
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
@@ -558,6 +558,7 @@ class CreateGroup(BaseViewList):
 		print(groupName)
 		response = {}
 		try:
+			print("Inside Try")
 			newgroup = Group.objects.create(name = groupName)
 		except:
 			if isEdit == 'no':
@@ -579,18 +580,19 @@ class CreateGroup(BaseViewList):
 			extendedGroup = ExtendedGroup(user=request.user, group = group)
 			extendedGroup.save()
 			for email in emailList:
-				user = User.objects.filter(email = email)
-				if user:
-					user = list(user)[0]
-					user.groups.add(group)
-				else:
-					msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
-					msg.template_name = "invitation-mail"
-					msg.global_merge_vars = {
-	                    'inviter': request.user.first_name,
-	                    'companyname':request.user.extendeduser.company.name
-	                }
-					#msg.send()
+				if email:
+					user = User.objects.filter(email = email)
+					if user:
+						user = list(user)[0]
+						user.groups.add(group)
+					else:
+						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
+						msg.template_name = "invitation-mail"
+						msg.global_merge_vars = {
+		                    'inviter': request.user.first_name,
+		                    'companyname':request.user.extendeduser.company.name
+		                }
+						msg.send()
 			if(isEdit == 'yes'):
 				response['success'] = 'Group edited successfully.'
 			else:
