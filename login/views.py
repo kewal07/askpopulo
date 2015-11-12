@@ -2,7 +2,7 @@ import os
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent
+from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent, ExtendedGroup
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -11,7 +11,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question,Voted,Subscriber
+from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question
 from categories.models import Category
 import json
 import base64
@@ -35,7 +35,6 @@ from postman.models import Message
 from referral.models import UserReferrer
 from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
-from login.models import ExtendedGroup
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -290,8 +289,8 @@ class LoggedInView(BaseViewDetail):
 		feed_activities = flat_feed.get(limit=25)['results']
 		context['flat_feed_activities'] = feed_activities
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
-		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
-		context['token'] = token
+		# token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
+		# context['token'] = token
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
 		context["followers"] = followers

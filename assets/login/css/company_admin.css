@@ -371,6 +371,19 @@ li.questions-li{
 	display: inline;
 	margin:0 1rem;
 }
+.errorlistSurvey{
+	float: none;
+	margin-left: 1rem;
+}
+.survey-question-div{
+	border: 1px solid;
+    padding: 1rem;
+    margin-right: 2rem;
+    margin-bottom: 1rem;
+}
+.survey-question-div:active,.survey-question-div:hover{
+    box-shadow: 5px 5px 5px;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;
