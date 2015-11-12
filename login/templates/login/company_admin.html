@@ -1439,7 +1439,7 @@
 							{
 								$(".errorlist").remove();
 								console.log(obj);
-								if(jQuery.isEmptyObject(obj))
+								if(obj.hasOwnProperty("success"))
 									$('#dashboard-surveys-tab').trigger("click");
 								else{
 									for(var key in obj){
