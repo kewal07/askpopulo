@@ -447,7 +447,12 @@ class AdminDashboard(BaseViewDetail):
 			data = super(AdminDashboard, self).get_context_data(**kwargs)
 			user = self.request.user
 			polls_vote_list = []
+			survey_list = Survey.objects.filter(user_id=user.id)
 			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+			s_polls = []
+			for survey in survey_list:
+				s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+			polls = [item for item in polls if item not in s_polls]
 			total_views = 0
 			dash_graph = []
 			cur_time = datetime.datetime.now()
@@ -488,7 +493,6 @@ class AdminDashboard(BaseViewDetail):
 				group_list.append(group_dict)
 			polls_count = len(polls)
 			groups_count = len(groups)
-			survey_list = Survey.objects.filter(user_id=user.id)
 			survey_count = len(survey_list)
 			survey_detail_list = []
 			for survey in survey_list:
@@ -496,7 +500,7 @@ class AdminDashboard(BaseViewDetail):
 				sur_dict['survey'] = survey
 				sur_dict['votes'] = SurveyVoted.objects.filter(survey_id=survey.id).count()
 				total_views += survey.numViews
-				sur_dict['polls'] = [ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
 				survey_detail_list.append(sur_dict)
 			votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
 			followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]

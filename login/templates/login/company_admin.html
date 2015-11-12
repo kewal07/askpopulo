@@ -29,12 +29,12 @@
 			<ul class="dashboard-menu-items clearfix">
 				<li class="dashboard-menu-li selectedLi">Dashboard</li>
 				<li class="dashboard-menu-li">Polls</li>
-				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
 				<li class="dashboard-menu-li">Followers</li>
 				<li id="dashboard-groups-tab" class="dashboard-menu-li">Groups</li>
 				<li class="dashboard-menu-li">Messages</li>
 				<li class="dashboard-menu-li">Feed</li>
 				<li class="dashboard-menu-li">Advanced</li>
+				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
 				<li class="dashboard-menu-li">Export</li>
 				<li class="dashboard-menu-li">Billing</li>
 			</ul>
@@ -484,6 +484,11 @@
 						<input id="categories" type="text" name="categories" style="border:none;">
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
 					</p>
+					<p>
+						<label for="groups">Group</label>
+						<input id="groups" type="text" name="groups" style="border:none;">
+						<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
+					</p>
 					<div class="survey-questions">
 					</div>
 					<i class="fa fa-plus-circle add-q">Add Question</i>
@@ -504,375 +509,120 @@
 						<li class="li-margin-polls">
 							<div class="liDetail">
 								<div class="check_analyse">
-								<p class="main activity_url" id="survey---{{ survey.id }}">
-									{{ survey_det.survey.survey_name }}
-								</p>
-								<p class="pollsDesc">{{ survey.description }}</p>
-								<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Vote{{ survey_det.votes|pluralize }}</span></p>
+									<p class="main activity_url main-survey" id="survey---{{ survey.id }}">
+										{{ survey_det.survey.survey_name }}
+									</p>
+									<p class="pollsDesc">{{ survey.description }}</p>
+									<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
 								</div>
 							</div>
-							{% for poll in survey_det.polls %}
-								<p class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.id }}">
-									{{ poll.question_text }}
-								</p>
-								<p class="pollsDesc">{{ poll.description }}</p>
-								<div class="analysis" id="advanced-analyse---{{ poll.id }}Div">
-									<div class="choices clearfix">
-									{% for choice in poll.choice_set.all %}
-									{% if choice.choice_image %}
-										<figure>
-											<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
-											<figcaption class="choiceFigCaption">
-												{% if choice.choice_text %}
-													Choice{{ forloop.counter }} : {{ choice.choice_text }}
-												{% else %}
-													Choice{{ forloop.counter }}
-												{% endif %}
-											</figcaption>
-										</figure>
+							<div class="survey-all-questions">
+								{% for poll in survey_det.polls %}
+									<p class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.question.id }}">
+										{{ poll.question.question_text }}
+									</p>
+									<p class="pollsDesc">{{ poll.question.description }}
+									</p>
+									{% if poll.q_type != "text" %}
+										<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
+											<div class="choices clearfix">
+											{% for choice in poll.question.choice_set.all %}
+											{% if choice.choice_image %}
+												<figure>
+													<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+													<figcaption class="choiceFigCaption">
+														{% if choice.choice_text %}
+															Choice{{ forloop.counter }} : {{ choice.choice_text }}
+														{% else %}
+															Choice{{ forloop.counter }}
+														{% endif %}
+													</figcaption>
+												</figure>
+											{% else %}
+												Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+												<br/>
+											{% endif %}
+											{% endfor %}
+											</div>
+											<div id="advanced-pollsChart---{{ poll.question.id }}" class="pollsChartClass">
+											</div>
+											<div id="advancedAna">
+												<p style="margin-bottom:1rem;"> Filter by different parameters </p>
+												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Gender">
+													<option value="nochoice">Gender</option>
+													<option value="f">Female</option>
+													<option value="m">Male</option>
+													<option value="d">Undisclosed</option>
+												</select>
+												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Age">
+													<option value="nochoice">Age</option>
+													<option value="<19">< 19</option>
+													<option value="20-25">20-25</option>
+													<option value="26-30">26-30</option>
+													<option value="31-35">31-35</option>
+													<option value="36-50">36-50</option>
+													<option value=">50">> 50</option>
+												</select>
+												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Profession">
+													<option value="nochoice">Profession</option>
+												</select>
+												<select class="advancedanalyseSelect advancedanalyseSelectCountry" id="advancedanalyse---{{ poll.question.id }}---Country" name="country">
+													<option value="nochoice">Country</option>
+												</select>
+												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---State" name="state">
+													<option value="nochoice">State</option>
+												</select>
+											</div>
+											<div id="advancedanalyse-pollsChart---{{ poll.question.id }}" class="pollsChartClass">
+											</div>
+											<p style="margin-bottom:1rem;text-align:center;"> Or</p>
+											<select class="analyseSelect" id="advanced-analyse---{{ poll.question.id }}Select">
+												<option value="nochoice">Filter by Choice</option>
+												{% for choice in poll.question.choice_set.all %}
+													<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
+												{% endfor %}
+											</select>
+											<div class="gender">
+												<div class="graphContainer">
+													<p> Gender </p>
+													<div class="question_analyse_chart" id="advanced-genderChart---{{ poll.question.id }}">
+													</div>
+												</div>
+											</div>
+											<div class="age">
+												<div class="graphContainer">
+													<p> Age </p>
+													<div class="question_analyse_chart" id="advanced-ageChart---{{ poll.question.id }}">
+													</div>
+												</div>
+											</div>
+											<div class="location">
+												<div class="graphContainer">
+													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+													<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ poll.question.id }}">
+													</div>
+												</div>
+											</div>
+											<div class="others">
+												<div class="graphContainer">
+													<p> Profession </p>
+													<div class="question_analyse_chart" id="advanced-othersChart---{{ poll.question.id }}">
+													</div>
+												</div>
+											</div>
+										</div>
 									{% else %}
-										Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
-										<br/>
+										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
+											{% for text in poll.question.votetext_set.all %}
+												<p class="answer-text">{{ text.answer_text }}</p>
+											{% endfor %}
+										</div>
 									{% endif %}
-									{% endfor %}
-									</div>
-									<div id="advanced-pollsChart---{{ poll.id }}" class="pollsChartClass">
-									</div>
-									<div id="advancedAna">
-										<p style="margin-bottom:1rem;"> Filter by different parameters </p>
-										<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.id }}---Gender">
-											<option value="nochoice">Gender</option>
-											<option value="f">Female</option>
-											<option value="m">Male</option>
-											<option value="d">Undisclosed</option>
-										</select>
-										<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.id }}---Age">
-											<option value="nochoice">Age</option>
-											<option value="<19">< 19</option>
-											<option value="20-25">20-25</option>
-											<option value="26-30">26-30</option>
-											<option value="31-35">31-35</option>
-											<option value="36-50">36-50</option>
-											<option value=">50">> 50</option>
-										</select>
-										<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.id }}---Profession">
-											<option value="nochoice">Profession</option>
-										</select>
-										<select class="advancedanalyseSelect advancedanalyseSelectCountry" id="advancedanalyse---{{ poll.id }}---Country" name="country">
-											<option value="nochoice">Country</option>
-										</select>
-										<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.id }}---State" name="state">
-											<option value="nochoice">State</option>
-										</select>
-									</div>
-									<div id="advancedanalyse-pollsChart---{{ poll.id }}" class="pollsChartClass">
-									</div>
-									<p style="margin-bottom:1rem;text-align:center;"> Or</p>
-									<select class="analyseSelect" id="advanced-analyse---{{ poll.id }}Select">
-										<option value="nochoice">Filter by Choice</option>
-										{% for choice in poll.choice_set.all %}
-											<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
-										{% endfor %}
-									</select>
-									<div class="gender">
-										<div class="graphContainer">
-											<p> Gender </p>
-											<div class="question_analyse_chart" id="advanced-genderChart---{{ poll.id }}">
-											</div>
-										</div>
-									</div>
-									<div class="age">
-										<div class="graphContainer">
-											<p> Age </p>
-											<div class="question_analyse_chart" id="advanced-ageChart---{{ poll.id }}">
-											</div>
-										</div>
-									</div>
-									<div class="location">
-										<div class="graphContainer">
-											<p> Location </p><div id="advanced-mapBackButton---{{ poll.id }}" class="back" onClick="back('advanced-',{{ poll.id }})"><i class="fa fa-arrow-left"></i></div>
-											<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ poll.id }}">
-											</div>
-										</div>
-									</div>
-									<div class="others">
-										<div class="graphContainer">
-											<p> Profession </p>
-											<div class="question_analyse_chart" id="advanced-othersChart---{{ poll.id }}">
-											</div>
-										</div>
-									</div>
-								</div>
-							{% endfor %}
+								{% endfor %}
+							</div>
 						</li>
 					{% endfor %}
 				</ul>
-			</div>
-			<div class="create-survey">
-				<form id="create-survey-form" class="create-survey-content-form" method="POST" action="{% url 'polls:create_survey' %}"  enctype="multipart/form-data">
-					{% csrf_token %}
-					<p class="form-p">
-						<label class="required" for="surveyName">Name</label>
-						<input type="text" id ="surveyName" name="surveyName" placeholder="Survey Name" maxlength="64"></input>
-					</p>
-					<p class="form-p">
-						<label class="required" for="surveyDescription">Description</label>
-						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description"></textarea>
-					</p>
-					<p class="form-p">
-						<label for="qExpiry">Expires On</label>
-						<select id="qExpiry_month" name="qExpiry_month">
-								<option value="0">Month</option>
-								<option value="1">January</option>
-								<option value="2">February</option>
-								<option value="3">March</option>
-								<option value="4">April</option>
-								<option value="5">May</option>
-								<option value="6">June</option>
-								<option value="7">July</option>
-								<option value="8">August</option>
-								<option value="9">September</option>
-								<option value="10">October</option>
-								<option value="11">November</option>
-								<option value="12">December</option>
-						</select>
-						<select id="qExpiry_day" name="qExpiry_day">
-								<option value="0">Day</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
-								<option value="13">13</option>
-								<option value="14">14</option>
-								<option value="15">15</option>
-								<option value="16">16</option>
-								<option value="17">17</option>
-								<option value="18">18</option>
-								<option value="19">19</option>
-								<option value="20">20</option>
-								<option value="21">21</option>
-								<option value="22">22</option>
-								<option value="23">23</option>
-								<option value="24">24</option>
-								<option value="25">25</option>
-								<option value="26">26</option>
-								<option value="27">27</option>
-								<option value="28">28</option>
-								<option value="29">29</option>
-								<option value="30">30</option>
-								<option value="31">31</option>
-						</select>
-						<select id="qExpiry_year" name="qExpiry_year">
-								<option value="0">Year</option>
-								<option value="2015">2015</option>
-								<option value="2016">2016</option>
-								<option value="2017">2017</option>
-								<option value="2018">2018</option>
-								<option value="2019">2019</option>
-								<option value="2020">2020</option>
-								<option value="2021">2021</option>
-								<option value="2022">2022</option>
-								<option value="2023">2023</option>
-								<option value="2024">2024</option>
-								<option value="2025">2025</option>
-								<option value="2026">2026</option>
-								<option value="2027">2027</option>
-								<option value="2028">2028</option>
-								<option value="2029">2029</option>
-								<option value="2030">2030</option>
-								<option value="2031">2031</option>
-								<option value="2032">2032</option>
-								<option value="2033">2033</option>
-								<option value="2034">2034</option>
-								<option value="2035">2035</option>
-								<option value="2036">2036</option>
-								<option value="2037">2037</option>
-								<option value="2038">2038</option>
-								<option value="2039">2039</option>
-								<option value="2040">2040</option>
-								<option value="2041">2041</option>
-								<option value="2042">2042</option>
-								<option value="2043">2043</option>
-								<option value="2044">2044</option>
-								<option value="2045">2045</option>
-								<option value="2046">2046</option>
-								<option value="2047">2047</option>
-								<option value="2048">2048</option>
-								<option value="2049">2049</option>
-								<option value="2050">2050</option>
-								<option value="2051">2051</option>
-								<option value="2052">2052</option>
-								<option value="2053">2053</option>
-								<option value="2054">2054</option>
-								<option value="2055">2055</option>
-								<option value="2056">2056</option>
-								<option value="2057">2057</option>
-								<option value="2058">2058</option>
-								<option value="2059">2059</option>
-								<option value="2060">2060</option>
-								<option value="2061">2061</option>
-								<option value="2062">2062</option>
-								<option value="2063">2063</option>
-								<option value="2064">2064</option>
-								<option value="2065">2065</option>
-								<option value="2066">2066</option>
-								<option value="2067">2067</option>
-								<option value="2068">2068</option>
-								<option value="2069">2069</option>
-								<option value="2070">2070</option>
-								<option value="2071">2071</option>
-								<option value="2072">2072</option>
-								<option value="2073">2073</option>
-								<option value="2074">2074</option>
-								<option value="2075">2075</option>
-								<option value="2076">2076</option>
-								<option value="2077">2077</option>
-								<option value="2078">2078</option>
-								<option value="2079">2079</option>
-								<option value="2080">2080</option>
-								<option value="2081">2081</option>
-								<option value="2082">2082</option>
-								<option value="2083">2083</option>
-								<option value="2084">2084</option>
-								<option value="2085">2085</option>
-								<option value="2086">2086</option>
-								<option value="2087">2087</option>
-								<option value="2088">2088</option>
-								<option value="2089">2089</option>
-								<option value="2090">2090</option>
-								<option value="2091">2091</option>
-								<option value="2092">2092</option>
-								<option value="2093">2093</option>
-								<option value="2094">2094</option>
-								<option value="2095">2095</option>
-								<option value="2096">2096</option>
-								<option value="2097">2097</option>
-								<option value="2098">2098</option>
-								<option value="2099">2099</option>
-								<option value="2100">2100</option>
-								<option value="2101">2101</option>
-								<option value="2102">2102</option>
-								<option value="2103">2103</option>
-								<option value="2104">2104</option>
-								<option value="2105">2105</option>
-								<option value="2106">2106</option>
-								<option value="2107">2107</option>
-								<option value="2108">2108</option>
-								<option value="2109">2109</option>
-								<option value="2110">2110</option>
-								<option value="2111">2111</option>
-								<option value="2112">2112</option>
-								<option value="2113">2113</option>
-								<option value="2114">2114</option>
-								<option value="2115">2115</option>
-						</select>
-						<select name="qExpiry_hr" id="qExpiry_hr">
-								<option value="0">hr</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
-						</select>
-						<select name="qExpiry_min" id="qExpiry_hr">
-								<option value="-1">min</option>
-								<option value="0">0</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
-								<option value="13">13</option>
-								<option value="14">14</option>
-								<option value="15">15</option>
-								<option value="16">16</option>
-								<option value="17">17</option>
-								<option value="18">18</option>
-								<option value="19">19</option>
-								<option value="20">20</option>
-								<option value="21">21</option>
-								<option value="22">22</option>
-								<option value="23">23</option>
-								<option value="24">24</option>
-								<option value="25">25</option>
-								<option value="26">26</option>
-								<option value="27">27</option>
-								<option value="28">28</option>
-								<option value="29">29</option>
-								<option value="30">30</option>
-								<option value="31">31</option>
-								<option value="32">32</option>
-								<option value="33">33</option>
-								<option value="34">34</option>
-								<option value="35">35</option>
-								<option value="36">36</option>
-								<option value="37">37</option>
-								<option value="38">38</option>
-								<option value="39">39</option>
-								<option value="40">40</option>
-								<option value="41">41</option>
-								<option value="42">42</option>
-								<option value="43">43</option>
-								<option value="44">44</option>
-								<option value="45">45</option>
-								<option value="46">46</option>
-								<option value="47">47</option>
-								<option value="48">48</option>
-								<option value="49">49</option>
-								<option value="50">50</option>
-								<option value="51">51</option>
-								<option value="52">52</option>
-								<option value="53">53</option>
-								<option value="54">54</option>
-								<option value="55">55</option>
-								<option value="56">56</option>
-								<option value="57">57</option>
-								<option value="58">58</option>
-								<option value="59">59</option>
-						</select>
-						<select name="qExpiry_ap" id="qExpiry_ap">
-								<option value="AM">AM</option>
-								<option value="PM">PM</option>
-						</select>
-					</p>
-					<p class="form-p">
-						<label for="categories">Category <i id="category_tooltip_fa" class="fa fa-info-circle"></i></label>
-						<input id="categories" type="text" name="categories" style="border:none;">
-						<input id="selectedCategories" type="hidden" name="selectedCategories" value="">
-					</p>
-					<div class="survey-questions">
-					</div>
-					<i class="fa fa-plus-circle add-q">Add Question</i>
-					<input class="submit surveySubmit" type="submit" value="Create" id="createSurveySubmit"/>
-				</form>
-				<div class="tooltip" id="category_tooltip">
-					<span>Categories list:<br></span>
-					{% for cat in categories %}
-						<span class="cat_title_tooltip">{{ cat }},    </span>
-					{% endfor %}
-				</div>
 			</div>
 		</div>
 		<div id="followers-content" class="admin-dash-div clearfix">
@@ -1152,6 +902,11 @@
 			{% for category in categories %}
 				availableTags.push("{{ category.category_title }}");
 			{% endfor %}
+
+			var availableGroupTags = []
+			{% for group in groups %}
+				availableGroupTags.push("{{ group.groupName }}");
+			{% endfor %}
 			
 			function validateEmail(field) {
     			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
@@ -1264,6 +1019,14 @@
 					maxselection: 5,
 					elemId: "selectedCategories"
 				});
+
+				$( "#groups" ).autocomplete({
+					source: availableGroupTags,
+					multiselect: true,
+					maxselection: 5,
+					elemId: "selectedGroups"
+				});
+
 				$('#id_categories').hide();
 				$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
 				$('#id_categories').prev().on('click', '#cats', function() {
@@ -1287,7 +1050,7 @@
 			  		var question_count_str = question_count.toString();
 			  		question_list.push(question_count_str);
 			  		var question_elem = '<div class="survey-question-div" id="questionDiv'+question_count_str+'">';
-			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-plus-circle remove-question">Remove</i><p class="form-p"><label class=" required" for="qText';
+			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question">Remove</i><p class="form-p"><label class=" required" for="qText';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question</label><textarea id ="qText';
 			  		question_elem += question_count_str;
@@ -1300,6 +1063,7 @@
 			  		question_elem += '" name="qDesc';
 			  		question_elem += question_count_str;
 			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
+			  		question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -1336,7 +1100,7 @@
 							choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
 							choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 							choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
-							choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-plus-circle remove-choice">Remove</i></p></div>';
+							choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice">Remove</i></p></div>';
 							// console.log($("#"+choice_elem_div).last());
 							$("#"+choice_elem_div).append(choice_elem);
 						}
@@ -1445,7 +1209,7 @@
 									for(var key in obj){
 									    if (obj.hasOwnProperty(key)){
 									    	if(key === "surveyError")
-										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
+										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
 										   	else{
 										   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
 										   	}
@@ -1462,8 +1226,7 @@
 			}
 	
 			$(document).ready(function(){
-
-				$	(".dashboard-menu-li").click(function(){
+				$(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
 					$(this).addClass("selectedLi");
 					// console.log($(this)[0].innerHTML);
@@ -1535,24 +1298,16 @@
 				});
 
 				$('#polls-content,#advanced-content,#surveys-content').on("click","p.analyse_question_text",function(){
-					// console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-					// console.log($(this)[0].id);
 					var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
-					// console.log(elemId);
-					// console.log(pollId);
 					var analysisDivId = '#'+elemId+"Div";
-					// $(".analysis").hide();
 					var isMatch = /^advanced-*/.test(elemId);
-					// console.log(isMatch);
 					var analyse_type = "";
 					if(isMatch)
 						analyse_type = "advanced-";
 			      	$(analysisDivId).toggle("slow");
-				  	// $('#mapBackButton---'+pollId).removeClass("back");
-			      	var delay=1000; //1 seconds
+				  	var delay=1000; //1 seconds
 					setTimeout(function(){
-					//your code to be executed after 1 seconds
 					if($(analysisDivId).is(':visible')){
 					  drawPollsChart(analyse_type,parseInt(pollId))
 					  drawGenderChart(analyse_type,parseInt(pollId));
@@ -1560,8 +1315,15 @@
 					  drawOthersChart(analyse_type,parseInt(pollId));
 					  drawLocationChart(analyse_type,parseInt(pollId));
 					}
+					else{
+						$("#text-analyse---"+pollId+"Div").toggle("slow");
+					}
 					}, delay); 
 			    });  
+				
+				$("#surveys-content").on("click",".main-survey",function(){
+					$(this).parent().parent().next().toggle("slow");
+				});
 
 			    $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
 			    	var elemId = $(this)[0].id;

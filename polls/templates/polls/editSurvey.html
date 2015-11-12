@@ -4,6 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/jquery-ui.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/edit_survey.css' %}" />
 	{% endblock %}
 	{% block extra_js %}
 		<script src="{% static 'js/jquery.js' %}" ></script>
@@ -278,41 +279,49 @@
 					<div class="survey-questions">
 						{% for question in polls %}
 							<div class="survey-question-div" id="questionDiv{{ forloop.counter }}">
-							<i id="remove-question{{ forloop.counter }}" class="fa fa-plus-circle remove-question">Remove</i>
-							<p>
-								<label for="qText{{ forloop.counter }}">Question</label>
-								<textarea id ="qText{{ forloop.counter }}" name="qText{{ forloop.counter }}" placeholder="Ask the people" maxlength="200">{{ question.poll.question_text }}</textarea>							
-							</p>
-							<p>
-								<label for="qDesc{{ forloop.counter }}">Description</label>
-								<textarea id ="qDesc{{ forloop.counter }}" name="qDesc{{ forloop.counter }}" placeholder="Description" maxlength="400">{{ question.poll.description }}</textarea>
-							</p>
-							<p class="form-p">
-								<label for="qType{{ forloop.counter }}">Question Type</label>
-								<select class="question-type-select" id="question-type-select{{ forloop.counter }}" name="qType{{ forloop.counter }}">
-									<option value="text" {% if question.type == "text" %}selected{% endif %} >Text</option>
-									<option value="radio" {% if question.type == "radio" %}selected{% endif %}>Single Select</option>
-									<option value="checkbox" {% if question.type == "checkbox" %}selected{% endif %}>Multi Select</option>
-								</select>
-							</p>
-							{% if question.type == "text" %}
-							{% else %}
-								<div id="question{{ forloop.counter }}choiceDiv">
-									{% for choice in question.poll.choice_set.all %}
-										<div id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}Div">
-										<p>
-											<label for="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}"></label>
-											<input id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" type="text" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" placeholder="Enter Choice" value="{{ choice.choice_text }}" maxlength="200">
-											{% if choice.choice_image %}
-												<img class="choices choice_image" id="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
-												<input type="hidden" id="questionDiv{{ forloop.parentloop.counter }}imagetextchoice{{ forloop.counter }}" name="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
-											{% endif %}
-											<input id="questionDiv{{ forloop.parentloop.counter }}filechoice{{ forloop.counter }}" class="fileButtonClass" type="file" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" accept="image/*">
-											<i id="{{ forloop.parentloop.counter }}---{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle remove-choice">Remove</i>
-										</p>
-										</div>
-									{% endfor %}
-									<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice">Add Another</i>
+								<i id="remove-question{{ forloop.counter }}" class="fa fa-times-circle remove-question">Remove</i>
+								<p>
+									<label for="qText{{ forloop.counter }}">Question</label>
+									<textarea id ="qText{{ forloop.counter }}" name="qText{{ forloop.counter }}" placeholder="Ask the people" maxlength="200">{{ question.poll.question_text }}</textarea>							
+								</p>
+								<p>
+									<label for="qDesc{{ forloop.counter }}">Description</label>
+									<textarea id ="qDesc{{ forloop.counter }}" name="qDesc{{ forloop.counter }}" placeholder="Description" maxlength="400">{{ question.poll.description }}</textarea>
+								</p>
+								<p class="anonymous">
+									{% if question.poll.protectResult %}
+										<input id="protectResult{{ forloop.counter }}" name="protectResult{{ forloop.counter }}" type="checkbox" checked>
+									{% else %}
+										<input id="protectResult{{ forloop.counter }}" name="protectResult{{ forloop.counter }}" type="checkbox">
+									{% endif %}
+									<label for="protectResult{{ forloop.counter }}">Protect Result </label>
+								</p>
+								<p class="form-p">
+									<label for="qType{{ forloop.counter }}">Question Type</label>
+									<select class="question-type-select" id="question-type-select{{ forloop.counter }}" name="qType{{ forloop.counter }}">
+										<option value="text" {% if question.type == "text" %}selected{% endif %} >Text</option>
+										<option value="radio" {% if question.type == "radio" %}selected{% endif %}>Single Select</option>
+										<option value="checkbox" {% if question.type == "checkbox" %}selected{% endif %}>Multi Select</option>
+									</select>
+								</p>
+								{% if question.type == "text" %}
+								{% else %}
+									<div id="question{{ forloop.counter }}choiceDiv">
+										{% for choice in question.poll.choice_set.all %}
+											<div id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}Div">
+											<p>
+												<label for="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}"></label>
+												<input id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" type="text" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" placeholder="Enter Choice" value="{{ choice.choice_text }}" maxlength="200">
+												{% if choice.choice_image %}
+													<img class="choices choice_image" id="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
+													<input type="hidden" id="questionDiv{{ forloop.parentloop.counter }}imagetextchoice{{ forloop.counter }}" name="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
+												{% endif %}
+												<input id="questionDiv{{ forloop.parentloop.counter }}filechoice{{ forloop.counter }}" class="fileButtonClass" type="file" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" accept="image/*">
+												<i id="{{ forloop.parentloop.counter }}---{{ forloop.counter }}---{{ question.type }}" class="fa fa-times-circle remove-choice">Remove</i>
+											</p>
+											</div>
+										{% endfor %}
+										<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice">Add Another</i>
 								</div>
 							{% endif %}
 							</div>
@@ -451,6 +460,7 @@
 			  		question_elem += '" name="qDesc';
 			  		question_elem += question_count_str;
 			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
+			  		question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -551,7 +561,7 @@
 										for(var key in obj){
 										    if (obj.hasOwnProperty(key)){
 										    	if(key === "surveyError")
-											        $(".createPollContent").children().first().prepend('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
+											        $(".createPollContent").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
 											   	else{
 											   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
 											   	}

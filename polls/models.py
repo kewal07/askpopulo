@@ -149,7 +149,7 @@ class Survey_Question(models.Model):
 	question = models.ForeignKey(Question)
 	question_type = models.CharField(max_length=20)
 	def __str__(self):
-		return self.survey+"_"+self.question+"_"+self.question_type
+		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 
 class SurveyVoted(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)

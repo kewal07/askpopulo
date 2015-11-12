@@ -1,0 +1,15 @@
+#surveyDescription,.survey-question-div textarea{
+	margin-top:-1rem;
+}
+.survey-questions{
+	width: 90%;
+    margin: 0 auto;
+}
+.survey-question-div p:first-of-type {
+	margin-top:1rem;
+}
+.anonymous{
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}

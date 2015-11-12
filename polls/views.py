@@ -1003,93 +1003,17 @@ class CompanyIndexView(BaseViewList):
 			company_obj = company_obj[0]
 		else:
 			return HttpResponseRedirect("/") #this should be a 404 page
-		# if user.is_authenticated():
-		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
-		# global_location = ""
-		# country_list =[]
-		# if request.COOKIES.get("location","global").lower() != "global":
-		# 	global_location = request.COOKIES.get("location").lower()
-		# 	country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
-		# print(global_location)
-		# print(country_list)
-
-		# if request.path.endswith('category') and not request.GET.get('category'):
-		# 	mainData = Category.objects.all()
-		# 	return mainData
-		# elif request.path.endswith('featuredpolls'):
-		# 	adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
-		# 	featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0).order_by('-pub_date')
-		# 	latest_questions.extend(featuredpolls)
-		# 	latest_questions.extend(adminpolls)
-		# 	if latest_questions:
-		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
-		# 		if request.GET.get('tab') == 'mostvoted':
-		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-		# 		elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 			latest_questions = latest_questions
-		# 		elif request.GET.get('tab') == 'leastvoted':
-		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
-		# 		elif request.GET.get('tab') == 'withexpiry':
-		# 			toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
-		# 			expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
-		# 			toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
-		# 			expired_polls.sort(key=lambda x: x.expiry, reverse=True)
-		# 			latest_questions = []
-		# 			if toexpire_polls:
-		# 				latest_questions.extend(toexpire_polls)
-		# 			if expired_polls:
-		# 				latest_questions.extend(expired_polls)
-		# 		# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-		# 	# sendFeed()
-		# elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
-		# 	if request.GET.get('tab') == 'mycategories':
-		# 		category_questions = []
-		# 		if user.extendeduser.categories:
-		# 			user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
-		# 			user_categories = Category.objects.filter(pk__in=user_categories_list)
-		# 			que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-		# 			category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0]
-		# 			latest_questions.extend(category_questions)
-		# 	elif request.GET.get('tab') == 'followed':
-		# 		followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
-		# 		latest_questions.extend(followed_questions)
-		# 	elif request.GET.get('tab') == 'voted':
-		# 		voted_questions = [x.question for x in Voted.objects.filter(user=user)]
-		# 		latest_questions.extend(voted_questions)
-		# 	elif request.GET.get('tab') == 'mypolls' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 		asked_polls = Question.objects.filter(user=user)
-		# 		latest_questions.extend(asked_polls)
-		# 	if latest_questions:
-		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
-		# 		latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-		# elif request.GET.get('category'):
-		# 	category_title = request.GET.get('category')
-		# 	category = Category.objects.filter(category_title=category_title)[0]
-		# 	latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
-		# 	latest_questions = latest_questions[::-1]
-		# 	if request.GET.get('tab') == 'mostvoted':
-		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-		# 	elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 		latest_questions = latest_questions
-		# 	elif request.GET.get('tab') == 'leastvoted':
-		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
-		# 	elif request.GET.get('tab') == 'withexpiry':
-		# 		toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
-		# 		expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
-		# 		toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
-		# 		expired_polls.sort(key=lambda x: x.expiry, reverse=True)
-		# 		latest_questions = []
-		# 		if toexpire_polls:
-		# 			latest_questions.extend(toexpire_polls)
-		# 		if expired_polls:
-		# 			latest_questions.extend(expired_polls)
-		# else:
 		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
 		company_user_list = [x.user_id for x in company_user_list]
 		company_admin_list = User.objects.filter(id__in = company_user_list)
 		company_admin_list = [x.username for x in company_admin_list]
 		followed = Follow.objects.filter(user_id=user.id,target_id__in=company_user_list, deleted_at__isnull=True)
 		latest_questions = Question.objects.filter(privatePoll=0,user_id__in=company_user_list).order_by('-pub_date')
+		survey_list = Survey.objects.filter(user_id=user.id)
+		s_polls = []
+		for survey in survey_list:
+			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+		latest_questions = [item for item in latest_questions if item not in s_polls]
 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
 		if request.GET.get('tab') == 'mostvoted':
 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
@@ -1290,9 +1214,11 @@ class CreateSurveyView(BaseViewList):
 				que_text = post_data.get("qText"+str(que_index)).strip()
 				que_desc = post_data.get("qDesc"+str(que_index)).strip()
 				que_type = post_data.get("qType"+str(que_index)).strip()
+				protectResult = post_data.get("protectResult"+str(que_index),False)
 				poll['text'] = que_text
 				poll['desc'] = que_desc
 				poll['type'] = que_type
+				poll['protectResult'] = protectResult
 				choices = []
 				images = []
 				queError = ""
@@ -1334,22 +1260,21 @@ class CreateSurveyView(BaseViewList):
 				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats)
 				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
-				if survey_id == -1:
-					if list(filter(bool, selectedGnames)):
-						for gName in selectedGnames:
-							if gName:
-								group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
-								for group_user in group_user_set:
-									group_user_email = group_user.email
-									msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
-									msg.template_name = "group-mail-question"
-									msg.global_merge_vars = {
-					                    'inviter': request.user.first_name,
-					                    'companyname':request.user.extendeduser.company.name,
-					                    'questionUrl':"www.askbypoll.com"+url,
-					                    'questionText':survey.survey_name
-					                }
-									msg.send()
+				if list(filter(bool, selectedGnames)):
+					for gName in selectedGnames:
+						if gName:
+							group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
+							for group_user in group_user_set:
+								group_user_email = group_user.email
+								msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
+								msg.template_name = "group-mail-question"
+								msg.global_merge_vars = {
+				                    'inviter': request.user.first_name,
+				                    'companyname':request.user.extendeduser.company.name,
+				                    'questionUrl':"www.askbypoll.com"+url,
+				                    'questionText':survey.survey_name
+				                }
+								msg.send()
 			errors['success'] = True
 			errors['id'] = survey.id
 			errors['survey_slug'] = survey.survey_slug
@@ -1408,7 +1333,10 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 						choice.delete()
 				question.delete()
 		for poll in polls_list:
-			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'])
+			protectResult = 0
+			if poll['protectResult']:
+				protectResult = 1
+			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
 			question.save()
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])

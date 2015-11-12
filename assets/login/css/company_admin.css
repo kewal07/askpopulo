@@ -267,8 +267,10 @@ span.cube-num{
 }
 .create-group,.create-survey{
 	display: none;
+	margin-top:2rem;
 	/*position:relative;*/
 }
+
 .groupMembers,.surveyDescription{
 	padding-bottom:1rem;
 }
@@ -281,6 +283,35 @@ span.cube-num{
     padding: 0.5rem;
     cursor: pointer;
     z-index:10;
+}
+.error-survey{
+	display: block;
+    text-align: center;
+}
+.survey-questions{
+	margin-top:1rem;
+}
+.survey-all-questions{
+	display:none;
+    border: 2px dashed;
+    margin-top: 2rem;
+    margin-left: 1rem;
+}
+.anonymous{
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+.ana-text{
+	display: none;
+	margin:0 1rem;
+}
+.answer-text{
+	border: 2px solid #666;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    background: #cfcfcf;
+    margin-bottom: 0.5rem;
 }
 figure.members-figure {
      position: relative;
