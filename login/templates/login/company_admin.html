@@ -659,7 +659,7 @@
 							<p class="main activity_url analyse_question_text" id="analyse---{{ group.groupName }}" onclick="displayGroupMembers('analyse---{{ group.groupName }}Div')">
 								{{group.groupName}}
 							</p>
-							<!-- <i class="fa fa-trash-o group-action-icons" style="margin-left:2rem;"></i> -->
+							<i class="fa fa-trash-o group-action-icons" style="margin-left:2rem;" onclick="deleteGroup('{{ group.groupId}}','{{ group.groupName }}')"></i>
 							<i class="fa fa-pencil-square-o group-action-icons" onclick="editGroup('{{ group.groupId}}')"></i>
 							<div class="analysis group-ana-member" id="analyse---{{ group.groupName }}Div">
 								<div class="groupMembers clearfix">
@@ -899,6 +899,25 @@
 			var i;
 			var currentActiveEditForm = '';
 			var editGroupFlag = false;
+
+			function deleteGroup(groupId, groupName){
+				var x=window.confirm("Are you sure to delete group: "+groupName+" ?");
+				if(x){
+					{% if user.is_authenticated %}
+						$.ajax({
+							url:"/user/deletegroup?groupId="+groupId,
+							type: 'GET',
+							processData: false,
+							contentType: false,
+							success:function(response)
+							{
+								console.log(response);
+								$('#dashboard-groups-tab').trigger("click");
+							}
+						});
+					{% endif %}
+				}
+			}
 
 			function editGroup(groupId){
 				data = {}

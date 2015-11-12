@@ -615,4 +615,20 @@ class EditGroup(BaseViewList):
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			print(exc_type, fname, exc_tb.tb_lineno)	
+			print(exc_type, fname, exc_tb.tb_lineno)
+
+class DeleteGroup(BaseViewList):
+	def get(self, request, *args, **kwargs):
+		groupId = request.GET.get('groupId','')
+		response = {}
+		try:
+			if(groupId or not groupId==''):
+				group = Group.objects.get(pk = groupId)
+				group.delete()
+				response['success'] = "Group deleted successfully."
+				return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+
