@@ -19,5 +19,7 @@ urlpatterns = patterns('',
 	url(r'^notifications_read$',login_required(views.MarkFeedSeen.as_view()),name='notifications_read'),
 	url(r'^(?P<pk>\d+)/(?P<user_slug>[\w\-]+)/redemption$',login_required(views.RedeemView.as_view()),name='redeem'),
 	url(r'^creategroup$',login_required(views.CreateGroup.as_view()),name='create_group'),
+	url(r'^editgroup$',login_required(views.EditGroup.as_view()),name='edit_group'),
+	url(r'^deletegroup$',login_required(views.DeleteGroup.as_view()),name='delete_group'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
 )

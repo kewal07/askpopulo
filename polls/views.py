@@ -1,11 +1,11 @@
-import os
+import os,linecache
 import sys
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -1009,93 +1009,17 @@ class CompanyIndexView(BaseViewList):
 			company_obj = company_obj[0]
 		else:
 			return HttpResponseRedirect("/") #this should be a 404 page
-		# if user.is_authenticated():
-		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
-		# global_location = ""
-		# country_list =[]
-		# if request.COOKIES.get("location","global").lower() != "global":
-		# 	global_location = request.COOKIES.get("location").lower()
-		# 	country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
-		# print(global_location)
-		# print(country_list)
-
-		# if request.path.endswith('category') and not request.GET.get('category'):
-		# 	mainData = Category.objects.all()
-		# 	return mainData
-		# elif request.path.endswith('featuredpolls'):
-		# 	adminpolls = Question.objects.filter(user__is_superuser=1,privatePoll=0).order_by('-pub_date')
-		# 	featuredpolls = Question.objects.filter(featuredPoll=1,privatePoll=0).order_by('-pub_date')
-		# 	latest_questions.extend(featuredpolls)
-		# 	latest_questions.extend(adminpolls)
-		# 	if latest_questions:
-		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
-		# 		if request.GET.get('tab') == 'mostvoted':
-		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-		# 		elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 			latest_questions = latest_questions
-		# 		elif request.GET.get('tab') == 'leastvoted':
-		# 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
-		# 		elif request.GET.get('tab') == 'withexpiry':
-		# 			toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
-		# 			expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
-		# 			toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
-		# 			expired_polls.sort(key=lambda x: x.expiry, reverse=True)
-		# 			latest_questions = []
-		# 			if toexpire_polls:
-		# 				latest_questions.extend(toexpire_polls)
-		# 			if expired_polls:
-		# 				latest_questions.extend(expired_polls)
-		# 		# latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-		# 	# sendFeed()
-		# elif user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}):
-		# 	if request.GET.get('tab') == 'mycategories':
-		# 		category_questions = []
-		# 		if user.extendeduser.categories:
-		# 			user_categories_list = list(map(int,user.extendeduser.categories.split(',')))
-		# 			user_categories = Category.objects.filter(pk__in=user_categories_list)
-		# 			que_cat_list = QuestionWithCategory.objects.filter(category__in=user_categories)
-		# 			category_questions = [x.question for x in que_cat_list if x.question.privatePoll == 0]
-		# 			latest_questions.extend(category_questions)
-		# 	elif request.GET.get('tab') == 'followed':
-		# 		followed_questions = [x.question for x in Subscriber.objects.filter(user=user)]
-		# 		latest_questions.extend(followed_questions)
-		# 	elif request.GET.get('tab') == 'voted':
-		# 		voted_questions = [x.question for x in Voted.objects.filter(user=user)]
-		# 		latest_questions.extend(voted_questions)
-		# 	elif request.GET.get('tab') == 'mypolls' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 		asked_polls = Question.objects.filter(user=user)
-		# 		latest_questions.extend(asked_polls)
-		# 	if latest_questions:
-		# 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
-		# 		latest_questions.sort(key=lambda x: x.pub_date, reverse=True)
-		# elif request.GET.get('category'):
-		# 	category_title = request.GET.get('category')
-		# 	category = Category.objects.filter(category_title=category_title)[0]
-		# 	latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0]
-		# 	latest_questions = latest_questions[::-1]
-		# 	if request.GET.get('tab') == 'mostvoted':
-		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
-		# 	elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
-		# 		latest_questions = latest_questions
-		# 	elif request.GET.get('tab') == 'leastvoted':
-		# 		latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=False)
-		# 	elif request.GET.get('tab') == 'withexpiry':
-		# 		toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
-		# 		expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
-		# 		toexpire_polls.sort(key=lambda x: x.expiry, reverse=False)
-		# 		expired_polls.sort(key=lambda x: x.expiry, reverse=True)
-		# 		latest_questions = []
-		# 		if toexpire_polls:
-		# 			latest_questions.extend(toexpire_polls)
-		# 		if expired_polls:
-		# 			latest_questions.extend(expired_polls)
-		# else:
 		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
 		company_user_list = [x.user_id for x in company_user_list]
 		company_admin_list = User.objects.filter(id__in = company_user_list)
 		company_admin_list = [x.username for x in company_admin_list]
 		followed = Follow.objects.filter(user_id=user.id,target_id__in=company_user_list, deleted_at__isnull=True)
 		latest_questions = Question.objects.filter(privatePoll=0,user_id__in=company_user_list).order_by('-pub_date')
+		survey_list = Survey.objects.filter(user_id=user.id)
+		s_polls = []
+		for survey in survey_list:
+			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+		latest_questions = [item for item in latest_questions if item not in s_polls]
 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
 		if request.GET.get('tab') == 'mostvoted':
 			latest_questions.sort(key=lambda x: x.voted_set.count(), reverse=True)
@@ -1150,10 +1074,87 @@ class CompanyIndexView(BaseViewList):
 		#print(context)
 		return mainData
 
+englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire","Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire","Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
+
+nothernIreLand = ['Antrim','Ards','Armagh','Ballymena','Ballymoney','Banbridge','Belfast','Carrickfergus','Castlereagh','Coleraine','Cookstown','Craigavon','Derry','Down','Dungannon and South Tyrone','Fermanagh','Larne','Limavady','Lisburn','Magherafelt','Moyle','Newry and Mourne District','Newtownabbey','North Down','Omagh','Strabane'];
+
+scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmannanshire","Dumfries and Galloway","Dundee City","East Ayrshire","East Dunbartonshire","East Lothian","East Renfrewshire","Edinburgh, City of","Eilean Siar","Falkirk","Fife","Glasgow City","Highland","Inverclyde","Midlothian","Moray","North Ayrshire","North Lanarkshire","Orkney Islands","Perth and Kinross","Renfrewshire","Scottish Borders, The","Shetland Islands","South Ayrshire","South Lanarkshire","Stirling","West Dunbartonshire","West Lothian"];
+
+wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
+
 class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
 		# print(request.path,request.POST)
+		if request.path == "/advanced_analyse_choice":
+			pollId = request.POST.get("question")
+			choiceId = request.POST.get("choice")
+			stateContry = request.POST.get("stateContry","")
+			response_dic = {}
+			# get gender count
+			gender_dic = {}
+			gender_dic['M'] = 0
+			gender_dic['F'] = 0
+			gender_dic['D'] = 0
+			# get age count
+			age_dic = {}
+			age_dic['over_50'] = 0
+			age_dic['bet_36_50'] = 0
+			age_dic['bet_31_35'] = 0
+			age_dic['bet_26_30'] = 0
+			age_dic['bet_20_25'] = 0
+			age_dic['under_19'] = 0
+			# get profession count
+			prof_dic = {}
+			# get country count
+			country_dic = {}
+			# get state count
+			state_dic = {}
+			vote_list = []
+			if choiceId == "nochoice":
+				vote_list = Voted.objects.filter(question_id=pollId)
+			else:
+				vote_list = Vote.objects.filter(choice_id=choiceId)
+			for vote in vote_list:
+				user_extendeduser = vote.user.extendeduser
+				gender_dic[user_extendeduser.gender] += 1
+				user_age = user_extendeduser.calculate_age()
+				if user_age > 50:
+					age_dic['over_50'] += 1
+				elif user_age > 35:
+					age_dic['bet_36_50'] += 1
+				elif user_age > 30:
+					age_dic['bet_31_35'] += 1
+				elif user_age > 25:
+					age_dic['bet_26_30'] += 1
+				elif user_age > 19:
+					age_dic['bet_20_25'] += 1
+				elif user_age > 0:
+					age_dic['under_19'] += 1
+				prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
+				country = user_extendeduser.country
+				if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+					country = 'United Kingdom'
+				country_dic[country] = country_dic.get(country,0) + 1
+				state = user_extendeduser.state
+				if country == stateContry:
+					if country == 'United Kingdom':
+						if state in englandDict:
+							state_dic['England'] = state_dic.get('England',0) + 1
+						elif state in nothernIreLand:
+							state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
+						elif state in scotland:
+							state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
+						elif state in wales:
+							state_dic['Wales'] = state_dic.get('Wales',0) + 1
+					else:
+						state_dic[state] = state_dic.get(state,0) + 1
+			response_dic["state"] = state_dic
+			response_dic["country"] = country_dic
+			response_dic["profession"] = prof_dic
+			response_dic["gender"] = gender_dic
+			response_dic["age"] = age_dic
+			return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		if request.path == "/advanced_analyse":
 			pollId = request.POST.get("question")
 			# poll = Question.objects.get(pk=pollId)
@@ -1191,9 +1192,12 @@ class AccessDBView(BaseViewList):
 			response_dic = {}
 			total_votes = 0
 			# print(min_age,max_age,gender,profession)
+			choices = []
 			for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
+				choice_dic = {}
 				choice_text = "Choice"+str(idx+1)
-				response_dic[choice_text] = 0
+				choice_dic["key"] = choice_text
+				choice_dic["val"] = 0
 				for vote in Vote.objects.filter(choice_id=choice.id):
 					user_age = vote.user.extendeduser.calculate_age()
 					user_gender = vote.user.extendeduser.gender.lower()
@@ -1213,8 +1217,10 @@ class AccessDBView(BaseViewList):
 					if country and user_country != country:
 						add_cnt = False
 					if add_cnt:
-						response_dic[choice_text] += 1
+						choice_dic["val"] += 1
 						total_votes += 1
+				choices.append(choice_dic)
+			response_dic['choices'] = choices
 			response_dic['total_votes'] = total_votes
 			# print(response_dic)
 			return HttpResponse(json.dumps(response_dic), content_type='application/json')
@@ -1233,4 +1239,376 @@ class TriviaPView(BaseViewList):
 			print(trivia.trivia_body)
 		context['trivias'] = triviaList
 		return triviaList
+
+class CreateSurveyView(BaseViewList):
+	def post(self, request, *args, **kwargs):
+		try:
+			print(request.POST)
+			print(request.GET)
+			edit = False
+			curtime = datetime.datetime.now();
+			survey_id = -1
+			qExpiry = None
+			if request.GET.get("sid"):
+				edit = True
+				survey_id = int(request.GET.get("sid"))
+				survey = Survey.objects.get(pk=request.GET.get("sid"))
+				if request.POST.get("oldExpiryTime") != "clean":
+					curtime = timezone.now()
+					qExpiry = survey.expiry
+			user = request.user
+			post_data = request.POST
+			errors = {}
+			survey_name = post_data.get("surveyName").strip()
+			survey_desc = post_data.get("surveyDescription")
+			qeyear = int(request.POST.getlist('qExpiry_year')[0])
+			qemonth = int(request.POST.getlist('qExpiry_month')[0])
+			qeday = int(request.POST.getlist('qExpiry_day')[0])
+			qehr = int(request.POST.getlist('qExpiry_hr')[0])
+			qemin = int(request.POST.getlist('qExpiry_min')[0])
+			qeap = request.POST.getlist('qExpiry_ap')[0]
+			surveyError = ""
+			if not survey_name:
+				surveyError += "Survey Name is Required<br>"
+			# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1: 
+				if qeap.lower() == 'pm' and qehr != 12:
+					qehr = qehr + 12
+				elif qeap.lower() == 'am' and qehr == 12:
+					qehr = 0
+				try:
+					curtime = datetime.datetime.now()
+					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
+					if qExpiry < curtime:
+						raise Exception
+				except:
+					surveyError += "Invalid date time<br>"
+			selectedCats = request.POST.get('selectedCategories','').split(",")
+			selectedGnames = request.POST.get('selectedGroups','').split(",")
+			if not list(filter(bool, selectedCats)):
+				surveyError += "Please Select a category<br>"
+			question_count = json.loads(post_data.get("question_count"))
+			polls_list = []
+			print(question_count)
+			if len(question_count) < 1:
+				surveyError += "Atleast 1 question is required<br>"
+			if surveyError:
+				errors['surveyError'] = surveyError
+			imagePathList = []
+			for que_index in question_count:
+				poll = {}
+				print(que_index)
+				print(post_data.get("qText"+str(que_index)))
+				que_text = post_data.get("qText"+str(que_index)).strip()
+				que_desc = post_data.get("qDesc"+str(que_index)).strip()
+				que_type = post_data.get("qType"+str(que_index)).strip()
+				protectResult = post_data.get("protectResult"+str(que_index),False)
+				poll['text'] = que_text
+				poll['desc'] = que_desc
+				poll['type'] = que_type
+				poll['protectResult'] = protectResult
+				choices = []
+				images = []
+				queError = ""
+				if not que_text:
+					queError += "Question is required.<br>"
+				if que_type != "text":
+					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
+					print(choice_list)
+					if len(choice_list) < 2:
+						queError += "Atleast 2 choices are required"
+					elif len(choice_list) > 5:
+						queError += "Maximum 5 choices can be provided"
+					for choice_count in choice_list:
+						choice_elem_id = 'questionDiv'+que_index+'choice'+str(choice_count)
+						choice_image_edit_elem_id = 'questionDiv'+que_index+'imagechoice'+str(choice_count)
+						choice = request.POST.getlist(choice_elem_id)[0].strip()
+						choices.append(choice)
+						if edit and request.POST.get(choice_image_edit_elem_id,""):
+							choiceid = request.POST.get(choice_image_edit_elem_id).split("---")[1]
+							choiceImage = Choice.objects.get(pk=choiceid).choice_image
+							imagePathList.append(choiceImage.path)
+						else:
+							choiceImage = request.FILES.get(choice_elem_id,"")
+						images.append(choiceImage)
+						if not choice and not choiceImage:
+							errors[choice_elem_id] = "Choice required"
+					if len(choices)!=len(set(choices)):
+						queError += "Please provide different choices<br>"
+				if queError:
+					errors["qText"+str(que_index)] = queError
+				poll['choice_texts'] = choices
+				poll['choice_images'] = images
+				polls_list.append(poll)
+			print(polls_list)
+			print(errors)
+			if errors:
+				return HttpResponse(json.dumps(errors), content_type='application/json')
+			else:
+				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats)
+				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
+				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
+				if list(filter(bool, selectedGnames)):
+					for gName in selectedGnames:
+						if gName:
+							group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
+							for group_user in group_user_set:
+								group_user_email = group_user.email
+								msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
+								msg.template_name = "group-mail-question"
+								msg.global_merge_vars = {
+				                    'inviter': request.user.first_name,
+				                    'companyname':request.user.extendeduser.company.name,
+				                    'questionUrl':"www.askbypoll.com"+url,
+				                    'questionText':survey.survey_name
+				                }
+								msg.send()
+			errors['success'] = True
+			errors['id'] = survey.id
+			errors['survey_slug'] = survey.survey_slug
+			return HttpResponse(json.dumps(errors), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+
+def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats):
+	try:
+		survey = None
+		if survey_id > 0:
+			survey = Survey.objects.get(pk=survey_id)
+			survey.survey_name = survey_name
+			survey.description = survey_desc
+			survey.expiry = qExpiry
+		else:
+			survey = Survey( user=user, pub_date=curtime, created_at=curtime, survey_name=survey_name, description=survey_desc, expiry=qExpiry)
+		survey.save()
+		if survey_id > 0:
+			for scat in survey.surveywithcategory_set.all():
+				scat.delete()
+		if list(filter(bool, selectedCats)):
+			for cat in selectedCats:
+				if cat:
+					category = Category.objects.filter(category_title=cat)[0]
+					scat,created = SurveyWithCategory.objects.get_or_create(survey=survey,category=category)
+					# scat.save()
+		return survey
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+		exc_type, exc_obj, tb = sys.exc_info()
+		f = tb.tb_frame
+		lineno = tb.tb_lineno
+		filename = f.f_code.co_filename
+		linecache.checkcache(filename)
+		line = linecache.getline(filename, lineno, f.f_globals)
+		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
+def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList):
+	try:
+		if edit:
+			survey_polls = Survey_Question.objects.filter(survey=survey)
+			print(survey_polls)
+			for poll in survey_polls:
+				print(poll)
+				question = poll.question
+				if poll.question_type != "text":
+					for choice in question.choice_set.all():
+						if choice.choice_image:
+							if os.path.isfile(choice.choice_image.path) and choice.choice_image.path not in imagePathList:
+								os.remove(choice.choice_image.path)
+						choice.delete()
+				question.delete()
+		for poll in polls_list:
+			protectResult = 0
+			if poll['protectResult']:
+				protectResult = 1
+			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
+			question.save()
+			for index,choice_text in enumerate(poll['choice_texts']):
+				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])
+				choice.save()
+			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'])
+			survey_que.save()
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+		exc_type, exc_obj, tb = sys.exc_info()
+		f = tb.tb_frame
+		lineno = tb.tb_lineno
+		filename = f.f_code.co_filename
+		linecache.checkcache(filename)
+		line = linecache.getline(filename, lineno, f.f_globals)
+		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
+class SurveyVoteView(BaseViewDetail):
+	model = Survey
 	
+	def get_template_names(self):
+		template_name = 'polls/voteSurvey.html'
+		survey = self.get_object()
+		survey.numViews +=1
+		survey.save()
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+
+		context = super(SurveyVoteView, self).get_context_data(**kwargs)
+		user = self.request.user
+		user_already_voted = False
+		if user.is_authenticated():
+			createExtendedUser(user)
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+				context['signup_part_form'] = MySignupPartForm(userFormData)
+			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
+			if question_user_vote:
+				question_user_vote = question_user_vote[0]
+				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
+					user_already_voted = True
+			context['user_already_voted'] = user_already_voted
+		context['expired'] = False
+		if context['survey'].expiry and context['survey'].expiry < timezone.now():
+			context['expired'] = True
+		context['polls'] = []
+		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
+			poll_dict = {"poll":x.question,"type":x.question_type}
+			poll_dict['user_already_voted'] = False
+			question_user_vote = Voted.objects.filter(user=user,question=x.question)
+			if question_user_vote:
+				poll_dict['user_already_voted'] = True
+				if x.question_type == "text":
+					poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
+			context['polls'].append(poll_dict)
+		return context
+
+	def post(self, request, *args, **kwargs):
+		try:
+			print(request.POST,request.path)
+			user = request.user
+			questionId = request.POST.get('question')
+			question = Question.objects.get(pk=questionId)
+			que_type = request.POST.get('questionType')
+			queSlug = question.que_slug
+			if user.is_authenticated():
+				choice_list = request.POST.getlist('choice'+str(questionId))
+				print(choice_list)
+				choice_list = list(filter(None, choice_list))
+				print(choice_list)
+				if choice_list:
+					if que_type != "text":
+						for choiceId in choice_list:
+							choice = Choice.objects.get(pk=choiceId)
+							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
+							if que_type == "radio":
+								if created:
+									vote,created = Vote.objects.get_or_create(user=user, choice=choice)
+							else:
+								vote,created = Vote.objects.get_or_create(user=user, choice=choice)
+					else:
+						voted,created = Voted.objects.get_or_create(user=user, question=question)
+						if created:
+							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+							voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
+							voteText.save()
+					survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
+					survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
+					survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
+					survey_voted.user_answer_count += 1
+					survey_voted.save()
+				else:
+					data={}
+					data[str(questionId)] = "Please enter an answer"
+					return HttpResponse(json.dumps(data),content_type='application/json')
+				return HttpResponse(json.dumps({}),content_type='application/json')
+			else:
+					if request.is_ajax():
+						return HttpResponse(json.dumps({}),content_type='application/json')
+					next_url = request.path
+					extra_params = '?next=%s'%next_url
+					url = reverse('account_login')
+					full_url = '%s%s'%(url,extra_params)
+					if request.is_ajax():
+						return HttpResponse(json.dumps({}),content_type='application/json')
+					return HttpResponseRedirect(full_url)
+			return HttpResponseRedirect(url)
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
+class SurveyEditView(BaseViewDetail):
+	model = Survey
+	
+	def get_template_names(self):
+		template_name = 'polls/editSurvey.html'
+		return [template_name]
+
+	def get(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		context = super(SurveyEditView, self).get_context_data(object=self.object)
+		survey = context['survey']
+		canEdit = True
+		if (survey.surveyvoted_set.count() > 0 and not request.user.is_superuser):
+			canEdit = False
+		if survey.user != request.user and not request.user.is_superuser:
+			canEdit = False
+		if not canEdit:
+			url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'que_slug':survey.que_slug})
+			return HttpResponseRedirect(url)
+		else:
+			context["data"] = Category.objects.all()
+			if survey.expiry:
+				tim = survey.expiry#.strftime("%Y-%m-%d %H:%M:%S")
+				# context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+				context["qExpiry_year"]= tim.year
+				context["qExpiry_month"]= tim.month
+				context["qExpiry_day"]= tim.day
+				context["qExpiry_hr"]= tim.hour
+				context["qExpiry_min"]= tim.minute
+				context["qExpiry_ap"] = "AM"
+				if tim.hour > 11:
+					context["qExpiry_ap"] = "PM"
+					if tim.hour > 12:
+						context["qExpiry_hr"] -= 12
+			categories = ""
+			for cat in survey.surveywithcategory_set.all():
+				categories += cat.category.category_title+","
+			context["survey_categories"] = categories
+			context['polls'] = []
+			for x in Survey_Question.objects.filter(survey_id=survey.id):
+				poll_dict = {"poll":x.question,"type":x.question_type}
+				context['polls'].append(poll_dict)
+			return self.render_to_response(context)
+
+class SurveyDeleteView(BaseViewDetail):
+	model = Survey
+	
+	def get_context_data(self, **kwargs):
+		return super(SurveyDeleteView, self).get_context_data(**kwargs)
+	
+	def get(self, request, *args, **kwargs):
+		url = reverse('polls:index')
+		survey = self.get_object()
+		survey_polls = Survey_Question.objects.filter(survey=survey)
+		if survey.user == request.user or request.user.is_superuser:
+			for poll in survey_polls:
+				question = poll.question
+				if poll.question_type != "text":
+					for choice in question.choice_set.all():
+						if choice.choice_image:
+							if os.path.isfile(choice.choice_image.path) and choice.choice_image.path:
+								os.remove(choice.choice_image.path)
+				question.delete()
+			survey.delete()
+		return HttpResponseRedirect(url)

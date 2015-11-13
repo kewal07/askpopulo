@@ -1,0 +1,245 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block meta_data_extra %}
+	{% with survey.has_image as has_image %}
+	{%if has_image %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/media/choices/{{ has_image }}"/>
+		<meta property="og:image:width" content="300" /> 
+		<meta property="og:image:height" content="300" />
+	{% else %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
+	{% endif %}
+	{% endwith %}
+	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<meta property="og:title" content="{{ survey.survey_name  }}"/>
+	<meta property="og:description" content="{{ survey.description  }}" />
+{% endblock %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
+{% endblock %}
+{% block extra_js %}
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="questions">
+			<div class="questionContent">
+				<div class="userInfo">
+					<div class="userImage">
+						<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
+								<img src="{{ survey.user.extendeduser.get_profile_pic_url }}"  alt="User {{ survey.user.first_name }}">
+						</a>
+					</div>
+					<div class="userBrief">
+						<p>
+							<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
+									{{survey.user.first_name}}
+							</a>
+						</p>
+						<p>
+							Asked on:<br>
+								<span id="{{ survey.id }}pubdate"></span><br>
+						</p>
+					</div>
+				</div> 
+				<div class="mainPoll">
+					<p class="que_text">{{ survey.survey_name }}
+						{% if user.is_authenticated %}
+							{% if user == survey.user or user.is_superuser %}
+							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
+							<a href="{% url 'polls:survey_edit' survey.id survey.survey_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+							{% endif %}
+							<a href="{% url 'polls:survey_delete' survey.id survey.survey_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:survey_delete' survey.id survey.survey_slug %}')) return true; else return false;"></i></a>
+							{% endif %}
+						{% endif %}
+					</p>
+					{% if survey.description or survey.surveywithcategory_set.count > 0 %}
+					<p class="question_description_header">
+							<span class="question_description_header_span">Description</span>
+					</p>
+					<p class="question_description">
+						{{ survey.description }}
+						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
+						{% for cat in survey.questionwithcategory_set.all %}
+							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
+						{% endfor %}
+					</p>
+					{% endif %}
+					<div class="survey-questions">
+						{% for question in polls %}
+						<div class="survey-question">
+							<p class="que_text">{{ question.poll.question_text }}</p>
+							{% if question.poll.description %}
+								<p class="question_description_header">
+									<span class="question_description_header_span">Description</span>
+								</p>
+								<p class="question_description">{{ question.poll.description }}</p>
+							{% endif %}
+							<p>
+							<form class="optionsForm" method="POST" id="optionsForm{{ question.poll.id }}">
+								{% csrf_token %}
+								<input type="hidden" name="question" value="{{ question.poll.id }}" />
+								<input type="hidden" name="questionType" value="{{ question.type }}" />
+								{% if question.type == "text" %}
+									<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+								{% else %}
+								{% for choice in question.poll.choice_set.all %}
+									<p>
+										<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+										<label for="choice{{ choice.id }}">
+											{% if choice.choice_image %}
+											<script>
+												$('.choice_image').css({"width":"120px","height":"120px"});
+												$("#choice{{ choice.id }}").hide();
+												var item = $("#choice{{ choice.id}}");
+												item.parent().css({"display":"inline-block"});
+												// console.log($this.parent().next().children().first().show());
+											</script>
+												<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+												<!-- {{ choice.choice_text }} -->
+											{% else %}
+												{{ choice.choice_text }}
+											{% endif %}
+										</label>
+									</p>
+								{% endfor %}
+								{% if question.poll.protectResult and user != question.poll.user %}
+									<p id="pollsVoted---{{ question.poll.id }}" style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;display:none;"> Thanks for Voting. Results have been protected by Admin.</p>
+								{% else %}
+									<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+								{% endif %}
+								{% endif %}
+								{% if question.user_already_voted %}
+									<script type="text/javascript">
+									$(document).ready(function(){
+										if($("#pollsChart---"+{{ question.poll.id }}).length >0)
+											drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
+										else{
+											$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
+											if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
+												$("#pollsVoted---"+{{ question.poll.id }}).show();
+										}
+									});
+									</script>
+								{% else %}
+									{% if expired %}
+										<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.poll.id }}---{{ question.poll.que_slug }}" disabled="disabled"/>
+									{% else %}
+										<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.poll.id }}---{{ question.poll.que_slug }}---{{ question.poll.isBet }}"/>
+									{% endif %}
+									{% if user.is_authenticated and user.id == question.user.id or expired %}
+										{% if user.is_authenticated %}
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
+										{% else %}
+											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
+										{% endif %}
+									{% endif %}
+								{% endif %}
+							</form>
+							</p>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			<div class="pollInfo  pollsInfoVotePage clearfix">
+				<div class="pollInfoDataDetail clearfix">
+					<ul class="pollInfoUl clearfix">
+						<li><span class="pollInfoNum">{{ survey.surveyvoted_set.count }}</span> <i title="opinions" class="fa fa-check-circle"></i></li>
+						<li>
+							{% if survey.expiry and not expired %}
+								<!-- Time Left:<br> -->
+								<div id="{{ survey.id }}timer" class="timerClass"></div>
+							{% endif %}
+							<script>
+								var currentDate = new Date();
+								var offset = currentDate.getTimezoneOffset();
+								
+								var utcDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }} - 1, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}, {{ survey.pub_date.second }});
+
+								var publicationDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }}, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}-offset, {{ survey.pub_date.second }});
+								var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
+								document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
+
+								{% if survey.expiry and not expired %}
+								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }}, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
+								$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+								{% endif %}
+
+								function disableVoteButton(){
+									$('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
+									$('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
+									$('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
+									$('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
+								}
+							</script>
+						</li>
+						<ul class="pollInfoUl clearfix share-buttons">
+							<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}"></div></li>
+						</ul>							
+					</ul>
+				</div>
+			</div>
+			<div id="disqus_thread">
+			</div>
+		</div>
+	</section>
+	<script type="text/javascript">
+		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
+		{% if user.is_authenticated %}
+			var disqus_shortname = 'askbypoll';
+
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+			    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			var disqus_config = function() {
+				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
+				this.page.api_key = "{{ ssoData.pub_key }}";
+				};
+		{% endif %}
+		$(document).ready(function()
+		{
+			$('.choice_image').css({"width":"120px","height":"120px"});
+			$('.submit').bind('click', function()
+			{
+				var voteSubmitId = $(this)[0].id;
+				var queid = $(this)[0].id.replace('vote','').split("---")[0];
+				var elemid = "#optionsForm"+queid;//$(this)[0].id
+				$(elemid).bind('submit', function()
+				{
+					$("#"+voteSubmitId).attr("disabled","disabled");
+					$.ajax(
+					{
+						type: 'POST',
+						url:'',
+						data:$(elemid).serialize(),
+						success:function(response)
+						{
+							$(".errorlist").remove();
+							if(jQuery.isEmptyObject(response)){
+								if($("#pollsChart---"+queid).length >0)
+									drawPollsChart("{{ csrf_token }}","",parseInt(queid));
+								else{
+									$("#choiceText"+queid).attr('disabled','disabled');
+									if($("#pollsVoted---"+queid).length >0)
+										$("#pollsVoted---"+queid).show();
+								}
+								$("#"+voteSubmitId).remove();
+							}else{
+								$("#"+voteSubmitId).parent().append('<span style="position:absolute" class="errorlist"><br>Please enter an answer</span>');
+								$("#"+voteSubmitId).removeAttr("disabled");
+							}
+						}
+					});
+					return false;
+				});
+			});
+		});
+	</script>
+{% endblock %}

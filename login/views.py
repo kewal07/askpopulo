@@ -1,8 +1,8 @@
-import os
+import os,linecache
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent
+from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent, ExtendedGroup
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -11,7 +11,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question,Voted,Subscriber
+from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question
 from categories.models import Category
 import json
 import base64
@@ -25,7 +25,7 @@ import datetime
 from stream_django.feed_manager import feed_manager
 from stream_django.enrich import Enrich
 from django.contrib.auth.decorators import login_required
-from firebase_token_generator import create_token
+# from firebase_token_generator import create_token
 import os
 import sys
 from django.core.mail import send_mail
@@ -35,7 +35,7 @@ from postman.models import Message
 from referral.models import UserReferrer
 from django.contrib.auth.models import Group
 from django.core.mail import EmailMessage
-from login.models import ExtendedGroup
+import linecache
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -290,8 +290,8 @@ class LoggedInView(BaseViewDetail):
 		feed_activities = flat_feed.get(limit=25)['results']
 		context['flat_feed_activities'] = feed_activities
 		auth_payload = {"uid": str(request_user.id), "auth_data": "foo", "other_auth_data": "bar"}
-		token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
-		context['token'] = token
+		# token = create_token("tX5LUw3MVHkDpZzvlHexdpVlCuHt3Hzyl2rmTqTS", auth_payload)
+		# context['token'] = token
 		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
 		context["followers"] = followers
@@ -444,100 +444,194 @@ class AdminDashboard(BaseViewDetail):
 		return [template_name]
 	
 	def get_context_data(self, **kwargs):
-		data = super(AdminDashboard, self).get_context_data(**kwargs)
-		user = self.request.user
-		polls_vote_list = []
-		polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
-		total_views = 0
-		dash_graph = []
-		cur_time = datetime.datetime.now()
-		month_names = ['Jan','Feb','March','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
-		for i in range(3):
-			month_num = cur_time.month - i
-			month_name = month_names[month_num-1]
-			print(user.id,month_num)
-			# dash_polls = Question.objects.filter(user_id = user.id,pub_date__month=month_num)
-			dash_polls = [ x for x in polls if x.pub_date.month == month_num]
-			dash_polls_count = len(dash_polls)
-			dash_views = 0
-			dash_votes = 0
-			for poll in dash_polls:
-				dash_views += poll.numViews
-				dash_votes += Voted.objects.filter(question_id=poll.id).count()
-			dash_dict = {}
-			dash_dict['month_name'] = month_name
-			dash_dict['polls'] = dash_polls_count
-			dash_dict['views'] = dash_views
-			dash_dict['votes'] = dash_votes
-			dash_graph.append(dash_dict)
-		data['dash_graph'] = dash_graph
-		for que in polls:
-			pole_dict = {}
-			pole_dict['poll'] = que
-			pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
-			total_views += que.numViews
-			polls_vote_list.append(pole_dict)
-		groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
-		print(groups)
-		group_list = []
-		for group in groups:
-			group_dict = {}
-			tempGroup = Group.objects.get(pk=group['group_id'])
-			group_dict['groupName'] = tempGroup.name
-			group_dict['groupMembers'] = tempGroup.user_set.all()
-			group_list.append(group_dict)
-		polls_count = len(polls)
-		groups_count = len(groups)
-		votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
-		followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
-		following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
-		credits = user.extendeduser.credits
-		feed = feed_manager.get_user_feed(user.id)
-		activities = feed.get(limit=25)['results']
-		data["activities"] = activities
-		flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
-		feed_activities = flat_feed.get(limit=25)['results']
-		data['flat_feed_activities'] = feed_activities
-		data["followers"] = followers
-		data["following"] = following
-		followers_count = len(followers)
-		following_count = len(following)
-		data['followers_count'] = followers_count
-		data['following_count'] = following_count
-		data['credits'] = credits
-		print(type(polls_count))
-		print(type(votes_count))
-		data['polls'] = polls_vote_list
-		data['polls_count'] = polls_count
-		data['groups'] = group_list
-		data['groups_count'] = groups_count
-		data['votes_count'] = votes_count
-		data['total_views'] = total_views
-		return data
+		try:
+			data = super(AdminDashboard, self).get_context_data(**kwargs)
+			user = self.request.user
+			polls_vote_list = []
+			survey_list = Survey.objects.filter(user_id=user.id)
+			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+			s_polls = []
+			for survey in survey_list:
+				s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+			polls = [item for item in polls if item not in s_polls]
+			total_views = 0
+			dash_graph = []
+			cur_time = datetime.datetime.now()
+			month_names = ['Jan','Feb','March','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
+			for i in range(3):
+				month_num = cur_time.month - i
+				month_name = month_names[month_num-1]
+				print(user.id,month_num)
+				# dash_polls = Question.objects.filter(user_id = user.id,pub_date__month=month_num)
+				dash_polls = [ x for x in polls if x.pub_date.month == month_num]
+				dash_polls_count = len(dash_polls)
+				dash_views = 0
+				dash_votes = 0
+				for poll in dash_polls:
+					dash_views += poll.numViews
+					dash_votes += Voted.objects.filter(question_id=poll.id).count()
+				dash_dict = {}
+				dash_dict['month_name'] = month_name
+				dash_dict['polls'] = dash_polls_count
+				dash_dict['views'] = dash_views
+				dash_dict['votes'] = dash_votes
+				dash_graph.append(dash_dict)
+			data['dash_graph'] = dash_graph
+			for que in polls:
+				pole_dict = {}
+				pole_dict['poll'] = que
+				pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
+				total_views += que.numViews
+				polls_vote_list.append(pole_dict)
+			groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
+			print(groups)
+			group_list = []
+			for group in groups:
+				groupNamePrefixLength = len(user.username+'_'+user.extendeduser.company.name+'-')
+				group_dict = {}
+				tempGroup = Group.objects.get(pk=group['group_id'])
+				group_dict['groupId'] = tempGroup.id
+				group_dict['groupName'] = tempGroup.name[groupNamePrefixLength:]
+				group_dict['groupMembers'] = tempGroup.user_set.all()
+				group_list.append(group_dict)
+			polls_count = len(polls)
+			groups_count = len(groups)
+			survey_count = len(survey_list)
+			survey_detail_list = []
+			for survey in survey_list:
+				sur_dict={}
+				sur_dict['survey'] = survey
+				sur_dict['votes'] = SurveyVoted.objects.filter(survey_id=survey.id).count()
+				total_views += survey.numViews
+				sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				survey_detail_list.append(sur_dict)
+			votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
+			followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
+			following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
+			credits = user.extendeduser.credits
+			feed = feed_manager.get_user_feed(user.id)
+			activities = feed.get(limit=25)['results']
+			data["activities"] = activities
+			flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
+			feed_activities = flat_feed.get(limit=25)['results']
+			data['flat_feed_activities'] = feed_activities
+			data["followers"] = followers
+			data["following"] = following
+			followers_count = len(followers)
+			following_count = len(following)
+			data['followers_count'] = followers_count
+			data['following_count'] = following_count
+			data['credits'] = credits
+			print(type(polls_count))
+			print(type(votes_count))
+			data['polls'] = polls_vote_list
+			data['polls_count'] = polls_count
+			data['groups'] = group_list
+			data['groups_count'] = groups_count
+			data['surveys'] = survey_detail_list
+			data['surveys_count'] = survey_count
+			data['votes_count'] = votes_count
+			data['total_views'] = total_views
+			data['categories'] = Category.objects.all()
+			return data
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
 class CreateGroup(BaseViewList):
 	def post(self, request, *args, **kwargs):
-		groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
 		emailList = request.POST.get('groupMembers').split(';')
+		isEdit = request.POST.get('isGroupEdit')
+		if isEdit == 'no':
+			groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
+		else:
+			groupName = request.POST.get("groupName")
+		print(isEdit)
+		print(groupName)
+		response = {}
 		try:
+			print("Inside Try")
 			newgroup = Group.objects.create(name = groupName)
 		except:
-			response['error'] = 'Group name already exists.'
-			return HttpResponse(json.dumps(response), content_type='application/json')
-		group = Group.objects.get(name=groupName)
-		extendedGroup = ExtendedGroup(user=request.user, group = group)
-		extendedGroup.save()
-		for email in emailList:
-			user = User.objects.filter(email = email)
-			if user:
-				user = list(user)[0]
-				user.groups.add(group)
+			if isEdit == 'no':
+				response['error'] = 'Group name already exists.'
+				return HttpResponse(json.dumps(response), content_type='application/json')
 			else:
-				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
-				msg.template_name = "invitation-mail"
-				msg.global_merge_vars = {
-                    'inviter': request.user.first_name,
-                    'companyname':request.user.extendeduser.company.name
-                }
-				msg.send()
-				
+				try:
+					group = Group.objects.get(name=groupName)
+					extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
+					extendedGroupCreater.delete()
+					group.delete()
+					newgroup = Group.objects.create(name = groupName)
+				except Exception as e:
+					exc_type, exc_obj, exc_tb = sys.exc_info()
+					fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+					print(exc_type, fname, exc_tb.tb_lineno)
+		try:
+			group = Group.objects.get(name=groupName)
+			extendedGroup = ExtendedGroup(user=request.user, group = group)
+			extendedGroup.save()
+			for email in emailList:
+				if email:
+					user = User.objects.filter(email = email)
+					if user:
+						user = list(user)[0]
+						user.groups.add(group)
+					else:
+						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
+						msg.template_name = "invitation-mail"
+						msg.global_merge_vars = {
+		                    'inviter': request.user.first_name,
+		                    'companyname':request.user.extendeduser.company.name
+		                }
+						msg.send()
+			if(isEdit == 'yes'):
+				response['success'] = 'Group edited successfully.'
+			else:
+				response['success'] = 'Group created successfully.'
+			return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+
+class EditGroup(BaseViewList):
+	def get(self, request, *args, **kwargs):
+		groupId = request.GET.get('groupId','')
+		response = {}
+		try:
+			if(groupId or not groupId==''):
+				group = Group.objects.get(pk = groupId)
+				response['groupName'] = group.name
+				response['mailList'] = ''
+				for user in group.user_set.all():
+					response['mailList'] += user.email +';'
+				return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+
+class DeleteGroup(BaseViewList):
+	def get(self, request, *args, **kwargs):
+		groupId = request.GET.get('groupId','')
+		response = {}
+		try:
+			if(groupId or not groupId==''):
+				group = Group.objects.get(pk = groupId)
+				group.delete()
+				response['success'] = "Group deleted successfully."
+				return HttpResponse(json.dumps(response), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+

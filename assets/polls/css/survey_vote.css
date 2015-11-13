@@ -1,0 +1,13 @@
+.survey-questions{
+	
+}
+.survey-question{
+	border: 2px dashed #666;
+    padding: 1rem;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+.text-ans{
+	width:100%;
+	height: 2.5rem;
+}
