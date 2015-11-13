@@ -399,3 +399,369 @@ function confirm_redirect(olEl,val,url){
 	openOverlay(olEl);
 	return yesnoconfirm(url);
 }
+
+/* Function for charts start */
+function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state) {
+	// console.log(analyse_type,pollId,age,gender,profession,location);
+	var pollsData = [];
+	var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
+	var colCount = 0;
+	var advanced_analyse_dic = {};
+	if (typeof age === "undefined" || age === null) { 
+	    age = "nochoice"; 
+	}
+	if (typeof gender === "undefined" || gender === null) { 
+	    gender = "nochoice"; 
+	}
+	if (typeof profession === "undefined" || profession === null) { 
+	    profession = "nochoice"; 
+	}
+	if (typeof location === "undefined" || location === null) { 
+	    location = "nochoice"; 
+	}
+	if (typeof state === "undefined" || state === null) { 
+	    state = "nochoice"; 
+	}
+	$.ajax({
+        url: "/advanced_analyse",
+        type: 'POST',
+        data: { question: pollId,
+        		age: age,
+        		gender: gender,
+        		profession: profession,
+        		country: location,
+        		state: state,
+        		csrfmiddlewaretoken: csrf_token
+        	},
+        async: false,
+        cache: false,
+        timeout: 30000,
+        error: function(){
+            return true;
+        },
+        success: function(msg){
+        	// console.log(msg);
+        	advanced_analyse_dic=msg;
+        }
+    });
+	pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+	for(var choice in advanced_analyse_dic['choices']){
+		var inData = [];
+		var choice_dic = advanced_analyse_dic['choices'][choice];
+		inData.push(choice_dic["key"]);
+		inData.push(choice_dic["val"]);
+		// inData.push(choice['val']);
+		inData.push(pollsColors[colCount++]);
+		var percent = 0;
+		if(advanced_analyse_dic['total_votes'] > 0)
+			percent = Math.round((choice_dic["val"]/advanced_analyse_dic['total_votes'])*100);
+			// percent = Math.round((choice["val"]/advanced_analyse_dic['total_votes'])*100);
+		inData.push(percent+"%");
+		pollsData.push(inData);
+		// console.log(inData);
+	}
+	var data = google.visualization.arrayToDataTable(pollsData);
+	var options = {
+          chartArea: {left:80,width: '60%'},
+          fontSize:14,
+          bars: {
+            groupWidth: 100
+          },
+          annotations:{
+          	textStyle: {
+		      opacity: 0         // The transparency of the text.
+		    }	        
+          },
+          hAxis: {
+            title: '',
+            minValue: 0,
+            gridlines: {
+              color: 'transparent'
+              },
+            textPosition: 'none',
+            baselineColor: 'transparent'
+          },
+          vAxis: {
+            title: '',
+            gridlines: {
+              color: 'transparent'
+              },
+          },
+          legend:{
+              position:'none'
+          },
+           animation:{
+              startup:true,
+              duration: 3000,
+              easing: 'inAndOut',
+         },
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
+        chart.draw(data, options);
+        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
+
+    function displayAnnotation(e){
+        data = google.visualization.arrayToDataTable(pollsData);
+        options = {
+          chartArea: {left:80,width: '60%'},
+          fontSize:14,
+          bars: {
+            groupWidth: 100
+          },
+          annotations:{
+          	textStyle: {
+		      opacity: 1         // The transparency of the text.
+		    }	        
+          },
+          hAxis: {
+            title: '',
+            minValue: 0,
+            gridlines: {
+              color: 'transparent'
+            },
+            textPosition: 'none',
+            baselineColor: 'transparent'
+          },
+          vAxis: {
+            title: '',
+            gridlines: {
+              color: 'transparent'
+              },
+          },
+          legend:{
+              position:'none'
+          },
+           animation:{
+              startup:true,
+              duration: 1,
+              easing: 'inAndOut',
+         },
+        };
+
+        chart.draw(data,options);
+    }
+}
+
+function drawGenderChart(csrf_token,analyse_type,pollId,choiceId) {
+  var genderData = [['Gender', 'Votes']];
+  if(typeof choiceId == 'undefined')
+  	choiceId = "nochoice"
+  var advanced_analyse_dic = {};
+  $.ajax({
+        url: "/advanced_analyse_choice",
+        type: 'POST',
+        data: { question: pollId,
+        		choice: choiceId,
+        		csrfmiddlewaretoken: csrf_token
+        	},
+        async: false,
+        cache: false,
+        timeout: 30000,
+        error: function(){
+            return true;
+        },
+        success: function(msg){
+        	// console.log(msg);
+        	advanced_analyse_dic=msg;
+        }
+    });
+  var m = advanced_analyse_dic['gender']['M'];
+  var f = advanced_analyse_dic['gender']['F'];
+  var d = advanced_analyse_dic['gender']['D'];
+  
+  if(m>0)
+  	genderData.push(['Male',m]);
+  if(f>0)
+  	genderData.push(['Female',f]);
+  if(d>0)
+  	genderData.push(['Not Disclosed',d])
+  var data = google.visualization.arrayToDataTable(genderData);
+  var options = {
+    pieHole: 0.4,
+    legend:'bottom'
+  };
+  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'genderChart---'+pollId));
+  chart.draw(data, options);
+}
+
+function drawAgeChart(csrf_token,analyse_type,pollId,choiceId) {
+  var ageData = [['Age Group', 'Votes']];
+  if(typeof choiceId == 'undefined')
+  	choiceId = "nochoice"
+  var advanced_analyse_dic = {};
+  $.ajax({
+        url: "/advanced_analyse_choice",
+        type: 'POST',
+        data: { question: pollId,
+        		choice: choiceId,
+        		csrfmiddlewaretoken: csrf_token
+        	},
+        async: false,
+        cache: false,
+        timeout: 30000,
+        error: function(){
+            return true;
+        },
+        success: function(msg){
+        	// console.log(msg);
+        	advanced_analyse_dic=msg;
+        }
+    });
+  var under_19 = advanced_analyse_dic['age']['under_19'];
+  var bet_20_25 = advanced_analyse_dic['age']['bet_20_25'];
+  var bet_26_30 = advanced_analyse_dic['age']['bet_26_30'];
+  var bet_31_35 = advanced_analyse_dic['age']['bet_31_35'];;
+  var bet_36_50 = advanced_analyse_dic['age']['bet_36_50'];
+  var over_50 = advanced_analyse_dic['age']['over_50'];
+  if(under_19 > 0)
+  	ageData.push(['Upto 19',under_19]);
+  if(bet_20_25 > 0)
+  	ageData.push(['20-25',bet_20_25]);
+  if(bet_26_30 > 0)
+  	ageData.push(['26-30',bet_26_30]);
+  if(bet_31_35 > 0)
+  	ageData.push(['31-35',bet_31_35]);
+  if(bet_36_50 > 0)
+  	ageData.push(['36-50',bet_36_50]);
+  if(over_50 > 0)
+  	ageData.push(['50+',over_50]);
+  var data = google.visualization.arrayToDataTable(ageData);
+  var options = {
+    pieHole: 0.4,
+    legend:'bottom'
+  };
+  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'ageChart---'+pollId));
+  chart.draw(data, options);
+}
+
+function drawOthersChart(csrf_token,analyse_type,pollId,choiceId) {
+	var profDict = {};
+	var profData = [['Profession','Votes']];
+	if(typeof choiceId == 'undefined')
+  		choiceId = "nochoice"
+  	var advanced_analyse_dic = {};
+	$.ajax({
+	    url: "/advanced_analyse_choice",
+	    type: 'POST',
+	    data: { question: pollId,
+	    		choice: choiceId,
+	    		csrfmiddlewaretoken: csrf_token
+	    	},
+	    async: false,
+	    cache: false,
+	    timeout: 30000,
+	    error: function(){
+	        return true;
+	    },
+	    success: function(msg){
+	    	// console.log(msg);
+	    	advanced_analyse_dic=msg;
+	    }
+	});
+	profDict = advanced_analyse_dic["profession"];
+	for(prof in profDict)
+		profData.push([prof,profDict[prof]]);
+	var data = google.visualization.arrayToDataTable(profData);
+	var options = {
+	pieHole: 0.4,
+	legend:'bottom'
+	};
+	var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'othersChart---'+pollId));
+	chart.draw(data, options);
+}
+
+function drawLocationChart(csrf_token,analyse_type,pollId,choiceId) {
+    // $('#mapBackButton').removeClass('back');
+	var conData = [['Country', 'Votes']];
+	var conDict = {};
+	if(typeof choiceId == 'undefined')
+  		choiceId = "nochoice"
+  	var advanced_analyse_dic = {};
+	$.ajax({
+	    url: "/advanced_analyse_choice",
+	    type: 'POST',
+	    data: { question: pollId,
+	    		choice: choiceId,
+	    		csrfmiddlewaretoken: csrf_token
+	    	},
+	    async: false,
+	    cache: false,
+	    timeout: 30000,
+	    error: function(){
+	        return true;
+	    },
+	    success: function(msg){
+	    	// console.log(msg);
+	    	advanced_analyse_dic=msg;
+	    }
+	});
+	conDict = advanced_analyse_dic["country"]
+	for(con in conDict){
+		conData.push([con,conDict[con]]);
+	}
+    var data = google.visualization.arrayToDataTable(conData);
+    var options = {};
+    var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId));
+    chart.draw(data, options);
+    google.visualization.events.addListener(chart, 'regionClick', function(e){
+    	$("#"+analyse_type+"mapBackButton").css("display", "inline-block");
+		// $('#mapBackButton').addClass("back");
+		drawStateMap(csrf_token,analyse_type,e.region,pollId);
+    });
+}
+
+var regionDict = {
+	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
+}
+	
+function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId){
+	var options = {
+      region: region,
+      displayMode: 'regions',
+      resolution: 'provinces',
+      datalessRegionColor: '#666',
+      colorAxis: {colors: ['#FF9900', '#FFFFFF', '#00CC00']},
+      backgroundColor: '#81d4fa',
+      domain: 'IN'
+  };
+	var stateContry = regionDict[region];
+	var stateData = [['State', 'Votes']];
+	var stateDict = {};
+	if(typeof choiceId == 'undefined')
+  		choiceId = "nochoice"
+  	var advanced_analyse_dic = {};
+	$.ajax({
+	    url: "/advanced_analyse_choice",
+	    type: 'POST',
+	    data: { question: pollId,
+	    		choice: choiceId,
+	    		stateContry: stateContry,
+	    		csrfmiddlewaretoken: csrf_token
+	    	},
+	    async: false,
+	    cache: false,
+	    timeout: 30000,
+	    error: function(){
+	        return true;
+	    },
+	    success: function(msg){
+	    	// console.log(msg);
+	    	advanced_analyse_dic=msg;
+	    }
+	});
+	stateDict = advanced_analyse_dic["state"]
+	for(state in stateDict){
+		stateData.push([state,stateDict[state]]);
+	}
+	// console.log(stateData)
+	var data = google.visualization.arrayToDataTable(stateData);
+	var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId));
+	chart.draw(data, options);
+}
+    
+function back(csrf_token,analyse_type,pollId,choiceId){  
+	$("#"+analyse_type+"mapBackButton").css("display", "none");  
+    drawLocationChart(csrf_token,analyse_type,pollId,choiceId);
+}
+/* Function for charts end */

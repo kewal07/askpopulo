@@ -114,7 +114,7 @@
 									<script type="text/javascript">
 									$(document).ready(function(){
 										if($("#pollsChart---"+{{ question.poll.id }}).length >0)
-											drawPollsChart("",{{ question.poll.id }});
+											drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
 										else{
 											$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
 											if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
@@ -203,157 +203,6 @@
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				};
 		{% endif %}
-		function drawPollsChart(analyse_type,pollId,age,gender,profession,location,state) {
-			// console.log(analyse_type,pollId,age,gender,profession,location);
-			var pollsData = [];
-			var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
-			var colCount = 0;
-			var advanced_analyse = true;
-			var advanced_analyse_dic = {};
-			if(typeof age == 'undefined' && typeof gender == 'undefined' && typeof profession == 'undefined' && typeof location == 'undefined' && typeof state == 'undefined'){
-				advanced_analyse = false;
-			}
-			else if((typeof age != 'undefined' && age == "nochoice") && (typeof gender != 'undefined' && gender == "nochoice") && (typeof profession != 'undefined' && profession == "nochoice") && (typeof location != 'undefined' && location == "nochoice") && (typeof state != 'undefined' && state == "nochoice")){
-				advanced_analyse = false;
-			} 
-			advanced_analyse = true;
-			if(advanced_analyse){
-				$.ajax({
-			        url: "/advanced_analyse",
-			        type: 'POST',
-			        data: { question: pollId,
-			        		age: "nochoice",
-			        		gender: "nochoice",
-			        		profession: "nochoice",
-			        		country: "nochoice",
-			        		state: "nochoice",
-			        		csrfmiddlewaretoken: "{{ csrf_token }}"
-			        	},
-			        async: false,
-			        cache: false,
-			        timeout: 30000,
-			        error: function(){
-			            return true;
-			        },
-			        success: function(msg){
-			        	console.log(msg);
-			        	advanced_analyse_dic=msg;
-			        }
-			    });
-			}
-			pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
-			{% for questions in polls %}
-			   {% with questions.poll as question %}
-			   		if(pollId === {{ question.id }}){
-						{% for choice in question.choice_set.all %}
-							var inData = [];
-							var choice_text = "";
-							choice_text = 'Choice{{ forloop.counter }}';
-							inData.push(choice_text);
-							if(!advanced_analyse){
-								inData.push({{ choice.vote_set.count }});
-							} else{
-								// console.log("iterate data from ajax");
-								inData.push(advanced_analyse_dic[choice_text]);
-							}
-							inData.push(pollsColors[colCount++]);
-							var percent = 0;
-							if(!advanced_analyse){
-								if({{ question.voted_set.count }} > 0)
-									percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);
-							} else{
-								if(advanced_analyse_dic['total_votes'] > 0)
-									percent = Math.round((advanced_analyse_dic[choice_text]/advanced_analyse_dic['total_votes'])*100);
-							}
-							inData.push(percent+"%");
-							//console.log(inData);
-							pollsData.push(inData);
-						{% endfor %}
-					}
-				{% endwith %}
-		  	{% endfor %}
-			var data = google.visualization.arrayToDataTable(pollsData);
-			var options = {
-		          chartArea: {left:80,width: '60%'},
-		          fontSize:14,
-		          bars: {
-		            groupWidth: 100
-		          },
-		          annotations:{
-		          	textStyle: {
-				      opacity: 0         // The transparency of the text.
-				    }	        
-		          },
-		          hAxis: {
-		            title: '',
-		            minValue: 0,
-		            gridlines: {
-		              color: 'transparent'
-		              },
-		            textPosition: 'none',
-		            baselineColor: 'transparent'
-		          },
-		          vAxis: {
-		            title: '',
-		            gridlines: {
-		              color: 'transparent'
-		              },
-		          },
-		          legend:{
-		              position:'none'
-		          },
-		           animation:{
-		              startup:true,
-		              duration: 3000,
-		              easing: 'inAndOut',
-		         },
-		        };
-
-		        var chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
-		        chart.draw(data, options);
-		        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
-
-		        function displayAnnotation(e){
-		        data = google.visualization.arrayToDataTable(pollsData);
-		        options = {
-		          chartArea: {left:80,width: '60%'},
-		          fontSize:14,
-		          bars: {
-		            groupWidth: 100
-		          },
-		          annotations:{
-		          	textStyle: {
-				      opacity: 1         // The transparency of the text.
-				    }	        
-		          },
-		          hAxis: {
-		            title: '',
-		            minValue: 0,
-		            gridlines: {
-		              color: 'transparent'
-		            },
-		            textPosition: 'none',
-		            baselineColor: 'transparent'
-		          },
-		          vAxis: {
-		            title: '',
-		            gridlines: {
-		              color: 'transparent'
-		              },
-		          },
-		          legend:{
-		              position:'none'
-		          },
-		           animation:{
-		              startup:true,
-		              duration: 1,
-		              easing: 'inAndOut',
-		         },
-		        };
-
-		        chart.draw(data,options);
-		    }
-		}
 		$(document).ready(function()
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
@@ -375,7 +224,7 @@
 							$(".errorlist").remove();
 							if(jQuery.isEmptyObject(response)){
 								if($("#pollsChart---"+queid).length >0)
-									drawPollsChart("",parseInt(queid));
+									drawPollsChart("{{ csrf_token }}","",parseInt(queid));
 								else{
 									$("#choiceText"+queid).attr('disabled','disabled');
 									if($("#pollsVoted---"+queid).length >0)
