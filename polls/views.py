@@ -1068,10 +1068,87 @@ class CompanyIndexView(BaseViewList):
 		#print(context)
 		return mainData
 
+englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire","Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire","Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
+
+nothernIreLand = ['Antrim','Ards','Armagh','Ballymena','Ballymoney','Banbridge','Belfast','Carrickfergus','Castlereagh','Coleraine','Cookstown','Craigavon','Derry','Down','Dungannon and South Tyrone','Fermanagh','Larne','Limavady','Lisburn','Magherafelt','Moyle','Newry and Mourne District','Newtownabbey','North Down','Omagh','Strabane'];
+
+scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmannanshire","Dumfries and Galloway","Dundee City","East Ayrshire","East Dunbartonshire","East Lothian","East Renfrewshire","Edinburgh, City of","Eilean Siar","Falkirk","Fife","Glasgow City","Highland","Inverclyde","Midlothian","Moray","North Ayrshire","North Lanarkshire","Orkney Islands","Perth and Kinross","Renfrewshire","Scottish Borders, The","Shetland Islands","South Ayrshire","South Lanarkshire","Stirling","West Dunbartonshire","West Lothian"];
+
+wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
+
 class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
 		# print(request.path,request.POST)
+		if request.path == "/advanced_analyse_choice":
+			pollId = request.POST.get("question")
+			choiceId = request.POST.get("choice")
+			stateContry = request.POST.get("stateContry","")
+			response_dic = {}
+			# get gender count
+			gender_dic = {}
+			gender_dic['M'] = 0
+			gender_dic['F'] = 0
+			gender_dic['D'] = 0
+			# get age count
+			age_dic = {}
+			age_dic['over_50'] = 0
+			age_dic['bet_36_50'] = 0
+			age_dic['bet_31_35'] = 0
+			age_dic['bet_26_30'] = 0
+			age_dic['bet_20_25'] = 0
+			age_dic['under_19'] = 0
+			# get profession count
+			prof_dic = {}
+			# get country count
+			country_dic = {}
+			# get state count
+			state_dic = {}
+			vote_list = []
+			if choiceId == "nochoice":
+				vote_list = Voted.objects.filter(question_id=pollId)
+			else:
+				vote_list = Vote.objects.filter(choice_id=choiceId)
+			for vote in vote_list:
+				user_extendeduser = vote.user.extendeduser
+				gender_dic[user_extendeduser.gender] += 1
+				user_age = user_extendeduser.calculate_age()
+				if user_age > 50:
+					age_dic['over_50'] += 1
+				elif user_age > 35:
+					age_dic['bet_36_50'] += 1
+				elif user_age > 30:
+					age_dic['bet_31_35'] += 1
+				elif user_age > 25:
+					age_dic['bet_26_30'] += 1
+				elif user_age > 19:
+					age_dic['bet_20_25'] += 1
+				elif user_age > 0:
+					age_dic['under_19'] += 1
+				prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
+				country = user_extendeduser.country
+				if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+					country = 'United Kingdom'
+				country_dic[country] = country_dic.get(country,0) + 1
+				state = user_extendeduser.state
+				if country == stateContry:
+					if country == 'United Kingdom':
+						if state in englandDict:
+							state_dic['England'] = state_dic.get('England',0) + 1
+						elif state in nothernIreLand:
+							state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
+						elif state in scotland:
+							state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
+						elif state in wales:
+							state_dic['Wales'] = state_dic.get('Wales',0) + 1
+					else:
+						state_dic[state] = state_dic.get(state,0) + 1
+			response_dic["state"] = state_dic
+			response_dic["country"] = country_dic
+			response_dic["profession"] = prof_dic
+			response_dic["gender"] = gender_dic
+			response_dic["age"] = age_dic
+			return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		if request.path == "/advanced_analyse":
 			pollId = request.POST.get("question")
 			# poll = Question.objects.get(pk=pollId)
@@ -1109,9 +1186,12 @@ class AccessDBView(BaseViewList):
 			response_dic = {}
 			total_votes = 0
 			# print(min_age,max_age,gender,profession)
+			choices = []
 			for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
+				choice_dic = {}
 				choice_text = "Choice"+str(idx+1)
-				response_dic[choice_text] = 0
+				choice_dic["key"] = choice_text
+				choice_dic["val"] = 0
 				for vote in Vote.objects.filter(choice_id=choice.id):
 					user_age = vote.user.extendeduser.calculate_age()
 					user_gender = vote.user.extendeduser.gender.lower()
@@ -1131,8 +1211,10 @@ class AccessDBView(BaseViewList):
 					if country and user_country != country:
 						add_cnt = False
 					if add_cnt:
-						response_dic[choice_text] += 1
+						choice_dic["val"] += 1
 						total_votes += 1
+				choices.append(choice_dic)
+			response_dic['choices'] = choices
 			response_dic['total_votes'] = total_votes
 			# print(response_dic)
 			return HttpResponse(json.dumps(response_dic), content_type='application/json')
