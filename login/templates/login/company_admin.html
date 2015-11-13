@@ -652,27 +652,6 @@
 			</div>
 			<div class="dashboard-stats clearfix">
 				<p id="create-new-group" onclick="createGroup()"> Create New </p>
-					<div class="create-group">
-						<form id="create-group-form" class="create-group-content-form" method="POST" action="{% url 'login:create_group' %}"  enctype="multipart/form-data">
-							{% csrf_token %}
-							<input type="hidden" id="isGroupEdit" name="isGroupEdit" value="no">
-							<p class="form-p">
-								<label class="required" for="groupName">Name</label>
-								<input type="text" id ="groupName" name="groupName" placeholder="Group Name" maxlength="64"></input>
-								<span class="errorlist" id="groupNameErrors"></span>
-							</p>
-							<p class="form-p">
-								<label class="required" for="groupMembers">Members</label>
-								<textarea id ="groupMembers" name="groupMembers" placeholder="Provide ; separated email id's"></textarea>
-								<span class="errorlist" id="groupMembersError"></span>
-							</p>
-							<p>
-						        <label for="csvUpload">Upload your CSV File</label>
-						        <input type="file" name="File Upload" id="csvUpload" accept=".csv" />
-							</p>
-							<input class="submit groupSubmit" type="submit" value="Create" id="createGroupSubmit"/>
-						</form>
-					</div>
 				<ul class="dashboard-recent">
 					<li> Groups</li>
 					{% for group in groups %}
@@ -702,6 +681,27 @@
 					{% endfor %}
 					
 				</ul>
+			</div>
+			<div class="create-group">
+				<form id="create-group-form" class="create-group-content-form" method="POST" action="{% url 'login:create_group' %}"  enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="hidden" id="isGroupEdit" name="isGroupEdit" value="no">
+					<p class="form-p">
+						<label class="required" for="groupName">Name</label>
+						<input type="text" id ="groupName" name="groupName" placeholder="Group Name" maxlength="64"></input>
+						<span class="errorlist" id="groupNameErrors"></span>
+					</p>
+					<p class="form-p">
+						<label class="required" for="groupMembers">Members</label>
+						<textarea id ="groupMembers" name="groupMembers" placeholder="Provide ; separated email id's"></textarea>
+						<span class="errorlist" id="groupMembersError"></span>
+					</p>
+					<p>
+				        <label for="csvUpload">Upload your CSV File</label>
+				        <input type="file" name="File Upload" id="csvUpload" accept=".csv" />
+					</p>
+					<input class="submit groupSubmit" type="submit" value="Create" id="createGroupSubmit"/>
+				</form>
 			</div>
 		</div>
 		<div id="messages-content" class="admin-dash-div clearfix">
@@ -1072,7 +1072,7 @@
 										$('#dashboard-groups-tab').trigger("click");
 									} else {
 										$('#groupNameErrors').text(response.error);
-										$("#createGroupSubmit").attr("disabled",false);
+										$("#createGroupSubmit").attr("disabled","");
 										response = {};
 									}
 								}
