@@ -71,6 +71,10 @@ class ExtendedGroup(BaseModel):
 	user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='groupauthor_set')
 	group = models.ForeignKey(Group, related_name='createdgroup_set')
+
+class ExtendedGroupFuture(BaseModel):
+	user_email = models.CharField(max_length=255)
+	group = models.ForeignKey(Group, related_name='futurecreatedgroup_set')
 	
 class Company(BaseModel):
 	name = models.CharField(max_length=255)
