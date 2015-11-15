@@ -517,7 +517,7 @@ class AdminDashboard(BaseViewDetail):
 			data['flat_feed_activities'] = feed_activities
 			data["followers"] = followers
 			data["following"] = following
-			data["activeUsers"] = activeUsers + 4
+			data["activeUsers"] = 11 
 			followers_count = len(followers)
 			following_count = len(following)
 			data['followers_count'] = followers_count
