@@ -1014,7 +1014,7 @@ class CompanyIndexView(BaseViewList):
 		company_admin_list = [x.username for x in company_admin_list]
 		followed = Follow.objects.filter(user_id=user.id,target_id__in=company_user_list, deleted_at__isnull=True)
 		latest_questions = Question.objects.filter(privatePoll=0,user_id__in=company_user_list).order_by('-pub_date')
-		survey_list = Survey.objects.filter(user_id=user.id)
+		survey_list = Survey.objects.filter(user_id__in = company_user_list)
 		s_polls = []
 		for survey in survey_list:
 			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
