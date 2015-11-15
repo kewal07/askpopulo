@@ -421,6 +421,18 @@ li.questions-li{
 }
 .share-with-group-form{
 	display:none;
+	position: absolute;
+    right: -25px;
+    top: 47px;
+    width: 353px;
+}
+.share-button-g{
+	border: 1px solid;
+    padding: 0.2rem;
+    position: absolute;
+    top: 8px;
+    cursor: pointer;
+    background: wheat;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
