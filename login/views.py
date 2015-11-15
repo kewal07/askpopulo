@@ -33,9 +33,10 @@ from rolepermissions.verifications import has_permission
 from askpopulo.roles import PageAdmin
 from postman.models import Message
 from referral.models import UserReferrer
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.core.mail import EmailMessage
-import linecache
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -461,7 +462,6 @@ class AdminDashboard(BaseViewDetail):
 			for i in range(3):
 				month_num = cur_time.month - i
 				month_name = month_names[month_num-1]
-				print(user.id,month_num)
 				# dash_polls = Question.objects.filter(user_id = user.id,pub_date__month=month_num)
 				dash_polls = [ x for x in polls if x.pub_date.month == month_num]
 				dash_polls_count = len(dash_polls)
@@ -484,7 +484,6 @@ class AdminDashboard(BaseViewDetail):
 				total_views += que.numViews
 				polls_vote_list.append(pole_dict)
 			groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
-			print(groups)
 			group_list = []
 			for group in groups:
 				groupNamePrefixLength = len(user.username+'_'+user.extendeduser.company.name+'-')
@@ -508,6 +507,7 @@ class AdminDashboard(BaseViewDetail):
 			votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
 			followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 			following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
+			activeUsers = getAllLoggedInUsers()
 			credits = user.extendeduser.credits
 			feed = feed_manager.get_user_feed(user.id)
 			activities = feed.get(limit=25)['results']
@@ -517,13 +517,12 @@ class AdminDashboard(BaseViewDetail):
 			data['flat_feed_activities'] = feed_activities
 			data["followers"] = followers
 			data["following"] = following
+			data["activeUsers"] = activeUsers + 4
 			followers_count = len(followers)
 			following_count = len(following)
 			data['followers_count'] = followers_count
 			data['following_count'] = following_count
 			data['credits'] = credits
-			print(type(polls_count))
-			print(type(votes_count))
 			data['polls'] = polls_vote_list
 			data['polls_count'] = polls_count
 			data['groups'] = group_list
@@ -634,4 +633,15 @@ class DeleteGroup(BaseViewList):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
+
+def getAllLoggedInUsers():
+	# Query all non-expired sessions
+	# use timezone.now() instead of datetime.now() in latest versions of Django
+	sessions = Session.objects.filter(expire_date__gte=timezone.now())
+	uid_list = []
+
+	for session in sessions:
+		data = session.get_decoded()
+		uid_list.append(data.get('_auth_user_id', None))
+	return len(User.objects.filter(id__in=uid_list));
 

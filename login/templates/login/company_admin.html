@@ -87,7 +87,7 @@
 					<div class="cube-admin">
 						<div id="cube">
 							<div class="face" id="f2"><span class="cube-num">{{ total_views }}</span><span class="cube-text">Views</span></div>
-							<div class="face" id="f3"><span class="cube-num">7</span><span class="cube-text">Active Users</span></div>
+							<div class="face" id="f3"><span class="cube-num">{{ activeUsers }}</span><span class="cube-text">Active Users</span></div>
 							<div class="face" id="f4"><span class="cube-num">{{ votes_count }}</span><span class="cube-text">Votes</span></div>
 							<div class="face" id="f5"><span class="cube-num">{{ following_count }}</span><span class="cube-text">Following</span></div>
 						</div>
@@ -656,12 +656,12 @@
 					<li> Groups</li>
 					{% for group in groups %}
 						<li class="li-margin-polls">
-							<p class="main activity_url analyse_question_text" id="analyse---{{ group.groupName }}" onclick="displayGroupMembers('analyse---{{ group.groupName }}Div')">
+							<p class="main activity_url analyse_question_text" id="groupName---{{ group.groupId }}" onclick="displayGroupMembers('groupMembers---{{ group.groupId }}Div')">
 								{{group.groupName}}
 							</p>
 							<i class="fa fa-trash-o group-action-icons" style="margin-left:2rem;" onclick="deleteGroup('{{ group.groupId}}','{{ group.groupName }}')"></i>
 							<i class="fa fa-pencil-square-o group-action-icons" onclick="editGroup('{{ group.groupId}}')"></i>
-							<div class="analysis group-ana-member" id="analyse---{{ group.groupName }}Div">
+							<div class="analysis group-ana-member" id="groupMembers---{{ group.groupId }}Div">
 								<div class="groupMembers clearfix">
 									{% for member in group.groupMembers %}
 										{% if member.extendeduser %}
@@ -989,12 +989,14 @@
 			            if (result[i] != '') {
 			                if (!validateEmail(result[i])) {
 			                    $("#groupMembersError").text('Invalid mail id');
+			                    $("#createGroupSubmit").attr("disabled",false);
 			                    return false;
 			                }
 			            }
 			        }
 			    } else {
 			    	 $("#groupMembersError").text('Need to provide atleast one group member.');
+			    	 $("#createGroupSubmit").attr("disabled",false);
 			    	return false;
 			    }
     			return true;
@@ -1053,7 +1055,8 @@
 					event.preventDefault();
 					var elemid = "#create-group-form";
 					var form_data = new FormData($(elemid)[0]);
-					var emailIdList = $('#groupMembers').val()
+					var emailIdList = $('#groupMembers').val();
+					$("#createGroupSubmit").attr("disabled","disabled");
 					if(validateMultipleEmailsCommaSeparated(emailIdList,';'))
 					{
 						{% if user.is_authenticated %}
@@ -1071,8 +1074,9 @@
 										response = {};
 										$('#dashboard-groups-tab').trigger("click");
 									} else {
+										$("#groupMembersError").text('');
 										$('#groupNameErrors').text(response.error);
-										$("#createGroupSubmit").attr("disabled","");
+										$("#createGroupSubmit").attr("disabled",false);
 										response = {};
 									}
 								}
