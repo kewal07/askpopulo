@@ -33,7 +33,7 @@ from django.utils import timezone
 from trivia.models import Trivia
 import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
-from login.models import ExtendedGroup
+from login.models import ExtendedGroup,ExtendedGroupFuture
 from django.contrib.auth.models import Group
 
 # Create your views here.
@@ -831,6 +831,11 @@ def createExtendedUser(user):
 				city_data = twitter_data.get('location','')
 				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 				extendedUser.save()
+	email = user.email
+	extendeduserGroups = ExtendedGroupFuture.objects.filter(user_email=email)
+	for extendeduserGroup in extendeduserGroups:
+		user.groups.add(extendeduserGroup.group)
+		extendeduserGroup.delete()
 
 def comment_mail(request):
 	to_email = []
@@ -1345,6 +1350,7 @@ class CreateSurveyView(BaseViewList):
 				if list(filter(bool, selectedGnames)):
 					for gName in selectedGnames:
 						if gName:
+							gName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+gName
 							group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
 							for group_user in group_user_set:
 								group_user_email = group_user.email
@@ -1606,3 +1612,38 @@ class SurveyDeleteView(BaseViewDetail):
 				question.delete()
 			survey.delete()
 		return HttpResponseRedirect(url)
+
+def survey_mail(request):
+	try:
+		print(request.POST)
+		errors = {}
+		url = reverse('polls:survey_vote', kwargs={'pk':int(request.POST.get('shareSurveyId','')),'survey_slug':request.POST.get('shareSurveySlug','')})
+		selectedGnames = request.POST.get('shareselectedGroups','').split(",")
+		if list(filter(bool, selectedGnames)):
+			for gName in selectedGnames:
+				if gName:
+					gName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+gName
+					group_user_set = Group.objects.filter(name=gName)[0].user_set.all()
+					for group_user in group_user_set:
+						group_user_email = group_user.email
+						msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
+						msg.template_name = "group-mail-survey"
+						msg.global_merge_vars = {
+		                    'inviter': request.user.first_name,
+		                    'companyname':request.user.extendeduser.company.name,
+		                    'questionUrl':"www.askbypoll.com"+url,
+		                    'questionText':request.POST.get('shareSurveyName','')
+		                }
+						msg.send()
+		return HttpResponse(json.dumps(errors), content_type='application/json')
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+		exc_type, exc_obj, tb = sys.exc_info()
+		f = tb.tb_frame
+		lineno = tb.tb_lineno
+		filename = f.f_code.co_filename
+		linecache.checkcache(filename)
+		line = linecache.getline(filename, lineno, f.f_globals)
+		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))

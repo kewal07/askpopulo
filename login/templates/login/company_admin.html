@@ -509,11 +509,22 @@
 						<li class="li-margin-polls">
 							<div class="liDetail">
 								<div class="check_analyse">
-									<p class="main activity_url main-survey" id="survey---{{ survey.id }}">
+									<p class="main activity_url main-survey" id="survey---{{ survey_det.survey.id }}">
 										{{ survey_det.survey.survey_name }}
 									</p>
-									<p class="pollsDesc">{{ survey.description }}</p>
-									<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
+									<p class="check"><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
+										<p class="share-g">
+											{% csrf_token %}
+											<input class="shareGroupsInput" id="sharegroups{{ survey_det.survey.id }}" type="text" name="sharegroups" style="border:none;">
+											<input id="shareselectedGroups{{ survey_det.survey.id }}" type="hidden" name="shareselectedGroups" value="">
+											<input type="hidden" name="shareSurveyId" value="{{ survey_det.survey.id }}">
+											<input type="hidden" name="shareSurveySlug" value="{{ survey_det.survey.survey_slug }}">
+											<input type="hidden" name="shareSurveyName" value="{{ survey_det.survey.survey_name }}">
+											<span class="share-button-g" id="share-button-g{{ survey_det.survey.id }}">Share</span>
+										</p>
+									</form>
 								</div>
 							</div>
 							<div class="survey-all-questions">
@@ -1054,8 +1065,10 @@
 					var elemid = "#create-group-form";
 					var form_data = new FormData($(elemid)[0]);
 					var emailIdList = $('#groupMembers').val()
+					$('#groupNameErrors').text("");
 					if(validateMultipleEmailsCommaSeparated(emailIdList,';'))
 					{
+						$("#createGroupSubmit").attr("disabled","disabled");
 						{% if user.is_authenticated %}
 							$.ajax(
 							{
@@ -1068,13 +1081,13 @@
 								{
 									if(typeof response.error === 'undefined'){
 										$('.create-group').html('');
-										response = {};
+										// response = {};
 										$('#dashboard-groups-tab').trigger("click");
 									} else {
 										$('#groupNameErrors').text(response.error);
-										$("#createGroupSubmit").attr("disabled","");
-										response = {};
+										// response = {};
 									}
+									$("#createGroupSubmit").removeAttr("disabled");
 								}
 							});
 						{% else %}
@@ -1362,7 +1375,42 @@
 										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country");
 									{% endfor %}
 								}
-
+								$(".share-with-group").click(function(){
+									var surveyId=$(this)[0].id.replace("share-with-group","");
+									$(this).parent().next().toggle("slow");
+									$("#sharegroups"+surveyId ).autocomplete({
+										source: availableGroupTags,
+										multiselect: true,
+										maxselection: 5,
+										elemId: "shareselectedGroups"+surveyId
+									});
+									$(".share-button-g").click(function(){
+										var elemid = "#share-with-group-form"+surveyId;
+										var divelemid = "#shareselectedGroups"+surveyId + "Div";
+										var inputelemid = "#shareselectedGroups"+surveyId
+										var form_data = new FormData($(elemid)[0]);
+										$.ajax(
+										{
+											type: 'POST',
+											url:"/survey_mail",
+											data:form_data,
+											processData: false,
+											contentType: false,
+											success:function(obj)
+											{
+												// $("#sharegroups"+surveyId).autocomplete("destroy");
+												// $("#sharegroups"+surveyId).removeData('autocomplete');
+												// $(divelemid).replaceWith(function() {
+												// 	return $("#sharegroups"+surveyId, this);
+												// });
+												// children().not(".shareGroupsInput").remove();
+												// $(inputelemid).val("");
+												// $(elemid).hide();
+												$('#dashboard-surveys-tab').trigger("click");
+											}
+										});
+									});
+								});
 						 //    if(elem_id == "dashboard-content"){
 							// google.setOnLoadCallback(drawChart);
 					  //           	drawChart();

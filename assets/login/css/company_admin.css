@@ -415,6 +415,13 @@ li.questions-li{
 .survey-question-div:active,.survey-question-div:hover{
     box-shadow: 5px 5px 5px;
 }
+.share-with-group{
+	right: 12rem;
+    width: 8rem;
+}
+.share-with-group-form{
+	display:none;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;

@@ -1,5 +1,5 @@
 from django import forms
-from .models import ExtendedUser
+from .models import ExtendedUser,ExtendedGroupFuture
 from django.contrib.auth.models import User
 # from allauth.account.forms import SignupForm
 from django.utils.safestring import mark_safe
@@ -104,6 +104,12 @@ class MySignupForm(forms.Form):
 		# print(bday,bday_year,bday_month,bday_day)
 		extendeduser = ExtendedUser(user=user,birthDay=bday,gender=gender,city=city,state=state,country=country,bio=bio,profession=profession,imageUrl=request.FILES.get('image',''),categories=user_categories)
 		extendeduser.save()
+		email = user.email
+		extendeduserGroups = ExtendedGroupFuture.objects.filter(user_email=email)
+		for extendeduserGroup in extendeduserGroups:
+			user.groups.add(extendeduserGroup.group)
+			extendeduserGroup.delete()
+
 
 class MySignupPartForm(forms.Form):
 	required_css_class = 'required'

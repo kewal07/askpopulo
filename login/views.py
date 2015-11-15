@@ -2,7 +2,7 @@ import os,linecache
 from django.shortcuts import render
 from django.views import generic
 from django.conf import settings
-from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent, ExtendedGroup
+from login.models import ExtendedUser, Follow, RedemptionScheme, RedemptionCouponsSent, ExtendedGroup, ExtendedGroupFuture
 import allauth
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import resolve,reverse
@@ -550,42 +550,30 @@ class CreateGroup(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		emailList = request.POST.get('groupMembers').split(';')
 		isEdit = request.POST.get('isGroupEdit')
-		if isEdit == 'no':
-			groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
-		else:
-			groupName = request.POST.get("groupName")
+		groupName = request.user.username+'_'+request.user.extendeduser.company.name+'-'+request.POST.get("groupName")
 		print(isEdit)
 		print(groupName)
 		response = {}
 		try:
-			print("Inside Try")
-			newgroup = Group.objects.create(name = groupName)
-		except:
-			if isEdit == 'no':
+			group, created = Group.objects.get_or_create(name = groupName)
+			if isEdit == 'no' and not created:
 				response['error'] = 'Group name already exists.'
 				return HttpResponse(json.dumps(response), content_type='application/json')
-			else:
-				try:
-					group = Group.objects.get(name=groupName)
-					extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
-					extendedGroupCreater.delete()
-					group.delete()
-					newgroup = Group.objects.create(name = groupName)
-				except Exception as e:
-					exc_type, exc_obj, exc_tb = sys.exc_info()
-					fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-					print(exc_type, fname, exc_tb.tb_lineno)
-		try:
-			group = Group.objects.get(name=groupName)
-			extendedGroup = ExtendedGroup(user=request.user, group = group)
-			extendedGroup.save()
+			extendedGroup, created = ExtendedGroup.objects.get_or_create(user=request.user, group = group)
+			group_user_set = group.user_set.all()
+			already_added_users = [x.email for x in group_user_set]
 			for email in emailList:
 				if email:
 					user = User.objects.filter(email = email)
 					if user:
-						user = list(user)[0]
-						user.groups.add(group)
+						if email not in already_added_users:
+							user = list(user)[0]
+							user.groups.add(group)
+						else:
+							already_added_users.remove(email)
 					else:
+						extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
+						extendedGroupFuture.save()
 						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
 						msg.template_name = "invitation-mail"
 						msg.global_merge_vars = {
@@ -593,15 +581,69 @@ class CreateGroup(BaseViewList):
 		                    'companyname':request.user.extendeduser.company.name
 		                }
 						msg.send()
+			for email in already_added_users:
+				user = User.objects.filter(email = email)[0]
+				group.user_set.remove(user)
 			if(isEdit == 'yes'):
-				response['success'] = 'Group edited successfully.'
+					response['success'] = 'Group edited successfully.'
 			else:
 				response['success'] = 'Group created successfully.'
 			return HttpResponse(json.dumps(response), content_type='application/json')
 		except Exception as e:
-			exc_type, exc_obj, exc_tb = sys.exc_info()
-			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+		# try:
+		# 	print("Inside Try")
+		# 	newgroup = Group.objects.create(name = groupName)
+		# except:
+		# 	if isEdit == 'no':
+		# 		response['error'] = 'Group name already exists.'
+		# 		return HttpResponse(json.dumps(response), content_type='application/json')
+		# 	else:
+		# 		try:
+		# 			group = Group.objects.get(name=groupName)
+		# 			extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
+		# 			extendedGroupCreater.delete()
+		# 			group.delete()
+		# 			newgroup = Group.objects.create(name = groupName)
+		# 		except Exception as e:
+		# 			exc_type, exc_obj, exc_tb = sys.exc_info()
+		# 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		# 			print(exc_type, fname, exc_tb.tb_lineno)
+		# try:
+		# 	group = Group.objects.get(name=groupName)
+		# 	extendedGroup = ExtendedGroup(user=request.user, group = group)
+		# 	extendedGroup.save()
+		# 	for email in emailList:
+		# 		if email:
+		# 			user = User.objects.filter(email = email)
+		# 			if user:
+		# 				user = list(user)[0]
+		# 				user.groups.add(group)
+		# 			else:
+		# 				extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
+		# 				extendedGroupFuture.save()
+		# 				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
+		# 				msg.template_name = "invitation-mail"
+		# 				msg.global_merge_vars = {
+		#                     'inviter': request.user.first_name,
+		#                     'companyname':request.user.extendeduser.company.name
+		#                 }
+		# 				msg.send()
+		# 	if(isEdit == 'yes'):
+		# 		response['success'] = 'Group edited successfully.'
+		# 	else:
+		# 		response['success'] = 'Group created successfully.'
+		# 	return HttpResponse(json.dumps(response), content_type='application/json')
+		# except Exception as e:
+		# 	exc_type, exc_obj, exc_tb = sys.exc_info()
+		# 	fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		# 	print(exc_type, fname, exc_tb.tb_lineno)
 
 class EditGroup(BaseViewList):
 	def get(self, request, *args, **kwargs):
@@ -610,7 +652,8 @@ class EditGroup(BaseViewList):
 		try:
 			if(groupId or not groupId==''):
 				group = Group.objects.get(pk = groupId)
-				response['groupName'] = group.name
+				groupNamePrefixLength = len(request.user.username+'_'+request.user.extendeduser.company.name+'-')
+				response['groupName'] = group.name[groupNamePrefixLength:]
 				response['mailList'] = ''
 				for user in group.user_set.all():
 					response['mailList'] += user.email +';'
