@@ -571,8 +571,8 @@ class CreateGroup(BaseViewList):
 						else:
 							already_added_users.remove(email)
 					else:
-						extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
-						extendedGroupFuture.save()
+						extendedGroupFuture,created = ExtendedGroupFuture.objects.get_or_create(user_email=email,group=group)
+						# extendedGroupFuture.save()
 						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
 						msg.template_name = "invitation-mail"
 						msg.global_merge_vars = {
