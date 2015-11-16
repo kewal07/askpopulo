@@ -277,6 +277,7 @@ class VoteView(BaseViewDetail):
 		question = Question.objects.get(pk=questionId)
 		queSlug = question.que_slug
 		queBet = request.POST.get('betAmountHidden')
+		points = 0
 		if queBet:
 			queBet = int(queBet)
 		# print(request.is_ajax())
@@ -302,8 +303,16 @@ class VoteView(BaseViewDetail):
 					if question.isBet and queBet:
 						vote = Vote(user=user, choice=choice, betCredit=queBet)
 						user.extendeduser.credits -= queBet
+						user.extendeduser.credits += 20
+						points = 20
 						user.extendeduser.save()
 					else:
+						if question.privatePoll:
+							user.extendeduser.credits += 20
+							points = 20
+						else:
+							user.extendeduser.credits += 10 #for voting on normal question
+							points = 10
 						vote = Vote(user=user, choice=choice)
 					voted = Voted(user=user, question=question)
 					# subscribed = Subscriber(user=user, question=question)
@@ -331,9 +340,7 @@ class VoteView(BaseViewDetail):
 		visible_public = True
 		if question.privatePoll:
 			visible_public = False
-			points = 20
-		else:
-			points = 10
+		
 		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug,"visible_public":visible_public}
 		if question.isBet and queBet:
 			activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet, "action":"voteBet","visible_public":visible_public}
@@ -358,7 +365,6 @@ class VoteView(BaseViewDetail):
 		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote","visible_public":visible_public}
 		feed = client.feed('notification', user.id)
 		feed.add_activity(activity)
-		user.extendeduser.credits += points
 		user.extendeduser.save()
 		return HttpResponseRedirect(url)
 		
