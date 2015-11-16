@@ -500,7 +500,7 @@ class AdminDashboard(BaseViewDetail):
 						group_dict['groupMembers'].append(x)
 					else:
 						group_dict['groupMembersIncomplete'].append(x)
-				group_dict['groupMembersFuture'] = [str(x.user_email) for x in ExtendedGroupFuture.objects.filter(group=tempGroup)]
+				group_dict['groupMembersFuture'] = [x.user_email.replace("@"," at ") for x in ExtendedGroupFuture.objects.filter(group=tempGroup)]
 				group_list.append(group_dict)
 			polls_count = len(polls)
 			groups_count = len(groups)
