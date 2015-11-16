@@ -442,11 +442,12 @@ li.questions-li{
     margin-bottom: 2rem !important;
 }
 .members-future{
-	margin-left: 1rem;
-    padding: 0.5rem;
-    border: 1px solid;
-    background: #cfcfcf;
-    margin-top: 2rem;
+	display: inline-block !important;
+	margin-left: 1rem !important;
+    padding: 0.5rem !important;
+    border: 1px solid !important;
+    background: #cfcfcf !important;
+    font-size: 1rem !important;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
