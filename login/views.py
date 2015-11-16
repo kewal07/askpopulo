@@ -56,6 +56,7 @@ class BaseViewList(generic.ListView):
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
+			activities = []
 			activities = feed.get(limit=25)['results']
 			# notifications = enricher.enrich_activities(activities)
 			notifications = activities
@@ -491,7 +492,15 @@ class AdminDashboard(BaseViewDetail):
 				tempGroup = Group.objects.get(pk=group['group_id'])
 				group_dict['groupId'] = tempGroup.id
 				group_dict['groupName'] = tempGroup.name[groupNamePrefixLength:]
-				group_dict['groupMembers'] = tempGroup.user_set.all()
+				groupMembers = tempGroup.user_set.all()
+				group_dict['groupMembers'] = []
+				group_dict['groupMembersIncomplete'] = []
+				for x in groupMembers:
+					if hasattr(x,'extendeduser'):
+						group_dict['groupMembers'].append(x)
+					else:
+						group_dict['groupMembersIncomplete'].append(x)
+				group_dict['groupMembersFuture'] = ExtendedGroupFuture.objects.filter(group=tempGroup)
 				group_list.append(group_dict)
 			polls_count = len(polls)
 			groups_count = len(groups)
@@ -576,9 +585,9 @@ class CreateGroup(BaseViewList):
 						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
 						msg.template_name = "invitation-mail"
 						msg.global_merge_vars = {
-		                    'inviter': request.user.first_name,
-		                    'companyname':request.user.extendeduser.company.name
-		                }
+						'inviter': request.user.first_name,
+						'companyname':request.user.extendeduser.company.name
+						}
 						msg.send()
 			for email in already_added_users:
 				user = User.objects.filter(email = email)[0]
@@ -596,53 +605,6 @@ class CreateGroup(BaseViewList):
 			linecache.checkcache(filename)
 			line = linecache.getline(filename, lineno, f.f_globals)
 			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-		# try:
-		# 	print("Inside Try")
-		# 	newgroup = Group.objects.create(name = groupName)
-		# except:
-		# 	if isEdit == 'no':
-		# 		response['error'] = 'Group name already exists.'
-		# 		return HttpResponse(json.dumps(response), content_type='application/json')
-		# 	else:
-		# 		try:
-		# 			group = Group.objects.get(name=groupName)
-		# 			extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
-		# 			extendedGroupCreater.delete()
-		# 			group.delete()
-		# 			newgroup = Group.objects.create(name = groupName)
-		# 		except Exception as e:
-		# 			exc_type, exc_obj, exc_tb = sys.exc_info()
-		# 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-		# 			print(exc_type, fname, exc_tb.tb_lineno)
-		# try:
-		# 	group = Group.objects.get(name=groupName)
-		# 	extendedGroup = ExtendedGroup(user=request.user, group = group)
-		# 	extendedGroup.save()
-		# 	for email in emailList:
-		# 		if email:
-		# 			user = User.objects.filter(email = email)
-		# 			if user:
-		# 				user = list(user)[0]
-		# 				user.groups.add(group)
-		# 			else:
-		# 				extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
-		# 				extendedGroupFuture.save()
-		# 				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
-		# 				msg.template_name = "invitation-mail"
-		# 				msg.global_merge_vars = {
-		#                     'inviter': request.user.first_name,
-		#                     'companyname':request.user.extendeduser.company.name
-		#                 }
-		# 				msg.send()
-		# 	if(isEdit == 'yes'):
-		# 		response['success'] = 'Group edited successfully.'
-		# 	else:
-		# 		response['success'] = 'Group created successfully.'
-		# 	return HttpResponse(json.dumps(response), content_type='application/json')
-		# except Exception as e:
-		# 	exc_type, exc_obj, exc_tb = sys.exc_info()
-		# 	fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-		# 	print(exc_type, fname, exc_tb.tb_lineno)
 
 class EditGroup(BaseViewList):
 	def get(self, request, *args, **kwargs):

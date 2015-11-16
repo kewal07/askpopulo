@@ -434,6 +434,20 @@ li.questions-li{
     cursor: pointer;
     background: wheat;
 }
+.invites-send{
+	color: orange;
+    border-top: 2px solid#666;
+    margin-top: 2rem !important;
+    padding-top: 1rem;
+    margin-bottom: 2rem !important;
+}
+.members-future{
+	margin-left: 1rem;
+    padding: 0.5rem;
+    border: 1px solid;
+    background: #cfcfcf;
+    margin-top: 2rem;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;
