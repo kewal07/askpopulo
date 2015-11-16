@@ -675,14 +675,28 @@
 							<div class="analysis group-ana-member" id="groupMembers---{{ group.groupId }}Div">
 								<div class="groupMembers clearfix">
 									{% for member in group.groupMembers %}
-										{% if member.extendeduser %}
-											<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
-												<figure class="members-figure">
-												  <img class="groupsMemberProfilePic" src="{{ member.extendeduser.get_profile_pic_url }}" alt="{{ member.first_name }}">
-												  <figcaption class="members-figcaption">{{ member.first_name }} {{ member.last_name }}</figcaption>
-												</figure>
-											</a>
-										{% endif %}
+										<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
+											<figure class="members-figure">
+											  <img class="groupsMemberProfilePic" src="{{ member.extendeduser.get_profile_pic_url }}" alt="{{ member.first_name }}">
+											  <figcaption class="members-figcaption">{{ member.first_name }} {{ member.last_name }}</figcaption>
+											</figure>
+										</a>
+									{% endfor %}
+									{% if group.groupMembersIncomplete %}
+										<p class="main invites-send">
+											<i class="fa fa-exclamation-triangle" style="color: black;margin-right: 0.5rem;"></i>Incomplete Profile
+										</p>
+									{% endif %}
+									{% for member in group.groupMembersIncomplete %}
+										<span class="members-future">{{ member.email }}</span>
+									{% endfor %}
+									{% if group.groupMembersFuture %}
+										<p class="main invites-send">
+											Invites Send
+										</p>
+									{% endif %}
+									{% for member in group.groupMembersFuture %}
+										<span class="members-future">{{ member.user_email }}</span>
 									{% endfor %}
 								</div>
 							</div>
