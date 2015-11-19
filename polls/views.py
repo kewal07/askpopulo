@@ -1564,6 +1564,10 @@ class SurveyEditView(BaseViewDetail):
 		self.object = self.get_object()
 		context = super(SurveyEditView, self).get_context_data(object=self.object)
 		survey = context['survey']
+		context["clone"] = False
+		# print(request.path)
+		if request.path.startswith("/clonesurvey"):
+			context["clone"] = True
 		canEdit = True
 		if (survey.surveyvoted_set.count() > 0 and not request.user.is_superuser):
 			canEdit = False

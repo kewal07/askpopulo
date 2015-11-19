@@ -61,7 +61,7 @@
 						<li class="myProfileTabs" id="myCredits"><i class="fa fa-coins"></i><span class="iCaption">{{ credits }} Credits</span></li>
 						<li class="myProfileTabs" id="myConnections"><i class="fa fa-users"></i><span class="iCaption"> {{ connection_count }} Connections</span></li>
 						{% if context_user == user %}
-						<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption">{{ messageCount }} Messages</span></li>
+							<li class="myProfileTabs" id="myABPInbox"><i class="fa fa-inbox"></i><span class="iCaption">{{ messageCount }} Messages</span></li>
 						{% endif %}
 						<li class="myProfileTabs" id="myPolls"><i class="fa fa-question-circle"></i><span class="iCaption"> {{ questions_count }} Polls</span></li>
 						<li class="myProfileTabs" id="myVotes"><i class="fa fa-check-circle"></i><span class="iCaption"> {{ voted_count }} Votes</span></li>
@@ -260,9 +260,6 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<!-- <div class="profileDetail myInboxDiv">
-						<object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;">
-					</div> -->
 					<div class="profileDetail" id="myCategoriesDiv">
 						{% for category in categories %}
 				    		<a href="{% url 'polls:polls_category' %}?category={{ category.category_title }}">
@@ -364,14 +361,8 @@
 							{% endfor %}
 						</ul>
 					</div>
-					<!-- <div class="profileDetail" id="myBetsDiv">
-						<ul class="profileDetailUl">
-							Coming Soon !!!
-						</ul>
-					</div> -->
 					<div class="profileDetail" id="myABPInboxDiv">
 						<ul class="profileDetailUl">
-							<!-- <object id="inboxObject" type="text/html" data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"> -->
 						</ul>
 					</div>
 					<div class="profileDetail" id="myConnectionsDiv">

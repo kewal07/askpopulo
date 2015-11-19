@@ -538,6 +538,10 @@
 					var form_data = new FormData($(elemid)[0]);
 					form_data.append('question_count', JSON.stringify(question_list));
 					form_data.append('choice_count', JSON.stringify(choice_list));
+					var create_survey_url = "/create_survey?sid={{ survey.id }}";
+					{% if clone %}
+						create_survey_url = "/create_survey";
+					{% endif %}
 					$(elemid).bind('submit', function()
 					{
 						//console.log("submit called....");
@@ -547,7 +551,7 @@
 							$.ajax(
 							{
 								type: 'POST',
-								url:"/create_survey?sid={{ survey.id }}",
+								url:create_survey_url,
 								data:form_data,
 								processData: false,
 								contentType: false,

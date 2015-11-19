@@ -41,6 +41,7 @@ urlpatterns = patterns('',
 	url(r'create_survey',views.CreateSurveyView.as_view(),name='create_survey'),
 	url(r'^survey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyVoteView.as_view()),name='survey_vote'),
 	url(r'^editsurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyEditView.as_view()),name='survey_edit'),
+	url(r'^clonesurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyEditView.as_view()),name='survey_clone'),
 	url(r'^deletesurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyDeleteView.as_view()),name='survey_delete'),
 	url(r'^survey_mail$', views.survey_mail,name="survey_mail"),
 )

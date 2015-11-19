@@ -226,13 +226,17 @@ class LoggedInView(BaseViewDetail):
 		public_profile = False
 		if request_user != user:
 			public_profile = True
-		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
-		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
 		if public_profile:
-			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')
 		else:
-			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
-		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+		survey_list = Survey.objects.filter(user_id=user.id)
+		s_polls = []
+		for survey in survey_list:
+			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+		user_asked_questions = [item for item in user_asked_questions if item not in s_polls][:20]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))
+		user_voted_questions = [item for item in user_voted_questions if item not in s_polls][:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
 		user_categories = []
 		cat_list = []
@@ -281,6 +285,8 @@ class LoggedInView(BaseViewDetail):
 		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
+		context['questions_count'] = len(user_asked_questions)
+		context['voted_count'] = len(user_voted_questions)
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
 		context['followed'] = Follow.objects.filter(user=request_user, target_id=user, deleted_at__isnull=True)
@@ -450,7 +456,7 @@ class AdminDashboard(BaseViewDetail):
 			data = super(AdminDashboard, self).get_context_data(**kwargs)
 			user = self.request.user
 			polls_vote_list = []
-			survey_list = Survey.objects.filter(user_id=user.id)
+			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
 			s_polls = []
 			for survey in survey_list:

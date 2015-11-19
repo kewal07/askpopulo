@@ -212,26 +212,26 @@ $(document).ready(function(){
 		$(".profileDetail").hide();
 		$(".detailHeader h1").text(headerText[elemId]);
 		// $(divElemId).slideToggle("slow");
-		if(divElemId === "notifications"){
-			$("#notification_count_span")[0].innerHTML = 0;
-			$("#notification_count_span").hide();
-	  		$.ajax(
-			{
-				type: 'GET',
-				url:"/user/notifications_read",
-				// data:$(elemid).serialize(),
-				success:function(response)
-				{
-					console.log("marked read");
-				}
-			});     
-		}
 		if(divElemId === "myABPInboxDiv"){
 			console.log("nbox Loaded for user");
 			$("#myABPInboxDiv").html('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
 			$("#myABPInboxDiv").toggle();
 		}
 		else{
+			if(divElemId === "notificationsDiv"){
+				$("#notification_count_span")[0].innerHTML = 0;
+				// $("#notification_count_span").hide();
+		  		$.ajax(
+				{
+					type: 'GET',
+					url:"/user/notifications_read",
+					// data:$(elemid).serialize(),
+					success:function(response)
+					{
+						console.log("marked read");
+					}
+				});     
+			}
 			var new_elem_html = "";
 			var path = location.pathname;
 			$.ajax({
