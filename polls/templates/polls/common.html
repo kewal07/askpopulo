@@ -101,7 +101,7 @@
 							<!-- <li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li> -->
 					{% if user.is_authenticated %}
 						{% if user.extendeduser.company.id > 1 %}
-							<li><a class="menuanchor" href="{% url 'company_page' user.extendeduser.company.name %}" data-intro="Type in your query and we will get you your results" data-position="bottom">{{ user.extendeduser.company.name}}</a></li>
+							<li><a class="menuanchor" href="{% url 'company_page' user.extendeduser.company.company_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">{{ user.extendeduser.company.name}}</a></li>
 						{% else %}
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
 						{% endif %}
