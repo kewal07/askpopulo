@@ -44,4 +44,6 @@ urlpatterns = patterns('',
 	url(r'^clonesurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyEditView.as_view()),name='survey_clone'),
 	url(r'^deletesurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyDeleteView.as_view()),name='survey_delete'),
 	url(r'^survey_mail$', views.survey_mail,name="survey_mail"),
+	url(r'^exportexcel', views.excel_view,name="exportexcel"),
+	url(r'^exportpdf/(?P<pk>\d+)', views.PDFView.as_view(),name="exportpdf"),
 )

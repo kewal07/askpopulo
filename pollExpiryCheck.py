@@ -28,6 +28,9 @@ def sendExpirationNotification():
 		
 		mailSentPollIdCur = conn.cursor()
 		mailSentPollIdCur.execute("SELECT pollid FROM pollexpiry_mail")
+
+		surveyPollIdCur = conn.cursor()
+		surveyPollIdCur.execute("SELECT question_id FROM polls_survey_question")
 		
 		expiredPollsCur = conn.cursor()
 		expiredPollsCur.execute("SELECT id FROM polls_question WHERE expiry is not null and NOW() > expiry")
@@ -42,6 +45,7 @@ def sendExpirationNotification():
 		userBetVotedCur = conn.cursor()
 
 		mailSentList = []
+		surveyPollList = []
 		expiredPollsList = []
 		betPollsList = []
 		userToSendList = []
@@ -51,17 +55,23 @@ def sendExpirationNotification():
 		que_voter = ""
 		que_desc = ""
 
+		for row in surveyPollIdCur:
+			temp = list(row)
+			surveyPollList.append(temp[0])
+
 		for row in mailSentPollIdCur:
 			temp = list(row)
 			mailSentList.append(temp[0])
 
 		for row in expiredPollsCur:
 			temp = list(row)
-			expiredPollsList.append(temp[0])
+			if temp[0] not in surveyPollList:
+				expiredPollsList.append(temp[0])
 
 		for row in betPollsCur:
 			temp = list(row)
-			betPollsList.append(temp)
+			if temp[0] not in surveyPollList:
+				betPollsList.append(temp)
 		
 		expiredPollsList = list(set(expiredPollsList) - set([x[0] for x in betPollsList]))
 		mailNotSentExpiredPolls = list(set(expiredPollsList) - set(mailSentList))

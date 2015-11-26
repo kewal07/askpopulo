@@ -2,7 +2,7 @@ import os,linecache
 import sys
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText
@@ -35,6 +35,7 @@ import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 from login.models import ExtendedGroup,ExtendedGroupFuture
 from django.contrib.auth.models import Group
+import operator
 
 # Create your views here.
 
@@ -1657,3 +1658,197 @@ def survey_mail(request):
 		linecache.checkcache(filename)
 		line = linecache.getline(filename, lineno, f.f_globals)
 		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
+import xlwt
+gender_excel_dic = {
+	"M":1,
+	"F":2,
+	"D":3
+}
+prof_excel_dic = {
+	"Student":1,
+	"Politics":2,
+	"Education":3,
+	"Information Technology":4,
+	"Public Sector":5,
+	"Social Services":6,
+	"Medical":7,
+	"Finance":8,
+	"Manager":9,
+	"Others":10
+}
+age_excel_dic ={
+	1:"Upto 19",
+	2:"20 - 25",
+	3:"26 - 30",
+	4:"31 - 35",
+	5:"36 - 50",
+	6:"50+"
+}
+
+normal_style = xlwt.easyxf(
+	"""
+	font:name Verdana
+	"""
+)
+
+border_style = xlwt.easyxf(
+	"""
+	font:name Verdana;
+	border: top thin, right thin, bottom thin, left thin;
+	align: vert centre, horiz left;
+	"""
+)
+
+def excel_view(request):
+	 
+	survey_id = -1
+	survey = ""
+	errors = {}
+	if request.GET.get("sid"):
+		survey_id = int(request.GET.get("sid",-1))
+		try:
+			survey = Survey.objects.get(pk=survey_id)
+		except:
+			errors['notfound'] = "Survey provided not found"
+			return HttpResponseNotFound(errors,content_type="application/json")
+		response = HttpResponse(content_type='application/ms-excel')
+		fname = "Survey_%s_Data.xls"%(survey_id)
+		response['Content-Disposition'] = 'attachment; filename=%s' % fname
+		wb = xlwt.Workbook()
+		ws0 = wb.add_sheet('Definitions', cell_overwrite_ok=True)
+		ws1 = wb.add_sheet('Raw Data', cell_overwrite_ok=True)
+		# write to the description sheet
+		write_to_description(ws0)
+		# description sheet end
+		ws1.write(0,0,"Country",normal_style)
+		ws1.write(0,1,"State",normal_style)
+		ws1.write(0,2,"Gender",normal_style)
+		ws1.write(0,3,"Age Group",normal_style)
+		ws1.write(0,4,"Profession",normal_style)
+		i = 1
+		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
+		for voted in voted_list:
+			j = 5
+			vote_user = voted.user
+			ws1.write(i,0,vote_user.extendeduser.country,normal_style)
+			ws1.write(i,1,vote_user.extendeduser.state,normal_style)
+			ws1.write(i,2,gender_excel_dic.get(vote_user.extendeduser.gender),normal_style)
+			ws1.write(i,3,get_age_group_excel(vote_user.extendeduser.calculate_age()),normal_style)
+			ws1.write(i,4,prof_excel_dic.get(vote_user.extendeduser.profession),normal_style)
+			for index,survey_question in enumerate(Survey_Question.objects.filter(survey_id = survey_id)):
+				question = survey_question.question
+				question_type = survey_question.question_type
+				excel_text = ""
+				choice_list = []
+				if question_type != "text":
+					choice_list = Choice.objects.filter(question_id=question.id)
+				excel_text = "Q"+str(index+1)
+				answer_text = ""
+				if question_type == "text":
+					vote_text = VoteText.objects.filter(user_id=vote_user.id,question_id=question.id)
+					if vote_text:
+						answer_text = vote_text[0].answer_text
+				elif question_type == "radio":
+					for c_index,choice in enumerate(choice_list):
+						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+							answer_text = str(c_index+1)
+				elif question_type == "checkbox":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+							answer_text = 1
+						ws1.write(0,j,excel_text,normal_style)
+						ws1.write(i,j,answer_text,normal_style)
+						j += 1
+				if question_type != "checkbox":
+					ws1.write(0,j,excel_text,normal_style)
+					ws1.write(i,j,answer_text,normal_style)
+					j += 1
+			i += 1
+		wb.save(response)
+		return response
+	errors['notfound'] = "No data provided"
+	return HttpResponseNotFound(errors,content_type="application/json")
+
+def write_to_description(ws0):
+	ws0.col(0).width = 25*256
+	ws0.write(0,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",normal_style)
+	ws0.write(1,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",normal_style)
+	ws0.write_merge(3,3,0,1,"Gender",border_style)
+	ws0.write(4,0,"Male",border_style)
+	ws0.write(4,1,1,border_style)
+	ws0.write(5,0,"Female",border_style)
+	ws0.write(5,1,2,border_style)
+	ws0.write(6,0,"Not Disclosed",border_style)
+	ws0.write(6,1,3,border_style)
+	ws0.write_merge(8,8,0,1,"Age Group",border_style)
+	x = 9
+	for key,val in age_excel_dic.items():
+		ws0.write(x,0,val,border_style)
+		ws0.write(x,1,key,border_style)
+		x += 1
+	x += 1
+	ws0.write_merge(x,x,0,1,"Profession",border_style)
+	x += 1
+	sorted_prof_excel_dic = sorted(prof_excel_dic.items(), key=operator.itemgetter(1))
+	print(sorted_prof_excel_dic)
+	for key_val in sorted_prof_excel_dic:
+		ws0.write(x,0,key_val[0],border_style)
+		ws0.write(x,1,key_val[1],border_style)
+		x += 1
+
+def get_age_group_excel(age):
+	res = -1
+	if age <= 19:
+		res = 1
+	elif age >19 and age <=25:
+		res = 2
+	elif age >25 and age <=30:
+		res = 3
+	elif age >30 and age <= 35:
+		res = 4
+	elif age >35 and age <= 50:
+		res = 5
+	elif age > 50:
+		res = 6
+	return res
+
+class PDFView(generic.DetailView):
+	model = Survey
+
+	def get_template_names(self):
+		template_name = "polls/pdf_report_survey.html"
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+		context = super(PDFView, self).get_context_data(**kwargs)
+		user = self.request.user
+		user_already_voted = False
+		if user.is_authenticated():
+			createExtendedUser(user)
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+				context['signup_part_form'] = MySignupPartForm(userFormData)
+			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
+			if question_user_vote:
+				question_user_vote = question_user_vote[0]
+				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
+					user_already_voted = True
+			context['user_already_voted'] = user_already_voted
+		context['expired'] = False
+		if context['survey'].expiry and context['survey'].expiry < timezone.now():
+			context['expired'] = True
+		context['polls'] = []
+		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
+			poll_dict = {"poll":x.question,"type":x.question_type}
+			poll_dict['user_already_voted'] = False
+			question_user_vote = Voted.objects.filter(user=user,question=x.question)
+			if question_user_vote:
+				poll_dict['user_already_voted'] = True
+				if x.question_type == "text":
+					poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
+			context['polls'].append(poll_dict)
+		return context
+	

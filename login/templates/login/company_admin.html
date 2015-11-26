@@ -19,6 +19,9 @@
 	<script type="text/javascript" src="{% static 'js/jquery.csv-0.71.min.js' %}"></script>
 	<script src="{% static 'js/jquery-ui.js' %}"></script>
 	<script src="{% static 'js/jquery.autocomplete.multiselect.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/html2canvas.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
+	
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -918,9 +921,29 @@
 		</div>
 		<div id="export-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Coming Soon!
+				Export Survey Reports
 			</div>
-			<p class="coming-soon">Export of raw data coming soon.Please contact support for accelerated development.</p>
+			<div class="dashboard-stats clearfix">
+				<ul class="dashboard-recent">
+					<li> Survey</li>
+					{% for survey_det in surveys %}
+						<li class="li-margin-polls">
+							<div class="liDetail">
+								<div class="check_analyse">
+									<p class="main">
+										{{ survey_det.survey.survey_name }}
+									</p>
+									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p export-excel" id="export-excel{{ survey_det.survey.id }}"><a href="/exportexcel?sid={{ survey_det.survey.id }}"> Export as Excel</a></span>
+										<span class="see-more-details see-more-details-p export-pdf" id="export-pdf{{ survey_det.survey.id }}">Export as PDF</span>
+									</p>
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
 		</div>
 		<div id="billing-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
@@ -1542,8 +1565,54 @@
 					var selectedChoice_country= $(common_elem_id_str+"Country").val();
 					populateState(common_elem_id_str+"State",selectedChoice_country);
 				});
-			});
-			
+
+				$("#export-content").on("click",".export-pdf",function(){
+					var survey_id = $(this)[0].id.replace("export-pdf","");
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'GET',
+							url:"/exportpdf/"+survey_id,
+							statusCode: {
+								404: function() {
+									$('#overlay-inAbox').children().children().first().text("No Survey Selected");
+									openOverlay("#overlay-inAbox");
+									$(this).css({"color":"red"});
+								}
+							},
+							success:function(response)
+							{
+								// console.log(response);
+								var new_html = document.createElement('div');
+								// $(new_html).id = "pdf-html";
+					        	new_html.innerHTML = response;
+					        	$('body').append('<div id="pdf-body">'+response+'</div>');
+					        	
+					  			var a4  =[ 595.28,  841.89];
+								var target = $('#pdf-body');
+								target.width((a4[0]*1.33333) -80).css('max-width','none');
+								html2canvas(target, {
+							        onrendered: function (canvas) {
+							            //Set hidden field's value to image data (base-64 string
+							            console.log("rendered");
+							            var	img = (canvas.toDataURL("image/png"));
+							            // alert(img);
+							            //Submit the form manually
+							            // document.getElementById("myForm").submit();
+							            var doc = new jsPDF('p', 'pt', 'a4', false);
+										doc.addImage(img, 'JPEG', 20, 20);
+										doc.save('Survey-'+survey_id+'-pdf.pdf');
+										// $('body').find($("#pdf-body")).remove();
+								    }
+								});
+							}
+						});
+					{% else %}
+						$("#export-content").click();
+					{% endif %}
+				});
+			});			
 		</script>
+
 	</section>
 {% endblock %}
