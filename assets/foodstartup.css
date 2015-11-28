@@ -1,0 +1,12 @@
+#infoBox1{
+	border: 1px solid;
+    width: 45%;
+}
+
+#figBox1{
+	background:url('/static/foodStartupFig1.jpg') no-repeat center center fixed;
+}
+
+.infoP{
+	padding: 1rem;
+}
