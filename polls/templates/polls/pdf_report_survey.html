@@ -4,8 +4,8 @@
 	{% with survey.has_image as has_image %}
 	{%if has_image %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/media/choices/{{ has_image }}"/>
-		<meta property="og:image:width" content="300" /> 
-		<meta property="og:image:height" content="300" />
+		<meta property="og:image:width" content="325" /> 
+		<meta property="og:image:height" content="325" />
 	{% else %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
 	{% endif %}
@@ -15,137 +15,320 @@
 	<meta property="og:description" content="{{ survey.description  }}" />
 {% endblock %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1", {packages:["corechart"]});
+		function drawPollsChartPDF(choice_data,elementId,total_votes) {
+			var pollsData = [];
+			var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
+			var colCount = 0;
+			pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+			var choiceLength = Object.keys(choice_data).length;
+			for(var i=1 ; i<=choiceLength; i++){
+				var inData = [];
+				inData.push("Choice"+i);
+				inData.push(choice_data["choice"+i]);
+				inData.push(pollsColors[colCount++]);
+				var percent = 0;
+				if(total_votes > 0)
+					percent = Math.round((choice_data["choice"+i]/total_votes)*100);
+				inData.push(percent+"%");
+				pollsData.push(inData);
+			}
+			var data = google.visualization.arrayToDataTable(pollsData);
+			var options = {
+	          chartArea: {left:80,width: '650px'},
+	          // fontSize:14,
+	          bars: {
+	            groupWidth: 10
+	          },
+	          annotations:{
+	          	textStyle: {
+			      opacity: 1       // The transparency of the text.
+			    }	        
+	          },
+	          hAxis: {
+	            title: '',
+	            minValue: 0,
+	            gridlines: {
+	              color: 'transparent'
+	              },
+	            textPosition: 'none',
+	            baselineColor: 'transparent'
+	          },
+	          vAxis: {
+	            title: '',
+	            gridlines: {
+	              color: 'transparent'
+	              },
+	          },
+	          legend:{
+	              position:'none'
+	          },
+	        };
+
+        	var chart = new google.visualization.BarChart(document.getElementById(elementId));
+        	google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      document.getElementById(elementId).innerHTML = '<img width="650px" height="200px" src="' + chart.getImageURI() + '">';
+		    });
+        	chart.draw(data, options);
+		}
+		function drawAgeChartPDF(age_dic,elementId) {
+			var data = google.visualization.arrayToDataTable([
+			  ['Task', 'Hours per Day'],
+			  ['Upto 19',age_dic['under_19']],
+			  ['19-25',age_dic['bet_20_25']],
+			  ['26-30',age_dic['bet_26_30']],
+			  ['31-35',age_dic['bet_31_35']],
+			  ['36-50',age_dic['bet_36_50']],
+			  ['50 Above',age_dic['over_50']]
+			]);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+		    chart.draw(data, options);
+	  	}
+	  	function drawGenderChartPDF(gender_dic,elementId) {
+			var data = google.visualization.arrayToDataTable([
+			  ['Task', 'Hours per Day'],
+			  ['Male', gender_dic["M"]],
+			  ['Female',gender_dic["F"]],
+			  ['Not Say', gender_dic["D"]]
+			]);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+		function drawProfessionChartPDF(prof_dic,elementId) {
+			var profData = [['Profession','Votes']];
+			for(prof in prof_dic)
+				profData.push([prof,prof_dic[prof]]);
+			var data = google.visualization.arrayToDataTable(profData);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+		function drawRegionsMapPDF(country_dic,elementId) {
+			console.log(country_dic);
+			var conData = [['Country', 'Votes']];
+			for(con in country_dic){
+				conData.push([con,country_dic[con]]);
+			}
+			var data = google.visualization.arrayToDataTable(conData);
+			var options = {
+				// 'backgroundColor': 'transparent'
+			};
+			var chart = new google.visualization.GeoChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+	</script>
 {% endblock %}
 {% block content %}
-	<section id="content">
-		<div class="questions" id="body-div">
-			<div class="questionContent">
-				<div class="userInfo">
-					<div class="userImage">
-						<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
-								<img src="{{ survey.user.extendeduser.get_profile_pic_url }}"  alt="User {{ survey.user.first_name }}">
-						</a>
+	
+		<div class="pdf-pages" id="pdf-page1">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component">
+						<table>
+							<thead>
+								<tr>
+									<th>Total Responses</th>
+									<th>Completion Rate</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ surveytotalResponses }}</td>
+									<td>{{ incompleteResponses }}%</td>
+								</tr>
+							</tbody>
+						</table>		
 					</div>
-					<div class="userBrief">
-						<p>
-							<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
-									{{survey.user.first_name}}
-							</a>
-						</p>
-						<p>
-							Asked on:<br>
-								<span id="{{ survey.id }}pubdate"></span><br>
-						</p>
-					</div>
-				</div> 
-				<div class="mainPoll">
-					<p class="que_text">{{ survey.survey_name }}
-						{% if user.is_authenticated %}
-							{% if user == survey.user or user.is_superuser %}
-							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
-							<a href="{% url 'polls:survey_edit' survey.id survey.survey_slug %}"><i class="fa fa-pencil-square-o"></i></a>
-							{% endif %}
-							<a href="{% url 'polls:survey_clone' survey.id survey.survey_slug %}">clone</a>
-							<a href="{% url 'polls:survey_delete' survey.id survey.survey_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:survey_delete' survey.id survey.survey_slug %}')) return true; else return false;"></i></a>
-							{% endif %}
-						{% endif %}
-					</p>
-					{% if survey.description or survey.surveywithcategory_set.count > 0 %}
-					<p class="question_description_header">
-							<span class="question_description_header_span">Description</span>
-					</p>
-					<p class="question_description">
-						{{ survey.description }}
-						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
-						{% for cat in survey.questionwithcategory_set.all %}
-							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
-						{% endfor %}
-					</p>
-					{% endif %}
-					<div class="survey-questions">
-						{% for question in polls %}
-						<div class="survey-question">
-							<p class="que_text">{{ question.poll.question_text }}</p>
-							{% if question.poll.description %}
-								<p class="question_description_header">
-									<span class="question_description_header_span">Description</span>
-								</p>
-								<p class="question_description">{{ question.poll.description }}</p>
-							{% endif %}
-							<p>
-							<form class="optionsForm" method="POST" id="optionsForm{{ question.poll.id }}">
-								{% csrf_token %}
-								<input type="hidden" name="question" value="{{ question.poll.id }}" />
-								<input type="hidden" name="questionType" value="{{ question.type }}" />
-								{% if question.type == "text" %}
-									<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
-								{% else %}
-								{% for choice in question.poll.choice_set.all %}
-									<p>
-										<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-										<label for="choice{{ choice.id }}">
-											{% if choice.choice_image %}
-											<script>
-												$('.choice_image').css({"width":"120px","height":"120px"});
-												$("#choice{{ choice.id }}").hide();
-												var item = $("#choice{{ choice.id}}");
-												item.parent().css({"display":"inline-block"});
-												// console.log($this.parent().next().children().first().show());
-											</script>
-												<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-												<!-- {{ choice.choice_text }} -->
-											{% else %}
-												{{ choice.choice_text }}
-											{% endif %}
-										</label>
-									</p>
-								{% endfor %}
-								{% if question.poll.protectResult and user != question.poll.user %}
-									<p id="pollsVoted---{{ question.poll.id }}" style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;display:none;"> Thanks for Voting. Results have been protected by Admin.</p>
-								{% else %}
-									<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
-								{% endif %}
-								{% endif %}
-								{% if question.user_already_voted %}
-									<script type="text/javascript">
-									$(document).ready(function(){
-										if($("#pollsChart---"+{{ question.poll.id }}).length >0)
-											drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
-										else{
-											$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
-											if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
-												$("#pollsVoted---"+{{ question.poll.id }}).show();
-										}
-									});
-									</script>
-								{% else %}
-									{% if expired %}
-										<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.poll.id }}---{{ question.poll.que_slug }}" disabled="disabled"/>
-									{% else %}
-										<input class="submit voteSubmit" type="submit" value="Vote" id="vote{{ question.poll.id }}---{{ question.poll.que_slug }}---{{ question.poll.isBet }}"/>
-									{% endif %}
-									{% if user.is_authenticated and user.id == question.user.id or expired %}
-										{% if user.is_authenticated %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
+				</div><!-- /container -->
+				<div class="table-container">
+					<div class="table-component">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }} : {{ poll.question.question_text }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }} votes
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }} votes
+												{% endfor %}
+											</td>
 										{% else %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
+											<td>NA</td>
+											<td>NA</td>
 										{% endif %}
-									{% endif %}
-								{% endif %}
-							</form>
-							</p>
-						</div>
-						{% endfor %}
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>		
 					</div>
-				</div>
+				</div><!-- /container -->
 			</div>
 		</div>
-	</section>
+
+		<div class="pdf-pages" id="pdf-page2">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Per Question Survey Analysis</h1>
+				{% for poll in polls %}
+				{% if poll.question.id == maxVotedQuestion %}
+					{% for choice in poll.question.choice_set.all %}
+						{% if choice.choice_image %}
+							<figure>
+								<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+								<figcaption class="choiceFigCaption">
+									{% if choice.choice_text %}
+										Choice{{ forloop.counter }} : {{ choice.choice_text }}
+									{% else %}
+										Choice{{ forloop.counter }}
+									{% endif %}
+								</figcaption>
+							</figure>
+						{% else %}
+							Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+							<br/>
+						{% endif %}
+					{% endfor %}
+					<p class="data-heading-pdf">
+						{{ poll.question.question_text }}
+					</p>
+					<div id="pollsChart-pdf" class="pollsChartPDF"></div>
+					<div id="analysis-pdf">
+						<div class="pdf-chart" id="genderchart"></div>
+						<div class="pdf-chart" id="agechart"></div>
+						<div class="pdf-chart" id="locationchart"></div>
+						<div class="pdf-chart" id="professionchart"></div>
+					</div>
+					<script type="text/javascript">
+						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph|safe }},"pollsChart-pdf",{{ poll.total_choice_vote }}));
+						google.setOnLoadCallback(drawAgeChartPDF({{ poll.age_graph|safe }},"agechart"));
+						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph|safe }},"genderchart"));
+						google.setOnLoadCallback(drawProfessionChartPDF({{ poll.prof_graph|safe }},"professionchart"));
+						google.setOnLoadCallback(drawRegionsMapPDF({{ poll.country_graph|safe }},"locationchart"));
+					</script>
+				{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	
+		<div class="pdf-pages" id="pdf-page3">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Sample Advanced Analysis from AskByPoll</h1>
+				<p class="pdf-data">
+					Use the Dashboard for more advanced real time analysis like –
+				</p>
+				<p class="pdf-data pdf-data-tabbed">
+					•	Country & State Specific Location Breakdown – Click on the Country graph.<br>
+					•	Choice specific analysis – Choose specific choice from dropdown<br>
+					•	Multi-Variable Comparative Analysis - Choose multiple parameters from the dropdown based on the comparison to be done with the base graph. <br>
+				</p>
+				<p class="pdf-data	">
+					A sample example of real time Multi-Variable Comparative Analysis – 
+				</p>
+				<p class="pdf-data pdf-data-bold">
+					Base Graph vs. Multi Parameter Graph
+				</p>
+				{% for poll in polls %}
+				{% if poll.question.id == maxVotedQuestion %}
+					<div id="pollsChart-pdf-cmp1" class="pollsChartPDF"></div>
+					<div id="advancedAna" class="advancedAnaPDF">
+						<p style="margin-bottom:1rem;"> Filter by different parameters </p>
+						<select class="advancedanalyseSelectPDF">
+							<option value="nochoice">Gender</option>
+						</select>
+						<select class="advancedanalyseSelectPDF">
+							<option value="26-30">26-30</option>
+						</select>
+						<select class="advancedanalyseSelectPDF">
+							<option value="nochoice">Profession</option>
+						</select>
+						<select class="advancedanalyseSelectPDF">
+							<option value="nochoice">India</option>
+						</select>
+						<select class="advancedanalyseSelectPDF">
+							<option value="nochoice">State</option>
+						</select>
+					</div>
+					<div id="pollsChart-pdf-cmp2" class="pollsChartPDF"></div>
+					<p class="pdf-data pdf-data-bold">
+						Base Pie Charts vs. Choice Specific Pie Charts:
+					</p><br>
+					<div class="analysis-pdf">
+					<div class="analysis-pdf-cmp">
+						<select class="advancedanalyseSelectPDF advancedanalyseSelectPDFAbsolute">
+							<option value="nochoice">Filter by Choice</option>
+						</select>
+						<div class="pdf-chart" id="genderchart-cmp1"></div>
+					</div>
+					<div class="analysis-pdf-cmp">
+						<select class="advancedanalyseSelectPDF advancedanalyseSelectPDFAbsolute">
+							<option value="nochoice">{{ poll.maxVotedChoiceStr }}</option>
+						</select>						
+						<div class="pdf-chart" id="genderchart-cmp2"></div>
+					</div>
+					</div>
+					<script type="text/javascript">
+						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph|safe }},"pollsChart-pdf-cmp1",{{ poll.total_choice_vote }}));
+						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph_filter|safe }},"pollsChart-pdf-cmp2",{{ poll.total_choice_vote_filter }}));
+						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph|safe }},"genderchart-cmp1"));
+						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph_filter|safe }},"genderchart-cmp2"));
+					</script>
+				{% endif %}
+				{% endfor %}
+			</div>
+		</div>
 	<script type="text/javascript">
 		$(document).ready(function()
 		{

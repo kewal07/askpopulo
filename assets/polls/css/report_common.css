@@ -1,4 +1,59 @@
+html{
+	background:none !important;
+	background-size:cover;
+	/*max-width: 1200px;*/
+  	margin: 0 auto;
+  	position: relative;
+  	height: 100%;
+  	/*font-family: 'Droid Sans', sans-serif;*/
+  	/*font-family: 'Lato', sans-serif;*/
+  	font-family: 'Arvo', serif;
+}
 #wrapper {
 	max-width: none;
 	width: 713.705px;
+}
+.survey-overview-pdf {
+    display: block !important;
+    padding: 2rem 1rem 1rem 1rem;
+    margin-top: 1rem !important;
+}
+.page-main-heading{
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	font-size: 2rem;
+    text-align: center;
+    text-decoration: underline;
+}
+.data-heading-pdf{
+	margin-top: 1rem;
+    font-size: 1.2rem;
+}
+.pdf-chart{
+	width: 325px;
+    display: inline-block;
+}
+.pdf-data-tabbed{
+	padding-left: 2rem;
+	padding-bottom: 0.5rem;
+}
+.pdf-data-bold{
+	padding-top: 0.4rem;
+	font-weight: bold;
+}
+.advancedanalyseSelectPDF{
+	background: wheat;
+    /*border-radius: 25px;*/
+    padding: 0.2rem;
+    margin-right: 0.5rem;
+}
+.advancedanalyseSelectPDFAbsolute{
+	margin-left: 4rem;
+}
+.analysis-pdf-cmp{
+	width: 335px;
+	display: inline-block;
+}
+.advancedAnaPDF{
+	padding: 0.5rem 0 0.5rem 0;
 }

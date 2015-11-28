@@ -1666,22 +1666,49 @@
 					        	$('body').append('<div id="pdf-body">'+response+'</div>');
 					        	
 					  			var a4  =[ 595.28,  841.89];
-								var target = $('#pdf-body');
-								target.width((a4[0]*1.33333) -80).css('max-width','none');
-								html2canvas(target, {
-							        onrendered: function (canvas) {
-							            //Set hidden field's value to image data (base-64 string
-							            console.log("rendered");
-							            var	img = (canvas.toDataURL("image/png"));
-							            // alert(img);
-							            //Submit the form manually
-							            // document.getElementById("myForm").submit();
-							            var doc = new jsPDF('p', 'pt', 'a4', false);
-										doc.addImage(img, 'JPEG', 20, 20);
-										doc.save('Survey-'+survey_id+'-pdf.pdf');
-										// $('body').find($("#pdf-body")).remove();
-								    }
-								});
+					  			setTimeout(function(){
+					  				var pageLenth = $('.pdf-pages').length;
+						  			var doc = new jsPDF('p', 'pt', 'a4', false);
+						  			$(".pdf-pages").each(function(i){
+						  				console.log($(this));
+						  				var target = $(this);//$("#"+$(this)[i].id);
+						  				console.log(target.width());
+						  				console.log(target.height());
+						  				// var canvas_width = (a4[0]*1.33333) -80;
+						  				// // var canvas_height = (a4[1]*1.33333) -80;
+						  				// console.log(canvas_width);
+						  				// console.log(canvas_height);
+						  				target.width((a4[0]*1.33333) -80).css('max-width','none');
+						  				// target.height((a4[1]*1) -80).css('max-width','none');
+						  				html2canvas(target, {
+									        onrendered: function (canvas) {
+									            //Set hidden field's value to image data (base-64 string
+									            console.log("rendered");
+									            var	img = (canvas.toDataURL("image/png"));
+									            // window.open(img,"_blank");
+									            // alert(img);
+									            // console.log(doc);
+									            // if(i == 0){
+									            	// window.open(img,"_blank");
+									            	doc.addImage(img, 'JPEG',20,20);
+									            	// doc.output("dataurlnewwindow");
+									            // }
+									            // doc.output("dataurlnewwindow");
+									            if(pageLenth == i+1){ 
+									            	// console.log(doc);
+									            	// doc.output("dataurlnewwindow");
+													doc.save('Survey-'+survey_id+'-pdf.pdf');
+													$('body').find($("#pdf-body")).remove();
+												} else{
+													doc.addPage();
+												}
+										    },
+											// width: canvas_width,
+											// height: canvas_height
+										});
+										// return false;
+									});
+								}, 1000);
 							}
 						});
 					{% else %}
