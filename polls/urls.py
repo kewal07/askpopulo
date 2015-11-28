@@ -43,4 +43,7 @@ urlpatterns = patterns('',
 	url(r'^editsurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyEditView.as_view()),name='survey_edit'),
 	url(r'^deletesurvey/(?P<pk>\d+)/(?P<survey_slug>[\w\-]+)$',login_required(views.SurveyDeleteView.as_view()),name='survey_delete'),
 	url(r'^survey_mail$', views.survey_mail,name="survey_mail"),
+	url(r'^embed-poll',views.embed_poll,name="embed_poll"),
+	url(r'^vote-embed-poll',views.vote_embed_poll,name="vote_embed_poll"),
+	url(r'^results-embed-poll',views.results_embed_poll,name="results_embed_poll"),
 )

@@ -502,8 +502,31 @@ class AdminDashboard(BaseViewDetail):
 				sur_dict['survey'] = survey
 				sur_dict['votes'] = SurveyVoted.objects.filter(survey_id=survey.id).count()
 				total_views += survey.numViews
-				sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				survey_questions = Survey_Question.objects.filter(survey_id=survey.id)
+				sur_dict['polls'] = []
+				for x in survey_questions:
+					maxVotes = -1
+					minVotes = 99999
+					maxVotedChoiceList = []
+					minVotedChoiceList = []
+					questionChoices = x.question.choice_set.all()
+					totalResponses = x.question.voted_set.count()
+					for choice in questionChoices:
+						numVotes = choice.vote_set.count()
+						if(numVotes == maxVotes):
+							maxVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
+						elif numVotes > maxVotes:
+							maxVotedChoiceList = []
+							maxVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
+						if(numVotes == minVotes):
+							minVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
+						elif numVotes < minVotes:
+							minVotedChoiceList = []
+							minVotedChoiceList.append(choice.choice_text+':'+str(numVotes))
+					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":maxVotedChoiceList,"minVotes":minVotedChoiceList})
 				survey_detail_list.append(sur_dict)
+				# sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				# survey_detail_list.append(sur_dict)
 			votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
 			followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 			following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]

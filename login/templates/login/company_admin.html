@@ -208,7 +208,7 @@
 							</div>
 							<div class="location">
 								<div class="graphContainer">
-									<p> Location </p><div id="mapBackButton---{{ question.poll.id }}" class="back" onClick="back('',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+									<p> Location </p><div id="mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
 									<div class="question_analyse_chart_loc" id="locationChart---{{ question.poll.id }}">
 									</div>
 								</div>
@@ -513,7 +513,7 @@
 										{{ survey_det.survey.survey_name }}
 									</p>
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
-									<p class="check"><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<p class="check"><span class="see-more-details see-more-details-p survey-overview-button" id="survey-overview{{ survey_det.survey.id }}">Overview</span><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
 									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
 										<p class="share-g">
 											{% csrf_token %}
@@ -609,7 +609,7 @@
 											</div>
 											<div class="location">
 												<div class="graphContainer">
-													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
 													<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ poll.question.id }}">
 													</div>
 												</div>
@@ -631,6 +631,67 @@
 									{% endif %}
 								{% endfor %}
 							</div>
+							<div class="survey-overview">
+								<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+								<div class="table-container">
+									<div class="table-component">
+										<table>
+											<thead>
+												<tr>
+													<th class="question-table">Question ID</th>
+													<th>Responses</th>
+													<th>Most Voted</th>
+													<th>Least Voted</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for poll in survey_det.polls %}
+													<tr>
+														<th class="question-table-heading">Question{{ forloop.counter }} : {{ poll.question.question_text }}</th>
+														<td> {{ poll.totalResponses }} votes</td>
+														{% if poll.q_type != "text" %}
+															<td> 
+																{% for choice in poll.maxVotes %}
+																	{{ choice }} votes
+																{% endfor %}
+															</td>
+															<td>
+																{% for choice in poll.minVotes %}
+																	{{ choice }} votes
+																{% endfor %}
+															</td>
+														{% else %}
+															<td>NA</td>
+															<td>NA</td>
+														{% endif %}
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>		
+									</div>
+								</div><!-- /container -->
+							</div>
+							<!-- <div class="survey-overview">
+								<p> Total Number of polls : {{ survey_det.polls|length }} </p>
+								{% for poll in survey_det.polls %}
+									<p>{{ poll.question.question_text }}</p>
+									{% if poll.q_type != "text" %}
+										<p>Number of responses {{ poll.totalResponses }} </p>
+										<p>Max Votes on</p>
+										{% for choice in poll.maxVotes %}
+											<p>{{ choice }}</p>
+										{% endfor %}
+										<p>Min Votes on</p>
+										{% for choice in poll.minVotes %}
+											<p>{{ choice }}</p>
+										{% endfor %}
+										{% else %}
+											<p>Number of responses {{ poll.totalResponses }} </p>
+											<p>Max Votes on : NA</p>
+											<p>Min Votes on : NA</p>
+									{% endif %}
+								{% endfor %}
+							</div> -->
 						</li>
 					{% endfor %}
 				</ul>
@@ -824,6 +885,8 @@
 							{% endif %}
 							{% endfor %}
 							</div>
+							<div id="advanced-pollsChart---{{ question.poll.id }}---extra" class="pollsChartClass">
+							</div>
 							<div id="advanced-pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
 							<div id="advancedAna">
@@ -878,7 +941,7 @@
 							</div>
 							<div class="location">
 								<div class="graphContainer">
-									<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+									<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
 									<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ question.poll.id }}">
 									</div>
 								</div>
@@ -908,6 +971,8 @@
 			</div>
 			<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
 		</div>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+		<script type="text/javascript" src="{% static 'js/jquery.stickyheader.js' %}"></script>
 		<script>
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			var profList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"];
@@ -1451,6 +1516,10 @@
 				$("#surveys-content").on("click",".main-survey",function(){
 					$(this).parent().parent().next().toggle("slow");
 				});
+
+				$("#surveys-content").on("click",".survey-overview-button",function(){
+			     $(this).parent().parent().parent().first().next().next().toggle("slow");
+			    });
 
 			    $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
 			    	var elemId = $(this)[0].id;

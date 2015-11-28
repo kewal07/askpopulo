@@ -269,3 +269,16 @@ class QuestionUpvotes(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	vote = models.BooleanField(default=0)
+
+class VoteApi(models.Model):
+	choice = models.ForeignKey(Choice)
+	question = models.ForeignKey(Question)
+	ipAddress = models.IPAddressField(blank=True,null=True)
+	created_at = models.DateTimeField(auto_now_add=True,null=True)
+	age = models.IntegerField(null=True)
+	gender = models.CharField(max_length=1,blank=True,null=True)
+	city = models.CharField(max_length=512,blank=True,null=True)
+	state = models.CharField(max_length=512,blank=True,null=True)
+	country = models.CharField(max_length=512,blank=True,null=True)
+	profession = models.CharField(max_length=512,blank=True,null=True)
+	# email = models.EmailField(max_length=70,blank=True, null= True, unique= True)

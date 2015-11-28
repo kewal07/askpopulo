@@ -332,6 +332,70 @@ function getCookie(cname) {
     return "";
 }
 
+// function ajaxindicatorstart(text)
+// {
+// 	if(jQuery('body').find('#resultLoading').attr('id') != 'resultLoading'){
+// 	jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+// 	}
+
+// 	jQuery('#resultLoading').css({
+// 		'width':'100%',
+// 		'height':'100%',
+// 		'position':'fixed',
+// 		'z-index':'10000000',
+// 		'top':'0',
+// 		'left':'0',
+// 		'right':'0',
+// 		'bottom':'0',
+// 		'margin':'auto'
+// 	});
+
+// 	jQuery('#resultLoading .bg').css({
+// 		'background':'#000000',
+// 		'opacity':'0.7',
+// 		'width':'100%',
+// 		'height':'100%',
+// 		'position':'absolute',
+// 		'top':'0'
+// 	});
+
+// 	jQuery('#resultLoading>div:first').css({
+// 		'width': '250px',
+// 		'height':'75px',
+// 		'text-align': 'center',
+// 		'position': 'fixed',
+// 		'top':'0',
+// 		'left':'0',
+// 		'right':'0',
+// 		'bottom':'0',
+// 		'margin':'auto',
+// 		'font-size':'16px',
+// 		'z-index':'10',
+// 		'color':'#ffffff'
+
+// 	});
+
+//     jQuery('#resultLoading .bg').height('100%');
+//        jQuery('#resultLoading').fadeIn(300);
+//     jQuery('body').css('cursor', 'wait');
+// }
+
+// function ajaxindicatorstop()
+// {
+//     jQuery('#resultLoading .bg').height('100%');
+//        jQuery('#resultLoading').fadeOut(300);
+//     jQuery('body').css('cursor', 'default');
+// }
+
+// jQuery(document).ajaxStart(function () {
+//  		//show ajax indicator
+// ajaxindicatorstart('Please give us a moment while we Make Sense of Millions of Bits for You !');
+// }).ajaxStop(function () {
+// //hide ajax indicator
+// ajaxindicatorstop();
+// });
+
+
 function activateMenuLink () {
 	$( ".menuanchor" ).each(function( ) {
 		elemHref = $(this)[0].href;
@@ -404,6 +468,7 @@ function confirm_redirect(olEl,val,url){
 function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state) {
 	// console.log(analyse_type,pollId,age,gender,profession,location);
 	var pollsData = [];
+	var pollsDataExtra = [];
 	var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
 	var colCount = 0;
 	var advanced_analyse_dic = {};
@@ -445,22 +510,33 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         }
     });
 	pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+	pollsDataExtra.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
 	for(var choice in advanced_analyse_dic['choices']){
 		var inData = [];
+		var inDataExtra = [];
 		var choice_dic = advanced_analyse_dic['choices'][choice];
 		inData.push(choice_dic["key"]);
 		inData.push(choice_dic["val"]);
+		inDataExtra.push(choice_dic["key"]);
+		inDataExtra.push(choice_dic["extra_val"]);
 		// inData.push(choice['val']);
-		inData.push(pollsColors[colCount++]);
+		inData.push(pollsColors[colCount]);
+		inDataExtra.push(pollsColors[colCount++]);
 		var percent = 0;
+		var percentExtra = 0;
 		if(advanced_analyse_dic['total_votes'] > 0)
 			percent = Math.round((choice_dic["val"]/advanced_analyse_dic['total_votes'])*100);
 			// percent = Math.round((choice["val"]/advanced_analyse_dic['total_votes'])*100);
+		if(advanced_analyse_dic['total_votes_extra'] > 0)
+			percentExtra = Math.round((choice_dic["extra_val"]/advanced_analyse_dic['total_votes_extra'])*100);
 		inData.push(percent+"%");
+		inDataExtra.push(percentExtra+"%");
 		pollsData.push(inData);
+		pollsDataExtra.push(inDataExtra);
 		// console.log(inData);
 	}
 	var data = google.visualization.arrayToDataTable(pollsData);
+	var dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
 	var options = {
           chartArea: {left:80,width: '60%'},
           fontSize:14,
@@ -499,7 +575,12 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
 
         var chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
         chart.draw(data, options);
-        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
+        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation); 
+        if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
+        	var chartExtra = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra'));
+	        chartExtra.draw(dataExtra, options);
+	        google.visualization.events.addListener(chartExtra, 'animationfinish', displayAnnotation);
+        }  
 
     function displayAnnotation(e){
         data = google.visualization.arrayToDataTable(pollsData);
@@ -540,6 +621,10 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         };
 
         chart.draw(data,options);
+        if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
+        	dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
+	        chartExtra.draw(dataExtra, options);
+        }  
     }
 }
 
@@ -707,15 +792,18 @@ function drawLocationChart(csrf_token,analyse_type,pollId,choiceId) {
     google.visualization.events.addListener(chart, 'regionClick', function(e){
     	$("#"+analyse_type+"mapBackButton").css("display", "inline-block");
 		// $('#mapBackButton').addClass("back");
-		drawStateMap(csrf_token,analyse_type,e.region,pollId);
+		drawStateMap(csrf_token,analyse_type,e.region,pollId,choiceId);
     });
 }
 
 var regionDict = {
 	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
 }
+
+var backChoiceId = "";
 	
 function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId){
+	backChoiceId = choiceId;
 	var options = {
       region: region,
       displayMode: 'regions',
@@ -760,8 +848,8 @@ function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId){
 	chart.draw(data, options);
 }
     
-function back(csrf_token,analyse_type,pollId,choiceId){  
+function back(csrf_token,analyse_type,pollId){  
 	$("#"+analyse_type+"mapBackButton").css("display", "none");  
-    drawLocationChart(csrf_token,analyse_type,pollId,choiceId);
+    drawLocationChart(csrf_token,analyse_type,pollId,backChoiceId);
 }
 /* Function for charts end */
