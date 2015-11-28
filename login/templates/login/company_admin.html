@@ -19,6 +19,9 @@
 	<script type="text/javascript" src="{% static 'js/jquery.csv-0.71.min.js' %}"></script>
 	<script src="{% static 'js/jquery-ui.js' %}"></script>
 	<script src="{% static 'js/jquery.autocomplete.multiselect.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/html2canvas.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
+	
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -513,7 +516,15 @@
 										{{ survey_det.survey.survey_name }}
 									</p>
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
-									<p class="check"><span class="see-more-details see-more-details-p survey-overview-button" id="survey-overview{{ survey_det.survey.id }}">Overview</span><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<p class="check">
+										{% if survey_det.survey.surveyvoted_set.count < 1 or user.is_superuser %}
+											<span class="see-more-details see-more-details-p edit-u"><a href="{% url 'polls:survey_edit' survey_det.survey.id survey_det.survey.survey_slug %}">Edit Survey</a></span>
+										{% endif %}
+										<span class="see-more-details see-more-details-p clone-u"><a href="{% url 'polls:survey_clone' survey_det.survey.id survey_det.survey.survey_slug %}">Clone Survey</a></span>
+										<span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span>
+										<span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span>
+										<span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span>										
+									</p>
 									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
 										<p class="share-g">
 											{% csrf_token %}
@@ -735,16 +746,36 @@
 							<i class="fa fa-pencil-square-o group-action-icons" onclick="editGroup('{{ group.groupId}}')"></i>
 							<div class="analysis group-ana-member" id="groupMembers---{{ group.groupId }}Div">
 								<div class="groupMembers clearfix">
-									{% for member in group.groupMembers %}
-										{% if member.extendeduser %}
+									{% if group.groupMembers %}
+										{% for member in group.groupMembers %}
 											<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
 												<figure class="members-figure">
 												  <img class="groupsMemberProfilePic" src="{{ member.extendeduser.get_profile_pic_url }}" alt="{{ member.first_name }}">
 												  <figcaption class="members-figcaption">{{ member.first_name }} {{ member.last_name }}</figcaption>
 												</figure>
 											</a>
-										{% endif %}
-									{% endfor %}
+										{% endfor %}
+									{% endif %}
+									{% if group.groupMembersIncomplete %}
+										<p class="main invites-send">
+											<i class="fa fa-exclamation-triangle" style="color: black;margin-right: 0.5rem;"></i>Incomplete Profile
+										</p>
+										<ul>
+											{% for member in group.groupMembersIncomplete %}
+												<li class="members-future">{{ member.email }}</li>
+											{% endfor %}
+										</ul>
+									{% endif %}
+									{% if group.groupMembersFuture %}
+										<p class="main invites-send">
+											Invites Send
+										</p>
+										<ul>
+											{% for member in group.groupMembersFuture %}
+												<li class="members-future">{{ member }}</li>
+											{% endfor %}
+										</ul>
+									{% endif %}
 								</div>
 							</div>
 							<div class="edit-group" id="edit-group-{{ group.groupId }}" style="display:none;">
@@ -961,9 +992,29 @@
 		</div>
 		<div id="export-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Coming Soon!
+				Export Survey Reports
 			</div>
-			<p class="coming-soon">Export of raw data coming soon.Please contact support for accelerated development.</p>
+			<div class="dashboard-stats clearfix">
+				<ul class="dashboard-recent">
+					<li> Survey</li>
+					{% for survey_det in surveys %}
+						<li class="li-margin-polls">
+							<div class="liDetail">
+								<div class="check_analyse">
+									<p class="main">
+										{{ survey_det.survey.survey_name }}
+									</p>
+									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p export-excel" id="export-excel{{ survey_det.survey.id }}"><a href="/exportexcel?sid={{ survey_det.survey.id }}"> Export as Excel</a></span>
+										<span class="see-more-details see-more-details-p export-pdf" id="export-pdf{{ survey_det.survey.id }}">Export as PDF</span>
+									</p>
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
 		</div>
 		<div id="billing-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
@@ -1591,8 +1642,54 @@
 					var selectedChoice_country= $(common_elem_id_str+"Country").val();
 					populateState(common_elem_id_str+"State",selectedChoice_country);
 				});
-			});
-			
+
+				$("#export-content").on("click",".export-pdf",function(){
+					var survey_id = $(this)[0].id.replace("export-pdf","");
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'GET',
+							url:"/exportpdf/"+survey_id,
+							statusCode: {
+								404: function() {
+									$('#overlay-inAbox').children().children().first().text("No Survey Selected");
+									openOverlay("#overlay-inAbox");
+									$(this).css({"color":"red"});
+								}
+							},
+							success:function(response)
+							{
+								// console.log(response);
+								var new_html = document.createElement('div');
+								// $(new_html).id = "pdf-html";
+					        	new_html.innerHTML = response;
+					        	$('body').append('<div id="pdf-body">'+response+'</div>');
+					        	
+					  			var a4  =[ 595.28,  841.89];
+								var target = $('#pdf-body');
+								target.width((a4[0]*1.33333) -80).css('max-width','none');
+								html2canvas(target, {
+							        onrendered: function (canvas) {
+							            //Set hidden field's value to image data (base-64 string
+							            console.log("rendered");
+							            var	img = (canvas.toDataURL("image/png"));
+							            // alert(img);
+							            //Submit the form manually
+							            // document.getElementById("myForm").submit();
+							            var doc = new jsPDF('p', 'pt', 'a4', false);
+										doc.addImage(img, 'JPEG', 20, 20);
+										doc.save('Survey-'+survey_id+'-pdf.pdf');
+										// $('body').find($("#pdf-body")).remove();
+								    }
+								});
+							}
+						});
+					{% else %}
+						$("#export-content").click();
+					{% endif %}
+				});
+			});			
 		</script>
+
 	</section>
 {% endblock %}

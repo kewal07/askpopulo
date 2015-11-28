@@ -56,6 +56,7 @@ class BaseViewList(generic.ListView):
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
+			activities = []
 			activities = feed.get(limit=25)['results']
 			# notifications = enricher.enrich_activities(activities)
 			notifications = activities
@@ -225,13 +226,17 @@ class LoggedInView(BaseViewDetail):
 		public_profile = False
 		if request_user != user:
 			public_profile = True
-		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
-		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
 		if public_profile:
-			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')
 		else:
-			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
-		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+		survey_list = Survey.objects.filter(user_id=user.id)
+		s_polls = []
+		for survey in survey_list:
+			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+		user_asked_questions = [item for item in user_asked_questions if item not in s_polls][:20]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))
+		user_voted_questions = [item for item in user_voted_questions if item not in s_polls][:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
 		user_categories = []
 		cat_list = []
@@ -280,6 +285,8 @@ class LoggedInView(BaseViewDetail):
 		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
+		context['questions_count'] = len(user_asked_questions)
+		context['voted_count'] = len(user_voted_questions)
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
 		context['followed'] = Follow.objects.filter(user=request_user, target_id=user, deleted_at__isnull=True)
@@ -449,7 +456,7 @@ class AdminDashboard(BaseViewDetail):
 			data = super(AdminDashboard, self).get_context_data(**kwargs)
 			user = self.request.user
 			polls_vote_list = []
-			survey_list = Survey.objects.filter(user_id=user.id)
+			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
 			s_polls = []
 			for survey in survey_list:
@@ -491,7 +498,15 @@ class AdminDashboard(BaseViewDetail):
 				tempGroup = Group.objects.get(pk=group['group_id'])
 				group_dict['groupId'] = tempGroup.id
 				group_dict['groupName'] = tempGroup.name[groupNamePrefixLength:]
-				group_dict['groupMembers'] = tempGroup.user_set.all()
+				groupMembers = tempGroup.user_set.all()
+				group_dict['groupMembers'] = []
+				group_dict['groupMembersIncomplete'] = []
+				for x in groupMembers:
+					if hasattr(x,'extendeduser'):
+						group_dict['groupMembers'].append(x)
+					else:
+						group_dict['groupMembersIncomplete'].append(x)
+				group_dict['groupMembersFuture'] = [x.user_email.replace("@"," at ") for x in ExtendedGroupFuture.objects.filter(group=tempGroup)]
 				group_list.append(group_dict)
 			polls_count = len(polls)
 			groups_count = len(groups)
@@ -540,7 +555,7 @@ class AdminDashboard(BaseViewDetail):
 			data['flat_feed_activities'] = feed_activities
 			data["followers"] = followers
 			data["following"] = following
-			data["activeUsers"] = activeUsers + 4
+			data["activeUsers"] = 11 
 			followers_count = len(followers)
 			following_count = len(following)
 			data['followers_count'] = followers_count
@@ -594,14 +609,14 @@ class CreateGroup(BaseViewList):
 						else:
 							already_added_users.remove(email)
 					else:
-						extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
-						extendedGroupFuture.save()
+						extendedGroupFuture,created = ExtendedGroupFuture.objects.get_or_create(user_email=email,group=group)
+						# extendedGroupFuture.save()
 						msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
 						msg.template_name = "invitation-mail"
 						msg.global_merge_vars = {
-		                    'inviter': request.user.first_name,
-		                    'companyname':request.user.extendeduser.company.name
-		                }
+						'inviter': request.user.first_name,
+						'companyname':request.user.extendeduser.company.name
+						}
 						msg.send()
 			for email in already_added_users:
 				user = User.objects.filter(email = email)[0]
@@ -619,53 +634,6 @@ class CreateGroup(BaseViewList):
 			linecache.checkcache(filename)
 			line = linecache.getline(filename, lineno, f.f_globals)
 			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-		# try:
-		# 	print("Inside Try")
-		# 	newgroup = Group.objects.create(name = groupName)
-		# except:
-		# 	if isEdit == 'no':
-		# 		response['error'] = 'Group name already exists.'
-		# 		return HttpResponse(json.dumps(response), content_type='application/json')
-		# 	else:
-		# 		try:
-		# 			group = Group.objects.get(name=groupName)
-		# 			extendedGroupCreater = ExtendedGroup.objects.get(group_id=group.id)
-		# 			extendedGroupCreater.delete()
-		# 			group.delete()
-		# 			newgroup = Group.objects.create(name = groupName)
-		# 		except Exception as e:
-		# 			exc_type, exc_obj, exc_tb = sys.exc_info()
-		# 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-		# 			print(exc_type, fname, exc_tb.tb_lineno)
-		# try:
-		# 	group = Group.objects.get(name=groupName)
-		# 	extendedGroup = ExtendedGroup(user=request.user, group = group)
-		# 	extendedGroup.save()
-		# 	for email in emailList:
-		# 		if email:
-		# 			user = User.objects.filter(email = email)
-		# 			if user:
-		# 				user = list(user)[0]
-		# 				user.groups.add(group)
-		# 			else:
-		# 				extendedGroupFuture = ExtendedGroupFuture(user_email=email,group=group)
-		# 				extendedGroupFuture.save()
-		# 				msg = EmailMessage(subject="Invitation", from_email="support@askbypoll.com",to=[email])
-		# 				msg.template_name = "invitation-mail"
-		# 				msg.global_merge_vars = {
-		#                     'inviter': request.user.first_name,
-		#                     'companyname':request.user.extendeduser.company.name
-		#                 }
-		# 				msg.send()
-		# 	if(isEdit == 'yes'):
-		# 		response['success'] = 'Group edited successfully.'
-		# 	else:
-		# 		response['success'] = 'Group created successfully.'
-		# 	return HttpResponse(json.dumps(response), content_type='application/json')
-		# except Exception as e:
-		# 	exc_type, exc_obj, exc_tb = sys.exc_info()
-		# 	fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-		# 	print(exc_type, fname, exc_tb.tb_lineno)
 
 class EditGroup(BaseViewList):
 	def get(self, request, *args, **kwargs):

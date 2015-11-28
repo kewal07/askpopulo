@@ -218,6 +218,16 @@ li.followers{
     width: 7rem;
     right: 5rem;
 }
+.edit-u{
+	/*top: 4rem;*/
+    width: 7rem;
+    right: 27rem;
+}
+.clone-u{
+	/*top: 4rem;*/
+    width: 7rem;
+    right: 20rem;
+}
 .check{
 	float: right;
 }
@@ -442,6 +452,7 @@ li.questions-li{
     cursor: pointer;
     background: wheat;
 }
+
 .table-container > header {
 	margin: 0 auto;
 	padding: 2em;
@@ -552,6 +563,27 @@ th.question-table-heading {
 .sticky-wrap.overflow-y {
 	overflow-y: auto;
 	max-height: 50vh;
+.invites-send{
+	color: orange;
+    border-top: 2px solid#666;
+    margin-top: 2rem !important;
+    padding-top: 1rem;
+    margin-bottom: 2rem !important;
+}
+.members-future{
+	display: inline-block !important;
+	margin-left: 1rem !important;
+    padding: 0.5rem !important;
+    border: 1px solid !important;
+    background: #cfcfcf !important;
+    font-size: 1rem !important;
+}
+.export-excel{
+	right: 8rem;
+    width: 7rem;
+}
+.export-pdf{
+    width: 7rem;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
