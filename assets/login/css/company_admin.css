@@ -218,6 +218,16 @@ li.followers{
     width: 7rem;
     right: 5rem;
 }
+.edit-u{
+	/*top: 4rem;*/
+    width: 7rem;
+    right: 27rem;
+}
+.clone-u{
+	/*top: 4rem;*/
+    width: 7rem;
+    right: 20rem;
+}
 .check{
 	float: right;
 }

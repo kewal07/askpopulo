@@ -516,7 +516,15 @@
 										{{ survey_det.survey.survey_name }}
 									</p>
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
-									<p class="check"><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span>
+										<span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span>
+										<span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span>
+										{% if survey_det.survey.surveyvoted_set.count < 1 or user.is_superuser %}
+											<span class="see-more-details see-more-details-p edit-u"><a href="{% url 'polls:survey_edit' survey_det.survey.id survey_det.survey.survey_slug %}">Edit Survey</a></span>
+										{% endif %}
+										<span class="see-more-details see-more-details-p clone-u"><a href="{% url 'polls:survey_clone' survey_det.survey.id survey_det.survey.survey_slug %}">Clone Survey</a></span>
+										</p>
 									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
 										<p class="share-g">
 											{% csrf_token %}
