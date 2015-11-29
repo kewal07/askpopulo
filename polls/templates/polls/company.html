@@ -32,8 +32,8 @@
 						<input name="target" type="hidden" value="{{ data.0.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}">
 					</form>
 					<i class="fa fa-envelope" style="cursor:pointer"> </i>
-					<a href="{{ data.0.company_obj.company_facebook }}"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>
-					<a href="{{ data.0.company_obj.company_twitter }}"><i class="fa fa-twitter" style="cursor:pointer"></i></a>
+					<a href="{{ data.0.company_obj.company_facebook }}" target="_blank"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>
+					<a href="{{ data.0.company_obj.company_twitter }}" target="_blank"><i class="fa fa-twitter" style="cursor:pointer"></i></a>
 					<i class="fa fa-bars" style="cursor:pointer"> </i>
 					<div class="company-desc-mobile"><p>{{ data.0.company_obj.description }}</p></div>
 				</div>

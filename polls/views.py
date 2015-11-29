@@ -1786,7 +1786,7 @@ def embed_poll(request):
 			html += '<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---'+str(pollId)+'"><span class="askbypoll-enter-details">Enter Details To Analyse Results</span>'
 			html += '<select class="askbypoll-ageField askbypoll-enter" id="askbypoll-age---'+str(pollId)+'" name="age"><option value="notSelected">What\'s your Age Group?</option><option value="16"><19</option><option value="22">20-25</option><option value="28">26-30</option><option value="33">31-35</option><option value="43">36-50</option><option value="55">>50</option></select>'
 			html += '<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---'+str(pollId)+'" name="gender"><option value="notSelected">What\'s your Gender</option><option value="Female">Female</option><option value="Male">Male</option><option value="D">Rather Not Say</option></select>'
-			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
+			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button> <button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
 			html += '</div>'
 		html += logo_html
 		html += question_html
@@ -1807,19 +1807,15 @@ def vote_embed_poll(request):
 		callback = request.GET.get('callback', '')
 		choiceId = int(request.GET.get('choiceId',0))
 		pollId = int(request.GET.get('pollId'))
+		alreadyVoted = request.GET.get('alreadyVoted','false')
 		ipAddress = getIpAddress(request)
 		ipAddress = '139.130.4.22'
-		existingVotes = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
-		if existingVotes:
-			lastVoteTime = existingVotes[0].created_at.replace(tzinfo=None)
-			localTime = datetime.datetime.now()-datetime.timedelta(minutes=330)
-			timeDifference = localTime - lastVoteTime
+
 		question = Question.objects.get(pk=pollId)
 		req = {}
-		existingVotes = []
-		print(existingVotes)
-		if((not existingVotes or timeDifference.total_seconds()>86400) and not(choiceId == 0)):
-			print("check1")
+
+		#if((not existingVotes or timeDifference.total_seconds()>86400) and not(choiceId == 0)):
+		if((not alreadyVoted == 'true') and not(choiceId == 0)):
 			url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
 			dbIpResponse = requests.get(url)
 			locationData = dbIpResponse.json()
@@ -1836,9 +1832,7 @@ def vote_embed_poll(request):
 			response = json.dumps(req)
 			response = callback + '(' + response + ');'
 		else:
-			print("check2")
-			if existingVotes:
-				print("check3")
+			if alreadyVoted == 'true':
 				totalVotes = VoteApi.objects.filter(question=question).count()
 				choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
 				result = {}
@@ -1862,48 +1856,54 @@ def results_embed_poll(request):
 		print(request.GET)
 		print("Age")
 		print(request.GET.get('age',18))
+		alreadyVoted = request.GET.get('alreadyVoted','false')
+		dataStored = request.GET.get('dataStored','false')
 		callback = request.GET.get('callback', '')
 		pollId = int(request.GET.get('pollId'))
 		poll = Question.objects.get(pk=pollId)
 		choices = Choice.objects.filter(question_id=pollId)
+
 		user_age = 0
-		if request.GET.get('age'):
-			user_age = int(request.GET.get('age',18))
 		gender = "D"
-		if request.GET.get('gender',"D") != "notSelected":
-			gender = request.GET.get('gender',"D")[0]
+		email = ''
 		profession = ''
-		if request.GET.get('profession',"D") != "notSelected":
-			profession = request.GET.get('profession','Others')
-		email = request.GET.get('email','')
-		ipAddress = getIpAddress(request)
-		ipAddress = '139.130.4.22'
-		existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
-		existingVote = existingVote[0]
-		existingVote.age = user_age
-		existingVote.gender = gender
-		existingVote.profession = profession
-		existingVote.email = email
-		existingVote.save()
-		if email and not User.objects.filter(email=email):
-			new_user = User(first_name="User",email=email,username=email,password=email)
-			new_user.save()
-			new_extended_user = ExtendedUser(user=new_user)
-			new_extended_user.save()
-			if user_age > 0:
-				new_extended_user.birthDay = datetime.date.today().year - user_age
-			if profession:
-				new_extended_user.profession = profession
-			new_extended_user.gender = gender
-			new_extended_user.country = existingVote.country
-			new_extended_user.state = existingVote.state
-			new_extended_user.city = existingVote.city
-			new_extended_user.save()
-		elif email:
-			old_user = User.objects.filter(email=email)[0]
-			subscribed, created = Subscriber.objects.get_or_create(user=old_user, question=poll)
-			voted, created = Voted.objects.get_or_create(user=old_user, question=poll)
-			vote, created = Vote.objects.get_or_create(user=old_user, choice=existingVote.choice)
+		print(alreadyVoted, dataStored)
+		if alreadyVoted == 'false' and dataStored == 'false':
+			if request.GET.get('age'):
+				user_age = int(request.GET.get('age',18))
+			if request.GET.get('gender',"D") != "notSelected":
+				gender = request.GET.get('gender',"D")[0]
+			if request.GET.get('profession',"D") != "notSelected":
+				profession = request.GET.get('profession','Others')
+			email = request.GET.get('email','')
+			ipAddress = getIpAddress(request)
+			ipAddress = '139.130.4.22'
+			existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
+			existingVote = existingVote[0]
+			existingVote.age = user_age
+			existingVote.gender = gender
+			existingVote.profession = profession
+			existingVote.email = email
+			existingVote.save()
+			if email and not User.objects.filter(email=email):
+				new_user = User(first_name="User",email=email,username=email,password=email)
+				new_user.save()
+				new_extended_user = ExtendedUser(user=new_user)
+				new_extended_user.save()
+				if user_age > 0:
+					new_extended_user.birthDay = datetime.date.today().year - user_age
+				if profession:
+					new_extended_user.profession = profession
+				new_extended_user.gender = gender
+				new_extended_user.country = existingVote.country
+				new_extended_user.state = existingVote.state
+				new_extended_user.city = existingVote.city
+				new_extended_user.save()
+			elif email:
+				old_user = User.objects.filter(email=email)[0]
+				subscribed, created = Subscriber.objects.get_or_create(user=old_user, question=poll)
+				voted, created = Voted.objects.get_or_create(user=old_user, question=poll)
+				vote, created = Vote.objects.get_or_create(user=old_user, choice=existingVote.choice)
 		choice_data = {}
 		percent = {}
 		totalVotes = 0

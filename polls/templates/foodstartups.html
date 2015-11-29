@@ -48,9 +48,39 @@
 					•	Swiggy on the other hand takes a hit of 14% Points in the age group of 26 – 30.<br>
 				<br>
 				</P>
+				
+				<ul id="foodStartUpsShare" class="share-buttons">
+					<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/foodtechstartups" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-hashtags="AskByPoll" style="margin-left:1rem;">Tweet</a></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/foodtechstartups" style="margin-left:1rem;"></div></li>
+				</ul>
+
 				<div id="disqus_thread">
 				</div>
 				<script type="text/javascript">
+
+					(function(d, s, id) 
+					{
+		  				var js, fjs = d.getElementsByTagName(s)[0];
+		  				if (d.getElementById(id)) return;
+		  				js = d.createElement(s); js.id = id;
+		  				js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
+		  				fjs.parentNode.insertBefore(js, fjs);
+					}
+					(document, 'script', 'facebook-jssdk'));
+
+					!function(d,s,id)
+					{
+						var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+						if(!d.getElementById(id))
+						{
+							js=d.createElement(s);
+							js.id=id;
+							js.src=p+'://platform.twitter.com/widgets.js';
+							fjs.parentNode.insertBefore(js,fjs);
+						}
+					}(document, 'script', 'twitter-wjs');
+
 					var disqus_shortname = 'askbypoll';
 					/* * * DON'T EDIT BELOW THIS LINE * * */
 					(function() {
