@@ -329,7 +329,11 @@
 					</div>
 					<i class="fa fa-plus-circle add-q">Add Question</i>
 					<p>
-					<input class="submit" type="submit" value="Update" id="createPollSubmit"/>
+					{% if clone %}
+						<input class="submit" type="submit" value="Clone" id="createPollSubmit"/>
+					{% else %}
+						<input class="submit" type="submit" value="Update" id="createPollSubmit"/>
+					{% endif %}
 					</p>
 				</form>
 				</div>

@@ -1658,8 +1658,8 @@ class SurveyEditView(BaseViewDetail):
 			canEdit = False
 		if survey.user != request.user and not request.user.is_superuser:
 			canEdit = False
-		if not canEdit:
-			url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'que_slug':survey.que_slug})
+		if not canEdit and not request.path.startswith("/clonesurvey"):
+			url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
 			return HttpResponseRedirect(url)
 		else:
 			context["data"] = Category.objects.all()
@@ -2206,7 +2206,7 @@ class PDFView(generic.DetailView):
 			if voted.survey_question_count != voted.user_answer_count:
 				incompleteResponses += 1
 		completeRate = 0
-		print(surveytotalResponses,incompleteResponses,int((surveytotalResponses-incompleteResponses)/surveytotalResponses))
+		# print(surveytotalResponses,incompleteResponses,int((surveytotalResponses-incompleteResponses)/surveytotalResponses))
 		if surveytotalResponses > 0:
 			completeRate = int(((surveytotalResponses-incompleteResponses)/surveytotalResponses)*100)
 		survey_polls = []
@@ -2263,8 +2263,8 @@ class PDFView(generic.DetailView):
 						maxVotedChoiceStr = "Choice"+str(index+1)
 					if(numVotes <= minVotedCount):
 						minVotedCount = numVotes
-					print(Vote.objects.filter(choice_id = choice.id))
-					print(VoteApi.objects.filter(choice_id = choice.id))
+					# print(Vote.objects.filter(choice_id = choice.id))
+					# print(VoteApi.objects.filter(choice_id = choice.id))
 					for vote in Vote.objects.filter(choice_id = choice.id):
 						choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
 						total_choice_vote += 1
