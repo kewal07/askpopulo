@@ -9,8 +9,9 @@ html{
   	/*font-family: 'Lato', sans-serif;*/
   	font-family: 'Arvo', serif;
 }
-.pdf-pages{
+.pdf-pages, #pdf-survey-footer{
 	/*background: url('/static/login/images/analytics-raw.jpg') no-repeat center center fixed;*/
+	/*height: 1030px;*/
 }
 #wrapper {
 	max-width: none;
@@ -22,27 +23,47 @@ html{
     margin-top: 1rem !important;
 }
 .page-main-heading{
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	/*margin-top: 1rem;*/
+	margin-bottom: 0.5rem;
 	font-size: 2rem;
     text-align: center;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
+    background: white;
+    padding: 0.4rem;
 }
 .data-heading-pdf{
-	margin-top: 1rem;
-    font-size: 1.2rem;
+	margin-bottom: 0.5rem;
+    font-weight: bold;
+    background: wheat;
+    padding: 0.4rem;
 }
 .pdf-chart{
 	width: 325px;
     display: inline-block;
+}
+.pdf-data{
+	background: white;
+	font-size: 0.8rem !important;
+	margin: 0.5rem 0 0.5rem;
+	padding: 0.4rem 0 0.4rem 0.4rem;;
 }
 .pdf-data-tabbed{
 	padding-left: 2rem;
 	padding-bottom: 0.5rem;
 }
 .pdf-data-bold{
-	padding-top: 0.4rem;
 	font-weight: bold;
+}
+.pdf-data-sundar{
+	background: wheat;
+}
+.pdf-info{
+	background: white;
+}
+.pdf-data-footer{
+	position: absolute;
+    bottom: 0;
+    right: 0px;
 }
 .advancedanalyseSelectPDF{
 	background: wheat;
@@ -59,4 +80,60 @@ html{
 }
 .advancedAnaPDF{
 	padding: 0.5rem 0 0.5rem 0;
+	text-align: center;
+}
+.pdf-que-text{
+	background: #cfcfcf;
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+.table-component-pdf {
+    line-height: 1.5em;
+    margin: 0 auto;
+    padding: 1em 0 1em;
+    overflow: hidden;
+}
+td, th {
+    text-align: center !important;
+    vertical-align: middle;
+    padding: none !important;
+}
+.pdf-choice-text{
+	background: white;
+	margin: 0.2rem 0 0.2rem;
+}
+.figurePDF { 
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+.choices{
+	display: -ms-flex; 
+  	display: -webkit-flex; 
+  	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+  	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+  	display: -ms-flexbox;      /* TWEENER - IE 10 */
+  	display: flex;
+}
+.choiceDetailImage{
+	width:100px;
+	height:100px;
+	margin:0 1rem;
+}
+.choiceFigCaption{
+	/*text-align: center;*/
+	/*height:21px;*/
+	font-size: 0.8rem !important;
+}
+.choice-figure{
+    display: inline-block;
+    width: 130px;
+    background: white;
+    height: auto;
+}
+.pdf-footer-logo{
+	width: 200px;
+    /*margin-left: 2px;*/
 }

@@ -156,13 +156,30 @@
 	</script>
 {% endblock %}
 {% block content %}
+
+		<div class="pdf-pages" id="pdf-page0">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Survey Details</h1>
+				<p class="data-heading-pdf">
+					Survey Name : {{ survey.survey_name }}
+				</p>
+				<p class="pdf-data pdf-data-tabbed">
+					Description : {{ survey.description }}
+				</p>
+				{% for poll in polls %}
+					<p class="pdf-data">
+						Question {{ forloop.counter }} : {{ poll.question.question_text }} 
+					</p>
+				{% endfor %}
+			</div>
+		</div>
 	
 		<div class="pdf-pages" id="pdf-page1">
 			<div class="survey-overview survey-overview-pdf">
 				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
 				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
 				<div class="table-container">
-					<div class="table-component">
+					<div class="table-component-pdf">
 						<table>
 							<thead>
 								<tr>
@@ -180,7 +197,7 @@
 					</div>
 				</div><!-- /container -->
 				<div class="table-container">
-					<div class="table-component">
+					<div class="table-component-pdf">
 						<table>
 							<thead>
 								<tr>
@@ -192,18 +209,19 @@
 							</thead>
 							<tbody>
 								{% for poll in polls %}
+								{% if forloop.counter < 6 %}
 									<tr>
-										<th class="question-table-heading">Question{{ forloop.counter }} : {{ poll.question.question_text }}</th>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
 										<td> {{ poll.totalResponses }} votes</td>
 										{% if poll.q_type != "text" %}
 											<td> 
 												{% for choice in poll.maxVotes %}
-													{{ choice }} votes
+													{{ choice }}<br>
 												{% endfor %}
 											</td>
 											<td>
 												{% for choice in poll.minVotes %}
-													{{ choice }} votes
+													{{ choice }}<br>
 												{% endfor %}
 											</td>
 										{% else %}
@@ -211,6 +229,7 @@
 											<td>NA</td>
 										{% endif %}
 									</tr>
+								{% endif %}
 								{% endfor %}
 							</tbody>
 						</table>		
@@ -219,72 +238,320 @@
 			</div>
 		</div>
 
+		{% if polls|length > 5 %}
 		<div class="pdf-pages" id="pdf-page2">
 			<div class="survey-overview survey-overview-pdf">
-				<h1 class="page-main-heading">Per Question Survey Analysis</h1>
-				{% for poll in polls %}
-				{% if poll.question.id == maxVotedQuestion %}
-					{% for choice in poll.question.choice_set.all %}
-						{% if choice.choice_image %}
-							<figure>
-								<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
-								<figcaption class="choiceFigCaption">
-									{% if choice.choice_text %}
-										Choice{{ forloop.counter }} : {{ choice.choice_text }}
-									{% else %}
-										Choice{{ forloop.counter }}
-									{% endif %}
-								</figcaption>
-							</figure>
-						{% else %}
-							Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
-							<br/>
-						{% endif %}
-					{% endfor %}
-					<p class="data-heading-pdf">
-						{{ poll.question.question_text }}
-					</p>
-					<div id="pollsChart-pdf" class="pollsChartPDF"></div>
-					<div id="analysis-pdf">
-						<div class="pdf-chart" id="genderchart"></div>
-						<div class="pdf-chart" id="agechart"></div>
-						<div class="pdf-chart" id="locationchart"></div>
-						<div class="pdf-chart" id="professionchart"></div>
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component-pdf">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+								{% if forloop.counter > 5 and forloop.counter < 11%}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+										{% else %}
+											<td>NA</td>
+											<td>NA</td>
+										{% endif %}
+									</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>		
 					</div>
-					<script type="text/javascript">
-						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph|safe }},"pollsChart-pdf",{{ poll.total_choice_vote }}));
-						google.setOnLoadCallback(drawAgeChartPDF({{ poll.age_graph|safe }},"agechart"));
-						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph|safe }},"genderchart"));
-						google.setOnLoadCallback(drawProfessionChartPDF({{ poll.prof_graph|safe }},"professionchart"));
-						google.setOnLoadCallback(drawRegionsMapPDF({{ poll.country_graph|safe }},"locationchart"));
-					</script>
-				{% endif %}
-				{% endfor %}
+				</div><!-- /container -->
 			</div>
 		</div>
-	
+		{% endif %}
+
+		{% if polls|length > 10 %}
 		<div class="pdf-pages" id="pdf-page3">
 			<div class="survey-overview survey-overview-pdf">
-				<h1 class="page-main-heading">Sample Advanced Analysis from AskByPoll</h1>
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component-pdf">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+								{% if forloop.counter > 10 and forloop.counter < 16%}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+										{% else %}
+											<td>NA</td>
+											<td>NA</td>
+										{% endif %}
+									</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>		
+					</div>
+				</div><!-- /container -->
+			</div>
+		</div>
+		{% endif %}
+
+		{% if polls|length > 15 %}
+		<div class="pdf-pages" id="pdf-page4">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component-pdf">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+								{% if forloop.counter > 15 and forloop.counter < 21%}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+										{% else %}
+											<td>NA</td>
+											<td>NA</td>
+										{% endif %}
+									</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>		
+					</div>
+				</div><!-- /container -->
+			</div>
+		</div>
+		{% endif %}
+
+		{% if polls|length > 20 %}
+		<div class="pdf-pages" id="pdf-page5">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component-pdf">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+								{% if forloop.counter > 20 and forloop.counter < 26%}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+										{% else %}
+											<td>NA</td>
+											<td>NA</td>
+										{% endif %}
+									</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>		
+					</div>
+				</div><!-- /container -->
+			</div>
+		</div>
+		{% endif %}
+
+		{% if polls|length > 25 %}
+		<div class="pdf-pages" id="pdf-page6">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Macro Analysis of the Survey</h1>
+				<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+				<div class="table-container">
+					<div class="table-component-pdf">
+						<table>
+							<thead>
+								<tr>
+									<th class="question-table">Question ID</th>
+									<th>Responses</th>
+									<th>Most Voted</th>
+									<th>Least Voted</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for poll in polls %}
+								{% if forloop.counter > 25 %}
+									<tr>
+										<th class="question-table-heading">Question{{ forloop.counter }}</th>
+										<td> {{ poll.totalResponses }} votes</td>
+										{% if poll.q_type != "text" %}
+											<td> 
+												{% for choice in poll.maxVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+											<td>
+												{% for choice in poll.minVotes %}
+													{{ choice }}<br>
+												{% endfor %}
+											</td>
+										{% else %}
+											<td>NA</td>
+											<td>NA</td>
+										{% endif %}
+									</tr>
+								{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>		
+					</div>
+				</div><!-- /container -->
+			</div>
+		</div>
+		{% endif %}
+
+		{% for poll in polls %}
+		<div class="pdf-pages" id="pdf-pages-poll{{ forloop.counter }}">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Per Question Survey Analysis</h1>
+				{% for choice in poll.question.choice_set.all %}
+					{% if choice.choice_image %}
+						<div class="choice-figure">
+							<img width="100px" height="100px" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+							<p class="choiceFigCaption">
+								{% if choice.choice_text %}
+									Choice{{ forloop.counter }} : {{ choice.choice_text }}
+								{% else %}
+									Choice{{ forloop.counter }}
+								{% endif %}
+							</p>
+						</div>
+					{% else %}
+						<p class="pdf-data">Choice{{ forloop.counter }} : "{{ choice.choice_text }}"</p>
+					{% endif %}
+				{% endfor %}
+				<p class="data-heading-pdf">
+					Question : {{ poll.question.question_text }}
+				</p>
+				{% if poll.q_type != "text" %}
+					<div id="pollsChart-pdf{{ poll.question.id }}" class="pollsChartPDF"></div>
+					<div id="analysis-pdf">
+						<div class="pdf-chart" id="genderchart{{ poll.question.id }}"></div>
+						<div class="pdf-chart" id="agechart{{ poll.question.id }}"></div>
+						<div class="pdf-chart" id="locationchart{{ poll.question.id }}"></div>
+						<div class="pdf-chart" id="professionchart{{ poll.question.id }}"></div>
+					</div>
+					<script type="text/javascript">
+						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph|safe }},"pollsChart-pdf{{ poll.question.id }}",{{ poll.total_choice_vote }}));
+						google.setOnLoadCallback(drawAgeChartPDF({{ poll.age_graph|safe }},"agechart{{ poll.question.id }}"));
+						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph|safe }},"genderchart{{ poll.question.id }}"));
+						google.setOnLoadCallback(drawProfessionChartPDF({{ poll.prof_graph|safe }},"professionchart{{ poll.question.id }}"));
+						google.setOnLoadCallback(drawRegionsMapPDF({{ poll.country_graph|safe }},"locationchart{{ poll.question.id }}"));
+					</script>
+				{% else %}
+					{% for text in poll.que_text_answers %}
+						<p class="pdf-que-text">{{ text }}</p>
+					{% endfor %}
+				{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+	
+		<div class="pdf-pages" id="second-last-page">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Sample Advanced Analysis</h1>
 				<p class="pdf-data">
-					Use the Dashboard for more advanced real time analysis like –
-				</p>
-				<p class="pdf-data pdf-data-tabbed">
-					•	Country & State Specific Location Breakdown – Click on the Country graph.<br>
-					•	Choice specific analysis – Choose specific choice from dropdown<br>
-					•	Multi-Variable Comparative Analysis - Choose multiple parameters from the dropdown based on the comparison to be done with the base graph. <br>
-				</p>
-				<p class="pdf-data	">
+					Use the Dashboard for more advanced real time analysis like –<br>
+				<span class="pdf-data-tabbed">
+					•	Country & State Specific Location Breakdown – Click on the Country graph.
+				</span><br>
+				<span class="pdf-data-tabbed">
+					•	Choice specific analysis – Choose specific choice from dropdown
+				</span><br>
+				<span class="pdf-data-tabbed">
+					•	Multi-Variable Comparative Analysis - Choose multiple parameters from the dropdown based on the comparison to be done with the base graph.
+				</span><br>
 					A sample example of real time Multi-Variable Comparative Analysis – 
-				</p>
-				<p class="pdf-data pdf-data-bold">
-					Base Graph vs. Multi Parameter Graph
 				</p>
 				{% for poll in polls %}
 				{% if poll.question.id == maxVotedQuestion %}
+					<p class="data-heading-pdf">
+						Question : {{ poll.question.question_text }}
+					</p>
+					<p class="pdf-data pdf-data-bold">
+						Base Graph vs. Multi Parameter Graph
+					</p>
 					<div id="pollsChart-pdf-cmp1" class="pollsChartPDF"></div>
-					<div id="advancedAna" class="advancedAnaPDF">
-						<p style="margin-bottom:1rem;"> Filter by different parameters </p>
+					<div class="pdf-data advancedAnaPDF">
+						<p style="margin-bottom:0.4rem;"> Filter by different parameters </p>
 						<select class="advancedanalyseSelectPDF">
 							<option value="nochoice">Gender</option>
 						</select>
@@ -304,7 +571,7 @@
 					<div id="pollsChart-pdf-cmp2" class="pollsChartPDF"></div>
 					<p class="pdf-data pdf-data-bold">
 						Base Pie Charts vs. Choice Specific Pie Charts:
-					</p><br>
+					</p>
 					<div class="analysis-pdf">
 					<div class="analysis-pdf-cmp">
 						<select class="advancedanalyseSelectPDF advancedanalyseSelectPDFAbsolute">
@@ -328,6 +595,35 @@
 				{% endif %}
 				{% endfor %}
 			</div>
+		</div>
+
+		<div class="pdf-pages" id="last-page">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">About AskByPoll</h1>
+				<div class="pdf-info">
+				<p class="pdf-data">
+					AskByPoll is a modern age research and decision making tool that helps in performing primary research through quick polls and surveys. The platform provides a community of voters who can help in providing their opinion based on the nature of the question. The platform provides quantitative and qualitative results on a question and easy to use real time analytics tools for quicker decision making
+				</p>
+				<p class="pdf-data pdf-data-bold">
+					We can also help you out with the analysis of any research you have performed on AskByPoll. We would conduct the analysis at the backend and provide you with business critical recommendations derived from our platform
+				</p>
+				<p class="pdf-data">
+					To get more details about the platform & services reach out to us at: support@askbypoll.com or call us at +917829716024, +917411132182
+				</p>
+				</div>
+				<p class="pdf-data pdf-data-sundar">
+					Contact Details:<br>
+					Email: support@askbypoll.com | Call: +917829716024 (India) <br>
+					Facebook: /askbypoll      Twitter: @AskByPoll
+				</p>
+			</div>
+		</div>
+
+		<div id="pdf-survey-footer">
+			<img class="pdf-footer-logo" src="/static/logoAndText.png">
+			<p class="pdf-data pdf-data-footer">
+				Contact us @ support@askbypoll.com
+			</p>
 		</div>
 	<script type="text/javascript">
 		$(document).ready(function()

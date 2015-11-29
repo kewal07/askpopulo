@@ -38,7 +38,7 @@
 				<li class="dashboard-menu-li">Feed</li>
 				<li class="dashboard-menu-li">Advanced</li>
 				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
-				<li class="dashboard-menu-li">Export</li>
+				<li id="dashboard-export-tab" class="dashboard-menu-li">Export</li>
 				<li class="dashboard-menu-li">Billing</li>
 			</ul>
 		</div>
@@ -720,27 +720,6 @@
 									</div>
 								</div><!-- /container -->
 							</div>
-							<!-- <div class="survey-overview">
-								<p> Total Number of polls : {{ survey_det.polls|length }} </p>
-								{% for poll in survey_det.polls %}
-									<p>{{ poll.question.question_text }}</p>
-									{% if poll.q_type != "text" %}
-										<p>Number of responses {{ poll.totalResponses }} </p>
-										<p>Max Votes on</p>
-										{% for choice in poll.maxVotes %}
-											<p>{{ choice }}</p>
-										{% endfor %}
-										<p>Min Votes on</p>
-										{% for choice in poll.minVotes %}
-											<p>{{ choice }}</p>
-										{% endfor %}
-										{% else %}
-											<p>Number of responses {{ poll.totalResponses }} </p>
-											<p>Max Votes on : NA</p>
-											<p>Min Votes on : NA</p>
-									{% endif %}
-								{% endfor %}
-							</div> -->
 						</li>
 					{% endfor %}
 				</ul>
@@ -1694,6 +1673,8 @@
 
 				$("#export-content").on("click",".export-pdf",function(){
 					var survey_id = $(this)[0].id.replace("export-pdf","");
+					$("#export-content").html('<p class="coming-soon">Please wait for some time.. We are making some sense of the data for you..</p>');
+					$("#dashboard-menu").hide();
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -1717,23 +1698,42 @@
 					  			var a4  =[ 595.28,  841.89];
 					  			setTimeout(function(){
 					  				var pageLenth = $('.pdf-pages').length;
+					  				var pageRendered = 0;
 						  			var doc = new jsPDF('p', 'pt', 'a4', false);
+						  			var dataimgs = [];
+						  			var targets = []
+						  			for(var j=0; j<pageLenth+1; j++){
+						  				dataimgs.push("");
+						  				targets.push("");
+						  			}
+						  			doc.setProperties({
+										title: 'Survey Analysis',
+										subject: 'Survey Analysis',
+										author: 'AskByPoll',
+										creator: 'AskByPoll'
+									});
+									html2canvas($("#pdf-survey-footer"), {
+								        onrendered: function (canvas) {
+								            //Set hidden field's value to image data (base-64 string
+								            var	dataimg = (canvas.toDataURL("image/png"));
+								            dataimgs[pageLenth] = dataimg;
+									    },
+									});
 						  			$(".pdf-pages").each(function(i){
-						  				console.log($(this));
+						  				// console.log($(this));
 						  				var target = $(this);//$("#"+$(this)[i].id);
-						  				console.log(target.width());
-						  				console.log(target.height());
-						  				// var canvas_width = (a4[0]*1.33333) -80;
-						  				// // var canvas_height = (a4[1]*1.33333) -80;
-						  				// console.log(canvas_width);
-						  				// console.log(canvas_height);
-						  				// target.width((a4[0]*1.33333) -80).css('max-width','none');
-						  				// target.height((a4[1]*1) -80).css('max-width','none');
+						  				targets[i] = $(this)[0].id;
+						  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
 						  				html2canvas(target, {
 									        onrendered: function (canvas) {
 									            //Set hidden field's value to image data (base-64 string
-									            console.log("rendered");
+									            var pageIndex = targets.indexOf(target[0].id);
+									            // console.log("rendered",target);
+									            // console.log(pageIndex);
+									            // console.log(target[0].id);
+									            pageRendered += 1
 									            var	dataimg = (canvas.toDataURL("image/png"));
+									            dataimgs[pageIndex] = dataimg;
 									            var bgimg = new Image();
 									            bgimg.src = "/static/login/images/analytics-raw.jpg";
 									            function getBase64Image(img) {
@@ -1749,31 +1749,23 @@
 												    var dataURI = getBase64Image(bgimg);
 												    return dataURI;
 												}
-									            // window.open(img,"_blank");
-									            // alert(img);
-									            // console.log(doc);
-									            // if(i == 0){
-									            	// window.open(img,"_blank");
-									            	doc.addImage(bgimg.onload(),'JPEG',0,0,a4[0],a4[1]);
-									            	doc.addImage(dataimg, 'JPEG',20,20);
-									            	// doc.output("dataurlnewwindow");
-									            // }
-									            // doc.output("dataurlnewwindow");
-									            if(pageLenth == i+1){ 
-									            	// console.log(doc);
-									            	// doc.output("dataurlnewwindow");
-													doc.save('Survey-'+survey_id+'-pdf.pdf');
+												if(pageLenth == pageRendered){ 
+									            	for(var j=0; j<pageLenth; j++){
+										  				doc.addImage(bgimg.onload(),'JPEG',0,0,a4[0],a4[1]);
+									            		doc.addImage(dataimgs[j], 'JPEG',20,20);
+									            		doc.addImage(dataimgs[pageLenth], 'JPEG',0,790,a4[0],55);
+									            		if(j != pageLenth - 1)
+									            			doc.addPage();
+										  			}
+										  			doc.save('Survey-'+survey_id+'-pdf.pdf');
 													$('body').find($("#pdf-body")).remove();
-												} else{
-													doc.addPage();
+													$("#dashboard-menu").show();
+													$('#dashboard-export-tab').click();
 												}
 										    },
-											// width: canvas_width,
-											// height: canvas_height
 										});
-										// return false;
 									});
-								}, 1000);
+								}, 5000);
 							}
 						});
 					{% else %}
