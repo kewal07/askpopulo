@@ -1682,19 +1682,35 @@
 						  				// // var canvas_height = (a4[1]*1.33333) -80;
 						  				// console.log(canvas_width);
 						  				// console.log(canvas_height);
-						  				target.width((a4[0]*1.33333) -80).css('max-width','none');
+						  				// target.width((a4[0]*1.33333) -80).css('max-width','none');
 						  				// target.height((a4[1]*1) -80).css('max-width','none');
 						  				html2canvas(target, {
 									        onrendered: function (canvas) {
 									            //Set hidden field's value to image data (base-64 string
 									            console.log("rendered");
-									            var	img = (canvas.toDataURL("image/png"));
+									            var	dataimg = (canvas.toDataURL("image/png"));
+									            var bgimg = new Image();
+									            bgimg.src = "/static/login/images/analytics-raw.jpg";
+									            function getBase64Image(img) {
+												    var canvas = document.createElement("canvas");
+												    canvas.width = a4[0];
+												    canvas.height = a4[1];
+												    var ctx = canvas.getContext("2d");
+												    ctx.drawImage(img, 0, 0);
+												    var dataURL = canvas.toDataURL("image/jpeg");
+												    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+												}
+									            bgimg.onload = function(){
+												    var dataURI = getBase64Image(bgimg);
+												    return dataURI;
+												}
 									            // window.open(img,"_blank");
 									            // alert(img);
 									            // console.log(doc);
 									            // if(i == 0){
 									            	// window.open(img,"_blank");
-									            	doc.addImage(img, 'JPEG',20,20);
+									            	doc.addImage(bgimg.onload(),'JPEG',0,0,a4[0],a4[1]);
+									            	doc.addImage(dataimg, 'JPEG',20,20);
 									            	// doc.output("dataurlnewwindow");
 									            // }
 									            // doc.output("dataurlnewwindow");

@@ -9,6 +9,9 @@ html{
   	/*font-family: 'Lato', sans-serif;*/
   	font-family: 'Arvo', serif;
 }
+.pdf-pages{
+	/*background: url('/static/login/images/analytics-raw.jpg') no-repeat center center fixed;*/
+}
 #wrapper {
 	max-width: none;
 	width: 713.705px;
