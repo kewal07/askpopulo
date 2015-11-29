@@ -593,6 +593,34 @@ th.question-table-heading {
 .export-pdf{
     width: 7rem;
 }
+.embed-poll-code{
+	margin-right:12rem;
+}
+.embedPollDiv{
+	display:none;
+	border:1px dashed;
+	padding:2rem;
+}
+.embedCodeTextArea{
+	width:60%;
+	font-size:20px;
+	height:60px;
+	vertical-align: top;
+	margin-bottom: 1rem;
+}
+.embedCodeLabel{
+	display: inline-block;
+    width: 30%;
+}
+.embedCodeP{
+	display:inline-block;
+	width:45%;
+}
+#embedCodeDivP{
+	margin: 0 auto;
+    display: block;
+    margin-top: 2rem;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;
