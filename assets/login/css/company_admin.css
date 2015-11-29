@@ -430,12 +430,19 @@ li.questions-li{
     width: 8rem;
 }
 .survey-overview-button{
- right: 20rem;
+ right: 27rem;
  width: 8rem;
 }
 .survey-overview{
 	display:none;
 	margin-top:2rem;
+}
+.completionRate{
+	border: 1px solid;
+    color: black;
+    background: wheat;
+    padding:0.2rem;
+    margin-left: 1rem;
 }
 .share-with-group-form{
 	display:none;

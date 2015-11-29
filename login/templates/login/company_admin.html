@@ -513,10 +513,12 @@
 							<div class="liDetail">
 								<div class="check_analyse">
 									<p class="main activity_url main-survey" id="survey---{{ survey_det.survey.id }}">
-										{{ survey_det.survey.survey_name }}
+										{{ survey_det.survey.survey_name }} <span class="completionRate"> Completion Rate : {{ survey_det.completionRate }}%</span>
 									</p>
+
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
 									<p class="check">
+										<span class="see-more-details see-more-details-p survey-overview-button">Overview</span>
 										{% if survey_det.survey.surveyvoted_set.count < 1 or user.is_superuser %}
 											<span class="see-more-details see-more-details-p edit-u"><a href="{% url 'polls:survey_edit' survey_det.survey.id survey_det.survey.survey_slug %}">Edit Survey</a></span>
 										{% endif %}
@@ -650,6 +652,7 @@
 											<thead>
 												<tr>
 													<th class="question-table">Question ID</th>
+													<th>Type</th>
 													<th>Responses</th>
 													<th>Most Voted</th>
 													<th>Least Voted</th>
@@ -659,6 +662,7 @@
 												{% for poll in survey_det.polls %}
 													<tr>
 														<th class="question-table-heading">Question{{ forloop.counter }} : {{ poll.question.question_text }}</th>
+														<td> {{ poll.q_type }} </td>
 														<td> {{ poll.totalResponses }} votes</td>
 														{% if poll.q_type != "text" %}
 															<td> 

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
 from polls import views
 
 urlpatterns = patterns('',
@@ -49,4 +50,5 @@ urlpatterns = patterns('',
 	url(r'^results-embed-poll',views.results_embed_poll,name="results_embed_poll"),
 	url(r'^exportexcel', views.excel_view,name="exportexcel"),
 	url(r'^exportpdf/(?P<pk>\d+)', views.PDFView.as_view(),name="exportpdf"),
+	url(r'^foodtechstartups', TemplateView.as_view(template_name='foodstartups.html'), name='foodstartups'),
 )
