@@ -513,7 +513,7 @@
 							<div class="liDetail">
 								<div class="check_analyse">
 									<p class="main activity_url main-survey" id="survey---{{ survey_det.survey.id }}">
-										{{ survey_det.survey.survey_name }} <span class="completionRate"> Completion Rate : {{ survey_det.completionRate }}%</span>
+										{{ survey_det.survey.survey_name }}
 									</p>
 
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
@@ -651,6 +651,24 @@
 										<table>
 											<thead>
 												<tr>
+													<th>Total Responses</th>
+													<th>Completion Rate</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>{{ survey_det.votes }}</td>
+													<td>{{ survey_det.incompleteResponses }}%</td>
+												</tr>
+											</tbody>
+										</table>		
+									</div>
+								</div>
+								<div class="table-container">
+									<div class="table-component">
+										<table>
+											<thead>
+												<tr>
 													<th class="question-table">Question ID</th>
 													<th>Type</th>
 													<th>Responses</th>
@@ -661,18 +679,18 @@
 											<tbody>
 												{% for poll in survey_det.polls %}
 													<tr>
-														<th class="question-table-heading">Question{{ forloop.counter }} : {{ poll.question.question_text }}</th>
+														<th class="question-table-heading">Question {{ forloop.counter }}</th>
 														<td> {{ poll.q_type }} </td>
 														<td> {{ poll.totalResponses }} votes</td>
 														{% if poll.q_type != "text" %}
 															<td> 
 																{% for choice in poll.maxVotes %}
-																	{{ choice }} votes
+																	{{ choice }}<br>
 																{% endfor %}
 															</td>
 															<td>
 																{% for choice in poll.minVotes %}
-																	{{ choice }} votes
+																	{{ choice }}<br>
 																{% endfor %}
 															</td>
 														{% else %}

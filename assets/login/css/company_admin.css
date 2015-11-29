@@ -221,12 +221,12 @@ li.followers{
 .edit-u{
 	/*top: 4rem;*/
     width: 7rem;
-    right: 27rem;
+    right: 34rem;
 }
 .clone-u{
 	/*top: 4rem;*/
     width: 7rem;
-    right: 20rem;
+    right: 27rem;
 }
 .check{
 	float: right;
@@ -430,7 +430,7 @@ li.questions-li{
     width: 8rem;
 }
 .survey-overview-button{
- right: 27rem;
+ right: 20rem;
  width: 8rem;
 }
 .survey-overview{

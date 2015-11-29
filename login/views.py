@@ -521,40 +521,41 @@ class AdminDashboard(BaseViewDetail):
 				sur_dict['votes'] = totalParticipants
 				total_views += survey.numViews
 				survey_questions = Survey_Question.objects.filter(survey_id=survey.id)
-				
-				for surveyVote in surveyVoted:
-					totalVoted += surveyVote.user_answer_count
 
-				if not totalParticipants == 0 and not len(survey_questions) == 0:
-					sur_dict['completionRate'] = round(((totalVoted)/(totalParticipants*(len(survey_questions))))*100, 2)
-				else:
-					sur_dict['completionRate'] = 0
+				incompleteResponses = 0				
+				for voted in surveyVoted:
+					if voted.survey_question_count != voted.user_answer_count:
+						incompleteResponses += 1
+
+				completeRate = 0
+				if totalParticipants > 0:
+					completeRate = int(((totalParticipants-incompleteResponses)/totalParticipants)*100)
+				sur_dict["incompleteResponses"] = completeRate
 
 				sur_dict['polls'] = []
 				for x in survey_questions:
-					maxVotes = -1
-					minVotes = 99999
+					# maxVotes = -1
+					# minVotes = 99999
 					maxVotedChoiceList = []
 					minVotedChoiceList = []
+					choice_dict = {}
+					maxVotedCount = -1
+					minVotedCount = 99999
 					questionChoices = x.question.choice_set.all()
 					totalResponses = x.question.voted_set.count()
-					for choice in questionChoices:
-						numVotes = choice.vote_set.count()
-						if(numVotes == maxVotes):
-							maxVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
-						elif numVotes > maxVotes:
-							maxVotedChoiceList[:] = []
-							maxVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
-							maxVotes = numVotes
+					for index,choice in enumerate(questionChoices):
+						vote_set = choice.vote_set
+						numVotes = vote_set.count()
+						# print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
+						if not choice_dict.get(numVotes):
+							choice_dict[numVotes] = []
+						choice_dict[numVotes].append("Choice " + str(index+1)) # + " : " + str(numVotes))
+						if(numVotes >= maxVotedCount):
+							maxVotedCount = numVotes
+						if(numVotes <= minVotedCount):
+							minVotedCount = numVotes
 
-						if(numVotes == minVotes):
-							minVotedChoiceList.append(choice.choice_text+' : '+str(numVotes))
-						elif numVotes < minVotes:
-							minVotedChoiceList[:] = []
-							minVotedChoiceList.append(choice.choice_text+':'+str(numVotes))
-							minVotes = numVotes
-
-					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":maxVotedChoiceList,"minVotes":minVotedChoiceList})
+					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":choice_dict.get(maxVotedCount,""),"minVotes":choice_dict.get(minVotedCount,"")})
 				survey_detail_list.append(sur_dict)
 				# sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
 				# survey_detail_list.append(sur_dict)
@@ -586,6 +587,7 @@ class AdminDashboard(BaseViewDetail):
 			data['votes_count'] = votes_count
 			data['total_views'] = total_views
 			data['categories'] = Category.objects.all()
+			print(data)
 			return data
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()

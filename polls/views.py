@@ -1090,6 +1090,10 @@ scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmann
 
 wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
 
+regionDict = {
+	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
+}
+
 class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
@@ -1820,7 +1824,7 @@ def vote_embed_poll(request):
 			dbIpResponse = requests.get(url)
 			locationData = dbIpResponse.json()
 			votedChoice = Choice.objects.get(pk=choiceId)
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=locationData['country'],city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress)
 			votedChoiceFromApi.save()
 			totalVotes = VoteApi.objects.filter(question=question).count()
 			choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
@@ -2201,6 +2205,10 @@ class PDFView(generic.DetailView):
 		for voted in survey_voted:
 			if voted.survey_question_count != voted.user_answer_count:
 				incompleteResponses += 1
+		completeRate = 0
+		print(surveytotalResponses,incompleteResponses,int((surveytotalResponses-incompleteResponses)/surveytotalResponses))
+		if surveytotalResponses > 0:
+			completeRate = int(((surveytotalResponses-incompleteResponses)/surveytotalResponses)*100)
 		survey_polls = []
 		maxVotedQuestionCount = -1
 		maxVotedQuestion = -1
@@ -2212,8 +2220,8 @@ class PDFView(generic.DetailView):
 				maxVotedQuestionCount = totalResponses
 			maxVotedChoice = ""
 			maxVotedChoiceStr = ""
-			maxVotedCount = 0
-			minVotedCount = 0
+			maxVotedCount = -1
+			minVotedCount = 99999
 			choice_dict = {} 
 			choice_vote_count = {}
 			total_choice_vote = 0
@@ -2233,82 +2241,89 @@ class PDFView(generic.DetailView):
 			gender_dict_filter['D'] = 0
 			prof_dict_filter = {}
 			country_dict_filter = {}
-			for index,choice in enumerate(questionChoices):
-				choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
-				choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
-				vote_set = choice.vote_set
-				numVotes = vote_set.count()
-				print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
-				if not choice_dict.get(numVotes):
-					choice_dict[numVotes] = []
-				choice_dict[numVotes].append(choice.choice_text + " : " + str(numVotes))
-				if(numVotes >= maxVotes):
-					maxVotedCount = numVotes
-					maxVotedChoice = choice.id
-					maxVotedChoiceStr = "Choice"+str(index+1)
-				if(numVotes <= minVotes):
-					minVotedCount = numVotes
-				print(Vote.objects.filter(choice_id = choice.id))
-				print(VoteApi.objects.filter(choice_id = choice.id))
-				for vote in Vote.objects.filter(choice_id = choice.id):
-					choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
-					total_choice_vote += 1
-					age = vote.user.extendeduser.calculate_age()
-					if age > 25 and age < 31:
-						choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
-						total_choice_vote_filter += 1
-					gender = vote.user.extendeduser.gender
-					profession = vote.user.extendeduser.profession
-					country = vote.user.extendeduser.country
-					age_dict = get_age_data(age,age_dict)
-					gender_dict[gender] = gender_dict.get(gender,0) + 1
-					prof_dict[profession] = prof_dict.get(profession,0) + 1
-					if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
-							country = 'United Kingdom'
-					country_dict[country] = country_dict.get(country,0) + 1
-				for vote in VoteApi.objects.filter(choice_id=choice.id):
-					age = vote.age
-					gender = vote.gender
-					profession = vote.profession
-					country = vote.country
-					if age and gender and profession:
+			que_text_answers = []
+			if x.question_type == "text":
+				for votetext in VoteText.objects.filter(question_id = x.question.id):
+					que_text_answers.append(votetext.answer_text)
+					if len(que_text_answers) == 10:
+						break
+			else:
+				for index,choice in enumerate(questionChoices):
+					choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
+					choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
+					vote_set = choice.vote_set
+					numVotes = vote_set.count()
+					# print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
+					if not choice_dict.get(numVotes):
+						choice_dict[numVotes] = []
+					choice_dict[numVotes].append("Choice " + str(index+1)) # + " : " + str(numVotes))
+					if(numVotes >= maxVotedCount):
+						maxVotedCount = numVotes
+						maxVotedChoice = choice.id
+						maxVotedChoiceStr = "Choice"+str(index+1)
+					if(numVotes <= minVotedCount):
+						minVotedCount = numVotes
+					print(Vote.objects.filter(choice_id = choice.id))
+					print(VoteApi.objects.filter(choice_id = choice.id))
+					for vote in Vote.objects.filter(choice_id = choice.id):
+						choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+						total_choice_vote += 1
+						age = vote.user.extendeduser.calculate_age()
 						if age > 25 and age < 31:
 							choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
 							total_choice_vote_filter += 1
-						choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
-						total_choice_vote += 1
+						gender = vote.user.extendeduser.gender
+						profession = vote.user.extendeduser.profession
+						country = vote.user.extendeduser.country
 						age_dict = get_age_data(age,age_dict)
 						gender_dict[gender] = gender_dict.get(gender,0) + 1
 						prof_dict[profession] = prof_dict.get(profession,0) + 1
 						if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 								country = 'United Kingdom'
 						country_dict[country] = country_dict.get(country,0) + 1
-				for vote in Vote.objects.filter(choice_id = maxVotedChoice):
-					age = vote.user.extendeduser.calculate_age()
-					gender = vote.user.extendeduser.gender
-					profession = vote.user.extendeduser.profession
-					country = vote.user.extendeduser.country
-					age_dict_filter = get_age_data(age,age_dict_filter)
-					gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
-					prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
-					if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
-							country = 'United Kingdom'
-					country_dict_filter[country] = country_dict.get(country,0) + 1
-				for vote in VoteApi.objects.filter(choice_id = maxVotedChoice):
-					age = vote.age
-					gender = vote.gender
-					profession = vote.profession
-					country = vote.country
-					if age and gender and profession:
+					for vote in VoteApi.objects.filter(choice_id=choice.id):
+						age = vote.age
+						gender = vote.gender
+						profession = vote.profession
+						country = vote.country
+						if age and gender and profession:
+							if age > 25 and age < 31:
+								choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+								total_choice_vote_filter += 1
+							choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+							total_choice_vote += 1
+							age_dict = get_age_data(age,age_dict)
+							gender_dict[gender] = gender_dict.get(gender,0) + 1
+							prof_dict[profession] = prof_dict.get(profession,0) + 1
+							if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+									country = 'United Kingdom'
+							country_dict[country] = country_dict.get(country,0) + 1
+					for vote in Vote.objects.filter(choice_id = maxVotedChoice):
+						age = vote.user.extendeduser.calculate_age()
+						gender = vote.user.extendeduser.gender
+						profession = vote.user.extendeduser.profession
+						country = vote.user.extendeduser.country
 						age_dict_filter = get_age_data(age,age_dict_filter)
 						gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
 						prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
 						if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 								country = 'United Kingdom'
 						country_dict_filter[country] = country_dict.get(country,0) + 1
-			survey_polls.append({ "question":x.question, "q_type":x.question_type, "totalResponses":totalResponses, "maxVotes":choice_dict.get(maxVotedCount,""), "minVotes":choice_dict.get(minVotedCount,""), "choice_graph":choice_vote_count, "choice_graph_filter":choice_vote_count_filter, "total_choice_vote":total_choice_vote, "total_choice_vote_filter":total_choice_vote_filter, "age_graph":age_dict, "gender_graph":gender_dict, "prof_graph":prof_dict, "country_graph":country_dict, "age_graph_filter":age_dict_filter,"gender_graph_filter":gender_dict_filter, "prof_graph_filter":prof_dict_filter, "country_graph_filter":country_dict_filter, "maxVotedChoiceStr":maxVotedChoiceStr })
+					for vote in VoteApi.objects.filter(choice_id = maxVotedChoice):
+						age = vote.age
+						gender = vote.gender
+						profession = vote.profession
+						country = vote.country
+						if age and gender and profession:
+							age_dict_filter = get_age_data(age,age_dict_filter)
+							gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
+							prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
+							if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+									country = 'United Kingdom'
+							country_dict_filter[country] = country_dict.get(country,0) + 1
+			survey_polls.append({ "question":x.question, "q_type":x.question_type, "totalResponses":totalResponses, "maxVotes":choice_dict.get(maxVotedCount,""), "minVotes":choice_dict.get(minVotedCount,""), "choice_graph":choice_vote_count, "choice_graph_filter":choice_vote_count_filter, "total_choice_vote":total_choice_vote, "total_choice_vote_filter":total_choice_vote_filter, "age_graph":age_dict, "gender_graph":gender_dict, "prof_graph":prof_dict, "country_graph":country_dict, "age_graph_filter":age_dict_filter,"gender_graph_filter":gender_dict_filter, "prof_graph_filter":prof_dict_filter, "country_graph_filter":country_dict_filter, "maxVotedChoiceStr":maxVotedChoiceStr, "que_text_answers":que_text_answers })
 		context["surveytotalResponses"] = surveytotalResponses
-		context["incompleteResponses"] = int(incompleteResponses/surveytotalResponses * 100)
+		context["incompleteResponses"] = completeRate
 		context["polls"] = survey_polls
 		context["maxVotedQuestion"] = maxVotedQuestion
 		print(context)
