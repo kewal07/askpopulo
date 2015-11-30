@@ -154,7 +154,7 @@ function main() {
 						}
 					}
 					if(divId.startsWith('askbypoll-data')){
-						$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
+						//$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
 						$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
 					}
 				});
