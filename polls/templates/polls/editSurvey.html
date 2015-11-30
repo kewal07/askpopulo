@@ -321,7 +321,11 @@
 											</p>
 											</div>
 										{% endfor %}
-										<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice">Add Another</i>
+										{% if question.poll.choice_set.all|length < 5 %}
+											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice">Add Another</i>
+										{% else %}
+											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice" style="display:none">Add Another</i>
+										{% endif %}
 								</div>
 							{% endif %}
 							</div>
