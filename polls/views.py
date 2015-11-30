@@ -1559,6 +1559,30 @@ class SurveyVoteView(BaseViewDetail):
 			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
 				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
 				context['signup_part_form'] = MySignupPartForm(userFormData)
+			profilepicUrl = user.extendeduser.get_profile_pic_url()
+			if not profilepicUrl.startswith('http'):
+				profilepicUrl = r"https://www.askbypoll.com"+profilepicUrl
+			subscribed_questions = Subscriber.objects.filter(user=self.request.user)
+			data = {
+				"id":user.id,
+				"username":user.username,
+				"email":user.email,
+				"avatar":profilepicUrl
+			}
+			data = json.dumps(data)
+			message = base64.b64encode(data.encode('utf-8'))
+			timestamp = int(time.time())
+			key = settings.DISQUS_SECRET_KEY.encode('utf-8')
+			msg = ('%s %s' % (message.decode('utf-8'), timestamp)).encode('utf-8')
+			digestmod = hashlib.sha1
+			sig = hmac.HMAC(key, msg, digestmod).hexdigest()
+			ssoData = dict(
+				message=message,
+				timestamp=timestamp,
+				sig=sig,
+				pub_key=settings.DISQUS_API_KEY,
+			)
+			context['ssoData'] = ssoData
 			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
 			if question_user_vote:
 				question_user_vote = question_user_vote[0]
