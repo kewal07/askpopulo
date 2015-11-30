@@ -1900,6 +1900,9 @@ def results_embed_poll(request):
 				new_extended_user.state = existingVote.state
 				new_extended_user.city = existingVote.city
 				new_extended_user.save()
+				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
+				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
+				vote, created = Vote.objects.get_or_create(user=new_user, choice=existingVote.choice)
 			elif email:
 				old_user = User.objects.filter(email=email)[0]
 				subscribed, created = Subscriber.objects.get_or_create(user=old_user, question=poll)
@@ -2327,7 +2330,7 @@ class PDFView(generic.DetailView):
 		context["incompleteResponses"] = completeRate
 		context["polls"] = survey_polls
 		context["maxVotedQuestion"] = maxVotedQuestion
-		print(context)
+		# print(context)
 		return context
 
 def get_age_data(user_age,age_dic):
