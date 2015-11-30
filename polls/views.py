@@ -189,7 +189,7 @@ class IndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
-			data['votes'] += mainquestion.voteapi_set.count()
+			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
@@ -273,6 +273,8 @@ class VoteView(BaseViewDetail):
 		context['connection'] = len(followers) + len(following)
 		if context['question'].expiry and context['question'].expiry < timezone.now():
 			context['expired'] = True
+		context['votes'] = context['question'].voted_set.count()
+		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -1066,7 +1068,7 @@ class CompanyIndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
-			data['votes'] += mainquestion.voteapi_set.count()
+			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False

@@ -126,7 +126,7 @@
 			<div class="pollInfo  pollsInfoVotePage clearfix">
 				<div class="pollInfoDataDetail clearfix">
 					<ul class="pollInfoUl clearfix">
-						<li><span class="pollInfoNum">{{ question.voted_set.count }}</span> <i title="opinions" class="fa fa-check-circle"></i></li>
+						<li><span class="pollInfoNum">{{ votes }}</span> <i title="opinions" class="fa fa-check-circle"></i></li>
 						<li><span class="pollInfoNum" id="sub_num{{ question.id }}">{{ question.subscriber_set.count }}</span> <i title="interested" class="fa fa-users"></i></li>
 						<li>{% if question.id in subscribed %}
 								<button class="btn followButton following" id="follow{{ question.id }}---{{ question.que_slug }}">Following</button>
