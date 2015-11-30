@@ -616,6 +616,11 @@ th.question-table-heading {
     display: block;
     margin-top: 2rem;
 }
+.advanced-ana-bar-graph{
+	display:none;
+	text-align: center;
+    font-weight: bold;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;

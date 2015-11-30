@@ -696,7 +696,7 @@ var jsPDF = (function(global) {
 			events.publish('addPage', { pageNumber : page });
 		},
 		_setPage = function(n) {
-			if (n > 0 && n <= page) {
+			if (n > 0 && n <= pages.length - 1) {
 				currentPage = n;
 				pageWidth = pagedim[n].width;
 				pageHeight = pagedim[n].height;
@@ -966,6 +966,9 @@ var jsPDF = (function(global) {
 			pageMode   = pmode;
 			return this;
 		},
+		API.getTotalNumberOfPages = function() {
+			return this.internal.getNumberOfPages();
+		};
 
 		/**
 		 * Adds text to page. Supports adding multiline text when 'text' argument is an Array of Strings.

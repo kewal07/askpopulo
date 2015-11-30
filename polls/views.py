@@ -1824,21 +1824,34 @@ def vote_embed_poll(request):
 			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress)
 			votedChoiceFromApi.save()
 			totalVotes = VoteApi.objects.filter(question=question).count()
-			choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
+			email_list_voted = []
+			choice_dic = {}
+			for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
+				email_list_voted.append(voteUser.user.email)
+				totalVotes += 1
+				choice_dic[voteUser.choice] = choice_dic.get(voteUser.choice,0) + 1
+			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
 			for i in choices:
-				i['percent'] = round((i.get('choiceCount')/totalVotes)*100)
+				i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
 				result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
+			
 			req ['result'] = result
 			response = json.dumps(req)
 			response = callback + '(' + response + ');'
 		else:
 			if alreadyVoted == 'true':
 				totalVotes = VoteApi.objects.filter(question=question).count()
-				choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
+				email_list_voted = []
+				choice_dic = {}
+				for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
+					email_list_voted.append(voteUser.user.email)
+					totalVotes += 1
+					choice_dic[voteUser.choice] = choice_dic.get(voteUser.choice,0) + 1
+				choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 				result = {}
 				for i in choices:
-					i['percent'] = round((i.get('choiceCount')/totalVotes)*100)
+					i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
 					result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
 				req ['result'] = result
 			else:
