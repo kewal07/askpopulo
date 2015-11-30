@@ -1716,22 +1716,7 @@
 								            dataimgs[pageLenth] = dataimg;
 									    },
 									});
-						  			$(".pdf-pages").each(function(i){
-						  				// console.log($(this));
-						  				var target = $(this);//$("#"+$(this)[i].id);
-						  				targets[i] = $(this)[0].id;
-						  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
-						  				html2canvas(target, {
-									        onrendered: function (canvas) {
-									            //Set hidden field's value to image data (base-64 string
-									            var pageIndex = targets.indexOf(target[0].id);
-									            // console.log("rendered",target);
-									            // console.log(pageIndex);
-									            // console.log(target[0].id);
-									            pageRendered += 1
-									            var	dataimg = (canvas.toDataURL("image/png"));
-									            dataimgs[pageIndex] = dataimg;
-									            var bgimg = new Image();
+									  	    var bgimg = new Image();
 									            bgimg.src = "/static/login/images/analytics-raw.jpg";
 									            function getBase64Image(img) {
 												    var canvas = document.createElement("canvas");
@@ -1746,14 +1731,41 @@
 												    var dataURI = getBase64Image(bgimg);
 												    return dataURI;
 												}
+									var bgimgloaded = bgimg.onload();
+						  			$(".pdf-pages").each(function(i){
+						  				// console.log($(this));
+						  				var target = $(this);//$("#"+$(this)[i].id);
+						  				targets[i] = $(this)[0].id;
+						  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
+						  				html2canvas(target, {
+									        onrendered: function (canvas) {
+									            //Set hidden field's value to image data (base-64 string
+									            var pageIndex = targets.indexOf(target[0].id);
+									             console.log("rendered",target);
+									             console.log(pageIndex);
+									             console.log(target[0].id);
+									            pageRendered += 1
+									            var	dataimg = (canvas.toDataURL("image/png"));
+									            dataimgs[pageIndex] = dataimg;
 												if(pageLenth == pageRendered){ 
 									            	for(var j=0; j<pageLenth; j++){
-										  				doc.addImage(bgimg.onload(),'JPEG',0,0,a4[0],a4[1]);
+												if(j == 0){
+													doc.addImage(bgimgloaded,'JPEG',0,0,a4[0],a4[1],'mybgimg');
+									            			doc.addImage(dataimgs[j], 'JPEG',20,20);
+													doc.addImage(dataimgs[pageLenth], 'JPEG',0,790,a4[0],55,'myfooterimg');
+												}
+												else{
+												if(j != pageLenth - 2){
+										  				doc.addImage('mybgimg','JPEG',0,0,a4[0],a4[1]);
 									            		doc.addImage(dataimgs[j], 'JPEG',20,20);
-									            		doc.addImage(dataimgs[pageLenth], 'JPEG',0,790,a4[0],55);
-									            		if(j != pageLenth - 1)
+									            		doc.addImage('myfooterimg', 'JPEG',0,790,a4[0],55);
+												}
+												}
+									            		if(j != pageLenth - 1 && j != pageLenth - 2)
 									            			doc.addPage();
+												console.log(j,pageLenth);
 										  			}
+													console.log("saving");
 										  			doc.save('Survey-'+survey_id+'-pdf.pdf');
 													$('body').find($("#pdf-body")).remove();
 													$("#dashboard-menu").show();

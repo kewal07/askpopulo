@@ -202,7 +202,7 @@ li.followers{
 	display: inline-block !important;
 }
 .see-more-details-p{
-	width: 5rem;
+	width: 8rem;
     text-align: center;
     /*margin-top:0.2rem;*/
     bottom: initial;
@@ -215,18 +215,15 @@ li.followers{
 }
 .question-u{
 	/*top: 4rem;*/
-    width: 7rem;
-    right: 5rem;
+    right: 8rem;
 }
 .edit-u{
 	/*top: 4rem;*/
-    width: 7rem;
-    right: 34rem;
+    right: 40rem;
 }
 .clone-u{
 	/*top: 4rem;*/
-    width: 7rem;
-    right: 27rem;
+    right: 32rem;
 }
 .check{
 	float: right;
@@ -426,12 +423,10 @@ li.questions-li{
     box-shadow: 5px 5px 5px;
 }
 .share-with-group{
-	right: 12rem;
-    width: 8rem;
+	right: 16rem;
 }
 .survey-overview-button{
- right: 20rem;
- width: 8rem;
+ right: 24rem;
 }
 .survey-overview{
 	display:none;
