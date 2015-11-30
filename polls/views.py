@@ -189,6 +189,7 @@ class IndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
+			data['votes'] += mainquestion.voteapi_set.count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
@@ -1065,6 +1066,7 @@ class CompanyIndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
+			data['votes'] += mainquestion.voteapi_set.count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
