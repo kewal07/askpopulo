@@ -1833,7 +1833,7 @@ def vote_embed_poll(request):
 			for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
 				email_list_voted.append(voteUser.user.email)
 				totalVotes += 1
-				choice_dic[voteUser.choice] = choice_dic.get(voteUser.choice,0) + 1
+				choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
 			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
 			for i in choices:
@@ -1851,7 +1851,7 @@ def vote_embed_poll(request):
 				for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
 					email_list_voted.append(voteUser.user.email)
 					totalVotes += 1
-					choice_dic[voteUser.choice] = choice_dic.get(voteUser.choice,0) + 1
+					choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
 				choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 				result = {}
 				for i in choices:

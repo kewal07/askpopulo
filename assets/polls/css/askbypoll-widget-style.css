@@ -520,6 +520,8 @@ select{
 
 .askbypoll-embed-content-div{
     width: 100%;
-    /*height: 600px;*/
+    height: 400px;
     background-color: wheat;
+    display: inline-block;
+    margin: 0 auto;
 }

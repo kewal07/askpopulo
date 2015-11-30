@@ -255,7 +255,7 @@ function main() {
 			var options = {
 			  'backgroundColor': 'transparent',
 			  // 'width':700,
-     		             'height':600
+     		             'height':400
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-agechart---"+pollId));
 			chart.draw(data, options);
@@ -270,7 +270,7 @@ function main() {
 			var options = {
 			  'backgroundColor': 'transparent',
 			  // 'width':700,
-     		             'height':600
+     		             'height':400
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-genderchart---"+pollId));
 			chart.draw(data, options);
@@ -283,7 +283,7 @@ function main() {
 			var options = {
 			  'backgroundColor': 'transparent',
 			  // 'width':700,
-     		             'height':600
+     		             'height':400
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-professionchart---"+pollId));
 			chart.draw(data, options);
@@ -296,7 +296,7 @@ function main() {
 			var data = google.visualization.arrayToDataTable(conData);
 			var options = {
 				'backgroundColor': 'transparent',
-				'height':600
+				'height':400
 			};
 			var chart = new google.visualization.GeoChart(document.getElementById('askbypoll-regions_div---'+pollId));
 			chart.draw(data, options);
