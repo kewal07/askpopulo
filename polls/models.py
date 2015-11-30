@@ -284,4 +284,4 @@ class VoteApi(models.Model):
 	state = models.CharField(max_length=512,blank=True,null=True)
 	country = models.CharField(max_length=512,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
-	# email = models.EmailField(max_length=70,blank=True, null= True, unique= True)
+	email = models.EmailField(max_length=70,blank=True, null= True, unique= True)

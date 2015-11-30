@@ -47,7 +47,7 @@ function main() {
         var css_link = $("<link>", { 
             rel: "stylesheet", 
             type: "text/css", 
-            href: "http://localhost:8000/static/polls/css/askbypoll-widget-style.css" 
+            href: "https://www.askbypoll.com/static/polls/css/askbypoll-widget-style.css" 
         });
         css_link.appendTo('head');      
 		var font_link = $("<link>", { 
@@ -61,7 +61,7 @@ function main() {
 		$(".askbypoll-embed-poll").each(function(index){
 			setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
 			var pollId = $(this).attr('id').split('---')[1];
-			var jsonp_url = "http://localhost:8000/embed-poll?pollId="+pollId+"&callback=?";
+			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&callback=?";
 			var that = $(this);
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
@@ -71,7 +71,7 @@ function main() {
 			// 	var askbypollProfession = "Student";
 			// 	var askbypollEmail = "a@b.com";
 			// 	var pollDiv = $("#askbypoll-embed-poll---"+pollId);
-			// 	var jsonp_url = "http://localhost:8000/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"&pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
+			// 	var jsonp_url = "https://www.askbypoll.com/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"&pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
 			// 	$.getJSON(jsonp_url, function(data) {
 			// 		pollDiv.html(data.html);
 			// 		$("#askbypoll-content---1---"+pollId).show();
@@ -85,7 +85,7 @@ function main() {
 				$.getJSON(jsonp_url, function(data) {
 					console.log(data);
 					that.html(data.html);
-					var check_if_voted_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
+					var check_if_voted_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
 					$.getJSON(check_if_voted_url, function(data) {
 					console.log("data is ::",data);
 					if("result" in data){
@@ -120,7 +120,7 @@ function main() {
 				a = new Date(a.getTime() +1000*60*60*24);
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
 				var choiceId = $(this).attr("id").split('---')[1];
-				var jsonp_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
+				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
 					for (var choice in result) {
@@ -152,7 +152,7 @@ function main() {
 				var choiceId = $(this).attr("id").split('---')[1];
 				// var pollId = $(".askbypoll-embed-poll").attr('id').split('---')[1];
 				console.log(pollId);
-				var jsonp_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
+				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
 					for (var choice in result) {
@@ -183,7 +183,7 @@ function main() {
 			if(askbypollAge.trim() == "" || askbypollGender == "notSelected" || askbypollProfession == "notSelected"){
 				$("#askbypoll-age---"+pollId).parent().prepend('<span class="askbypoll-embed-error"> Age Gender Profession are mandatory</span>');
 			}else{
-				var jsonp_url = "http://localhost:8000/results-embed-poll?pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
+				var jsonp_url = "https://www.askbypoll.com/results-embed-poll?pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
 				var a = new Date();
 				a = new Date(a.getTime() +1000*60*60*24);
 				document.cookie = 'ASKBYPOLL_DATA_GIVEN_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/';

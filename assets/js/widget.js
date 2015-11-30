@@ -47,7 +47,7 @@ function main() {
         var css_link = $("<link>", { 
             rel: "stylesheet", 
             type: "text/css", 
-            href: "http://localhost:8000/static/polls/css/askbypoll-widget-style.css" 
+            href: "https://www.askbypoll.com/static/polls/css/askbypoll-widget-style.css" 
         });
         css_link.appendTo('head');      
 		var font_link = $("<link>", { 
@@ -60,13 +60,13 @@ function main() {
         /******* Load HTML *******/
 		$(".askbypoll-embed-poll").each(function(index){
 			var pollId = $(this).attr('id').split('---')[1];
-			var jsonp_url = "http://localhost:8000/embed-poll?pollId="+pollId+"&callback=?";
+			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&callback=?";
 			var that = $(this);
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			$.getJSON(jsonp_url, function(data) {
 				console.log(data);
 				that.html(data.html);
-				var check_if_voted_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
+				var check_if_voted_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
 				$.getJSON(check_if_voted_url, function(data) {
 				console.log("data is ::",data);
 				if("result" in data){
@@ -103,7 +103,7 @@ function main() {
 				var choiceId = $(this).attr("id").split('---')[1];
 				var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED');
 				console.log(alreadyVoted);
-				var jsonp_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
+				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
 					for (var choice in result) {
@@ -134,7 +134,7 @@ function main() {
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
 				// var pollId = $(".askbypoll-embed-poll").attr('id').split('---')[1];
 				console.log(pollId);
-				var jsonp_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
+				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
 					for (var choice in result) {
