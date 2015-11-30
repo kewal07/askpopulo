@@ -11,7 +11,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question
+from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question,VoteApi
 from categories.models import Category
 import json
 import base64
@@ -477,7 +477,7 @@ class AdminDashboard(BaseViewDetail):
 				for poll in dash_polls:
 					dash_views += poll.numViews
 					dash_votes += Voted.objects.filter(question_id=poll.id).count()
-					dash_votes += poll.voteapi_set.count()
+					dash_votes += VoteApi.objects.filter(question=poll).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 				dash_dict = {}
 				dash_dict['month_name'] = month_name
 				dash_dict['polls'] = dash_polls_count
@@ -489,7 +489,8 @@ class AdminDashboard(BaseViewDetail):
 				pole_dict = {}
 				pole_dict['poll'] = que
 				pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
-				pole_dict['votes'] += que.voteapi_set.count()
+				pole_dict['allvotes'] = pole_dict['votes'] + VoteApi.objects.filter(question=que).count()
+				pole_dict['votes'] += VoteApi.objects.filter(question=que).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 				total_views += que.numViews
 				polls_vote_list.append(pole_dict)
 			groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
@@ -589,7 +590,7 @@ class AdminDashboard(BaseViewDetail):
 			data['votes_count'] = votes_count
 			data['total_views'] = total_views
 			data['categories'] = Category.objects.all()
-			print(data)
+			# print(data)
 			return data
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
