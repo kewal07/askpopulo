@@ -485,11 +485,12 @@ select{
   margin-right: 10px;
 }
 
+/*
 .askbypoll-embed-tab-radio-label[for*='1']:before { content: '\f1cb'; }
 .askbypoll-embed-tab-radio-label[for*='2']:before { content: '\f17d'; }
 .askbypoll-embed-tab-radio-label[for*='3']:before { content: '\f16b'; }
 .askbypoll-embed-tab-radio-label[for*='4']:before { content: '\f1a9'; }
-
+*/
 .askbypoll-embed-tab-radio{
     display: none;
 }
