@@ -477,6 +477,7 @@ class AdminDashboard(BaseViewDetail):
 				for poll in dash_polls:
 					dash_views += poll.numViews
 					dash_votes += Voted.objects.filter(question_id=poll.id).count()
+					dash_votes += poll.voteapi_set.count()
 				dash_dict = {}
 				dash_dict['month_name'] = month_name
 				dash_dict['polls'] = dash_polls_count
@@ -488,6 +489,7 @@ class AdminDashboard(BaseViewDetail):
 				pole_dict = {}
 				pole_dict['poll'] = que
 				pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
+				pole_dict['votes'] += que.voteapi_set.count()
 				total_views += que.numViews
 				polls_vote_list.append(pole_dict)
 			groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
