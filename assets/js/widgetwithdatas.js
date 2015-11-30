@@ -60,11 +60,15 @@ function main() {
         /******* Load HTML *******/
 		$(".askbypoll-embed-poll").each(function(index){
 			setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
+			var divId = $(this).attr('id');
 			var pollId = $(this).attr('id').split('---')[1];
 			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&callback=?";
 			var that = $(this);
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
-			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
+			var dataGiven = undefined;
+			if(divId.startsWith('askbypoll-data')){
+				var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
+			}
 			// if(alreadyVoted == 'true' && dataGiven == 'true'){
 			// 	var askbypollAge = '19';
 			// 	var askbypollGender = "M";
@@ -109,6 +113,7 @@ function main() {
 		});
 		$(".askbypoll-embed-poll").on( "click", ".askbypoll-embed-poll-question-choice-text", function(event) {
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
+			var divId = $(this).parent().parent().parent().parent().attr("id");
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
 			
@@ -133,14 +138,17 @@ function main() {
 							$('#askbypoll-result-choice---'+choice).text(percent+'%');
 						}
 					}
-					$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
-					$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
+					if(divId.startsWith('askbypoll-data')){
+						$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
+						$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
+					}
 				});
 			}
 		});
 		
 		$(".askbypoll-embed-poll").on( "click", ".askbypoll-embed-poll-question-choice-img", function(event) {
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
+			var divId = $(this).parent().parent().parent().parent().attr("id");
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
 			if(alreadyVoted == 'true')
@@ -165,8 +173,10 @@ function main() {
 							$('#askbypoll-result-choice---'+choice).text(percent+'%');
 						}
 					}
-					$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
-					$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
+					if(divId.startsWith('askbypoll-data')){
+						$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
+						$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
+					}		
 				});
 			}
 		});
@@ -229,8 +239,8 @@ function main() {
 			]);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-agechart---"+pollId));
 			chart.draw(data, options);
@@ -244,8 +254,8 @@ function main() {
 			]);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-genderchart---"+pollId));
 			chart.draw(data, options);
@@ -257,8 +267,8 @@ function main() {
 			var data = google.visualization.arrayToDataTable(profData);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-professionchart---"+pollId));
 			chart.draw(data, options);
