@@ -1861,8 +1861,11 @@ def vote_embed_poll(request):
 			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
 			for i in choices:
-				i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
-				result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
+				if totalVotes > 0:
+					i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
+					result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount')+choice_dic.get(i.get('choice'),0))+'---'+str(totalVotes)
+				else:
+					result[i.get('choice')] = "0---0---0"
 			
 			req ['result'] = result
 			response = json.dumps(req)
@@ -1879,8 +1882,11 @@ def vote_embed_poll(request):
 				choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 				result = {}
 				for i in choices:
-					i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
-					result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
+					if totalVotes > 0:
+						i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
+						result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount')+choice_dic.get(i.get('choice'),0))+'---'+str(totalVotes)
+					else:
+						result[i.get('choice')] = "0---0---0"
 				req ['result'] = result
 			else:
 				req = {}

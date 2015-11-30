@@ -181,7 +181,11 @@ function main() {
 					for (var choice in result) {
 						if (result.hasOwnProperty(choice)) {
 							var progressBarId = "askbypoll-embed-progress-bar---"+choice;
-							var percent = result[choice].split('---')[0];
+							var votes = result[choice].split('---')[1];
+							var totalvotes = result[choice].split('---')[2];
+							var percent = 0;
+							if(totalVotes > 0)
+								percent = Math.round((votes/totalvotes)*100);
 							$('#'+progressBarId).css('display','inline-block');
 							$('#'+progressBarId).css('width',percent+'%');
 							$('#'+progressBarId).css('background','yellow');
