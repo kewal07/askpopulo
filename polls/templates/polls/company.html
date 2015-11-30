@@ -21,7 +21,7 @@
 		{% if data %}
 			<div id="cover-image-mobile" style="background:url('{{ data.0.company_obj.get_cover_url }}') no-repeat;">
 				<div class="company-icons-mobile">
-					<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.name %}" class="create-destroy" style="display:inline">
+					<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.company_slug %}" class="create-destroy" style="display:inline">
 						{% csrf_token %}
 						<input name="company" type="hidden" value="1">
 						{% if data.0.followed %}
@@ -31,7 +31,9 @@
 						{% endif %}
 						<input name="target" type="hidden" value="{{ data.0.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}">
 					</form>
-					<i class="fa fa-envelope" style="cursor:pointer"> </i>
+					{% if user.is_authenticated %}
+						<i class="fa fa-envelope" style="cursor:pointer"> </i>
+					{% endif %}
 					<a href="{{ data.0.company_obj.company_facebook }}" target="_blank"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>
 					<a href="{{ data.0.company_obj.company_twitter }}" target="_blank"><i class="fa fa-twitter" style="cursor:pointer"></i></a>
 					<i class="fa fa-bars" style="cursor:pointer"> </i>
@@ -289,7 +291,7 @@
 			cover_image += "{{ data.0.company_obj.get_cover_url }}') no-repeat;";
 			cover_image += '"><p id="company-name">{{ data.0.company_obj.name }}</p><div class="company-icons">';
 			cover_image += ' <a href="{{ data.0.company_obj.company_url }}"><img class="fa company-logo" style="cursor:pointer" src="{{  data.0.company_obj.get_logo_url}}"> </img></a>';
-			cover_image += '<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.name %}" class="create-destroy" style="display:inline"><input name="company" type="hidden" value="1">';
+			cover_image += '<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.company_slug %}" class="create-destroy" style="display:inline"><input name="company" type="hidden" value="1">';
 			cover_image += "{% csrf_token %}";
 			{% if data.0.followed %}
 				cover_image += '<input name="remove" type="hidden" value="1"><i class="fa fa-rss" style="color:green;cursor:pointer" title="Unfollow"></i>'

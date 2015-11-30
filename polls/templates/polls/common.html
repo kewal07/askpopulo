@@ -4,7 +4,7 @@
 		{% load staticfiles %}
 		{% load activity_tags %}
 		{% load get_name %}
-		<title>A Social Info Polling Platform</title>
+		<title>AskByPoll : Ask Analyze Decide</title>
 		<meta name="msvalidate.01" content="598B0E2BF761D365BEDC8D6C21DF64DB" />
 		<meta itemprop="name" content="AskByPoll">
 		<meta itemprop="description" content="A Socio-Info-Polling platform providing users an interactive social tool to gather the public opinion on any question they have in a fun filled way.">
@@ -101,7 +101,7 @@
 							<!-- <li><a class="menuanchor" href="{% url 'polls:featured' %}">Featured</a></li> -->
 					{% if user.is_authenticated %}
 						{% if user.extendeduser.company.id > 1 %}
-							<li><a class="menuanchor" href="{% url 'company_page' user.extendeduser.company.name %}" data-intro="Type in your query and we will get you your results" data-position="bottom">{{ user.extendeduser.company.name}}</a></li>
+							<li><a class="menuanchor" href="{% url 'company_page' user.extendeduser.company.company_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">{{ user.extendeduser.company.name}}</a></li>
 						{% else %}
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
 						{% endif %}

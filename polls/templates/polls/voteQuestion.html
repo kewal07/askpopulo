@@ -10,6 +10,7 @@
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
 	{% endif %}
 	{% endwith %}
+	<meta property="fb:page_id" content="question.id" />
 	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
 	<meta property="og:title" content="{{ question.question_text  }}"/>
 	<meta property="og:description" content="{{ question.description  }}" />

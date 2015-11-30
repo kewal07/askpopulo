@@ -840,11 +840,12 @@ def createExtendedUser(user):
 				city_data = twitter_data.get('location','')
 				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 				extendedUser.save()
-	email = user.email
-	extendeduserGroups = ExtendedGroupFuture.objects.filter(user_email=email)
-	for extendeduserGroup in extendeduserGroups:
-		user.groups.add(extendeduserGroup.group)
-		extendeduserGroup.delete()
+	if user.is_authenticated():	
+		email = user.email
+		extendeduserGroups = ExtendedGroupFuture.objects.filter(user_email=email)
+		for extendeduserGroup in extendeduserGroups:
+			user.groups.add(extendeduserGroup.group)
+			extendeduserGroup.delete()
 
 def comment_mail(request):
 	to_email = []
@@ -1012,7 +1013,7 @@ class CompanyIndexView(BaseViewList):
 		curtime = timezone.now()
 		# print(request.path.replace("/",""))
 		company_name = request.path.replace("/","")
-		company_obj = Company.objects.filter(name=company_name)
+		company_obj = Company.objects.filter(company_slug=company_name)
 		if company_obj:
 			company_obj = company_obj[0]
 		else:
