@@ -113,7 +113,7 @@
 						{% if question.protectResult and user != question.user %}
 						<p style="font-size:1.5rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;"> Thanks for Voting. Results have been protected by Admin.</p>
 						{% else %}
-						<div id="pollsChart">
+						<div class="pollsChart" id="pollsChart---{{ question.id }}">
 						</div>
 						{% endif %}
 						<div class="analyzeAndShare">
@@ -135,28 +135,28 @@
 					<div class="gender">
 						<div class="graphContainer">
 							<p> Gender </p>
-							<div id="genderChart">
+							<div class="genderChart" id="genderChart---{{ question.id }}">
 							</div>
 						</div>
 					</div>
 					<div class="age">
 						<div class="graphContainer">
 							<p> Age </p>
-							<div id="ageChart">
+							<div class="ageChart" id="ageChart---{{ question.id }}">
 							</div>
 						</div>
 					</div>
 					<div class="location">
 						<div class="graphContainer">
 							<p> Location </p><div class="back" onClick="back()"><i class="fa fa-arrow-left"></i></div>
-							<div id="locationChart">
+							<div class="locationChart" id="locationChart---{{ question.id }}">
 							</div>
 						</div>
 					</div>
 					<div class="others">
 						<div class="graphContainer">
 							<p> Others </p>
-							<div id="othersChart">
+							<div class="othersChart" id="othersChart---{{ question.id }}">
 							</div>
 						</div>
 					</div>
@@ -237,16 +237,16 @@
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			$(document).ready(function(){
 			 
-			  drawPollsChart();
+			  drawPollsChart("{{ csrf_token }}","",{{ question.id }});
 			  window.addEventListener("resize", resizeEventHandler);
 
 			  function resizeEventHandler() {
-				drawPollsChart();
+				drawPollsChart("{{ csrf_token }}","",{{ question.id }});
 				if($('.analysis').is(':visible')){
-				  drawGenderChart();
-			      drawAgeChart();
-			      drawOthersChart();
-			      drawLocationChart();
+				  drawGenderChart("{{ csrf_token }}","",{{ question.id }});
+			      drawAgeChart("{{ csrf_token }}","",{{ question.id }});
+			      drawOthersChart("{{ csrf_token }}","",{{ question.id }});
+			      drawLocationChart("{{ csrf_token }}","",{{ question.id }});
 				 }
 			  }
 			  
@@ -258,311 +258,15 @@
 			      setTimeout(function(){
 			      //your code to be executed after 1 seconds
 			        if($('.analysis').is(':visible')){
-			          drawGenderChart();
-			          drawAgeChart();
-			          drawOthersChart();
-			          drawLocationChart();
+			          drawGenderChart("{{ csrf_token }}","",{{ question.id }});
+			          drawAgeChart("{{ csrf_token }}","",{{ question.id }});
+			          drawOthersChart("{{ csrf_token }}","",{{ question.id }});
+			          drawLocationChart("{{ csrf_token }}","",{{ question.id }});
 			        }
 			      }, delay); 
 			    });    
 			});
 
-			function drawPollsChart() {
-				// console.log("{{question.choice_set.all}}");
-				var pollsData = [];
-				var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
-				var colCount = 0;
-				pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
-				{% for choice in question.choice_set.all %}
-					var inData = [];
-					var choice_text = "";
-					choice_text = 'Choice{{ forloop.counter }}';
-					inData.push(choice_text);
-					inData.push({{ choice.vote_set.count }});
-					inData.push(pollsColors[colCount++]);
-					var percent = 0;
-					if({{ question.voted_set.count }} > 0)
-						percent = Math.round(({{ choice.vote_set.count }}/{{ question.voted_set.count }})*100);;
-					inData.push(percent+"%");
-					//console.log(inData);
-					pollsData.push(inData);
-				{% endfor %}
-				var data = google.visualization.arrayToDataTable(pollsData);
-				var options = {
-			          chartArea: {left:80,width: '60%'},
-			          fontSize:14,
-			          bars: {
-			            groupWidth: 100
-			          },
-			          annotations:{
-			          	textStyle: {
-					      opacity: 0         // The transparency of the text.
-					    }	        
-			          },
-			          hAxis: {
-			            title: '',
-			            minValue: 0,
-			            gridlines: {
-			              color: 'transparent'
-			              },
-			            textPosition: 'none',
-			            baselineColor: 'transparent'
-			          },
-			          vAxis: {
-			            title: '',
-			            gridlines: {
-			              color: 'transparent'
-			              },
-			          },
-			          legend:{
-			              position:'none'
-			          },
-			           animation:{
-			              startup:true,
-			              duration: 3000,
-			              easing: 'inAndOut',
-			         },
-			        };
-
-			        var chart = new google.visualization.BarChart(document.getElementById('pollsChart'));
-			        chart.draw(data, options);
-			        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);   
-
-			        function displayAnnotation(e){
-			        data = google.visualization.arrayToDataTable(pollsData);
-			        options = {
-			          chartArea: {left:80,width: '60%'},
-			          fontSize:14,
-			          bars: {
-			            groupWidth: 100
-			          },
-			          annotations:{
-			          	textStyle: {
-					      opacity: 1         // The transparency of the text.
-					    }	        
-			          },
-			          hAxis: {
-			            title: '',
-			            minValue: 0,
-			            gridlines: {
-			              color: 'transparent'
-			            },
-			            textPosition: 'none',
-			            baselineColor: 'transparent'
-			          },
-			          vAxis: {
-			            title: '',
-			            gridlines: {
-			              color: 'transparent'
-			              },
-			          },
-			          legend:{
-			              position:'none'
-			          },
-			           animation:{
-			              startup:true,
-			              duration: 1,
-			              easing: 'inAndOut',
-			         },
-			        };
-
-			        chart.draw(data,options);
-			      }
-			  }
-
-			function drawGenderChart() {
-			  var genderData = [['Gender', 'Votes']];
-			  var m = 0;
-			  var f = 0;
-			  var d = 0;
-			  {% for voted in question.voted_set.all %}
-			  	{% if voted.user.extendeduser.gender == "M" %}
-			  		m++;
-			  	{% elif voted.user.extendeduser.gender == "F" %}
-			  		f++;
-			  	{% else %}
-			  		d++;
-			  	{% endif %}
-			  {% endfor %}
-			  genderData.push(['Male',m]);
-			  genderData.push(['Female',f]);
-			  genderData.push(['Not Disclosed',d])
-			  var data = google.visualization.arrayToDataTable(genderData);
-			  var options = {
-			    pieHole: 0.4,
-			    legend:'bottom'
-			  };
-			  var chart = new google.visualization.PieChart(document.getElementById('genderChart'));
-			  chart.draw(data, options);
-			}
-
-			function drawAgeChart() {
-			  var ageData = [['Age Group', 'Votes']];
-			  var under_19 = 0;
-			  var bet_20_25 = 0;
-			  var bet_26_30 = 0;
-			  var bet_31_35 = 0;
-			  var bet_36_50 = 0;
-			  var over_50 = 0;
-			  {% for voted in question.voted_set.all %}
-				{% if voted.user.extendeduser.calculate_age > 50 %}
-			  		over_50++;
-			  	{% elif voted.user.extendeduser.calculate_age > 35 %}
-			  		bet_36_50++;
-			  	{% elif voted.user.extendeduser.calculate_age > 30 %}
-			  		bet_31_35++;
-			  	{% elif voted.user.extendeduser.calculate_age > 25 %}
-			  		bet_26_30++;
-			  	{% elif voted.user.extendeduser.calculate_age > 19 %}
-			  		bet_20_25++;
-				{% elif voted.user.extendeduser.calculate_age > 0 %}
-			  		under_19++;
-				{% else %}
-			  		console.log("Age wrong");
-			  	{% endif %}
-			  {% endfor %}
-			  ageData.push(['Upto 19',under_19]);
-			  ageData.push(['20-25',bet_20_25]);
-			  ageData.push(['26-30',bet_26_30]);
-			  ageData.push(['31-35',bet_31_35]);
-			  ageData.push(['36-50',bet_36_50]);
-			  ageData.push(['50+',over_50]);
-			  var data = google.visualization.arrayToDataTable(ageData);
-			  var options = {
-			    pieHole: 0.4,
-			    legend:'bottom'
-			  };
-			  var chart = new google.visualization.PieChart(document.getElementById('ageChart'));
-			  chart.draw(data, options);
-			}
-
-			function drawOthersChart() {
-				var profDict = {};
-				var profData = [['Profession','Votes']];
-				{% for voted in question.voted_set.all %}
-					{% if voted.user.extendeduser.profession %}
-						var prof = "{{ voted.user.extendeduser.profession }}";
-						if(prof in profDict)
-							profDict[prof] = profDict[prof]+1;
-						else
-							profDict[prof] = 1;
-					{% endif %}
-				{% endfor %}
-				for(prof in profDict)
-					profData.push([prof,profDict[prof]]);
-			  var data = google.visualization.arrayToDataTable(profData);
-			  var options = {
-			    pieHole: 0.4,
-			    legend:'bottom'
-			  };
-			  var chart = new google.visualization.PieChart(document.getElementById('othersChart'));
-			  chart.draw(data, options);
-			}
-			
-			function drawLocationChart() {
-			    $('#mapBackButton').removeClass('back');
-				var conData = [['Country', 'Votes']];
-				var conDict = {};
-				{% for voted in question.voted_set.all %}
-					{% if voted.user.extendeduser.country %}
-						var country = "{{ voted.user.extendeduser.country }}";
-						if(country == 'United Kingdom' || country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
-							country = 'United Kingdom'
-						}
-						if(country in conDict)
-							conDict[country] = conDict[country]+1;
-						else
-							conDict[country] = 1;
-					{% endif %}
-				{% endfor %}
-				for(con in conDict){
-					conData.push([con,conDict[con]]);
-				}
-			    var data = google.visualization.arrayToDataTable(conData);
-			    var options = {};
-			    var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
-			    chart.draw(data, options);
-			    google.visualization.events.addListener(chart, 'regionClick', selectHandler);
-			}
-			function selectHandler(e) {
-				$("#mapBackButton").css("display", "inline-block");
-				$('#mapBackButton').addClass("back");
-				drawStateMap(e.region);
-			}
-			
-			var regionDict = {
-				"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
-			}
-
-			var englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire",
-				"Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire",
-				"Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
-
-			var nothernIreLand = ['Antrim','Ards','Armagh','Ballymena','Ballymoney','Banbridge','Belfast','Carrickfergus','Castlereagh','Coleraine','Cookstown','Craigavon','Derry','Down','Dungannon and South Tyrone','Fermanagh','Larne','Limavady','Lisburn','Magherafelt','Moyle','Newry and Mourne District','Newtownabbey','North Down','Omagh','Strabane'];
-
-			var scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmannanshire","Dumfries and Galloway","Dundee City","East Ayrshire","East Dunbartonshire","East Lothian","East Renfrewshire","Edinburgh, City of","Eilean Siar","Falkirk","Fife","Glasgow City","Highland","Inverclyde","Midlothian","Moray","North Ayrshire","North Lanarkshire","Orkney Islands","Perth and Kinross","Renfrewshire","Scottish Borders, The","Shetland Islands","South Ayrshire","South Lanarkshire","Stirling","West Dunbartonshire","West Lothian"];
-
-			var wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
-				
-			function drawStateMap(region){
-				var options = {
-			      region: region,
-			      displayMode: 'regions',
-			      resolution: 'provinces',
-			      datalessRegionColor: '#666',
-			      colorAxis: {colors: ['#FF9900', '#FFFFFF', '#00CC00']},
-			      backgroundColor: '#81d4fa',
-			      domain: 'IN'
-			  };
-				var stateContry = regionDict[region];
-				var stateData = [['State', 'Votes']];
-				var stateDict = {};
-				{% for voted in question.voted_set.all %}
-					{% if voted.user.extendeduser.country %}
-						var country = "{{ voted.user.extendeduser.country }}";
-						if(country=='Scotland' || country=='Wales' || country=='Northern Ireland'){
-								country = 'United Kingdom'
-						}
-						if(country == stateContry){
-							var state = "{{ voted.user.extendeduser.state }}";
-							if(country == 'United Kingdom')
-							{
-								console.log(state);
-								if(englandDict.indexOf(state) > -1){
-									stateDict['England'] = stateDict['England']||0 + 1;
-								} else if(nothernIreLand.indexOf(state) > -1) {
-									stateDict['Northern Ireland'] = stateDict['Northern Ireland']||0 + 1;
-								} else if(scotland.indexOf(state) > -1) {
-									stateDict['Scotland'] = stateDict['Scotland']||0 + 1;
-								} else if(wales.indexOf(state) > -1) {
-									stateDict['Wales'] = stateDict['Wales']||0 + 1;
-								} else {
-									stateDict[state] = 1;
-								}
-							} 
-							else 
-							{
-								if(state in stateDict)
-									stateDict[state] = stateDict[state]+1;
-								else
-									stateDict[state] = 1;
-							}
-						}
-					{% endif %}
-				{% endfor %}
-				for(state in stateDict){
-					stateData.push([state,stateDict[state]]);
-				}
-				console.log(stateData)
-				var data = google.visualization.arrayToDataTable(stateData);
-				var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
-				chart.draw(data, options);
-			}
-			    
-			function back(){  
-				$("#mapBackButton").css("display", "none");  
-			    drawLocationChart();
-			}
 		</script>
 		<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 {% endblock %}
