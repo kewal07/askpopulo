@@ -19,6 +19,9 @@
 	<script type="text/javascript" src="{% static 'js/jquery.csv-0.71.min.js' %}"></script>
 	<script src="{% static 'js/jquery-ui.js' %}"></script>
 	<script src="{% static 'js/jquery.autocomplete.multiselect.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/html2canvas.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
+	
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -35,7 +38,7 @@
 				<li class="dashboard-menu-li">Feed</li>
 				<li class="dashboard-menu-li">Advanced</li>
 				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
-				<li class="dashboard-menu-li">Export</li>
+				<li id="dashboard-export-tab" class="dashboard-menu-li">Export</li>
 				<li class="dashboard-menu-li">Billing</li>
 			</ul>
 		</div>
@@ -161,8 +164,24 @@
 								{{question.poll.question_text}}
 							</p>
 							<p class="pollsDesc">{{ question.poll.description }}</p>
-							<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
+							<p class="check"><span id="embed-code---{{question.poll.id}}" class="see-more-details see-more-details-p embed-poll-code">Embed</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
 							</div>
+						</div>
+						<div class="embedPollDiv" id="embed-code---{{ question.poll.id }}Div">
+							<p class="embedCodeP">
+								<label class="embedCodeLabel" for="embedCodeWithoutData">Script for Widget without data :</label>
+								<textarea class="embedCodeTextArea" id="embedCodeWithoutData---{{ question.poll.id }}" name="embedCodeNoData" maxlength="400" readonly><script type='text/javascript' src='https://www.askbypoll.com/static/js/widget.js'></script></textarea>
+							</p>
+
+							<span style="color:orange; padding-left:1rem; padding-right:1rem; font-size:25px;">or</span>
+							<p class="embedCodeP">
+								<label class="embedCodeLabel" for="embedCodeWithData">Script for Widget with data :</label>
+								<textarea class="embedCodeTextArea" id="embedCodeWithData---{{ question.poll.id }}" name="embedCodeData" maxlength="400" readonly><script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script></textarea>
+							</p>
+							<p id="embedCodeDivP" class="embedCodeP">
+								<label class="embedCodeLabel" for="embedCodeDiv">Place this code wherever you want to place the widget :</label>
+								<textarea class="embedCodeTextArea" id="embedCodeDiv---{{ question.poll.id }}" name="embedCodePlaceholderDiv" maxlength="400" readonly><div class="askbypoll-embed-poll" id="askbypoll-embed-poll---{{ question.poll.id }}"></div></textarea>
+							</p>
 						</div>
 						<div class="analysis" id="analyse---{{ question.poll.id }}Div">
 							<div class="choices clearfix">
@@ -208,7 +227,7 @@
 							</div>
 							<div class="location">
 								<div class="graphContainer">
-									<p> Location </p><div id="mapBackButton---{{ question.poll.id }}" class="back" onClick="back('',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+									<p> Location </p><div id="mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
 									<div class="question_analyse_chart_loc" id="locationChart---{{ question.poll.id }}">
 									</div>
 								</div>
@@ -512,8 +531,18 @@
 									<p class="main activity_url main-survey" id="survey---{{ survey_det.survey.id }}">
 										{{ survey_det.survey.survey_name }}
 									</p>
+
 									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
-									<p class="check"><span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span><span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span></p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p survey-overview-button">Overview</span>
+										{% if survey_det.survey.surveyvoted_set.count < 1 or user.is_superuser %}
+											<span class="see-more-details see-more-details-p edit-u"><a href="{% url 'polls:survey_edit' survey_det.survey.id survey_det.survey.survey_slug %}">Edit Survey</a></span>
+										{% endif %}
+										<span class="see-more-details see-more-details-p clone-u"><a href="{% url 'polls:survey_clone' survey_det.survey.id survey_det.survey.survey_slug %}">Clone Survey</a></span>
+										<span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span>
+										<span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span>
+										<span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span>										
+									</p>
 									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
 										<p class="share-g">
 											{% csrf_token %}
@@ -609,7 +638,7 @@
 											</div>
 											<div class="location">
 												<div class="graphContainer">
-													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
 													<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ poll.question.id }}">
 													</div>
 												</div>
@@ -630,6 +659,66 @@
 										</div>
 									{% endif %}
 								{% endfor %}
+							</div>
+							<div class="survey-overview">
+								<!-- <p> Total Number of polls : {{ survey_det.polls|length }} </p> -->
+								<div class="table-container">
+									<div class="table-component">
+										<table>
+											<thead>
+												<tr>
+													<th>Total Responses</th>
+													<th>Completion Rate</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>{{ survey_det.votes }}</td>
+													<td>{{ survey_det.incompleteResponses }}%</td>
+												</tr>
+											</tbody>
+										</table>		
+									</div>
+								</div>
+								<div class="table-container">
+									<div class="table-component">
+										<table>
+											<thead>
+												<tr>
+													<th class="question-table">Question ID</th>
+													<th>Type</th>
+													<th>Responses</th>
+													<th>Most Voted</th>
+													<th>Least Voted</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for poll in survey_det.polls %}
+													<tr>
+														<th class="question-table-heading">Question {{ forloop.counter }}</th>
+														<td> {{ poll.q_type }} </td>
+														<td> {{ poll.totalResponses }} votes</td>
+														{% if poll.q_type != "text" %}
+															<td> 
+																{% for choice in poll.maxVotes %}
+																	{{ choice }}<br>
+																{% endfor %}
+															</td>
+															<td>
+																{% for choice in poll.minVotes %}
+																	{{ choice }}<br>
+																{% endfor %}
+															</td>
+														{% else %}
+															<td>NA</td>
+															<td>NA</td>
+														{% endif %}
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>		
+									</div>
+								</div><!-- /container -->
 							</div>
 						</li>
 					{% endfor %}
@@ -844,6 +933,8 @@
 							{% endif %}
 							{% endfor %}
 							</div>
+							<div id="advanced-pollsChart---{{ question.poll.id }}---extra" class="pollsChartClass">
+							</div>
 							<div id="advanced-pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
 							<div id="advancedAna">
@@ -898,7 +989,7 @@
 							</div>
 							<div class="location">
 								<div class="graphContainer">
-									<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+									<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
 									<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ question.poll.id }}">
 									</div>
 								</div>
@@ -918,9 +1009,29 @@
 		</div>
 		<div id="export-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Coming Soon!
+				Export Survey Reports
 			</div>
-			<p class="coming-soon">Export of raw data coming soon.Please contact support for accelerated development.</p>
+			<div class="dashboard-stats clearfix">
+				<ul class="dashboard-recent">
+					<li> Survey</li>
+					{% for survey_det in surveys %}
+						<li class="li-margin-polls">
+							<div class="liDetail">
+								<div class="check_analyse">
+									<p class="main">
+										{{ survey_det.survey.survey_name }}
+									</p>
+									<p class="pollsDesc">{{ survey_det.survey.description }}</p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p export-excel" id="export-excel{{ survey_det.survey.id }}"><a href="/exportexcel?sid={{ survey_det.survey.id }}"> Export as Excel</a></span>
+										<span class="see-more-details see-more-details-p export-pdf" id="export-pdf{{ survey_det.survey.id }}">Export as PDF</span>
+									</p>
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
 		</div>
 		<div id="billing-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
@@ -928,6 +1039,8 @@
 			</div>
 			<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
 		</div>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+		<script type="text/javascript" src="{% static 'js/jquery.stickyheader.js' %}"></script>
 		<script>
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			var profList = ["Student","Politics","Education","Information Technology","Public Sector","Social Services","Medical","Finance","Manager","Others"];
@@ -1444,6 +1557,14 @@
 					$(this).prev().children().first().click();
 				});
 
+				
+				$('#polls-content').on("click",'.embed-poll-code',function(){
+					var embedCodePollId = $(this).attr('id').split('---')[1];
+					var embedCodeDiv = "embed-code---"+embedCodePollId+"Div";
+					$('#'+embedCodeDiv).toggle('slow');
+				});
+
+
 				$('#polls-content,#advanced-content,#surveys-content').on("click","p.analyse_question_text",function(){
 					var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
@@ -1471,6 +1592,10 @@
 				$("#surveys-content").on("click",".main-survey",function(){
 					$(this).parent().parent().next().toggle("slow");
 				});
+
+				$("#surveys-content").on("click",".survey-overview-button",function(){
+			     $(this).parent().parent().parent().first().next().next().toggle("slow");
+			    });
 
 			    $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
 			    	var elemId = $(this)[0].id;
@@ -1542,8 +1667,110 @@
 					var selectedChoice_country= $(common_elem_id_str+"Country").val();
 					populateState(common_elem_id_str+"State",selectedChoice_country);
 				});
-			});
-			
+
+				$("#export-content").on("click",".export-pdf",function(){
+					var survey_id = $(this)[0].id.replace("export-pdf","");
+					$("#export-content").html('<p class="coming-soon">Please wait for some time.. We are making some sense of the data for you..</p>');
+					$("#dashboard-menu").hide();
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'GET',
+							url:"/exportpdf/"+survey_id,
+							statusCode: {
+								404: function() {
+									$('#overlay-inAbox').children().children().first().text("No Survey Selected");
+									openOverlay("#overlay-inAbox");
+									$(this).css({"color":"red"});
+								}
+							},
+							success:function(response)
+							{
+								// console.log(response);
+								var new_html = document.createElement('div');
+								// $(new_html).id = "pdf-html";
+					        	new_html.innerHTML = response;
+					        	$('body').append('<div id="pdf-body">'+response+'</div>');
+					        	
+					  			var a4  =[ 595.28,  841.89];
+					  			setTimeout(function(){
+					  				var pageLenth = $('.pdf-pages').length;
+					  				var pageRendered = 0;
+						  			var doc = new jsPDF('p', 'pt', 'a4', false);
+						  			var dataimgs = [];
+						  			var targets = []
+						  			for(var j=0; j<pageLenth+1; j++){
+						  				dataimgs.push("");
+						  				targets.push("");
+						  			}
+						  			doc.setProperties({
+										title: 'Survey Analysis',
+										subject: 'Survey Analysis',
+										author: 'AskByPoll',
+										creator: 'AskByPoll'
+									});
+									html2canvas($("#pdf-survey-footer"), {
+								        onrendered: function (canvas) {
+								            //Set hidden field's value to image data (base-64 string
+								            var	dataimg = (canvas.toDataURL("image/png"));
+								            dataimgs[pageLenth] = dataimg;
+									    },
+									});
+						  			$(".pdf-pages").each(function(i){
+						  				// console.log($(this));
+						  				var target = $(this);//$("#"+$(this)[i].id);
+						  				targets[i] = $(this)[0].id;
+						  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
+						  				html2canvas(target, {
+									        onrendered: function (canvas) {
+									            //Set hidden field's value to image data (base-64 string
+									            var pageIndex = targets.indexOf(target[0].id);
+									            // console.log("rendered",target);
+									            // console.log(pageIndex);
+									            // console.log(target[0].id);
+									            pageRendered += 1
+									            var	dataimg = (canvas.toDataURL("image/png"));
+									            dataimgs[pageIndex] = dataimg;
+									            var bgimg = new Image();
+									            bgimg.src = "/static/login/images/analytics-raw.jpg";
+									            function getBase64Image(img) {
+												    var canvas = document.createElement("canvas");
+												    canvas.width = a4[0];
+												    canvas.height = a4[1];
+												    var ctx = canvas.getContext("2d");
+												    ctx.drawImage(img, 0, 0);
+												    var dataURL = canvas.toDataURL("image/jpeg");
+												    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+												}
+									            bgimg.onload = function(){
+												    var dataURI = getBase64Image(bgimg);
+												    return dataURI;
+												}
+												if(pageLenth == pageRendered){ 
+									            	for(var j=0; j<pageLenth; j++){
+										  				doc.addImage(bgimg.onload(),'JPEG',0,0,a4[0],a4[1]);
+									            		doc.addImage(dataimgs[j], 'JPEG',20,20);
+									            		doc.addImage(dataimgs[pageLenth], 'JPEG',0,790,a4[0],55);
+									            		if(j != pageLenth - 1)
+									            			doc.addPage();
+										  			}
+										  			doc.save('Survey-'+survey_id+'-pdf.pdf');
+													$('body').find($("#pdf-body")).remove();
+													$("#dashboard-menu").show();
+													$('#dashboard-export-tab').click();
+												}
+										    },
+										});
+									});
+								}, 5000);
+							}
+						});
+					{% else %}
+						$("#export-content").click();
+					{% endif %}
+				});
+			});			
 		</script>
+
 	</section>
 {% endblock %}

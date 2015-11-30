@@ -226,13 +226,17 @@ class LoggedInView(BaseViewDetail):
 		public_profile = False
 		if request_user != user:
 			public_profile = True
-		context['questions_count'] = Question.objects.filter(user_id = user.id).count()
-		context['voted_count'] = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id)).count()
 		if public_profile:
-			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id,privatePoll=0,isAnonymous=0).order_by('-pub_date')
 		else:
-			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')[:20]
-		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))[:20]
+			user_asked_questions = Question.objects.filter(user_id = user.id).order_by('-pub_date')
+		survey_list = Survey.objects.filter(user_id=user.id)
+		s_polls = []
+		for survey in survey_list:
+			s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+		user_asked_questions = [item for item in user_asked_questions if item not in s_polls][:20]
+		user_voted_questions = Question.objects.filter(pk__in=Voted.objects.values_list('question_id').filter(user_id = user.id))
+		user_voted_questions = [item for item in user_voted_questions if item not in s_polls][:20]
 		user_subscribed_questions = Subscriber.objects.filter(user_id=user.id).count()
 		user_categories = []
 		cat_list = []
@@ -281,6 +285,8 @@ class LoggedInView(BaseViewDetail):
 		context['ssoData'] = ssoData
 		context['questions'] = user_asked_questions
 		context['voted'] = user_voted_questions
+		context['questions_count'] = len(user_asked_questions)
+		context['voted_count'] = len(user_voted_questions)
 		context['subscribed'] = user_subscribed_questions
 		context['categories'] = user_categories
 		context['followed'] = Follow.objects.filter(user=request_user, target_id=user, deleted_at__isnull=True)
@@ -450,7 +456,7 @@ class AdminDashboard(BaseViewDetail):
 			data = super(AdminDashboard, self).get_context_data(**kwargs)
 			user = self.request.user
 			polls_vote_list = []
-			survey_list = Survey.objects.filter(user_id=user.id)
+			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
 			s_polls = []
 			for survey in survey_list:
@@ -508,11 +514,51 @@ class AdminDashboard(BaseViewDetail):
 			survey_detail_list = []
 			for survey in survey_list:
 				sur_dict={}
+				totalVoted = 0
 				sur_dict['survey'] = survey
-				sur_dict['votes'] = SurveyVoted.objects.filter(survey_id=survey.id).count()
+				surveyVoted = SurveyVoted.objects.filter(survey_id=survey.id)
+				totalParticipants = len(surveyVoted)
+				sur_dict['votes'] = totalParticipants
 				total_views += survey.numViews
-				sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				survey_questions = Survey_Question.objects.filter(survey_id=survey.id)
+
+				incompleteResponses = 0				
+				for voted in surveyVoted:
+					if voted.survey_question_count != voted.user_answer_count:
+						incompleteResponses += 1
+
+				completeRate = 0
+				if totalParticipants > 0:
+					completeRate = int(((totalParticipants-incompleteResponses)/totalParticipants)*100)
+				sur_dict["incompleteResponses"] = completeRate
+
+				sur_dict['polls'] = []
+				for x in survey_questions:
+					# maxVotes = -1
+					# minVotes = 99999
+					maxVotedChoiceList = []
+					minVotedChoiceList = []
+					choice_dict = {}
+					maxVotedCount = -1
+					minVotedCount = 99999
+					questionChoices = x.question.choice_set.all()
+					totalResponses = x.question.voted_set.count()
+					for index,choice in enumerate(questionChoices):
+						vote_set = choice.vote_set
+						numVotes = vote_set.count()
+						# print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
+						if not choice_dict.get(numVotes):
+							choice_dict[numVotes] = []
+						choice_dict[numVotes].append("Choice " + str(index+1)) # + " : " + str(numVotes))
+						if(numVotes >= maxVotedCount):
+							maxVotedCount = numVotes
+						if(numVotes <= minVotedCount):
+							minVotedCount = numVotes
+
+					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":choice_dict.get(maxVotedCount,""),"minVotes":choice_dict.get(minVotedCount,"")})
 				survey_detail_list.append(sur_dict)
+				# sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
+				# survey_detail_list.append(sur_dict)
 			votes_count = Voted.objects.filter(question_id__in=Question.objects.values_list('id').filter(user_id = user.id)).count()
 			followers = [ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ]
 			following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
@@ -541,6 +587,7 @@ class AdminDashboard(BaseViewDetail):
 			data['votes_count'] = votes_count
 			data['total_views'] = total_views
 			data['categories'] = Category.objects.all()
+			print(data)
 			return data
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()

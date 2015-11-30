@@ -2,10 +2,10 @@ import os,linecache
 import sys
 from django.shortcuts import render
 from django.core.urlresolvers import resolve,reverse
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -35,6 +35,9 @@ import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 from login.models import ExtendedGroup,ExtendedGroupFuture
 from django.contrib.auth.models import Group
+from django.db.models import Count
+import requests
+import operator
 
 # Create your views here.
 
@@ -1088,148 +1091,230 @@ scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmann
 
 wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
 
+regionDict = {
+	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
+}
+
 class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
-		# print(request.path,request.POST)
-		if request.path == "/advanced_analyse_choice":
-			pollId = request.POST.get("question")
-			choiceId = request.POST.get("choice")
-			stateContry = request.POST.get("stateContry","")
-			response_dic = {}
-			# get gender count
-			gender_dic = {}
-			gender_dic['M'] = 0
-			gender_dic['F'] = 0
-			gender_dic['D'] = 0
-			# get age count
-			age_dic = {}
-			age_dic['over_50'] = 0
-			age_dic['bet_36_50'] = 0
-			age_dic['bet_31_35'] = 0
-			age_dic['bet_26_30'] = 0
-			age_dic['bet_20_25'] = 0
-			age_dic['under_19'] = 0
-			# get profession count
-			prof_dic = {}
-			# get country count
-			country_dic = {}
-			# get state count
-			state_dic = {}
-			vote_list = []
-			if choiceId == "nochoice":
-				vote_list = Voted.objects.filter(question_id=pollId)
-			else:
-				vote_list = Vote.objects.filter(choice_id=choiceId)
-			for vote in vote_list:
-				user_extendeduser = vote.user.extendeduser
-				gender_dic[user_extendeduser.gender] += 1
-				user_age = user_extendeduser.calculate_age()
-				if user_age > 50:
-					age_dic['over_50'] += 1
-				elif user_age > 35:
-					age_dic['bet_36_50'] += 1
-				elif user_age > 30:
-					age_dic['bet_31_35'] += 1
-				elif user_age > 25:
-					age_dic['bet_26_30'] += 1
-				elif user_age > 19:
-					age_dic['bet_20_25'] += 1
-				elif user_age > 0:
-					age_dic['under_19'] += 1
-				prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
-				country = user_extendeduser.country
-				if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
-					country = 'United Kingdom'
-				country_dic[country] = country_dic.get(country,0) + 1
-				state = user_extendeduser.state
-				if country == stateContry:
-					if country == 'United Kingdom':
-						if state in englandDict:
-							state_dic['England'] = state_dic.get('England',0) + 1
-						elif state in nothernIreLand:
-							state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
-						elif state in scotland:
-							state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
-						elif state in wales:
-							state_dic['Wales'] = state_dic.get('Wales',0) + 1
-					else:
-						state_dic[state] = state_dic.get(state,0) + 1
-			response_dic["state"] = state_dic
-			response_dic["country"] = country_dic
-			response_dic["profession"] = prof_dic
-			response_dic["gender"] = gender_dic
-			response_dic["age"] = age_dic
-			return HttpResponse(json.dumps(response_dic), content_type='application/json')
-		if request.path == "/advanced_analyse":
-			pollId = request.POST.get("question")
-			# poll = Question.objects.get(pk=pollId)
-			min_age = 0
-			max_age = 9999
-			if request.POST.get("age") != "nochoice":
-				if request.POST.get("age") == "<19":
-					max_age = 19
-				elif request.POST.get("age") == "20-25":
-					min_age = 20
-					max_age = 25
-				elif request.POST.get("age") == "26-30":
-					min_age = 26
-					max_age = 30
-				elif request.POST.get("age") == "31-35":
-					min_age = 31
-					max_age = 35
-				elif request.POST.get("age") == "36-50":
-					min_age = 36
-					max_age = 50
-				elif request.POST.get("age") == ">50":
-					min_age = 50
-			gender = ""
-			if request.POST.get("gender") != "nochoice":
-				gender = request.POST.get("gender").lower()
-			profession = ""
-			if request.POST.get("profession") != "nochoice":
-				profession = request.POST.get("profession").lower()
-			country = ""
-			if request.POST.get("country") != "nochoice":
-				country = request.POST.get("country").lower()
-			state = ""
-			if request.POST.get("state") != "nochoice":
-				state = request.POST.get("state").lower()
-			response_dic = {}
-			total_votes = 0
-			# print(min_age,max_age,gender,profession)
-			choices = []
-			for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
-				choice_dic = {}
-				choice_text = "Choice"+str(idx+1)
-				choice_dic["key"] = choice_text
-				choice_dic["val"] = 0
-				for vote in Vote.objects.filter(choice_id=choice.id):
-					user_age = vote.user.extendeduser.calculate_age()
-					user_gender = vote.user.extendeduser.gender.lower()
-					user_prof = vote.user.extendeduser.profession.lower()
-					user_country = vote.user.extendeduser.country.lower()
-					user_state = vote.user.extendeduser.state.lower()
-					add_cnt = True
-					# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
-					if not (user_age >= min_age and user_age <= max_age):
-						add_cnt = False
-					if gender and user_gender != gender:
-						add_cnt = False
-					if profession and user_prof != profession:
-						add_cnt = False
-					if state and user_state != state:
-						add_cnt = False
-					if country and user_country != country:
-						add_cnt = False
-					if add_cnt:
-						choice_dic["val"] += 1
-						total_votes += 1
-				choices.append(choice_dic)
-			response_dic['choices'] = choices
-			response_dic['total_votes'] = total_votes
-			# print(response_dic)
-			return HttpResponse(json.dumps(response_dic), content_type='application/json')
+		try:
+			# print(request.path,request.POST)
+			if request.path == "/advanced_analyse_choice":
+				pollId = request.POST.get("question")
+				choiceId = request.POST.get("choice")
+				stateContry = request.POST.get("stateContry","")
+				response_dic = {}
+				# get gender count
+				gender_dic = {}
+				gender_dic['M'] = 0
+				gender_dic['F'] = 0
+				gender_dic['D'] = 0
+				# get age count
+				age_dic = {}
+				age_dic['over_50'] = 0
+				age_dic['bet_36_50'] = 0
+				age_dic['bet_31_35'] = 0
+				age_dic['bet_26_30'] = 0
+				age_dic['bet_20_25'] = 0
+				age_dic['under_19'] = 0
+				# get profession count
+				prof_dic = {}
+				# get country count
+				country_dic = {}
+				# get state count
+				state_dic = {}
+				vote_list = []
+				email_list_voted = []
+				if choiceId == "nochoice":
+					vote_list = Voted.objects.filter(question_id=pollId)
+					vote_api_list = VoteApi.objects.filter(question_id=pollId)
+				else:
+					vote_list = Vote.objects.filter(choice_id=choiceId)
+					vote_api_list = VoteApi.objects.filter(choice_id=choiceId)
+				for vote in vote_list:
+					user_extendeduser = vote.user.extendeduser
+					email_list_voted.append(vote.user.email)
+					gender_dic[user_extendeduser.gender] += 1
+					user_age = user_extendeduser.calculate_age()
+					if user_age > 50:
+						age_dic['over_50'] += 1
+					elif user_age > 35:
+						age_dic['bet_36_50'] += 1
+					elif user_age > 30:
+						age_dic['bet_31_35'] += 1
+					elif user_age > 25:
+						age_dic['bet_26_30'] += 1
+					elif user_age > 19:
+						age_dic['bet_20_25'] += 1
+					elif user_age > 0:
+						age_dic['under_19'] += 1
+					prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
+					country = user_extendeduser.country
+					if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+						country = 'United Kingdom'
+					country_dic[country] = country_dic.get(country,0) + 1
+					state = user_extendeduser.state
+					if country == stateContry:
+						if country == 'United Kingdom':
+							if state in englandDict:
+								state_dic['England'] = state_dic.get('England',0) + 1
+							elif state in nothernIreLand:
+								state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
+							elif state in scotland:
+								state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
+							elif state in wales:
+								state_dic['Wales'] = state_dic.get('Wales',0) + 1
+						else:
+							state_dic[state] = state_dic.get(state,0) + 1
+				for vote in vote_api_list:
+					if vote.age and vote.profession and vote.gender:
+						gender_dic[vote.gender] += 1
+						user_age = vote.age
+						if user_age > 50:
+							age_dic['over_50'] += 1
+						elif user_age > 35:
+							age_dic['bet_36_50'] += 1
+						elif user_age > 30:
+							age_dic['bet_31_35'] += 1
+						elif user_age > 25:
+							age_dic['bet_26_30'] += 1
+						elif user_age > 19:
+							age_dic['bet_20_25'] += 1
+						elif user_age > 0:
+							age_dic['under_19'] += 1
+						prof_dic[vote.profession] = prof_dic.get(vote.profession,0) + 1
+						country = vote.country
+						if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+							country = 'United Kingdom'
+						country_dic[country] = country_dic.get(country,0) + 1
+						state = vote.state
+						if country == stateContry:
+							if country == 'United Kingdom':
+								if state in englandDict:
+									state_dic['England'] = state_dic.get('England',0) + 1
+								elif state in nothernIreLand:
+									state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
+								elif state in scotland:
+									state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
+								elif state in wales:
+									state_dic['Wales'] = state_dic.get('Wales',0) + 1
+							else:
+								state_dic[state] = state_dic.get(state,0) + 1
+				response_dic["state"] = state_dic
+				response_dic["country"] = country_dic
+				response_dic["profession"] = prof_dic
+				response_dic["gender"] = gender_dic
+				response_dic["age"] = age_dic
+				return HttpResponse(json.dumps(response_dic), content_type='application/json')
+			if request.path == "/advanced_analyse":
+				pollId = request.POST.get("question")
+				# poll = Question.objects.get(pk=pollId)
+				min_age = 0
+				max_age = 9999
+				if request.POST.get("age") != "nochoice":
+					if request.POST.get("age") == "<19":
+						max_age = 19
+					elif request.POST.get("age") == "20-25":
+						min_age = 20
+						max_age = 25
+					elif request.POST.get("age") == "26-30":
+						min_age = 26
+						max_age = 30
+					elif request.POST.get("age") == "31-35":
+						min_age = 31
+						max_age = 35
+					elif request.POST.get("age") == "36-50":
+						min_age = 36
+						max_age = 50
+					elif request.POST.get("age") == ">50":
+						min_age = 50
+				gender = ""
+				if request.POST.get("gender") != "nochoice":
+					gender = request.POST.get("gender").lower()
+				profession = ""
+				if request.POST.get("profession") != "nochoice":
+					profession = request.POST.get("profession").lower()
+				country = ""
+				if request.POST.get("country") != "nochoice":
+					country = request.POST.get("country").lower()
+				state = ""
+				if request.POST.get("state") != "nochoice":
+					state = request.POST.get("state").lower()
+				response_dic = {}
+				total_votes = 0
+				# print(min_age,max_age,gender,profession)
+				total_votes_extra = 0
+				choices = []
+				for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
+					choice_dic = {}
+					choice_text = "Choice"+str(idx+1)
+					choice_dic["key"] = choice_text
+					choice_dic["val"] = 0
+					choice_dic["extra_val"] = 0
+					for vote in Vote.objects.filter(choice_id=choice.id):
+						user_age = vote.user.extendeduser.calculate_age()
+						user_gender = vote.user.extendeduser.gender.lower()
+						user_prof = vote.user.extendeduser.profession.lower()
+						user_country = vote.user.extendeduser.country.lower()
+						user_state = vote.user.extendeduser.state.lower()
+						add_cnt = True
+						# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
+						if not (user_age >= min_age and user_age <= max_age):
+							add_cnt = False
+						if gender and user_gender != gender:
+							add_cnt = False
+						if profession and user_prof != profession:
+							add_cnt = False
+						if state and user_state != state:
+							add_cnt = False
+						if country and user_country != country:
+							add_cnt = False
+						if add_cnt:
+							choice_dic["val"] += 1
+							total_votes += 1
+							choice_dic["extra_val"] += 1
+							total_votes_extra += 1
+					for vote in VoteApi.objects.filter(choice_id=choice.id):
+						if vote.age and vote.profession and vote.gender:
+							user_age = vote.age
+							user_gender = vote.gender.lower()
+							user_prof = vote.profession.lower()
+							user_country = vote.country.lower()
+							user_state = vote.state.lower()
+							add_cnt = True
+							if not (user_age >= min_age and user_age <= max_age):
+								add_cnt = False
+							if gender and user_gender != gender:
+								add_cnt = False
+							if profession and user_prof != profession:
+								add_cnt = False
+							if state and user_state != state:
+								add_cnt = False
+							if country and user_country != country:
+								add_cnt = False
+							if add_cnt:
+								choice_dic["val"] += 1
+								total_votes += 1
+						choice_dic["extra_val"] += 1
+						total_votes_extra += 1
+					choices.append(choice_dic)
+				response_dic['choices'] = choices
+				response_dic['total_votes'] = total_votes
+				response_dic['total_votes_extra'] = total_votes_extra
+				# print(response_dic)
+				return HttpResponse(json.dumps(response_dic), content_type='application/json')
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
 class TriviaPView(BaseViewList):
 	context_object_name = 'trivias'
@@ -1565,13 +1650,17 @@ class SurveyEditView(BaseViewDetail):
 		self.object = self.get_object()
 		context = super(SurveyEditView, self).get_context_data(object=self.object)
 		survey = context['survey']
+		context["clone"] = False
+		# print(request.path)
+		if request.path.startswith("/clonesurvey"):
+			context["clone"] = True
 		canEdit = True
 		if (survey.surveyvoted_set.count() > 0 and not request.user.is_superuser):
 			canEdit = False
 		if survey.user != request.user and not request.user.is_superuser:
 			canEdit = False
-		if not canEdit:
-			url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'que_slug':survey.que_slug})
+		if not canEdit and not request.path.startswith("/clonesurvey"):
+			url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
 			return HttpResponseRedirect(url)
 		else:
 			context["data"] = Category.objects.all()
@@ -1654,3 +1743,610 @@ def survey_mail(request):
 		linecache.checkcache(filename)
 		line = linecache.getline(filename, lineno, f.f_globals)
 		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
+def embed_poll(request):
+	try:
+		print("embed_poll")
+		pollId = int(request.GET.get('pollId'))
+		callback = request.GET.get('callback', '')
+		analysisNeeded = True
+		if request.GET.get('analysisNeeded'):
+			analysisNeeded = False
+		req = {}
+		poll = Question.objects.get(pk=pollId)
+		logo_html = '<a href="http://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
+		choices = Choice.objects.filter(question_id=pollId)
+		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
+		for choice in choices:
+			if choice.choice_image :
+				choice_html += '<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---'+str(choice.id)+'">'
+				choice_html += '<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---'+str(choice.id)+'" src="https://www.askbypoll.com/media/choices/'+choice.get_file_name()+'">'
+				choice_html += '<div class="askbypoll-progress-bar-Img-div" style="position:relative;" >'
+				choice_html += '<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-'+str(choice.id)+'">'
+				choice_html += choice.choice_text
+				choice_html += '</p>'
+				choice_html += '<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'"></div>'
+				choice_html += '<span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'"></span>'
+				choice_html += '</div></div>'
+			else:
+				choice_html += '<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---'+str(choice.id)+'">'
+				choice_html += '<p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---'+str(choice.id)+'">'
+				choice_html += choice.choice_text
+				choice_html += '</p>'
+				choice_html += '<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'"></div>'
+				choice_html += '<span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'"></span>'
+				choice_html += '</div>'
+		choice_html += '</div>'
+		question_html = '<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'">'
+		question_html += '<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'
+		question_html += poll.question_text
+		question_html += '</p></div>'
+		html = '<div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'
+		if analysisNeeded:
+			html += '<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---'+str(pollId)+'"><span class="askbypoll-enter-details">Enter Details To Analyse Results</span>'
+			html += '<select class="askbypoll-ageField askbypoll-enter" id="askbypoll-age---'+str(pollId)+'" name="age"><option value="notSelected">What\'s your Age Group?</option><option value="16"><19</option><option value="22">20-25</option><option value="28">26-30</option><option value="33">31-35</option><option value="43">36-50</option><option value="55">>50</option></select>'
+			html += '<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---'+str(pollId)+'" name="gender"><option value="notSelected">What\'s your Gender</option><option value="Female">Female</option><option value="Male">Male</option><option value="D">Rather Not Say</option></select>'
+			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button> <button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
+			html += '</div>'
+		html += logo_html
+		html += question_html
+		html += choice_html
+		html += site_link_html
+		html += '</div>'
+		req ['html'] = html
+		response = json.dumps(req)
+		response = callback + '(' + response + ');'
+		return HttpResponse(response,content_type="application/json")
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+
+def vote_embed_poll(request):
+	try:
+		callback = request.GET.get('callback', '')
+		choiceId = int(request.GET.get('choiceId',0))
+		pollId = int(request.GET.get('pollId'))
+		alreadyVoted = request.GET.get('alreadyVoted','false')
+		ipAddress = getIpAddress(request)
+		ipAddress = '139.130.4.22'
+
+		question = Question.objects.get(pk=pollId)
+		req = {}
+
+		#if((not existingVotes or timeDifference.total_seconds()>86400) and not(choiceId == 0)):
+		if((not alreadyVoted == 'true') and not(choiceId == 0)):
+			url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
+			dbIpResponse = requests.get(url)
+			locationData = dbIpResponse.json()
+			votedChoice = Choice.objects.get(pk=choiceId)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress)
+			votedChoiceFromApi.save()
+			totalVotes = VoteApi.objects.filter(question=question).count()
+			choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
+			result = {}
+			for i in choices:
+				i['percent'] = round((i.get('choiceCount')/totalVotes)*100)
+				result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
+			req ['result'] = result
+			response = json.dumps(req)
+			response = callback + '(' + response + ');'
+		else:
+			if alreadyVoted == 'true':
+				totalVotes = VoteApi.objects.filter(question=question).count()
+				choices = VoteApi.objects.filter(question=question).values('choice').annotate(choiceCount=Count('choice'))
+				result = {}
+				for i in choices:
+					i['percent'] = round((i.get('choiceCount')/totalVotes)*100)
+					result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount'))
+				req ['result'] = result
+			else:
+				req = {}
+			response = json.dumps(req)
+			response = callback + '(' + response + ');'
+
+		return HttpResponse(response,content_type="application/json")
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+
+def results_embed_poll(request):
+	try:
+		print(request.GET)
+		print("Age")
+		print(request.GET.get('age',18))
+		alreadyVoted = request.GET.get('alreadyVoted','false')
+		dataStored = request.GET.get('dataStored','false')
+		callback = request.GET.get('callback', '')
+		pollId = int(request.GET.get('pollId'))
+		poll = Question.objects.get(pk=pollId)
+		choices = Choice.objects.filter(question_id=pollId)
+
+		user_age = 0
+		gender = "D"
+		email = ''
+		profession = ''
+		print(alreadyVoted, dataStored)
+		if alreadyVoted == 'false' and dataStored == 'false':
+			if request.GET.get('age'):
+				user_age = int(request.GET.get('age',18))
+			if request.GET.get('gender',"D") != "notSelected":
+				gender = request.GET.get('gender',"D")[0]
+			if request.GET.get('profession',"D") != "notSelected":
+				profession = request.GET.get('profession','Others')
+			email = request.GET.get('email','')
+			ipAddress = getIpAddress(request)
+			ipAddress = '139.130.4.22'
+			existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
+			existingVote = existingVote[0]
+			existingVote.age = user_age
+			existingVote.gender = gender
+			existingVote.profession = profession
+			existingVote.email = email
+			existingVote.save()
+			if email and not User.objects.filter(email=email):
+				new_user = User(first_name="User",email=email,username=email,password=email)
+				new_user.save()
+				new_extended_user = ExtendedUser(user=new_user)
+				new_extended_user.save()
+				if user_age > 0:
+					new_extended_user.birthDay = datetime.date.today().year - user_age
+				if profession:
+					new_extended_user.profession = profession
+				new_extended_user.gender = gender
+				new_extended_user.country = existingVote.country
+				new_extended_user.state = existingVote.state
+				new_extended_user.city = existingVote.city
+				new_extended_user.save()
+			elif email:
+				old_user = User.objects.filter(email=email)[0]
+				subscribed, created = Subscriber.objects.get_or_create(user=old_user, question=poll)
+				voted, created = Voted.objects.get_or_create(user=old_user, question=poll)
+				vote, created = Vote.objects.get_or_create(user=old_user, choice=existingVote.choice)
+		choice_data = {}
+		percent = {}
+		totalVotes = 0
+		for index,choice in enumerate(choices):
+			choice_data[choice.id] = "choice" + str(index)
+			percent["choice" + str(index)] = 0
+		# get gender count
+		gender_dic = {}
+		gender_dic['M'] = 0
+		gender_dic['F'] = 0
+		gender_dic['D'] = 0
+		# get age count
+		age_dic = {}
+		age_dic['over_50'] = 0
+		age_dic['bet_36_50'] = 0
+		age_dic['bet_31_35'] = 0
+		age_dic['bet_26_30'] = 0
+		age_dic['bet_20_25'] = 0
+		age_dic['under_19'] = 0
+		# get profession count
+		prof_dic = {}
+		# get country count
+		country_dic = {}
+		# get state count
+		state_dic = {}
+		email_list_voted = []
+		for voteUser in Vote.objects.filter(choice__in=choices):
+			email_list_voted.append(voteUser.user.email)
+			totalVotes += 1
+			percent[choice_data[voteUser.choice_id]] = percent.get(choice_data[voteUser.choice_id],0) + 1
+			voteApi = voteUser.user.extendeduser
+			gender = voteApi.gender
+			user_age = voteApi.calculate_age()
+			profession = voteApi.profession
+			country = voteApi.country
+			gender_dic[gender] += 1
+			if user_age > 50:
+				age_dic['over_50'] += 1
+			elif user_age > 35:
+				age_dic['bet_36_50'] += 1
+			elif user_age > 30:
+				age_dic['bet_31_35'] += 1
+			elif user_age > 25:
+				age_dic['bet_26_30'] += 1
+			elif user_age > 19:
+				age_dic['bet_20_25'] += 1
+			elif user_age > 0:
+				age_dic['under_19'] += 1
+			prof_dic[profession] = prof_dic.get(profession,0) + 1
+			if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+				country = 'United Kingdom'
+			country_dic[country] = country_dic.get(country,0) + 1
+		for voteApi in VoteApi.objects.filter(question_id=pollId):
+			if email and email in email_list_voted:
+				pass
+			else:
+				totalVotes += 1
+				percent[choice_data[voteApi.choice_id]] = percent.get(choice_data[voteApi.choice_id],0) + 1
+				gender = voteApi.gender
+				user_age = voteApi.age
+				profession = voteApi.profession
+				country = voteApi.country
+				if gender and user_age and profession:
+					gender_dic[gender] += 1
+					if user_age > 50:
+						age_dic['over_50'] += 1
+					elif user_age > 35:
+						age_dic['bet_36_50'] += 1
+					elif user_age > 30:
+						age_dic['bet_31_35'] += 1
+					elif user_age > 25:
+						age_dic['bet_26_30'] += 1
+					elif user_age > 19:
+						age_dic['bet_20_25'] += 1
+					elif user_age > 0:
+						age_dic['under_19'] += 1
+					prof_dic[profession] = prof_dic.get(profession,0) + 1
+					# if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+					# 	country = 'United Kingdom'
+					country_dic[country] = country_dic.get(country,0) + 1	
+		logo_html = '<a href="http://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
+		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---1---'+str(pollId)+'"><div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'+logo_html+'<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'"><p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'+poll.question_text+'</p></div><div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'" >'
+		# print(choice_data,percent,totalVotes)
+		for index,choice in enumerate(choices):
+			choice_text = "Option "+str(index)
+			# print(percent[choice_data[choice.id]])
+			# print(percent[choice_data[choice.id]]/totalVotes)
+			choice_percent = int((percent[choice_data[choice.id]]/totalVotes) * 100)
+			if choice.choice_text:
+				choice_text = choice.choice_text
+			if choice.choice_image:
+				html += '<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---'+str(choice.id)+'"><img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---'+str(choice.id)+'" src="https://www.askbypoll.com/media/choices/'+choice.get_file_name()+'"><div class="askbypoll-progress-bar-Img-div" style="position:relative;"><p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-'+str(choice.id)+'">'+choice_text+'</p><div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'" style="display: inline-block; width:'+str(choice_percent)+'%; background: yellow;"></div><span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'">'+str(choice_percent)+'%</span></div></div>'
+			else:
+				html += '<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---'+str(choice.id)+'"><p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---'+str(choice.id)+'">'+choice_text+'</p><div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'" style="display: inline-block; width: '+str(choice_percent)+'%; background: yellow;"></div><span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'">'+str(choice_percent)+'%</span></div>'
+		html += '</div><div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</a></p></div></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---2---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-agechart---'+str(pollId)+'" width=700px height=600px></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" width=700px height=600px></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" width=700px height=600px></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" width=700px height=600px></div></section>'
+		req = {}
+		req ['html'] = html
+		req["gender_dic"] = gender_dic
+		req['age_dic'] = age_dic
+		req['prof_dic'] = prof_dic
+		req["country_dic"] = country_dic
+		response = json.dumps(req)
+		response = callback + '(' + response + ');'
+		return HttpResponse(response,content_type="application/json")
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+
+def getIpAddress(request):
+	""" use requestobject to fetch client machine's IP Address """
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')    ### Real IP address of client Machine
+	return ip
+
+import xlwt
+gender_excel_dic = {
+	"M":1,
+	"F":2,
+	"D":3
+}
+prof_excel_dic = {
+	"Student":1,
+	"Politics":2,
+	"Education":3,
+	"Information Technology":4,
+	"Public Sector":5,
+	"Social Services":6,
+	"Medical":7,
+	"Finance":8,
+	"Manager":9,
+	"Others":10
+}
+age_excel_dic ={
+	1:"Upto 19",
+	2:"20 - 25",
+	3:"26 - 30",
+	4:"31 - 35",
+	5:"36 - 50",
+	6:"50+"
+}
+
+normal_style = xlwt.easyxf(
+	"""
+	font:name Verdana
+	"""
+)
+
+border_style = xlwt.easyxf(
+	"""
+	font:name Verdana;
+	border: top thin, right thin, bottom thin, left thin;
+	align: vert centre, horiz left;
+	"""
+)
+
+def excel_view(request):
+	 
+	survey_id = -1
+	survey = ""
+	errors = {}
+	if request.GET.get("sid"):
+		survey_id = int(request.GET.get("sid",-1))
+		try:
+			survey = Survey.objects.get(pk=survey_id)
+		except:
+			errors['notfound'] = "Survey provided not found"
+			return HttpResponseNotFound(errors,content_type="application/json")
+		response = HttpResponse(content_type='application/ms-excel')
+		fname = "Survey_%s_Data.xls"%(survey_id)
+		response['Content-Disposition'] = 'attachment; filename=%s' % fname
+		wb = xlwt.Workbook()
+		ws0 = wb.add_sheet('Definitions', cell_overwrite_ok=True)
+		ws1 = wb.add_sheet('Raw Data', cell_overwrite_ok=True)
+		# write to the description sheet
+		write_to_description(ws0)
+		# description sheet end
+		ws1.write(0,0,"Country",normal_style)
+		ws1.write(0,1,"State",normal_style)
+		ws1.write(0,2,"Gender",normal_style)
+		ws1.write(0,3,"Age Group",normal_style)
+		ws1.write(0,4,"Profession",normal_style)
+		i = 1
+		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
+		for voted in voted_list:
+			j = 5
+			vote_user = voted.user
+			ws1.write(i,0,vote_user.extendeduser.country,normal_style)
+			ws1.write(i,1,vote_user.extendeduser.state,normal_style)
+			ws1.write(i,2,gender_excel_dic.get(vote_user.extendeduser.gender),normal_style)
+			ws1.write(i,3,get_age_group_excel(vote_user.extendeduser.calculate_age()),normal_style)
+			ws1.write(i,4,prof_excel_dic.get(vote_user.extendeduser.profession),normal_style)
+			for index,survey_question in enumerate(Survey_Question.objects.filter(survey_id = survey_id)):
+				question = survey_question.question
+				question_type = survey_question.question_type
+				excel_text = ""
+				choice_list = []
+				if question_type != "text":
+					choice_list = Choice.objects.filter(question_id=question.id)
+				excel_text = "Q"+str(index+1)
+				answer_text = ""
+				if question_type == "text":
+					vote_text = VoteText.objects.filter(user_id=vote_user.id,question_id=question.id)
+					if vote_text:
+						answer_text = vote_text[0].answer_text
+				elif question_type == "radio":
+					for c_index,choice in enumerate(choice_list):
+						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+							answer_text = str(c_index+1)
+				elif question_type == "checkbox":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+							answer_text = 1
+						ws1.write(0,j,excel_text,normal_style)
+						ws1.write(i,j,answer_text,normal_style)
+						j += 1
+				if question_type != "checkbox":
+					ws1.write(0,j,excel_text,normal_style)
+					ws1.write(i,j,answer_text,normal_style)
+					j += 1
+			i += 1
+		wb.save(response)
+		return response
+	errors['notfound'] = "No data provided"
+	return HttpResponseNotFound(errors,content_type="application/json")
+
+def write_to_description(ws0):
+	ws0.col(0).width = 25*256
+	ws0.write(0,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",normal_style)
+	ws0.write(1,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",normal_style)
+	ws0.write_merge(3,3,0,1,"Gender",border_style)
+	ws0.write(4,0,"Male",border_style)
+	ws0.write(4,1,1,border_style)
+	ws0.write(5,0,"Female",border_style)
+	ws0.write(5,1,2,border_style)
+	ws0.write(6,0,"Not Disclosed",border_style)
+	ws0.write(6,1,3,border_style)
+	ws0.write_merge(8,8,0,1,"Age Group",border_style)
+	x = 9
+	for key,val in age_excel_dic.items():
+		ws0.write(x,0,val,border_style)
+		ws0.write(x,1,key,border_style)
+		x += 1
+	x += 1
+	ws0.write_merge(x,x,0,1,"Profession",border_style)
+	x += 1
+	sorted_prof_excel_dic = sorted(prof_excel_dic.items(), key=operator.itemgetter(1))
+	print(sorted_prof_excel_dic)
+	for key_val in sorted_prof_excel_dic:
+		ws0.write(x,0,key_val[0],border_style)
+		ws0.write(x,1,key_val[1],border_style)
+		x += 1
+
+def get_age_group_excel(age):
+	res = -1
+	if age <= 19:
+		res = 1
+	elif age >19 and age <=25:
+		res = 2
+	elif age >25 and age <=30:
+		res = 3
+	elif age >30 and age <= 35:
+		res = 4
+	elif age >35 and age <= 50:
+		res = 5
+	elif age > 50:
+		res = 6
+	return res
+
+class PDFView(generic.DetailView):
+	model = Survey
+
+	def get_template_names(self):
+		template_name = "polls/pdf_report_survey.html"
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+		context = super(PDFView, self).get_context_data(**kwargs)
+		survey = context['survey']
+		maxVotes = -1
+		minVotes = 99999
+		maxVotedChoiceList = []
+		minVotedChoiceList = []
+		survey_questions = Survey_Question.objects.filter(survey_id = survey.id)
+		survey_voted = SurveyVoted.objects.filter(survey_id = survey.id)
+		surveytotalResponses = len(survey_voted)
+		incompleteResponses = 0
+		for voted in survey_voted:
+			if voted.survey_question_count != voted.user_answer_count:
+				incompleteResponses += 1
+		completeRate = 0
+		# print(surveytotalResponses,incompleteResponses,int((surveytotalResponses-incompleteResponses)/surveytotalResponses))
+		if surveytotalResponses > 0:
+			completeRate = int(((surveytotalResponses-incompleteResponses)/surveytotalResponses)*100)
+		survey_polls = []
+		maxVotedQuestionCount = -1
+		maxVotedQuestion = -1
+		for x in survey_questions:
+			questionChoices = x.question.choice_set.all()
+			totalResponses = x.question.voted_set.count()
+			if maxVotedQuestionCount < totalResponses and x.question_type != "text":
+				maxVotedQuestion = x.question.id
+				maxVotedQuestionCount = totalResponses
+			maxVotedChoice = ""
+			maxVotedChoiceStr = ""
+			maxVotedCount = -1
+			minVotedCount = 99999
+			choice_dict = {} 
+			choice_vote_count = {}
+			total_choice_vote = 0
+			choice_vote_count_filter = {}
+			total_choice_vote_filter = 0
+			age_dict = {}
+			gender_dict = {}
+			gender_dict['M'] = 0
+			gender_dict['F'] = 0
+			gender_dict['D'] = 0
+			prof_dict = {}
+			country_dict = {}
+			age_dict_filter = {}
+			gender_dict_filter = {}
+			gender_dict_filter['M'] = 0
+			gender_dict_filter['F'] = 0
+			gender_dict_filter['D'] = 0
+			prof_dict_filter = {}
+			country_dict_filter = {}
+			que_text_answers = []
+			if x.question_type == "text":
+				for votetext in VoteText.objects.filter(question_id = x.question.id):
+					que_text_answers.append(votetext.answer_text)
+					if len(que_text_answers) == 10:
+						break
+			else:
+				for index,choice in enumerate(questionChoices):
+					choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
+					choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
+					vote_set = choice.vote_set
+					numVotes = vote_set.count()
+					# print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
+					if not choice_dict.get(numVotes):
+						choice_dict[numVotes] = []
+					choice_dict[numVotes].append("Choice " + str(index+1)) # + " : " + str(numVotes))
+					if(numVotes >= maxVotedCount):
+						maxVotedCount = numVotes
+						maxVotedChoice = choice.id
+						maxVotedChoiceStr = "Choice"+str(index+1)
+					if(numVotes <= minVotedCount):
+						minVotedCount = numVotes
+					# print(Vote.objects.filter(choice_id = choice.id))
+					# print(VoteApi.objects.filter(choice_id = choice.id))
+					for vote in Vote.objects.filter(choice_id = choice.id):
+						choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+						total_choice_vote += 1
+						age = vote.user.extendeduser.calculate_age()
+						if age > 25 and age < 31:
+							choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+							total_choice_vote_filter += 1
+						gender = vote.user.extendeduser.gender
+						profession = vote.user.extendeduser.profession
+						country = vote.user.extendeduser.country
+						age_dict = get_age_data(age,age_dict)
+						gender_dict[gender] = gender_dict.get(gender,0) + 1
+						prof_dict[profession] = prof_dict.get(profession,0) + 1
+						if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+								country = 'United Kingdom'
+						country_dict[country] = country_dict.get(country,0) + 1
+					for vote in VoteApi.objects.filter(choice_id=choice.id):
+						age = vote.age
+						gender = vote.gender
+						profession = vote.profession
+						country = vote.country
+						if age and gender and profession:
+							if age > 25 and age < 31:
+								choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+								total_choice_vote_filter += 1
+							choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+							total_choice_vote += 1
+							age_dict = get_age_data(age,age_dict)
+							gender_dict[gender] = gender_dict.get(gender,0) + 1
+							prof_dict[profession] = prof_dict.get(profession,0) + 1
+							if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+									country = 'United Kingdom'
+							country_dict[country] = country_dict.get(country,0) + 1
+					for vote in Vote.objects.filter(choice_id = maxVotedChoice):
+						age = vote.user.extendeduser.calculate_age()
+						gender = vote.user.extendeduser.gender
+						profession = vote.user.extendeduser.profession
+						country = vote.user.extendeduser.country
+						age_dict_filter = get_age_data(age,age_dict_filter)
+						gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
+						prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
+						if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+								country = 'United Kingdom'
+						country_dict_filter[country] = country_dict.get(country,0) + 1
+					for vote in VoteApi.objects.filter(choice_id = maxVotedChoice):
+						age = vote.age
+						gender = vote.gender
+						profession = vote.profession
+						country = vote.country
+						if age and gender and profession:
+							age_dict_filter = get_age_data(age,age_dict_filter)
+							gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
+							prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
+							if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+									country = 'United Kingdom'
+							country_dict_filter[country] = country_dict.get(country,0) + 1
+			survey_polls.append({ "question":x.question, "q_type":x.question_type, "totalResponses":totalResponses, "maxVotes":choice_dict.get(maxVotedCount,""), "minVotes":choice_dict.get(minVotedCount,""), "choice_graph":choice_vote_count, "choice_graph_filter":choice_vote_count_filter, "total_choice_vote":total_choice_vote, "total_choice_vote_filter":total_choice_vote_filter, "age_graph":age_dict, "gender_graph":gender_dict, "prof_graph":prof_dict, "country_graph":country_dict, "age_graph_filter":age_dict_filter,"gender_graph_filter":gender_dict_filter, "prof_graph_filter":prof_dict_filter, "country_graph_filter":country_dict_filter, "maxVotedChoiceStr":maxVotedChoiceStr, "que_text_answers":que_text_answers })
+		context["surveytotalResponses"] = surveytotalResponses
+		context["incompleteResponses"] = completeRate
+		context["polls"] = survey_polls
+		context["maxVotedQuestion"] = maxVotedQuestion
+		print(context)
+		return context
+
+def get_age_data(user_age,age_dic):
+	age_dic['over_50'] = age_dic.get('over_50',0)
+	age_dic['bet_36_50'] = age_dic.get('bet_36_50',0)
+	age_dic['bet_31_35'] = age_dic.get('bet_31_35',0)
+	age_dic['bet_26_30'] = age_dic.get('bet_26_30',0)
+	age_dic['bet_20_25'] = age_dic.get('bet_20_25',0)
+	age_dic['under_19'] = age_dic.get('under_19',0)
+	if user_age > 50:
+		age_dic['over_50'] = age_dic.get('over_50',0) + 1
+	elif user_age > 35:
+		age_dic['bet_36_50'] = age_dic.get('bet_36_50',0) + 1
+	elif user_age > 30:
+		age_dic['bet_31_35'] = age_dic.get('bet_31_35',0) + 1
+	elif user_age > 25:
+		age_dic['bet_26_30'] = age_dic.get('bet_26_30',0) + 1
+	elif user_age > 19:
+		age_dic['bet_20_25'] = age_dic.get('bet_20_25',0) + 1
+	elif user_age > 0:
+		age_dic['under_19'] = age_dic.get('under_19',0) + 1
+	return age_dic

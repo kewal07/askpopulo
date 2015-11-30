@@ -50,6 +50,7 @@
 							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
 							<a href="{% url 'polls:survey_edit' survey.id survey.survey_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 							{% endif %}
+							<a href="{% url 'polls:survey_clone' survey.id survey.survey_slug %}"><i class="fa fa-files-o"></i></a>
 							<a href="{% url 'polls:survey_delete' survey.id survey.survey_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:survey_delete' survey.id survey.survey_slug %}')) return true; else return false;"></i></a>
 							{% endif %}
 						{% endif %}

@@ -45,13 +45,14 @@ class Question(models.Model):
 	def save(self, *args, **kwargs):
 		qText = self.question_text
 		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
-		short_q_text = qText[:50]
-		if not short_q_text.strip():
-			short_q_text = None
-		qslug = slugify(short_q_text)
-		if not qslug and not qslug.strip():
-			qslug = None
-		self.que_slug = qslug
+		if not self.que_slug:
+			short_q_text = qText[:50]
+			if not short_q_text.strip():
+				short_q_text = None
+			qslug = slugify(short_q_text)
+			if not qslug and not qslug.strip():
+				qslug = None
+			self.que_slug = qslug
 		digestmod = hashlib.sha1
 		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
@@ -94,15 +95,16 @@ class Survey(models.Model):
 
 	def save(self, *args, **kwargs):
 		try:
-			qText = self.survey_name
-			# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
-			short_q_text = qText[:50]
-			if not short_q_text.strip():
-				short_q_text = None
-			qslug = slugify(short_q_text)
-			if not qslug and not qslug.strip():
-				qslug = None
-			self.survey_slug = qslug
+			if not self.survey_slug:
+				qText = self.survey_name
+				# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
+				short_q_text = qText[:50]
+				if not short_q_text.strip():
+					short_q_text = None
+				qslug = slugify(short_q_text)
+				if not qslug and not qslug.strip():
+					qslug = None
+				self.survey_slug = qslug
 			digestmod = hashlib.sha1
 			msg = ("%s %s %s"%(self.survey_name,self.pub_date,self.user.username)).encode('utf-8')
 			sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
@@ -199,6 +201,7 @@ class VoteText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	answer_text = models.CharField(max_length=255)
+	created_at = models.DateTimeField(auto_now_add=True,null=True)
 	def __str__(self):
 		return self.answer_text
 
@@ -269,3 +272,16 @@ class QuestionUpvotes(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	vote = models.BooleanField(default=0)
+
+class VoteApi(models.Model):
+	choice = models.ForeignKey(Choice)
+	question = models.ForeignKey(Question)
+	ipAddress = models.IPAddressField(blank=True,null=True)
+	created_at = models.DateTimeField(auto_now_add=True,null=True)
+	age = models.IntegerField(null=True)
+	gender = models.CharField(max_length=1,blank=True,null=True)
+	city = models.CharField(max_length=512,blank=True,null=True)
+	state = models.CharField(max_length=512,blank=True,null=True)
+	country = models.CharField(max_length=512,blank=True,null=True)
+	profession = models.CharField(max_length=512,blank=True,null=True)
+	email = models.EmailField(max_length=70,blank=True, null= True, unique= True)

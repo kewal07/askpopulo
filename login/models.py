@@ -89,10 +89,11 @@ class Company(BaseModel):
 
 	def save(self, *args, **kwargs):
 		cname = self.name
-		cslug = slugify(cname)
-		if not cslug and not cslug.strip():
-			cslug = None
-		self.company_slug = cslug
+		if not self.company_slug:
+			cslug = slugify(cname)
+			if not cslug and not cslug.strip():
+				cslug = None
+			self.company_slug = cslug
 		super(Company, self).save(*args, **kwargs)
 
 	def __str__(self):

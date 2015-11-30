@@ -1,0 +1,25 @@
+.infoP{
+	border: 1px solid;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+#infoBox1{
+    width: 100%;
+}
+
+.figBox{
+	margin-bottom: 1rem;
+	border:1px solid;
+}
+#wrapper{
+	font-size: 20px !important;
+	max-width: 1600px !important;
+}
+.questions{
+	padding:5rem;
+}
+#foodStartUpsShare{
+	display: inline-flex;
+    padding: 1rem;
+}
