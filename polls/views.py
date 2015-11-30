@@ -2002,10 +2002,10 @@ def results_embed_poll(request):
 			else:
 				html += '<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---'+str(choice.id)+'"><p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---'+str(choice.id)+'">'+choice_text+'</p><div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'" style="display: inline-block; width: '+str(choice_percent)+'%; background: yellow;"></div><span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'">'+str(choice_percent)+'%</span></div>'
 		html += '</div><div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</a></p></div></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---2---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-agechart---'+str(pollId)+'" width=700px height=600px></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" width=700px height=600px></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" width=700px height=600px></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" width=700px height=600px></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---2---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-agechart---'+str(pollId)+'" ></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" ></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" ></div></section>'
+		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" ></div></section>'
 		req = {}
 		req ['html'] = html
 		req["gender_dic"] = gender_dic

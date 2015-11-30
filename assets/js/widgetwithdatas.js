@@ -229,8 +229,8 @@ function main() {
 			]);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-agechart---"+pollId));
 			chart.draw(data, options);
@@ -244,8 +244,8 @@ function main() {
 			]);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-genderchart---"+pollId));
 			chart.draw(data, options);
@@ -257,8 +257,8 @@ function main() {
 			var data = google.visualization.arrayToDataTable(profData);
 			var options = {
 			  'backgroundColor': 'transparent',
-			  'width':700,
-              'height':600
+			  // 'width':700,
+     //          'height':600
 			};
 			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-professionchart---"+pollId));
 			chart.draw(data, options);
