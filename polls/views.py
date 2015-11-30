@@ -1809,7 +1809,7 @@ def vote_embed_poll(request):
 		pollId = int(request.GET.get('pollId'))
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		ipAddress = getIpAddress(request)
-		ipAddress = '139.130.4.22'
+		# ipAddress = '139.130.4.22'
 
 		question = Question.objects.get(pk=pollId)
 		req = {}
@@ -1877,7 +1877,7 @@ def results_embed_poll(request):
 				profession = request.GET.get('profession','Others')
 			email = request.GET.get('email','')
 			ipAddress = getIpAddress(request)
-			ipAddress = '139.130.4.22'
+			# ipAddress = '139.130.4.22'
 			existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
 			existingVote = existingVote[0]
 			existingVote.age = user_age
