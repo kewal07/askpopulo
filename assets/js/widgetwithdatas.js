@@ -27,7 +27,7 @@ if (window.jQuery === undefined || window.jQuery.fn.jquery !== '1.11.1') {
 var headID = document.getElementsByTagName("head")[0];
 var newScript = document.createElement('script');
 newScript.type = 'text/javascript';
-newScript.src = 'http://www.google.com/jsapi';
+newScript.src = 'https://www.google.com/jsapi';
 headID.appendChild(newScript);
 
 /******** Called once jQuery has loaded ******/
@@ -40,9 +40,24 @@ function scriptLoadHandler() {
 }
 
 /******** Our main function ********/
-function main() { 
+function main() {
+    function askByPollLoadGoogle()
+    {
+	if(typeof google != 'undefined' && google && google.load)
+        {
+            // Now you can use google.load() here...
+	    google.load('visualization', '1', {'callback':'', 'packages':['corechart']});
+        }
+        else
+        {
+            // Retry later...
+            setTimeout(askByPollLoadGoogle, 30);
+        }
+    }
+    askByPollLoadGoogle();
+    //setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 2000); 
     jQuery(document).ready(function($) { 
-    	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
+    	//setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
     	/******* Load CSS *******/
         var css_link = $("<link>", { 
             rel: "stylesheet", 
@@ -59,7 +74,7 @@ function main() {
 
         /******* Load HTML *******/
 		$(".askbypoll-embed-poll").each(function(index){
-			setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
+			//setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
 			var divId = $(this).attr('id');
 			var pollId = $(this).attr('id').split('---')[1];
 			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&callback=?";
@@ -184,7 +199,7 @@ function main() {
 		$(".askbypoll-embed-poll").on( "click", ".askbypoll-button", function() {
 			var that = $(this);
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
-			var pollDiv = $("#askbypoll-embed-poll---"+pollId);
+			var pollDiv = $("#askbypoll-data-embed-poll---"+pollId);
 			var askbypollAge = $("#askbypoll-age---"+pollId).val();
 			var askbypollGender = $("#askbypoll-gender---"+pollId).val();
 			var askbypollProfession = $("#askbypoll-profession---"+pollId).val();
