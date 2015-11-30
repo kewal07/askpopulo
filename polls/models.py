@@ -276,7 +276,7 @@ class QuestionUpvotes(models.Model):
 class VoteApi(models.Model):
 	choice = models.ForeignKey(Choice)
 	question = models.ForeignKey(Question)
-	ipAddress = models.IPAddressField(blank=True,null=True)
+	ipAddress = models.GenericIPAddressField(blank=True,null=True)
 	created_at = models.DateTimeField(auto_now_add=True,null=True)
 	age = models.IntegerField(null=True)
 	gender = models.CharField(max_length=1,blank=True,null=True)
@@ -284,4 +284,4 @@ class VoteApi(models.Model):
 	state = models.CharField(max_length=512,blank=True,null=True)
 	country = models.CharField(max_length=512,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
-	email = models.EmailField(max_length=70,blank=True, null= True, unique= True)
+	email = models.EmailField(max_length=70,blank=True, null= True)
