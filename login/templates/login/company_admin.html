@@ -170,17 +170,17 @@
 						<div class="embedPollDiv" id="embed-code---{{ question.poll.id }}Div">
 							<p class="embedCodeP">
 								<label class="embedCodeLabel" for="embedCodeWithoutData">Script for Widget without data :</label>
-								<textarea class="embedCodeTextArea" id="embedCodeWithoutData---{{ question.poll.id }}" name="embedCodeNoData" maxlength="400" readonly></textarea>
+								<textarea class="embedCodeTextArea" id="embedCodeWithoutData---{{ question.poll.id }}" name="embedCodeNoData" maxlength="400" readonly><script type='text/javascript' src='https://www.askbypoll.com/static/js/widget.js'></script></textarea>
 							</p>
 
 							<span style="color:orange; padding-left:1rem; padding-right:1rem; font-size:25px;">or</span>
 							<p class="embedCodeP">
 								<label class="embedCodeLabel" for="embedCodeWithData">Script for Widget with data :</label>
-								<textarea class="embedCodeTextArea" id="embedCodeWithData---{{ question.poll.id }}" name="embedCodeData" maxlength="400" readonly></textarea>
+								<textarea class="embedCodeTextArea" id="embedCodeWithData---{{ question.poll.id }}" name="embedCodeData" maxlength="400" readonly><script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script></textarea>
 							</p>
 							<p id="embedCodeDivP" class="embedCodeP">
 								<label class="embedCodeLabel" for="embedCodeDiv">Place this code wherever you want to place the widget :</label>
-								<textarea class="embedCodeTextArea" id="embedCodeDiv---{{ question.poll.id }}" name="embedCodePlaceholderDiv" maxlength="400" readonly></textarea>
+								<textarea class="embedCodeTextArea" id="embedCodeDiv---{{ question.poll.id }}" name="embedCodePlaceholderDiv" maxlength="400" readonly><div class="askbypoll-embed-poll" id="askbypoll-embed-poll---{{ question.poll.id }}"></div></textarea>
 							</p>
 						</div>
 						<div class="analysis" id="analyse---{{ question.poll.id }}Div">
@@ -1562,9 +1562,6 @@
 					var embedCodePollId = $(this).attr('id').split('---')[1];
 					var embedCodeDiv = "embed-code---"+embedCodePollId+"Div";
 					$('#'+embedCodeDiv).toggle('slow');
-					$('#embedCodeWithoutData---'+embedCodePollId).val("<script type='text/javascript' src='https://askbypoll.com/static/widget.js'/>");
-					$('#embedCodeWithData---'+embedCodePollId).val("<script type='text/javascript' src='https://askbypoll.com/static/widget.js'/>");
-					$('#embedCodeDiv---'+embedCodePollId).val('<div class="askbypoll-embed-poll" id="askbypoll-embed-poll---'+embedCodePollId+'><\/div>');
 				});
 
 

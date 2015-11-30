@@ -59,32 +59,53 @@ function main() {
 
         /******* Load HTML *******/
 		$(".askbypoll-embed-poll").each(function(index){
+			setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
 			var pollId = $(this).attr('id').split('---')[1];
 			var jsonp_url = "http://localhost:8000/embed-poll?pollId="+pollId+"&callback=?";
 			var that = $(this);
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
-			$.getJSON(jsonp_url, function(data) {
-				console.log(data);
-				that.html(data.html);
-				var check_if_voted_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
-				$.getJSON(check_if_voted_url, function(data) {
-				console.log("data is ::",data);
-				if("result" in data){
-					var result = data.result;
-					console.log("Result is::",result);
-					for (var choice in result) {
-						if (result.hasOwnProperty(choice)) {
-							var progressBarId = "askbypoll-embed-progress-bar---"+choice;
-							var percent = result[choice].split('---')[0];
-							$('#'+progressBarId).css('display','inline-block');
-							$('#'+progressBarId).css('width',percent+'%');
-							$('#'+progressBarId).css('background','yellow');
-							$('#askbypoll-result-choice---'+choice).text(percent+'%');
+			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
+			// if(alreadyVoted == 'true' && dataGiven == 'true'){
+			// 	var askbypollAge = '19';
+			// 	var askbypollGender = "M";
+			// 	var askbypollProfession = "Student";
+			// 	var askbypollEmail = "a@b.com";
+			// 	var pollDiv = $("#askbypoll-embed-poll---"+pollId);
+			// 	var jsonp_url = "http://localhost:8000/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"&pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
+			// 	$.getJSON(jsonp_url, function(data) {
+			// 		pollDiv.html(data.html);
+			// 		$("#askbypoll-content---1---"+pollId).show();
+			// 		google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
+			// 		google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
+			// 		google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
+			// 		google.setOnLoadCallback(drawRegionsMap(pollId, data.country_dic));
+			// 		event.stopPropagation();
+			// 	});
+			// }else {
+				$.getJSON(jsonp_url, function(data) {
+					console.log(data);
+					that.html(data.html);
+					var check_if_voted_url = "http://localhost:8000/vote-embed-poll?pollId="+pollId+"&alreadyVoted="+alreadyVoted+"&callback=?";
+					$.getJSON(check_if_voted_url, function(data) {
+					console.log("data is ::",data);
+					if("result" in data){
+						var result = data.result;
+						console.log("Result is::",result);
+						for (var choice in result) {
+							if (result.hasOwnProperty(choice)) {
+								var progressBarId = "askbypoll-embed-progress-bar---"+choice;
+								var percent = result[choice].split('---')[0];
+								$('#'+progressBarId).css('display','inline-block');
+								$('#'+progressBarId).css('width',percent+'%');
+								$('#'+progressBarId).css('background','yellow');
+								$('#askbypoll-result-choice---'+choice).text(percent+'%');
+							}
 						}
 					}
-				}
+
+					});
 				});
-			});
+			// }
 		});
 		$(".askbypoll-embed-poll").on( "click", ".askbypoll-embed-poll-question-choice-text", function(event) {
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
@@ -92,23 +113,9 @@ function main() {
 			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
 			
 			console.log(alreadyVoted, dataGiven);
-			if(alreadyVoted == 'true' && dataGiven == 'true'){
-				var askbypollAge = '19';
-				var askbypollGender = "M";
-				var askbypollProfession = "Student";
-				var askbypollEmail = "a@b.com";
-				var pollDiv = $("#askbypoll-embed-poll---"+pollId);
-				var jsonp_url = "http://localhost:8000/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"&pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
-				$.getJSON(jsonp_url, function(data) {
-					pollDiv.html(data.html);
-					$("#askbypoll-content---1---"+pollId).show();
-					google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
-					google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
-					google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
-					google.setOnLoadCallback(drawRegionsMap(pollId, data.country_dic));
-					event.stopPropagation();
-				});
-			} else {
+			if(alreadyVoted == 'true')
+						event.stopPropagation();
+			else {
 				var a = new Date();
 				a = new Date(a.getTime() +1000*60*60*24);
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
@@ -136,24 +143,9 @@ function main() {
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
-			
-			if(alreadyVoted == 'true' && dataGiven == 'true'){
-				var askbypollAge = 19;
-				var askbypollGender = "M";
-				var askbypollProfession = "Student";
-				var askbypollEmail = "a@b.com";
-				var pollDiv = $("#askbypoll-embed-poll---"+pollId);
-				var jsonp_url = "http://localhost:8000/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
-				$.getJSON(jsonp_url, function(data) {
-					pollDiv.html(data.html);
-					$("#askbypoll-content---1---"+pollId).show();
-					google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
-					google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
-					google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
-					google.setOnLoadCallback(drawRegionsMap(pollId, data.country_dic));
-					event.stopPropagation();
-				});
-			} else {
+			if(alreadyVoted == 'true')
+						event.stopPropagation();
+			else {
 				var a = new Date();
 				a = new Date(a.getTime() +1000*60*60*24);
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
