@@ -460,6 +460,10 @@ function confirm_redirect(olEl,val,url){
 		console.log($oLay.children().children().first()[0])
 		$oLay.children().children().first()[0].innerHTML = "You Sure Want to Delete the Poll??";
 	}
+	if (val === "delete_survey"){
+		console.log($oLay.children().children().first()[0])
+		$oLay.children().children().first()[0].innerHTML = "You Sure Want to Delete the Survey??";
+	}
 	openOverlay(olEl);
 	return yesnoconfirm(url);
 }
