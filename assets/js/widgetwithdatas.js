@@ -184,7 +184,7 @@ function main() {
 							var votes = result[choice].split('---')[1];
 							var totalvotes = result[choice].split('---')[2];
 							var percent = 0;
-							if(totalVotes > 0)
+							if(totalvotes > 0)
 								percent = Math.round((votes/totalvotes)*100);
 							$('#'+progressBarId).css('display','inline-block');
 							$('#'+progressBarId).css('width',percent+'%');

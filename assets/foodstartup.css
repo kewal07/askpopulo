@@ -23,3 +23,6 @@
 	display: inline-flex;
     padding: 1rem;
 }
+.askbypoll-embed-poll-question-choice{
+	margin-right:5rem !important;
+}
