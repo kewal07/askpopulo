@@ -508,6 +508,10 @@
 						<input id="groups" type="text" name="groups" style="border:none;">
 						<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
 					</p>
+					<p class="anonymous" style="margin-top:2rem">
+						<input id="protectResult" name="protectResult" type="checkbox">
+						<label for="protectResult">Protect Survey Result </label>
+					</p>
 					<div class="survey-questions">
 					</div>
 					<i class="fa fa-plus-circle add-q">Add Question</i>
@@ -1238,6 +1242,8 @@
 				var question_list = [];
 				var choice_count = {};
 				var choice_list = {};
+				var protectedResultSurvey = false;
+
 				$(".create-survey").toggle("slow");
 			
 				$( "#categories" ).autocomplete({
@@ -1290,7 +1296,10 @@
 			  		question_elem += '" name="qDesc';
 			  		question_elem += question_count_str;
 			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
-			  		question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(protectedResultSurvey)
+			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		else
+			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -1450,6 +1459,17 @@
 						$(location).attr('href',create_url);
 					{% endif %}
 				});
+
+				$("#surveys-content").on("click","#protectResult",function(){
+					protectedResultSurvey = !protectedResultSurvey;
+					var checked = false;
+					if($("#protectResult").is(':checked'))
+						checked = true;
+					for(var i=1; i<question_count; i++){
+						$("#protectResult"+i).prop( "checked", checked );
+					}
+				});
+
 			}
 	
 			$(document).ready(function(){

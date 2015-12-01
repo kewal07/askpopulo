@@ -276,6 +276,14 @@
 						<input id="categories" type="text" name="categories" >
 						<input id="selectedCategories" type="hidden" name="selectedCategories" value="{{ survey_categories }}">
 					</p>
+					<p class="anonymous" style="margin-top:2rem">
+						{% if surveyResultProtected %}
+							<input id="protectResult" name="protectResult" type="checkbox" checked>
+						{% else %}
+							<input id="protectResult" name="protectResult" type="checkbox">
+						{% endif %}
+						<label for="protectResult">Protect Survey Result </label>
+					</p>
 					<div class="survey-questions">
 						{% for question in polls %}
 							<div class="survey-question-div" id="questionDiv{{ forloop.counter }}">
@@ -365,6 +373,7 @@
 			var question_list = [];
 			var choice_count = {};
 			var choice_list = {};
+			var protectedResultSurvey = false;
 			function add_another_choice(question_count_select,selectedType){
 				var question_choice_count = choice_count[question_count_select];
 	  			choice_list[question_count_select].push(question_choice_count);
@@ -425,6 +434,7 @@
 				/* End of file browse*/
 			}
 			$(document).ready(function(){
+				protectedResultSurvey = $("#protectResult").is(':checked');
 				$(".fileButtonClass").click(function(){
 					var elemId = $(this)[0].id;
 					$("#"+elemId.replace("file","image")).hide();
@@ -468,7 +478,10 @@
 			  		question_elem += '" name="qDesc';
 			  		question_elem += question_count_str;
 			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
-			  		question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(protectedResultSurvey)
+			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		else
+			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -591,6 +604,17 @@
 						return false;
 					});
 				});
+
+				$("#protectResult").click(function(){
+					protectedResultSurvey = !protectedResultSurvey;
+					var checked = false;
+					if($("#protectResult").is(':checked'))
+						checked = true;
+					for(var i=1; i<question_count; i++){
+						$("#protectResult"+i).prop( "checked", checked );
+					}
+				});
+
 			});
 		</script>
 	{% endblock %}
