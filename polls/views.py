@@ -843,6 +843,9 @@ def createExtendedUser(user):
 				city_data = twitter_data.get('location','')
 				extendedUser = ExtendedUser(user=user, imageUrl = img_url, city=city_data)
 				extendedUser.save()
+	else:
+		extendedUser = ExtendedUser(user=user)
+		extendedUser.save()
 	if user.is_authenticated():	
 		email = user.email
 		extendeduserGroups = ExtendedGroupFuture.objects.filter(user_email=email)
