@@ -1,8 +1,10 @@
 {% extends "polls/common.html" %}
 {% block meta_data_extra %}
 	{% with question.has_image as has_image %}
-	{%if has_image %}
-		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/media/choices/{{ has_image }}"/>
+	{%if has_image|length > 0 %}
+	{% for share_image in has_image %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}{{ share_image }}"/>
+	{% endfor %}
 		<meta property="og:image:width" content="300" /> 
 		<meta property="og:image:height" content="300" />
 	{% else %}
@@ -30,30 +32,23 @@
 				<div class="questionContent">
 					<div class="userInfo">
 						<div class="userImage">
-							{% if question.isAnonymous %}
-								<img class="usr-detail-img" src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
-							{% else %}
-								<a href="{% url 'login:loggedIn' question.user.id question.user.extendeduser.user_slug %}">
-									<img class="usr-detail-img" src="{{ question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.user.first_name }}">
-								</a>
-							{% endif %}
+
+							<a href="{{ question.get_user_details.user_url }}">
+								<img class="usr-detail-img" src="{{ question.get_user_details.pic_url }}"  alt="{{ question.get_user_details.pic_url }}">
+							</a>
 						</div>
 						<div class="userBrief">
 							<p>
-								{% if question.isAnonymous %}
-									Anonymous
-								{% else %}
-									<a href="{% url 'login:loggedIn' question.user.id question.user.extendeduser.user_slug %}">
-										{{question.user.first_name}}
-									</a>
-								{% endif %}
+								<a href="{{ question.get_user_details.user_url }}">
+									{{ question.get_user_details.user_name }}
+								</a>
 							</p>
 							{% if not question.isAnonymous %}
-										<div class="usr-creds-msg" style="font-size:0.9rem">
-											<span class="usr-det">pCoins : {{ question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
-											<span class="usr-det .connections">Connection{{ connection|pluralize }} : {{ connection }} <i class="fa fa-users"></i></span>
-										</div>
-									{% endif %}
+								<div class="usr-creds-msg" style="font-size:0.9rem">
+									<span class="usr-det">pCoins : {{ question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
+									<span class="usr-det .connections">Connection{{ connection|pluralize }} : {{ connection }} <i class="fa fa-users"></i></span>
+								</div>
+							{% endif %}
 							<p>
 								Asked on:<br>
 								{{ question.pub_date }}

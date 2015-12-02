@@ -468,7 +468,7 @@ class CreatePollView(BaseViewList):
 		if not user.is_authenticated():
 			url = reverse('account_login')
 		elif request.POST:
-			qText = request.POST.get('qText')	
+			qText = request.POST.get('qText')
 			qText = qText.replace('\n', ' ').replace('\r', '')
 			if not qText.strip():
 				errors['qTextError'] = "Question required"
@@ -521,6 +521,15 @@ class CreatePollView(BaseViewList):
 			imagePathList = []
 			images = []
 			choices = []
+			shareImage = request.FILES.get('shareImage')
+			# print(request.POST,request.FILES)
+			if edit:
+				if request.POST.get('imagetextshareImage',""):
+					shareImage = question.featured_image
+				elif question.featured_image:
+					if os.path.isfile(question.featured_image.path):
+							os.remove(question.featured_image.path)
+					# imagePathList.append(shareImage.path)
 			selectedCats = request.POST.get('selectedCategories','').split(",")
 			selectedGnames = request.POST.get('selectedGroups','').split(",")
 			if not list(filter(bool, selectedCats)):
@@ -655,8 +664,9 @@ class CreatePollView(BaseViewList):
 				question.isBet = bet
 				question.protectResult = protectResult
 				question.home_visible = home_visible
+				question.featured_image = shareImage
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
@@ -1393,6 +1403,15 @@ class CreateSurveyView(BaseViewList):
 			if surveyError:
 				errors['surveyError'] = surveyError
 			imagePathList = []
+			shareImage = request.FILES.get('shareImage')
+			# print(request.POST,request.FILES)
+			if edit:
+				if request.POST.get('imagetextshareImage',""):
+					shareImage = survey.featured_image
+				elif survey.featured_image:
+					if os.path.isfile(survey.featured_image.path):
+							os.remove(survey.featured_image.path)
+					# imagePathList.append(shareImage.path)
 			for que_index in question_count:
 				poll = {}
 				print(que_index)
@@ -1443,7 +1462,7 @@ class CreateSurveyView(BaseViewList):
 			if errors:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
-				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats)
+				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage)
 				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
 				if list(filter(bool, selectedGnames)):
@@ -1471,7 +1490,7 @@ class CreateSurveyView(BaseViewList):
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
 
-def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats):
+def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage):
 	try:
 		survey = None
 		if survey_id > 0:
@@ -1479,8 +1498,9 @@ def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selected
 			survey.survey_name = survey_name
 			survey.description = survey_desc
 			survey.expiry = qExpiry
+			survey.featured_image = shareImage
 		else:
-			survey = Survey( user=user, pub_date=curtime, created_at=curtime, survey_name=survey_name, description=survey_desc, expiry=qExpiry)
+			survey = Survey( user=user, pub_date=curtime, created_at=curtime, survey_name=survey_name, description=survey_desc, expiry=qExpiry, featured_image=shareImage)
 		survey.save()
 		if survey_id > 0:
 			for scat in survey.surveywithcategory_set.all():

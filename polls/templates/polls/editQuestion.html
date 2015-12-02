@@ -354,6 +354,14 @@
 							</select>
 						</div>
 					</p>
+					<p>
+						<label for="shareImage">Featured Image</label>
+						{% if question.featured_image %}
+							<img class="choices choice_image" id="imageshareImage" src="/media/featuredimages/{{ question.get_file_name }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/featuredimages/{{ question.get_file_name }}"'>
+							<input type="hidden" id="imagetextshareImage" name="imagetextshareImage" value="/media/featuredimages/{{ question.get_file_name }}---{{ question.id }}" />
+						{% endif %}
+						<input id="shareImage" class="fileButtonClass" type="file" name="shareImage" accept="image/*">
+					</p>
 					{% for choice in question.choice_set.all %}
 					<p>
 						<label for="choice{{ forloop.counter }}">Choice {{ forloop.counter }}</label>
@@ -449,6 +457,9 @@
 			</div>
 			<div class="tooltip" id="makeFeatured_tooltip">
 				<span class="cat_title_tooltip">The Question would be sent to the Home page and 100 pCoins would be deducted. </span>
+			</div>
+			<div class="tooltip" id="featuredimage_tooltip">
+				<span class="cat_title_tooltip">This image will be used while FB sharing, along with the choice image if provided.</span>
 			</div>
 		</section>
 		<script>

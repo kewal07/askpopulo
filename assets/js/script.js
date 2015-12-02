@@ -133,6 +133,17 @@ $(document).ready(function(){
   		$("#groups_tooltip").toggle();
   	});
 
+  	$("#featuredimage_tooltip_fa").hover(function(e){
+  		// console.log($(this));
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#featuredimage_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  		});
+  		$("#featuredimage_tooltip").toggle();
+  	});
+
   	$("#private_poll_fa").hover(function(e){
   		// console.log("category_tooltip");
   		var elem_pos = $(this).offset();

@@ -508,6 +508,10 @@
 						<input id="groups" type="text" name="groups" style="border:none;">
 						<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
 					</p>
+					<p style="margin-top:2rem">
+						<label class="required" for="shareImage">Featured Image <i id="featuredimage_tooltip_fa" class="fa fa-info-circle"></i></label>
+						<input id="shareImage" class="fileButtonClass" type="file" name="shareImage" accept="image/*">
+					</p>
 					<p class="anonymous" style="margin-top:2rem">
 						<input id="protectResult" name="protectResult" type="checkbox">
 						<label for="protectResult">Protect Survey Result </label>
@@ -522,6 +526,9 @@
 					{% for cat in categories %}
 						<span class="cat_title_tooltip">{{ cat }},    </span>
 					{% endfor %}
+				</div>
+				<div class="tooltip" id="featuredimage_tooltip">
+					<span class="cat_title_tooltip">This image will be used while FB sharing, along with the choice image if provided.</span>
 				</div>
 			</div>
 			<div class="dashboard-stats clearfix">
@@ -1276,6 +1283,50 @@
 			  		});
 			  		$("#category_tooltip").toggle();
 			  	});
+
+			  	$("#featuredimage_tooltip_fa").hover(function(e){
+			  		// console.log($(this));
+			  		var elem_pos = $(this).offset();
+			  		// console.log(elem_pos.top,elem_pos.left);
+			  		$("#featuredimage_tooltip").css({
+			  			"top":elem_pos.top-100,
+			  			"left":elem_pos.left-60,
+			  		});
+			  		$("#featuredimage_tooltip").toggle();
+			  	});
+
+			  	/*For file browse */
+				var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+				var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+				// var upImg = $('<img id="upImg" width=>')
+				var fileInput = $("#shareImage").after(label).wrap(invisible);
+				// $("#"+choice_file_id).hide();
+
+				fileInput.change(function(){
+					// $('#upImgText').hide();
+				    $this = $(this);
+				    var fileVal = $this.val();
+			    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+			    	var fileName = fileVal.substr(fileNameIndex);
+			    	if (this.files && this.files[0]) {
+			            var reader = new FileReader();
+			            
+			            reader.onload = function (e) {
+			                imgSrc = e.target.result;
+							console.log($this.parent().children().first());
+							// $(".upImg").attr('src', e.target.result);
+							$this.parent().next().children().first().attr('src', e.target.result);
+							// $(".upImg").show();
+							$this.parent().next().children().first().show();
+			            }
+			            
+			            reader.readAsDataURL(this.files[0]);
+			        }
+					// $("#upImgText").text(fileName);
+					$this.parent().next().children().first().next().hide();
+			    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+				})
+				/* End of file browse*/
 			  	$(".add-q").click(function(){
 			  		choice_count[question_count] = 1;
 			  		choice_list[question_count] = [];

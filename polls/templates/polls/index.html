@@ -47,17 +47,9 @@
 							<div class="userInfo">
 								<div class="userImage">
 									{% if question.question.user.extendeduser %}
-										{% if question.question.isAnonymous %}
-											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="Anonymous">
-										{% elif question.question.user.extendeduser.company.id > 1 %}
-											<a class ="userIndexA" href="{% url 'company_page' question.question.user.extendeduser.company.company_slug %}">
-												<img class ="userIndexImage" src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
-											</a>
-										{% else %}
-											<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
-												<img class ="userIndexImage" src="{{ question.question.user.extendeduser.get_profile_pic_url }}"  alt="User {{ question.question.user.first_name }}">
-											</a>
-										{% endif %}
+										<a class ="userIndexA" href="{{ question.question.get_user_details.user_url }}">
+											<img class ="userIndexImage" src="{{ question.question.get_user_details.pic_url }}"  alt="{{ question.question.get_user_details.user_alt }}">
+										</a>
 									{% else %}
 										<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
 											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
@@ -66,13 +58,9 @@
 								</div>
 								<div class="userBrief">
 									<p>
-										{% if question.question.isAnonymous %}
-											Anonymous
-										{% else %}
-											<a href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
-												{{question.question.user.first_name}}
-											</a>
-										{% endif %}
+										<a href="{{ question.question.get_user_details.user_url }}">
+											{{ question.question.get_user_details.user_name }}
+										</a>
 									</p>
 									{% if not question.question.isAnonymous %}
 										<div class="usr-creds-msg">

@@ -11,6 +11,7 @@ import hashlib
 import hmac
 from datetime import date
 from stream_django.activity import Activity
+from django.core.urlresolvers import resolve,reverse
 # Create your models here.
 
 shakey=(settings.SHAKEY).encode('utf-8')
@@ -20,6 +21,13 @@ def get_file_path(instance, filename):
 	filename = "choice%s.%s" % (instance.question.id,ext)
 	folder_day = date.today()
 	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'choices'+os.sep+str(folder_day)))
+	return os.path.join(profilePath,filename)
+
+def get_file_path_featured(instance, filename):
+	ext = filename.split('.')[-1]
+	filename = "featured%s.%s" % (instance.id,ext)
+	folder_day = date.today()
+	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'featuredimages'+os.sep+str(folder_day)))
 	return os.path.join(profilePath,filename)
 
 class Question(models.Model):
@@ -41,6 +49,7 @@ class Question(models.Model):
 	last_accessed = models.DateTimeField(null=True,blank=True)
 	home_visible = models.BooleanField(default=1)
 	protectResult = models.BooleanField(default=0)
+	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 
 	def save(self, *args, **kwargs):
 		qText = self.question_text
@@ -75,10 +84,48 @@ class Question(models.Model):
 				ch_list.append(x+1)
 		return ch_list
 	def has_image(self):
+		image_list = []
+		if self.featured_image:
+			image_list.append("/media/featuredimages/"+self.get_file_name())
 		for choice in self.choice_set.all():
 			if choice.choice_image:
-				return choice.get_file_name()
-		return False
+				image_list.append("/media/choices/"+choice.get_file_name())
+		image_list.append(self.user.extendeduser.get_profile_pic_url())
+		return image_list
+	def get_user_details(self):
+		if self.isAnonymous:
+			pic_url = "/static/login/images/defaultAvatar.png"
+			user_url = ""
+			user_alt = "Anonymous"
+			user_name = "Anonymous"
+		elif self.user.extendeduser.company_id > 1:
+			pic_url = self.user.extendeduser.get_profile_pic_url()
+			user_url = reverse('company_page', kwargs={'company_name':self.user.extendeduser.company.company_slug})
+			# user_alt = "User %s"%(self.user.extendeduser.company.name)
+			# user_name = self.user.extendeduser.company.name
+			user_alt = "User %s"%(self.user.first_name)
+			user_name = self.user.first_name
+		else:
+			pic_url = self.user.extendeduser.get_profile_pic_url()
+			user_url = reverse('login:loggedIn', kwargs={'pk':self.user.id,'user_slug':self.user.extendeduser.user_slug})
+			user_alt = "User %s"%(self.user.first_name)
+			user_name = self.user.first_name
+		user_details = {}
+		user_details['pic_url'] = pic_url
+		user_details['user_url'] = user_url
+		user_details['user_alt'] = user_alt
+		user_details['user_name'] = user_name
+		return user_details
+	def get_folder_day(self):
+		folder_day = ""
+		try:
+			day = self.featured_image.path.split(os.sep)[-2]
+			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
+		except:
+			pass
+		return folder_day
+	def get_file_name(self):
+		return self.get_folder_day()+"/"+self.featured_image.path.split(os.sep)[-1]
 
 class Survey(models.Model):
 	survey_pk = models.CharField(max_length=255)
@@ -92,6 +139,7 @@ class Survey(models.Model):
 	numViews = models.IntegerField(blank=True,null=True,default=0)
 	last_accessed = models.DateTimeField(null=True,blank=True)
 	home_visible = models.BooleanField(default=0)
+	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 
 	def save(self, *args, **kwargs):
 		try:
@@ -131,12 +179,26 @@ class Survey(models.Model):
 		was_published_recently.boolean = True
 		was_published_recently.short_description = 'Published recently'
 	def has_image(self):
+		image_list = []
+		if self.featured_image:
+			image_list.append("/media/featuredimages/"+self.get_file_name())
 		polls = [ x.question for x in Survey_Question.objects.filter(survey_id=self.id)]
 		for poll in polls:
 			for choice in poll.choice_set.all():
 				if choice.choice_image:
-					return choice.get_file_name()
-		return False
+					image_list.append("/media/choices/"+choice.get_file_name())
+		image_list.append(self.user.extendeduser.get_profile_pic_url())
+		return image_list
+	def get_folder_day(self):
+		folder_day = ""
+		try:
+			day = self.featured_image.path.split(os.sep)[-2]
+			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
+		except:
+			pass
+		return folder_day
+	def get_file_name(self):
+		return self.get_folder_day()+"/"+self.featured_image.path.split(os.sep)[-1]
 
 class SurveyWithCategory(models.Model):
 	survey = models.ForeignKey(Survey)

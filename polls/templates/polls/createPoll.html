@@ -351,6 +351,10 @@
 						</div>
 					</p>
 					<p>
+						<label class="required" for="shareImage">Featured Image <i id="featuredimage_tooltip_fa" class="fa fa-info-circle"></i></label>
+						<input id="shareImage" class="fileButtonClass" type="file" name="shareImage" accept="image/*">
+					</p>
+					<p>
 						<label class=" required" for="choice1">Choice 1</label>
 						<input id="choice1" class="createPollText" type="text" name="choice1" placeholder="First Choice" maxlength="200">
 						<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
@@ -435,6 +439,9 @@
 			</div>
 			<div class="tooltip" id="makeFeatured_tooltip">
 				<span class="cat_title_tooltip">The Question would be sent to the Home page and 100 pCoins would be deducted.</span>
+			</div>
+			<div class="tooltip" id="featuredimage_tooltip">
+				<span class="cat_title_tooltip">This image will be used while FB sharing, along with the choice image if provided.</span>
 			</div>
 		</section>
 		<script>
