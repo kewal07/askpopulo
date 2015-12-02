@@ -1619,11 +1619,13 @@ class SurveyVoteView(BaseViewDetail):
 		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
 			poll_dict = {"poll":x.question,"type":x.question_type}
 			poll_dict['user_already_voted'] = False
-			question_user_vote = Voted.objects.filter(user=user,question=x.question)
-			if question_user_vote:
-				poll_dict['user_already_voted'] = True
-				if x.question_type == "text":
-					poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
+			question_user_vote = []
+			if user.is_authenticated():
+				question_user_vote = Voted.objects.filter(user=user,question=x.question)
+				if question_user_vote:
+					poll_dict['user_already_voted'] = True
+					if x.question_type == "text":
+						poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
 			context['polls'].append(poll_dict)
 		return context
 

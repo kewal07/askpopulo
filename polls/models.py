@@ -87,10 +87,10 @@ class Question(models.Model):
 		image_list = []
 		if self.featured_image:
 			image_list.append("/media/featuredimages/"+self.get_file_name())
-		for choice in self.choice_set.all():
-			if choice.choice_image:
-				image_list.append("/media/choices/"+choice.get_file_name())
-		image_list.append(self.user.extendeduser.get_profile_pic_url())
+		if not image_list:
+			for choice in self.choice_set.all():
+				if choice.choice_image:
+					image_list.append("/media/choices/"+choice.get_file_name())
 		return image_list
 	def get_user_details(self):
 		if self.isAnonymous:
@@ -182,12 +182,12 @@ class Survey(models.Model):
 		image_list = []
 		if self.featured_image:
 			image_list.append("/media/featuredimages/"+self.get_file_name())
-		polls = [ x.question for x in Survey_Question.objects.filter(survey_id=self.id)]
-		for poll in polls:
-			for choice in poll.choice_set.all():
-				if choice.choice_image:
-					image_list.append("/media/choices/"+choice.get_file_name())
-		image_list.append(self.user.extendeduser.get_profile_pic_url())
+		if not image_list:
+			polls = [ x.question for x in Survey_Question.objects.filter(survey_id=self.id)]
+			for poll in polls:
+				for choice in poll.choice_set.all():
+					if choice.choice_image:
+						image_list.append("/media/choices/"+choice.get_file_name())
 		return image_list
 	def get_folder_day(self):
 		folder_day = ""
