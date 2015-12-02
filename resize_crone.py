@@ -13,26 +13,24 @@ log_file = open(script_path+os.sep+"askbypoll_crone.log","a")
 
 #print(script_path,now,ago,now>ago,script_path+os.sep+'media'+os.sep+'choices'+os.sep+str(folder_day))
 
-for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'choices'+os.sep+str(folder_day)):  
-    for fname in files:
-        path=os.path.join(root,fname)
-        st=os.stat(path)    
-        #mtime=dt.datetime.fromtimestamp(st.st_mtime)
-        #print(mtime,ago)
-        #if mtime>ago:
-        #print('%s modified %s'%(path,mtime))
-        #imfile, ext = os.path.splitext(path)
-        #print(imfile,ext,path)
-        im = Image.open(path)
-        msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
-        log_file.write(msg)
-        #print(msg)
-        if im.size[0] > 300 or im.size[1] > 300:
-            msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
-            #print(msg)
+internal_folders = ['choices','profile','featuredimages']
+
+for folder in internal_folders:
+    for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+folder+os.sep+str(folder_day)):  
+        for fname in files:
+            path=os.path.join(root,fname)
+            st=os.stat(path)    
+            im = Image.open(path)
+            msg = "\nSize of "+path+" is "+str(im.size)+" @ "+str(dt.datetime.now())
             log_file.write(msg)
-            im.thumbnail(resize_to)
-            im.save(path)
+            #print(msg)
+            if im.size[0] > 300 or im.size[1] > 300:
+                msg = "\nResizing "+path+" @ "+str(dt.datetime.now())
+                #print(msg)
+                log_file.write(msg)
+                im.thumbnail(resize_to)
+                im.save(path)
+"""
 for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'profile'+os.sep+str(folder_day)):  
     for fname in files:
         path=os.path.join(root,fname)
@@ -53,7 +51,7 @@ for root,dirs,files in os.walk(script_path+os.sep+'media'+os.sep+'profile'+os.se
             log_file.write(msg)
             im.thumbnail(resize_to)
             im.save(path)
-"""
+
 for root,dirs,files in os.walk(script_path+os.sep+'media'):  
     for fname in files:
         path=os.path.join(root,fname)
