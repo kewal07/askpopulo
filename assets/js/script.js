@@ -37,7 +37,7 @@ $(document).ready(function(){
             
             reader.onload = function (e) {
                 imgSrc = e.target.result;
-				console.log($this.parent().children().first());
+				//console.log($this.parent().children().first());
 				// $(".upImg").attr('src', e.target.result);
 				$this.parent().next().children().first().attr('src', e.target.result);
 				// $(".upImg").show();
