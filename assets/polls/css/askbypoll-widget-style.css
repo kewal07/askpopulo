@@ -31,14 +31,6 @@ img.askbypoll-embed-poll-logo{
 .askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
   text-transform: capitalize
 }
-.askbypoll-embed-poll-powered-by{
-	position: relative;
-	height: 20px;
-}
-p.askbypoll-embed-poll-powered-by-p{
-	position: absolute;
-	right:0;
-}
 a.askbypoll-embed-poll-askbypoll-url{
 	text-decoration: none;
 	color:orange;
@@ -200,6 +192,7 @@ select{
     height: 20px;
 }
 p.askbypoll-embed-poll-powered-by-p{
+    color:black !important;
     position: absolute;
     right:0;
 }
