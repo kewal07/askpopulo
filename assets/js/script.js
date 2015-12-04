@@ -629,7 +629,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         };
         var chart = "";
         if(graphType != ""){
-        	console.log(analyse_type+'pollsChart---'+pollId+'---'+graphType);
+        	// console.log(analyse_type+'pollsChart---'+pollId+'---'+graphType);
         	if(document.getElementById(analyse_type+'pollsChart---'+pollId+'---'+graphType) != null){
         		chart = new google.visualization.ColumnChart(document.getElementById(analyse_type+'pollsChart---'+pollId+'---'+graphType));
         		chart.draw(data, optionsCol);
@@ -776,7 +776,7 @@ function drawGenderChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
     legend:'bottom'
   };
 
-  console.log(analyse_type+'genderChart---'+pollId+graphId);
+  // console.log(analyse_type+'genderChart---'+pollId+graphId);
   if(document.getElementById(analyse_type+'genderChart---'+pollId+graphId) != null){
 	  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'genderChart---'+pollId+graphId));
 	  chart.draw(data, options);
@@ -833,7 +833,7 @@ function drawAgeChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
     pieHole: 0.4,
     legend:'bottom'
   };
-  console.log(analyse_type+'ageChart---'+pollId+graphId);
+  // console.log(analyse_type+'ageChart---'+pollId+graphId);
   if(document.getElementById(analyse_type+'ageChart---'+pollId+graphId) != null){
 	  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'ageChart---'+pollId+graphId));
 	  chart.draw(data, options);
@@ -876,7 +876,7 @@ function drawOthersChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
 	pieHole: 0.4,
 	legend:'bottom'
 	};
-	console.log(analyse_type+'othersChart---'+pollId+graphId);
+	// console.log(analyse_type+'othersChart---'+pollId+graphId);
   	if(document.getElementById(analyse_type+'othersChart---'+pollId+graphId) != null){
 		var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'othersChart---'+pollId+graphId));
 		chart.draw(data, options);
@@ -918,7 +918,7 @@ function drawLocationChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
 	}
     var data = google.visualization.arrayToDataTable(conData);
     var options = {};
-    console.log(analyse_type+'locationChart---'+pollId+graphId);
+    // console.log(analyse_type+'locationChart---'+pollId+graphId);
   	if(document.getElementById(analyse_type+'locationChart---'+pollId+graphId) != null){
 	    var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId+graphId));
 	    chart.draw(data, options);
@@ -981,7 +981,7 @@ function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId,graphId){
 	// console.log(stateData)
 
 	var data = google.visualization.arrayToDataTable(stateData);
-	console.log(analyse_type+'locationChart---'+pollId+graphId);
+	// console.log(analyse_type+'locationChart---'+pollId+graphId);
   	if(document.getElementById(analyse_type+'locationChart---'+pollId+graphId) != null){
 		var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId+graphId));
 		chart.draw(data, options);
