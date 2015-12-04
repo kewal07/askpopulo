@@ -651,7 +651,7 @@ th.question-table-heading {
 }
 .question_analyse_chart_cmp1, .question_analyse_chart_cmp2, .question_analyse_chart_loc_cmp1, .question_analyse_chart_loc_cmp2{
 	height: 400px;
-	width: 600px;
+	width: 500px;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
