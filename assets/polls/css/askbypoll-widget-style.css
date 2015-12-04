@@ -3,12 +3,16 @@
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    /*box-sizing: border-box;*/
+}
+.askbypoll-embed-content{
+    border:1px solid;
 }
 .askbypoll-embed-poll{
     margin:1rem 0;
+    border:1px solid;
 }
-.askbypoll-embed-poll-wrapper{
+/*.askbypoll-embed-poll-wrapper{
 	width: 80%;
     margin: 0 auto;
     padding: 1rem;
@@ -16,7 +20,7 @@
 	font-family: 'Montserrat', sans-serif;
 	color:#fff !important;
 	position: relative;
-}
+}*/
 img.askbypoll-embed-poll-logo{
 	width: 40px;
     height: 40px;
@@ -24,42 +28,8 @@ img.askbypoll-embed-poll-logo{
     right: 0;
     top: 0;
 }
-.askbypoll-embed-poll-question{
-	border-bottom:2px solid;
-    /*padding-bottom:1rem;*/
-}
-.askbypoll-embed-poll-question-text{
-	font-size:1.3rem !important;
-	margin-left:1.5rem;
-    color:#fff !important;
-}
 .askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
   text-transform: capitalize
-}
-.askbypoll-embed-poll-question-choice-text{
-	width: 100%;
-	display: inline-block;
-    border: 2px solid #fff;
-    background-color: transparent;
-    /*border-radius: 2.5rem;*/
-    outline: 0;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-   	padding: .5em;
-    -webkit-align-self: center;
-    align-self: center;
-    color: #fff !important;
-    margin: 0 auto;
-    cursor: pointer;
-  /*  margin:1.5rem;*/	
-  z-index: 1000;
-  font-size: 1rem; 
-  font-weight: initial !important;
-     line-height:initial !important; 
-     margin-bottom: 0px !important; 
-     font-size:1rem !important;
 }
 .askbypoll-embed-poll-powered-by{
 	position: relative;
@@ -90,28 +60,30 @@ img.askbypoll-embed-poll-question-choice-img{
 	cursor:pointer;
 }
 .askbypoll-embed-poll-question-choice-img-text{
+    line-height: 100% !important;
     display:block;
-	/*position: absolute;
-    bottom: 0px;
-    z-index: 100000;*/
-    background-color: rgb(92, 184, 92);
-    background-color: rgba(92, 184, 92, 0.4);
+    background-color: lightpink;
     margin: 0;
     width: 100%;
     padding: 0.5rem 0;
     color: black;
     font-weight: bold;
     margin:0;
+    padding-left: 4px;
 }
 .askbypoll-embed-poll-question-choice:nth-of-type(1) {
-    margin-right:11rem;
+    margin-right:2rem;
+}
+.askbypoll-embed-poll-question-choice:nth-of-type(2) {
+    margin-right:2rem;
 }
 .askbypoll-embed-poll-question-choice:nth-of-type(3) {
-    margin-right:11rem;
+    margin-right:2rem;
 }
 .askbypoll-embed-poll-choice{
 	display: inline;
 }
+
 .askbypoll-embed-progress-bar{
 	width: 0;
     display: inline-block;
@@ -120,7 +92,7 @@ img.askbypoll-embed-poll-question-choice-img{
     top:0;
     opacity: 0.5;
     height: 100%;
-    background:red;
+    background:#FF0000;
     /*border-radius: 2.5rem;*/
     -webkit-animation: mymove 5s 1; /*/ Chrome, Safari, Opera /*/
     animation: mymove 1s 1;
@@ -149,79 +121,30 @@ span.askbypoll-poll-result{
     top: 8px;
     z-index: 1000;
 }
-.askbypoll-embed-overlay{
-    display: none;
-    border: 2px solid;
-    padding: 1rem;
-    position: absolute;
-    z-index: 10000000;
-    top: 28%;
-    width: 95%;
-    background: #5cb85c;
-    margin: 0 auto;
-    opacity: 1;
-}
-.askbypoll-enter-details{
-    text-align: center;
-    display: block;
-}
-.askbypoll-enter{
-    outline: 0;
-    background-color: transparent;
-    border: 0;
-    border-bottom: 2px solid #fff;
-    font-size: 1rem;
-    margin-top: 0.5em;
-    color: #fff;
-    font-family: 'Montserrat', sans-serif;
-    width: 100%;
-    text-align: left;
-}
 select option{
-    background-color: #6952a0;
+    background-color: lightgray;
 }
 ::-webkit-input-placeholder {
-   color: #fff;
+   color: black;
    font-family: 'Montserrat', sans-serif;
 }
 
 :-moz-placeholder { 
-   color: #fff; 
+   color: black; 
    font-family: 'Montserrat', sans-serif; 
 }
 
 ::-moz-placeholder { 
-   color: #fff;  
+   color: black;  
    font-family: 'Montserrat', sans-serif;
 }
 
 :-ms-input-placeholder {  
-   color: #fff; 
+   color: black; 
    font-family: 'Montserrat', sans-serif; 
 }
 select{
     font-family: 'Montserrat', sans-serif;
-}
-.askbypoll-button{
-    border: 4px solid #fff;
-    background-color: transparent;
-    border-radius: 2.5em;
-    outline: 0;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    font-size: 1rem;
-    padding: 0 1.5em;
-    -webkit-align-self: center;
-    align-self: center;
-    transition: all .3s ease;
-    font-family: 'Montserrat', sans-serif;
-    color: #fff;
-    display: block;
-    margin: 0 auto;
-    margin-top: 0.5rem;
-    cursor: pointer;
 }
 /*New*/
 #piechart{
@@ -229,41 +152,28 @@ select{
   height:600px;
 }
 /*Before*/
-.askbypoll-embed-poll{
-    margin:1rem 0;
-}
 .askbypoll-embed-poll-wrapper{
     width: 100%;
     margin: 0 auto;
     padding: 1rem;
-    background-color: #6952a0;
+    background-color: white;
     font-family: 'Montserrat', sans-serif;
     color:#fff !important;
     position: relative;
 }
-img.askbypoll-embed-poll-logo{
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
 .askbypoll-embed-poll-question{
-    border-bottom:2px solid;
-    /*padding-bottom:1rem;*/
+    border-bottom:1px solid;
+    border-color:black;
 }
 .askbypoll-embed-poll-question-text{
     font-size:1.3rem !important;
     margin-left:1.5rem;
-    color:#fff !important;
-}
-.askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
-  text-transform: capitalize
+    color:black !important;
 }
 .askbypoll-embed-poll-question-choice-text{
     width: 100%;
     display: inline-block;
-    border: 2px solid #fff;
+    border: 1px solid black;
     background-color: transparent;
     /*border-radius: 2.5rem;*/
     outline: 0;
@@ -282,7 +192,8 @@ img.askbypoll-embed-poll-logo{
   font-size: 1rem; 
   font-weight: initial !important;
      line-height:initial !important; 
-     margin-bottom: 0px !important; 
+     margin-bottom: 0px !important;
+     color:black !important;
 }
 .askbypoll-embed-poll-powered-by{
     position: relative;
@@ -301,8 +212,8 @@ a.askbypoll-embed-poll-askbypoll-url{
     margin-left:1.5rem;
 }
 img.askbypoll-embed-poll-question-choice-img{
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 150px;
     display: block;
 }
 .askbypoll-embed-poll-question-choice{
@@ -312,51 +223,11 @@ img.askbypoll-embed-poll-question-choice-img{
     border: 2px solid;
     cursor:pointer;
 }
-.askbypoll-embed-poll-question-choice-img-text{
-    display:block;
-    /*position: absolute;
-    bottom: 0px;
-    z-index: 100000;*/
-    background-color: rgb(92, 184, 92);
-    background-color: rgba(92, 184, 92, 0.4);
-    margin: 0;
-    width: 100%;
-    padding: 0.5rem 0;
-    color: black;
-    font-weight: bold;
-    margin:0;
-}
-.askbypoll-embed-poll-question-choice:nth-of-type(1) {
-    margin-right:11rem;
-}
-.askbypoll-embed-poll-question-choice:nth-of-type(3) {
-    margin-right:11rem;
-}
+
 .askbypoll-embed-poll-choice{
     display: inline;
 }
-.askbypoll-embed-progress-bar{
-    width: 0;
-    display: inline-block;
-    position: absolute;
-    left: 0;
-    top:0;
-    opacity: 0.5;
-    height: 100%;
-    background:red;
-    /*border-radius: 2.5rem;*/
-    -webkit-animation: mymove 5s 1; /*/ Chrome, Safari, Opera /*/
-    animation: mymove 1s 1;
-}
-@-webkit-keyframes mymove {
-    from {width: 0%;}
-    /*to {width: 80%;}*/
-}
- /*Standard syntax */
-@keyframes mymove {
-    from {width: 0%;}
-/*    to {width: 10%;}*/
-}
+
 .askbypoll-embed-poll-choice{
     display:inline-block;
     position: relative;
@@ -368,9 +239,10 @@ img.askbypoll-embed-poll-question-choice-img{
 }
 span.askbypoll-poll-result{
     position: absolute;
-    right: 0px;
+    right: 5px;
     top: 8px;
     z-index: 1000;
+    color:black;
 }
 .askbypoll-embed-overlay{
     display: none;
@@ -380,11 +252,12 @@ span.askbypoll-poll-result{
     z-index: 10000000;
     top: 28%;
     width: 95%;
-    background: #5cb85c;
+    background:beige;
     margin: 0 auto;
     opacity: 1;
 }
 .askbypoll-enter-details{
+    color:black;
     text-align: center;
     display: block;
 }
@@ -392,41 +265,16 @@ span.askbypoll-poll-result{
     outline: 0;
     background-color: transparent;
     border: 0;
-    border-bottom: 2px solid #fff;
+    border-bottom: 2px solid black;
     font-size: 1rem;
     margin-top: 0.5em;
-    color: #fff;
+    color: black;
     font-family: 'Montserrat', sans-serif;
     width: 100%;
     text-align: left;
 }
-select option{
-    background-color: #6952a0;
-}
-::-webkit-input-placeholder {
-   color: #fff;
-   font-family: 'Montserrat', sans-serif;
-}
-
-:-moz-placeholder { 
-   color: #fff; 
-   font-family: 'Montserrat', sans-serif; 
-}
-
-::-moz-placeholder { 
-   color: #fff;  
-   font-family: 'Montserrat', sans-serif;
-}
-
-:-ms-input-placeholder {  
-   color: #fff; 
-   font-family: 'Montserrat', sans-serif; 
-}
-select{
-    font-family: 'Montserrat', sans-serif;
-}
-.askbypoll-button{
-    border: 4px solid #fff;
+.askbypoll-button, .askbypoll-close-button{
+    border: 2px solid black;
     background-color: transparent;
     border-radius: 2.5em;
     outline: 0;
@@ -440,15 +288,15 @@ select{
     align-self: center;
     transition: all .3s ease;
     font-family: 'Montserrat', sans-serif;
-    color: #fff;
+    color: black;
     display: block;
     margin: 0 auto;
     margin-top: 0.5rem;
     cursor: pointer;
 }
 
-.askbypoll-close-button{
-	 border: 4px solid #fff;
+/*.askbypoll-close-button{
+	 border: 2px solid black;
     background-color: transparent;
     border-radius: 2.5em;
     outline: 0;
@@ -462,12 +310,12 @@ select{
     align-self: center;
     transition: all .3s ease;
     font-family: 'Montserrat', sans-serif;
-    color: #fff;
+    color: black;
     display: block;
     margin: 0 auto;
     margin-top: 0.5rem;
     cursor: pointer;
-}
+}*/
 
 .askbypoll-embed-tab-radio-label {
   display: inline-block;
@@ -521,7 +369,6 @@ select{
 .askbypoll-embed-content-div{
     width: 100%;
     height: 400px;
-    background-color: wheat;
     display: inline-block;
     margin: 0 auto;
 }
