@@ -480,13 +480,16 @@ function confirm_redirect(olEl,val,url){
 }
 
 /* Function for charts start */
-function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state) {
+function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType) {
 	// console.log(analyse_type,pollId,age,gender,profession,location);
 	var pollsData = [];
 	var pollsDataExtra = [];
 	var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
 	var colCount = 0;
 	var advanced_analyse_dic = {};
+	if (typeof graphType === "undefined" || graphType === null) { 
+	    graphType = ""; 
+	}
 	if (typeof age === "undefined" || age === null) { 
 	    age = "nochoice"; 
 	}
@@ -587,9 +590,54 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
               easing: 'inAndOut',
          },
         };
-
-        var chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
-        chart.draw(data, options);
+	var optionsCol = {
+          chartArea: {left:80,width: '60%'},
+          fontSize:14,
+          bars: {
+            groupWidth: 100
+          },
+          annotations:{
+          	textStyle: {
+		      opacity: 0         // The transparency of the text.
+		    }	        
+          },
+          hAxis: {
+            title: '',
+            minValue: 0,
+            gridlines: {
+              color: 'transparent'
+              },
+            // textPosition: 'none',
+            // baselineColor: 'transparent'
+          },
+          vAxis: {
+            title: '',
+            gridlines: {
+              color: 'transparent'
+              },
+            textPosition: 'none',
+            baselineColor: 'transparent'
+          },
+          legend:{
+              position:'none'
+          },
+           animation:{
+              startup:true,
+              duration: 3000,
+              easing: 'inAndOut',
+         },
+        };
+        var chart = "";
+        if(graphType != ""){
+        	console.log(analyse_type+'pollsChart---'+pollId+'---'+graphType);
+        	if(document.getElementById(analyse_type+'pollsChart---'+pollId+'---'+graphType) != null){
+        		chart = new google.visualization.ColumnChart(document.getElementById(analyse_type+'pollsChart---'+pollId+'---'+graphType));
+        		chart.draw(data, optionsCol);
+        	}
+        }else{
+        	chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
+        	chart.draw(data, options);
+        }
         google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation); 
         if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	$("#advanced-ana-bar-graph-1---"+pollId).show();
@@ -636,8 +684,48 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
               easing: 'inAndOut',
          },
         };
-
-        chart.draw(data,options);
+        optionsCol = {
+          chartArea: {left:80,width: '60%'},
+          fontSize:14,
+          bars: {
+            groupWidth: 100
+          },
+          annotations:{
+          	textStyle: {
+		      opacity: 1         // The transparency of the text.
+		    }	        
+          },
+          hAxis: {
+            title: '',
+            minValue: 0,
+            gridlines: {
+              color: 'transparent'
+              },
+            // textPosition: 'none',
+            // baselineColor: 'transparent'
+          },
+          vAxis: {
+            title: '',
+            gridlines: {
+              color: 'transparent'
+              },
+            textPosition: 'none',
+            baselineColor: 'transparent'
+          },
+          legend:{
+              position:'none'
+          },
+           animation:{
+              startup:true,
+              duration: 3000,
+              easing: 'inAndOut',
+         },
+        };
+		if(graphType != ""){
+        	chart.draw(data, optionsCol);
+        }else{
+        	chart.draw(data, options);
+        }
         if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
 	        chartExtra.draw(dataExtra, options);
@@ -645,10 +733,14 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
     }
 }
 
-function drawGenderChart(csrf_token,analyse_type,pollId,choiceId) {
+function drawGenderChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
   var genderData = [['Gender', 'Votes']];
-  if(typeof choiceId == 'undefined')
+  if(typeof choiceId == 'undefined' || choiceId === null)
   	choiceId = "nochoice"
+  if(typeof graphId == 'undefined')
+  	graphId = ""
+  else
+  	graphId = "---"+graphId
   var advanced_analyse_dic = {};
   $.ajax({
         url: "/advanced_analyse_choice",
@@ -683,14 +775,22 @@ function drawGenderChart(csrf_token,analyse_type,pollId,choiceId) {
     pieHole: 0.4,
     legend:'bottom'
   };
-  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'genderChart---'+pollId));
-  chart.draw(data, options);
+
+  console.log(analyse_type+'genderChart---'+pollId+graphId);
+  if(document.getElementById(analyse_type+'genderChart---'+pollId+graphId) != null){
+	  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'genderChart---'+pollId+graphId));
+	  chart.draw(data, options);
+	}
 }
 
-function drawAgeChart(csrf_token,analyse_type,pollId,choiceId) {
+function drawAgeChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
   var ageData = [['Age Group', 'Votes']];
-  if(typeof choiceId == 'undefined')
+  if(typeof choiceId == 'undefined' || choiceId === null)
   	choiceId = "nochoice"
+  if(typeof graphId == 'undefined')
+  	graphId = ""
+  else
+  	graphId = "---"+graphId
   var advanced_analyse_dic = {};
   $.ajax({
         url: "/advanced_analyse_choice",
@@ -733,15 +833,22 @@ function drawAgeChart(csrf_token,analyse_type,pollId,choiceId) {
     pieHole: 0.4,
     legend:'bottom'
   };
-  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'ageChart---'+pollId));
-  chart.draw(data, options);
+  console.log(analyse_type+'ageChart---'+pollId+graphId);
+  if(document.getElementById(analyse_type+'ageChart---'+pollId+graphId) != null){
+	  var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'ageChart---'+pollId+graphId));
+	  chart.draw(data, options);
+	}
 }
 
-function drawOthersChart(csrf_token,analyse_type,pollId,choiceId) {
+function drawOthersChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
 	var profDict = {};
 	var profData = [['Profession','Votes']];
-	if(typeof choiceId == 'undefined')
+	if(typeof choiceId == 'undefined' || choiceId === null)
   		choiceId = "nochoice"
+  	if(typeof graphId == 'undefined')
+	  	graphId = ""
+	  else
+	  	graphId = "---"+graphId
   	var advanced_analyse_dic = {};
 	$.ajax({
 	    url: "/advanced_analyse_choice",
@@ -769,16 +876,23 @@ function drawOthersChart(csrf_token,analyse_type,pollId,choiceId) {
 	pieHole: 0.4,
 	legend:'bottom'
 	};
-	var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'othersChart---'+pollId));
-	chart.draw(data, options);
+	console.log(analyse_type+'othersChart---'+pollId+graphId);
+  	if(document.getElementById(analyse_type+'othersChart---'+pollId+graphId) != null){
+		var chart = new google.visualization.PieChart(document.getElementById(analyse_type+'othersChart---'+pollId+graphId));
+		chart.draw(data, options);
+	}
 }
 
-function drawLocationChart(csrf_token,analyse_type,pollId,choiceId) {
+function drawLocationChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
     // $('#mapBackButton').removeClass('back');
 	var conData = [['Country', 'Votes']];
 	var conDict = {};
-	if(typeof choiceId == 'undefined')
+	if(typeof choiceId == 'undefined' || choiceId === null)
   		choiceId = "nochoice"
+  	if(typeof graphId == 'undefined')
+	  	graphId = ""
+	else
+	  	graphId = "---"+graphId.replace("---","");
   	var advanced_analyse_dic = {};
 	$.ajax({
 	    url: "/advanced_analyse_choice",
@@ -804,13 +918,16 @@ function drawLocationChart(csrf_token,analyse_type,pollId,choiceId) {
 	}
     var data = google.visualization.arrayToDataTable(conData);
     var options = {};
-    var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId));
-    chart.draw(data, options);
-    google.visualization.events.addListener(chart, 'regionClick', function(e){
-    	$("#"+analyse_type+"mapBackButton").css("display", "inline-block");
-		// $('#mapBackButton').addClass("back");
-		drawStateMap(csrf_token,analyse_type,e.region,pollId,choiceId);
-    });
+    console.log(analyse_type+'locationChart---'+pollId+graphId);
+  	if(document.getElementById(analyse_type+'locationChart---'+pollId+graphId) != null){
+	    var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId+graphId));
+	    chart.draw(data, options);
+	    google.visualization.events.addListener(chart, 'regionClick', function(e){
+	    	$("#"+analyse_type+"mapBackButton").css("display", "inline-block");
+			// $('#mapBackButton').addClass("back");
+			drawStateMap(csrf_token,analyse_type,e.region,pollId,choiceId,graphId);
+	    });
+	}
 }
 
 var regionDict = {
@@ -818,9 +935,11 @@ var regionDict = {
 }
 
 var backChoiceId = "";
+var bakgraphId = "";
 	
-function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId){
+function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId,graphId){
 	backChoiceId = choiceId;
+	bakgraphId = graphId;
 	var options = {
       region: region,
       displayMode: 'regions',
@@ -860,13 +979,17 @@ function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId){
 		stateData.push([state,stateDict[state]]);
 	}
 	// console.log(stateData)
+
 	var data = google.visualization.arrayToDataTable(stateData);
-	var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId));
-	chart.draw(data, options);
+	console.log(analyse_type+'locationChart---'+pollId+graphId);
+  	if(document.getElementById(analyse_type+'locationChart---'+pollId+graphId) != null){
+		var chart = new google.visualization.GeoChart(document.getElementById(analyse_type+'locationChart---'+pollId+graphId));
+		chart.draw(data, options);
+	}
 }
     
 function back(csrf_token,analyse_type,pollId){  
 	$("#"+analyse_type+"mapBackButton").css("display", "none");  
-    drawLocationChart(csrf_token,analyse_type,pollId,backChoiceId);
+    drawLocationChart(csrf_token,analyse_type,pollId,backChoiceId,bakgraphId);
 }
 /* Function for charts end */
