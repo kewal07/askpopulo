@@ -582,6 +582,11 @@
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
+									<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
+										{% for text in poll.question.votetext_set.all %}
+											<p class="answer-text">{{ text.answer_text }}</p>
+										{% endfor %}
+									</div>
 									{% if poll.q_type != "text" %}
 										<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 											<div class="choices clearfix">
@@ -605,77 +610,145 @@
 											</div>
 											<div id="advanced-pollsChart---{{ poll.question.id }}" class="pollsChartClass">
 											</div>
-											<div id="advancedAna">
+											<div class="advancedAnaCmp" id="advancedAna">
 												<p style="margin-bottom:1rem;"> Filter by different parameters </p>
-												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Gender">
-													<option value="nochoice">Gender</option>
-													<option value="f">Female</option>
-													<option value="m">Male</option>
-													<option value="d">Undisclosed</option>
-												</select>
-												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Age">
-													<option value="nochoice">Age</option>
-													<option value="<19">< 19</option>
-													<option value="20-25">20-25</option>
-													<option value="26-30">26-30</option>
-													<option value="31-35">31-35</option>
-													<option value="36-50">36-50</option>
-													<option value=">50">> 50</option>
-												</select>
-												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---Profession">
-													<option value="nochoice">Profession</option>
-												</select>
-												<select class="advancedanalyseSelect advancedanalyseSelectCountry" id="advancedanalyse---{{ poll.question.id }}---Country" name="country">
-													<option value="nochoice">Country</option>
-												</select>
-												<select class="advancedanalyseSelect" id="advancedanalyse---{{ poll.question.id }}---State" name="state">
-													<option value="nochoice">State</option>
-												</select>
+												<div class="advancedCmpSelect">
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
+														<option value="nochoice">Gender</option>
+														<option value="f">Female</option>
+														<option value="m">Male</option>
+														<option value="d">Undisclosed</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Age---1">
+														<option value="nochoice">Age</option>
+														<option value="<19">< 19</option>
+														<option value="20-25">20-25</option>
+														<option value="26-30">26-30</option>
+														<option value="31-35">31-35</option>
+														<option value="36-50">36-50</option>
+														<option value=">50">> 50</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Profession---1">
+														<option value="nochoice">Profession</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Country---1" name="country">
+														<option value="nochoice">Country</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---State---1" name="state">
+														<option value="nochoice">State</option>
+													</select>
+												</div>
+												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column1" class="pollsChartClass pollsChartClassColumn">
 											</div>
-											<div id="advancedanalyse-pollsChart---{{ poll.question.id }}" class="pollsChartClass">
 											</div>
-											<p style="margin-bottom:1rem;text-align:center;"> Or</p>
-											<select class="analyseSelect" id="advanced-analyse---{{ poll.question.id }}Select">
-												<option value="nochoice">Filter by Choice</option>
-												{% for choice in poll.question.choice_set.all %}
-													<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
-												{% endfor %}
-											</select>
-											<div class="gender">
-												<div class="graphContainer">
-													<p> Gender </p>
-													<div class="question_analyse_chart" id="advanced-genderChart---{{ poll.question.id }}">
+											<div class="advancedAnaCmp" id="advancedAna">
+												<p style="margin-bottom:1rem;"> Filter by different parameters </p>
+												<div class="advancedCmpSelect">
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
+														<option value="nochoice">Gender</option>
+														<option value="f">Female</option>
+														<option value="m">Male</option>
+														<option value="d">Undisclosed</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Age---2">
+														<option value="nochoice">Age</option>
+														<option value="<19">< 19</option>
+														<option value="20-25">20-25</option>
+														<option value="26-30">26-30</option>
+														<option value="31-35">31-35</option>
+														<option value="36-50">36-50</option>
+														<option value=">50">> 50</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Profession---2">
+														<option value="nochoice">Profession</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Country---2" name="country">
+														<option value="nochoice">Country</option>
+													</select>
+													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---State---2" name="state">
+														<option value="nochoice">State</option>
+													</select>
+												</div>
+												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column2" class="pollsChartClass pollsChartClassColumn">
+												</div>
+											</div>
+											<div class="advancedAnaCmp">
+												<p style="margin-bottom:1rem;text-align:center;"> Or</p>
+												<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ poll.question.id }}Select---1">
+													<option value="nochoice">Filter by Choice</option>
+													{% for choice in poll.question.choice_set.all %}
+														<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
+													{% endfor %}
+												</select>
+												<div class="gender">
+													<div class="graphContainer">
+														<p> Gender </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-genderChart---{{ poll.question.id }}---1">
+														</div>
+													</div>
+												</div>
+												<div class="age">
+													<div class="graphContainer">
+														<p> Age </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-ageChart---{{ poll.question.id }}---1">
+														</div>
+													</div>
+												</div>
+												<div class="location">
+													<div class="graphContainer">
+														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+														<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp1" id="advanced-locationChart---{{ poll.question.id }}---1">
+														</div>
+													</div>
+												</div>
+												<div class="others">
+													<div class="graphContainer">
+														<p> Profession </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-othersChart---{{ poll.question.id }}---1">
+														</div>
 													</div>
 												</div>
 											</div>
-											<div class="age">
-												<div class="graphContainer">
-													<p> Age </p>
-													<div class="question_analyse_chart" id="advanced-ageChart---{{ poll.question.id }}">
+											<div class="advancedAnaCmp">
+												<p style="margin-bottom:1rem;text-align:center;"> Or</p>
+												<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ poll.question.id }}Select---2">
+													<option value="nochoice">Filter by Choice</option>
+													{% for choice in poll.question.choice_set.all %}
+														<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
+													{% endfor %}
+												</select>
+												<div class="gender">
+													<div class="graphContainer">
+														<p> Gender </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-genderChart---{{ poll.question.id }}---2">
+														</div>
 													</div>
 												</div>
-											</div>
-											<div class="location">
-												<div class="graphContainer">
-													<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
-													<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ poll.question.id }}">
+												<div class="age">
+													<div class="graphContainer">
+														<p> Age </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-ageChart---{{ poll.question.id }}---2">
+														</div>
 													</div>
 												</div>
-											</div>
-											<div class="others">
-												<div class="graphContainer">
-													<p> Profession </p>
-													<div class="question_analyse_chart" id="advanced-othersChart---{{ poll.question.id }}">
+												<div class="location">
+													<div class="graphContainer">
+														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+														<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp2" id="advanced-locationChart---{{ poll.question.id }}---2">
+														</div>
+													</div>
+												</div>
+												<div class="others">
+													<div class="graphContainer">
+														<p> Profession </p>
+														<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-othersChart---{{ poll.question.id }}---2">
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
 									{% else %}
-										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
-											{% for text in poll.question.votetext_set.all %}
-												<p class="answer-text">{{ text.answer_text }}</p>
-											{% endfor %}
-										</div>
+										
 									{% endif %}
 								{% endfor %}
 							</div>
@@ -958,67 +1031,139 @@
 							<p class="advanced-ana-bar-graph" id ="advanced-ana-bar-graph-2---{{ question.poll.id }}">Results Which Have Demographic Data </p>
 							<div id="advanced-pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
-							<div id="advancedAna">
+							<div class="advancedAnaCmp" id="advancedAna">
 								<p style="margin-bottom:1rem;"> Filter by different parameters </p>
-								<select class="advancedanalyseSelect" id="advancedanalyse---{{ question.poll.id }}---Gender">
-									<option value="nochoice">Gender</option>
-									<option value="f">Female</option>
-									<option value="m">Male</option>
-									<option value="d">Undisclosed</option>
-								</select>
-								<select class="advancedanalyseSelect" id="advancedanalyse---{{ question.poll.id }}---Age">
-									<option value="nochoice">Age</option>
-									<option value="<19">< 19</option>
-									<option value="20-25">20-25</option>
-									<option value="26-30">26-30</option>
-									<option value="31-35">31-35</option>
-									<option value="36-50">36-50</option>
-									<option value=">50">> 50</option>
-								</select>
-								<select class="advancedanalyseSelect" id="advancedanalyse---{{ question.poll.id }}---Profession">
-									<option value="nochoice">Profession</option>
-								</select>
-								<select class="advancedanalyseSelect advancedanalyseSelectCountry" id="advancedanalyse---{{ question.poll.id }}---Country" name="country">
-									<option value="nochoice">Country</option>
-								</select>
-								<select class="advancedanalyseSelect" id="advancedanalyse---{{ question.poll.id }}---State" name="state">
-									<option value="nochoice">State</option>
-								</select>
+								<div class="advancedCmpSelect">
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---Gender---1">
+										<option value="nochoice">Gender</option>
+										<option value="f">Female</option>
+										<option value="m">Male</option>
+										<option value="d">Undisclosed</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---Age---1">
+										<option value="nochoice">Age</option>
+										<option value="<19">< 19</option>
+										<option value="20-25">20-25</option>
+										<option value="26-30">26-30</option>
+										<option value="31-35">31-35</option>
+										<option value="36-50">36-50</option>
+										<option value=">50">> 50</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---Profession---1">
+										<option value="nochoice">Profession</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---Country---1" name="country">
+										<option value="nochoice">Country</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---State---1" name="state">
+										<option value="nochoice">State</option>
+									</select>
+								</div>
+								<div id="advancedanalyse-pollsChart---{{ question.poll.id }}---column1" class="pollsChartClass pollsChartClassColumn">
 							</div>
-							<div id="advancedanalyse-pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
-							<p style="margin-bottom:1rem;text-align:center;"> Or</p>
-							<select class="analyseSelect" id="advanced-analyse---{{ question.poll.id }}Select">
-								<option value="nochoice">Filter by Choice</option>
-								{% for choice in question.poll.choice_set.all %}
-									<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
-								{% endfor %}
-							</select>
-							<div class="gender">
-								<div class="graphContainer">
-									<p> Gender </p>
-									<div class="question_analyse_chart" id="advanced-genderChart---{{ question.poll.id }}">
+							<div class="advancedAnaCmp" id="advancedAna">
+								<p style="margin-bottom:1rem;"> Filter by different parameters </p>
+								<div class="advancedCmpSelect">
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---Gender---2">
+										<option value="nochoice">Gender</option>
+										<option value="f">Female</option>
+										<option value="m">Male</option>
+										<option value="d">Undisclosed</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---Age---2">
+										<option value="nochoice">Age</option>
+										<option value="<19">< 19</option>
+										<option value="20-25">20-25</option>
+										<option value="26-30">26-30</option>
+										<option value="31-35">31-35</option>
+										<option value="36-50">36-50</option>
+										<option value=">50">> 50</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---Profession---2">
+										<option value="nochoice">Profession</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---Country---2" name="country">
+										<option value="nochoice">Country</option>
+									</select>
+									<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---State---2" name="state">
+										<option value="nochoice">State</option>
+									</select>
+								</div>
+								<div id="advancedanalyse-pollsChart---{{ question.poll.id }}---column2" class="pollsChartClass pollsChartClassColumn">
+								</div>
+							</div>
+							<div class="advancedAnaCmp">
+								<p style="margin-bottom:1rem;text-align:center;"> Or</p>
+								<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ question.poll.id }}Select---1">
+									<option value="nochoice">Filter by Choice</option>
+									{% for choice in question.poll.choice_set.all %}
+										<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
+									{% endfor %}
+								</select>
+								<div class="gender">
+									<div class="graphContainer">
+										<p> Gender </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-genderChart---{{ question.poll.id }}---1">
+										</div>
+									</div>
+								</div>
+								<div class="age">
+									<div class="graphContainer">
+										<p> Age </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-ageChart---{{ question.poll.id }}---1">
+										</div>
+									</div>
+								</div>
+								<div class="location">
+									<div class="graphContainer">
+										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+										<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp1" id="advanced-locationChart---{{ question.poll.id }}---1">
+										</div>
+									</div>
+								</div>
+								<div class="others">
+									<div class="graphContainer">
+										<p> Profession </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp1" id="advanced-othersChart---{{ question.poll.id }}---1">
+										</div>
 									</div>
 								</div>
 							</div>
-							<div class="age">
-								<div class="graphContainer">
-									<p> Age </p>
-									<div class="question_analyse_chart" id="advanced-ageChart---{{ question.poll.id }}">
+							<div class="advancedAnaCmp">
+								<p style="margin-bottom:1rem;text-align:center;"> Or</p>
+								<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ question.poll.id }}Select---2">
+									<option value="nochoice">Filter by Choice</option>
+									{% for choice in question.poll.choice_set.all %}
+										<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
+									{% endfor %}
+								</select>
+								<div class="gender">
+									<div class="graphContainer">
+										<p> Gender </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-genderChart---{{ question.poll.id }}---2">
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="location">
-								<div class="graphContainer">
-									<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
-									<div class="question_analyse_chart_loc" id="advanced-locationChart---{{ question.poll.id }}">
+								<div class="age">
+									<div class="graphContainer">
+										<p> Age </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-ageChart---{{ question.poll.id }}---2">
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="others">
-								<div class="graphContainer">
-									<p> Profession </p>
-									<div class="question_analyse_chart" id="advanced-othersChart---{{ question.poll.id }}">
+								<div class="location">
+									<div class="graphContainer">
+										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+										<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp2" id="advanced-locationChart---{{ question.poll.id }}---2">
+										</div>
+									</div>
+								</div>
+								<div class="others">
+									<div class="graphContainer">
+										<p> Profession </p>
+										<div class="question_analyse_chart question_analyse_chart_cmp2" id="advanced-othersChart---{{ question.poll.id }}---2">
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1614,9 +1759,11 @@
 							            for (i = 0; i < profList.length; ++i) {
 										    var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
 										    // console.log(tempOption);
-										    $("#advancedanalyse---{{ question.poll.id }}---Profession").append(tempOption);
+										    $("#advancedanalyse---{{ question.poll.id }}---Profession---1").append(tempOption);
+										    $("#advancedanalyse---{{ question.poll.id }}---Profession---2").append(tempOption);
 										}
-										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country");
+										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---1");
+										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---2");
 									{% endfor %}
 								}
 								$(".share-with-group").click(function(){
@@ -1686,15 +1833,26 @@
 			      	$(analysisDivId).toggle("slow");
 				  	var delay=1000; //1 seconds
 					setTimeout(function(){
+					$("#text-analyse---"+pollId+"Div").toggle("slow");
 					if($(analysisDivId).is(':visible')){
 					  drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
 					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2"); 
+					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
 					}
 					else{
-						$("#text-analyse---"+pollId+"Div").toggle("slow");
+						// $("#text-analyse---"+pollId+"Div").toggle("slow");
 					}
 					}, delay); 
 			    });  
@@ -1710,6 +1868,7 @@
 			    $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1].replace("Select","");
+					var graphId = elemId.split("---")[2];
 					// console.log(elemId);
 					// console.log(pollId);
 					var isMatch = /^advanced-*/.test(elemId);
@@ -1730,18 +1889,18 @@
 						// setTimeout(function(){
 						//your code to be executed after 1 seconds
 						if($(analysisDivId).is(':visible')){
-						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId);
-						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId);
-						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId);
-						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId);
+						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
 						}
 						// }, delay); 
 					}else{
 						if($(analysisDivId).is(':visible')){
-						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
 						}
 					}
 				});  
@@ -1749,6 +1908,7 @@
 				$("#advanced-content,#surveys-content").on("change","select.advancedanalyseSelect",function(){
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
+					var graphId = elemId.split("---")[3];
 					// console.log(elemId);
 					// console.log(pollId);
 					var isMatch = /^advancedanalyse-*/.test(elemId);
@@ -1759,23 +1919,24 @@
 					var analysisDivId = '#'+analyse_type+'analyse---'+pollId+"Div";
 					// console.log(analysisDivId);
 					var common_elem_id_str = "#advancedanalyse---"+pollId+"---";
-					var selectedChoice_age = $(common_elem_id_str+"Age").val();
-					var selectedChoice_gender = $(common_elem_id_str+"Gender").val();
-					var selectedChoice_prof = $(common_elem_id_str+"Profession").val();
-					var selectedChoice_country = $(common_elem_id_str+"Country").val();
-					var selectedChoice_state = $(common_elem_id_str+"State").val();
+					var selectedChoice_age = $(common_elem_id_str+"Age---"+graphId).val();
+					var selectedChoice_gender = $(common_elem_id_str+"Gender---"+graphId).val();
+					var selectedChoice_prof = $(common_elem_id_str+"Profession---"+graphId).val();
+					var selectedChoice_country = $(common_elem_id_str+"Country---"+graphId).val();
+					var selectedChoice_state = $(common_elem_id_str+"State---"+graphId).val();
 					// console.log(selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state);
-					drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state);
+					drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId);
 				});
 
 				$("#advanced-content,#surveys-content").on("change","select.advancedanalyseSelectCountry",function(){
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
+					var graphId = elemId.split("---")[3];
 					// console.log(elemId);
 					// console.log(pollId);
 					var common_elem_id_str = "#advancedanalyse---"+pollId+"---";
-					var selectedChoice_country= $(common_elem_id_str+"Country").val();
-					populateState(common_elem_id_str+"State",selectedChoice_country);
+					var selectedChoice_country= $(common_elem_id_str+"Country---"+graphId).val();
+					populateState(common_elem_id_str+"State---"+graphId,selectedChoice_country);
 				});
 
 				$("#export-content").on("click",".export-pdf",function(){

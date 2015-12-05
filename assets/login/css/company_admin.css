@@ -621,6 +621,38 @@ th.question-table-heading {
 	text-align: center;
     font-weight: bold;
 }
+.pollsChartClassColumn{
+	width: 70%;
+    margin-left: 1rem;
+    display: inline-block;
+    height: 330px;
+}
+.advancedanalyseSelectColumn1, .advancedanalyseSelectColumn2{
+	/*max-width: 17%;*/
+	width: 7rem;
+    display: block;
+    margin: 0;
+    margin-bottom: 1rem;
+}
+.advancedanalyseSelectChoiceCmp{
+	width:10rem;
+}
+.advancedAnaCmp{
+	width:45% !important;
+	/*margin: 0 !important;*/
+	display: inline-block !important;
+}
+.advancedCmpSelect{
+	/*position: absolute;*/
+	width: 17%;
+	display: inline-block;
+	margin-top: 3rem;
+	vertical-align: top;
+}
+.question_analyse_chart_cmp1, .question_analyse_chart_cmp2, .question_analyse_chart_loc_cmp1, .question_analyse_chart_loc_cmp2{
+	height: 400px;
+	width: 500px;
+}
 .remove-question{
 	cursor: pointer;
     float: right;
