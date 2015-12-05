@@ -1369,6 +1369,7 @@ class CreateSurveyView(BaseViewList):
 			errors = {}
 			survey_name = post_data.get("surveyName").strip()
 			survey_desc = post_data.get("surveyDescription")
+			thanks_msg = post_data.get("thanks-msg")
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
 			qemonth = int(request.POST.getlist('qExpiry_month')[0])
 			qeday = int(request.POST.getlist('qExpiry_day')[0])
@@ -1420,10 +1421,12 @@ class CreateSurveyView(BaseViewList):
 				que_desc = post_data.get("qDesc"+str(que_index)).strip()
 				que_type = post_data.get("qType"+str(que_index)).strip()
 				protectResult = post_data.get("protectResult"+str(que_index),False)
+				addComment = post_data.get("addComment"+str(que_index),False)
 				poll['text'] = que_text
 				poll['desc'] = que_desc
 				poll['type'] = que_type
 				poll['protectResult'] = protectResult
+				poll['addComment'] = addComment
 				choices = []
 				images = []
 				queError = ""
@@ -1462,7 +1465,7 @@ class CreateSurveyView(BaseViewList):
 			if errors:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
-				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage)
+				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage,thanks_msg)
 				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
 				if list(filter(bool, selectedGnames)):
@@ -1490,7 +1493,7 @@ class CreateSurveyView(BaseViewList):
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
 
-def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage):
+def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage,thanks_msg):
 	try:
 		survey = None
 		if survey_id > 0:
@@ -1499,8 +1502,9 @@ def createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selected
 			survey.description = survey_desc
 			survey.expiry = qExpiry
 			survey.featured_image = shareImage
+			survey.thanks_msg = thanks_msg
 		else:
-			survey = Survey( user=user, pub_date=curtime, created_at=curtime, survey_name=survey_name, description=survey_desc, expiry=qExpiry, featured_image=shareImage)
+			survey = Survey( user=user, pub_date=curtime, created_at=curtime, survey_name=survey_name, description=survey_desc, expiry=qExpiry, featured_image=shareImage, thanks_msg=thanks_msg)
 		survey.save()
 		if survey_id > 0:
 			for scat in survey.surveywithcategory_set.all():
@@ -1543,12 +1547,15 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			protectResult = 0
 			if poll['protectResult']:
 				protectResult = 1
+			addComment = 0
+			if poll['addComment']:
+				addComment = 1
 			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
 			question.save()
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])
 				choice.save()
-			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'])
+			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment)
 			survey_que.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1617,7 +1624,7 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
-			poll_dict = {"poll":x.question,"type":x.question_type}
+			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1626,6 +1633,10 @@ class SurveyVoteView(BaseViewDetail):
 					poll_dict['user_already_voted'] = True
 					if x.question_type == "text":
 						poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
+				if x.add_comment:
+					voteText = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)
+					if voteText:
+						poll_dict['answer'] = voteText[0].answer_text
 			context['polls'].append(poll_dict)
 		return context
 
@@ -1639,9 +1650,11 @@ class SurveyVoteView(BaseViewDetail):
 			queSlug = question.que_slug
 			if user.is_authenticated():
 				choice_list = request.POST.getlist('choice'+str(questionId))
-				print(choice_list)
+				choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
+				print(choice_list,choice_list_comment)
 				choice_list = list(filter(None, choice_list))
-				print(choice_list)
+				choice_list_comment = list(filter(None, choice_list_comment))
+				print(choice_list,choice_list_comment)
 				if choice_list:
 					if que_type != "text":
 						for choiceId in choice_list:
@@ -1653,6 +1666,9 @@ class SurveyVoteView(BaseViewDetail):
 									vote,created = Vote.objects.get_or_create(user=user, choice=choice)
 							else:
 								vote,created = Vote.objects.get_or_create(user=user, choice=choice)
+						if choice_list_comment:
+							voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0])
+							voteText.save()
 					else:
 						voted,created = Voted.objects.get_or_create(user=user, question=question)
 						if created:
@@ -1736,12 +1752,16 @@ class SurveyEditView(BaseViewDetail):
 			context["survey_categories"] = categories
 			context['polls'] = []
 			surveyResultProtected = True
+			surveyAddComment = True
 			for x in Survey_Question.objects.filter(survey_id=survey.id):
 				if not x.question.protectResult:
 					surveyResultProtected = False
-				poll_dict = {"poll":x.question,"type":x.question_type}
+				if not x.add_comment:
+					surveyAddComment = False
+				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
 				context['polls'].append(poll_dict)
 			context["surveyResultProtected"] = surveyResultProtected
+			context["surveyAddComment"] = surveyAddComment
 			return self.render_to_response(context)
 
 class SurveyDeleteView(BaseViewDetail):

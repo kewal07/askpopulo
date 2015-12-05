@@ -258,7 +258,11 @@
 					</p>
 					<p class="form-p">
 						<label for="surveyDescription">Description</label>
-						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description"></textarea>
+						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description" maxlength="400"></textarea>
+					</p>
+					<p class="form-p">
+						<label for="thanks-msg">Thanks Message</label>
+						<textarea id ="thanks-msg" name="thanks-msg" placeholder="Enter the thank you message to be displayed in the end of max 400 characters" maxlength="400">Thank You for Completing the Survey!!!</textarea>
 					</p>
 					<p class="form-p">
 						<label for="qExpiry">Expires On</label>
@@ -509,16 +513,20 @@
 						<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
 					</p>
 					<p style="margin-top:2rem">
-						<label class="required" for="shareImage">Featured Image <i id="featuredimage_tooltip_fa" class="fa fa-info-circle"></i></label>
+						<label for="shareImage">Featured Image <i id="featuredimage_tooltip_fa" class="fa fa-info-circle"></i></label>
 						<input id="shareImage" class="fileButtonClass" type="file" name="shareImage" accept="image/*">
 					</p>
 					<p class="anonymous" style="margin-top:2rem">
 						<input id="protectResult" name="protectResult" type="checkbox">
 						<label for="protectResult">Protect Survey Result </label>
 					</p>
+					<p class="anonymous" style="margin-top:2rem">
+						<input id="addComment" name="addComment" type="checkbox">
+						<label for="addComment">Add Comment to every Question </label>
+					</p>
 					<div class="survey-questions">
 					</div>
-					<i class="fa fa-plus-circle add-q">Add Question</i>
+					<i class="fa fa-plus-circle add-q"> Add Question</i>
 					<input class="submit surveySubmit" type="submit" value="Create" id="createSurveySubmit"/>
 				</form>
 				<div class="tooltip" id="category_tooltip">
@@ -1245,11 +1253,13 @@
 			}
 
 			function createSurvey(){
+				var display_question_count = 1;
 				var question_count = 1;
 				var question_list = [];
 				var choice_count = {};
 				var choice_list = {};
 				var protectedResultSurvey = false;
+				var addCommentSurvey = false;
 
 				$(".create-survey").toggle("slow");
 			
@@ -1334,7 +1344,7 @@
 			  		var question_count_str = question_count.toString();
 			  		question_list.push(question_count_str);
 			  		var question_elem = '<div class="survey-question-div" id="questionDiv'+question_count_str+'">';
-			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question">Remove</i><p class="form-p"><label class=" required" for="qText';
+			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question"> Remove</i><p class="form-p"> Question <span class="display_question_count">'+display_question_count+'</span>:</p><p class="form-p"><label class=" required" for="qText';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question</label><textarea id ="qText';
 			  		question_elem += question_count_str;
@@ -1351,6 +1361,10 @@
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		else
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(addCommentSurvey)
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  		else
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -1358,15 +1372,23 @@
 			  		// console.log(question_elem);
 			  		$(".survey-questions").append(question_elem);
 			  		$(".remove-question").click(function(){
-						var elemId = $(this)[0].id;
+			  			var elemId = $(this)[0].id;
 						var question_count_select3 = elemId.replace("remove-question","");
 						$("#questionDiv"+question_count_select3).remove();
 						question_list = jQuery.grep(question_list, function(value) {
 						  return value != question_count_select3;
 						})
 						delete choice_list[question_count_select3];
+						var refresh_display_count = 1;
+						$(".display_question_count").each(function(i){
+							$(this)[0].innerHTML = refresh_display_count;
+							refresh_display_count += 1;
+						});
+						display_question_count = refresh_display_count;
+						// console.log("remove",display_question_count);
 					});
 			  		question_count += 1;
+			  		display_question_count += 1;
 			  		function add_another_choice(question_count_select,selectedType){
 						var question_choice_count = choice_count[question_count_select];
 			  			choice_list[question_count_select].push(question_choice_count);
@@ -1387,7 +1409,7 @@
 							choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
 							choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 							choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
-							choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice">Remove</i></p></div>';
+							choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
 							// console.log($("#"+choice_elem_div).last());
 							$("#"+choice_elem_div).append(choice_elem);
 						}
@@ -1455,8 +1477,13 @@
 						if(selectedType != "text"){
 							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
 							$("#"+question_div).append(add_another_choice_elem);
-							$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice">Add Another</i>');
+							$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
 							add_another_choice(question_count_select,selectedType);
+						}
+						if(selectedType == "radio"){
+							$("#addComment"+question_count_select+"p").show();
+						} else {
+							$("#addComment"+question_count_select+"p").hide();
 						}
 						$(".add-choice").on("click",function(){
 							var elemId = $(this)[0].id;
@@ -1516,8 +1543,18 @@
 					var checked = false;
 					if($("#protectResult").is(':checked'))
 						checked = true;
-					for(var i=1; i<question_count; i++){
-						$("#protectResult"+i).prop( "checked", checked );
+					for(var i=0; i<question_list.length; i++){
+						$("#protectResult"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
+				$("#surveys-content").on("click","#addComment",function(){
+					addCommentSurvey = !addCommentSurvey;
+					var checked = false;
+					if($("#addComment").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#addComment"+question_list[i]).prop( "checked", checked );
 					}
 				});
 

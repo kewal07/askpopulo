@@ -140,6 +140,7 @@ class Survey(models.Model):
 	last_accessed = models.DateTimeField(null=True,blank=True)
 	home_visible = models.BooleanField(default=0)
 	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
+	thanks_msg = models.CharField(max_length=400,null=True,blank=True, default="Thank You for Completing the Survey!!!")
 
 	def save(self, *args, **kwargs):
 		try:
@@ -212,6 +213,7 @@ class Survey_Question(models.Model):
 	survey = models.ForeignKey(Survey)
 	question = models.ForeignKey(Question)
 	question_type = models.CharField(max_length=20)
+	add_comment = models.BooleanField(default=0)
 	def __str__(self):
 		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 

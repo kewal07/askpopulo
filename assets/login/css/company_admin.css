@@ -621,6 +621,16 @@ th.question-table-heading {
 	text-align: center;
     font-weight: bold;
 }
+.remove-question{
+	cursor: pointer;
+    float: right;
+}
+.add-q,.add-choice{
+	cursor: pointer;
+}
+.createPollContentForm textarea{
+	margin-top: 0rem !important;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;

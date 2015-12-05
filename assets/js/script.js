@@ -479,6 +479,18 @@ function confirm_redirect(olEl,val,url){
 	return yesnoconfirm(url);
 }
 
+function confirm_redirect_only(olEl,val,url){
+	$oLay = $(olEl);
+	console.log(url);
+	// console.log(val);
+	$oLay.children().children().first()[0].innerHTML = val;
+	openOverlay(olEl);
+	$("#okay_redirect").click(function(){
+		closeOverlay();
+		window.location.href = url;
+	});
+}
+
 /* Function for charts start */
 function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state) {
 	// console.log(analyse_type,pollId,age,gender,profession,location);

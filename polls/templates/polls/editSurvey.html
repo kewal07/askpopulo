@@ -23,7 +23,11 @@
 					</p>
 					<p class="form-p">
 						<label for="surveyDescription">Description</label>
-						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description">{{ survey.description }}</textarea>
+						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description" maxlength="400">{{ survey.description }}</textarea>
+					</p>
+					<p class="form-p">
+						<label for="thanks-msg">Thanks Message</label>
+						<textarea id ="thanks-msg" name="thanks-msg" placeholder="Enter the thank you message to be displayed in the end of max 400 characters" maxlength="400">{{ survey.thanks_msg }}</textarea>
 					</p>
 					<p>
 						<label for="qExpiry">Expires On</label>
@@ -292,10 +296,19 @@
 						{% endif %}
 						<label for="protectResult">Protect Survey Result </label>
 					</p>
+					<p class="anonymous" style="margin-top:2rem">
+						{% if surveyAddComment %}
+							<input id="addComment" name="addComment" type="checkbox" checked>
+						{% else %}
+							<input id="addComment" name="addComment" type="checkbox">
+						{% endif %}
+						<label for="addComment">Add Comment to All Question </label>
+					</p>
 					<div class="survey-questions">
 						{% for question in polls %}
 							<div class="survey-question-div" id="questionDiv{{ forloop.counter }}">
-								<i id="remove-question{{ forloop.counter }}" class="fa fa-times-circle remove-question">Remove</i>
+								<i id="remove-question{{ forloop.counter }}" class="fa fa-times-circle remove-question"> Remove</i>
+								<p class="form-p"> Question <span class="display_question_count">{{ forloop.counter }}</span>:</p>
 								<p>
 									<label for="qText{{ forloop.counter }}">Question</label>
 									<textarea id ="qText{{ forloop.counter }}" name="qText{{ forloop.counter }}" placeholder="Ask the people" maxlength="200">{{ question.poll.question_text }}</textarea>							
@@ -311,6 +324,18 @@
 										<input id="protectResult{{ forloop.counter }}" name="protectResult{{ forloop.counter }}" type="checkbox">
 									{% endif %}
 									<label for="protectResult{{ forloop.counter }}">Protect Result </label>
+								</p>
+								{% if question.type == "radio" %}
+									<p id="addComment{{ forloop.counter }}p" class="anonymous" style="margin-top:1rem">
+								{% else %}
+									<p id="addComment{{ forloop.counter }}p" class="anonymous" style="display:none;margin-top:1rem">
+								{% endif %}
+									{% if question.addComment %}
+										<input id="addComment{{ forloop.counter }}" name="addComment{{ forloop.counter }}" type="checkbox" checked>
+									{% else %}
+										<input id="addComment{{ forloop.counter }}" name="addComment{{ forloop.counter }}" type="checkbox">
+									{% endif %}
+									<label for="addComment{{ forloop.counter }}">Add Comment </label>
 								</p>
 								<p class="form-p">
 									<label for="qType{{ forloop.counter }}">Question Type</label>
@@ -333,21 +358,21 @@
 													<input type="hidden" id="questionDiv{{ forloop.parentloop.counter }}imagetextchoice{{ forloop.counter }}" name="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
 												{% endif %}
 												<input id="questionDiv{{ forloop.parentloop.counter }}filechoice{{ forloop.counter }}" class="fileButtonClass" type="file" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" accept="image/*">
-												<i id="{{ forloop.parentloop.counter }}---{{ forloop.counter }}---{{ question.type }}" class="fa fa-times-circle remove-choice">Remove</i>
+												<i id="{{ forloop.parentloop.counter }}---{{ forloop.counter }}---{{ question.type }}" class="fa fa-times-circle remove-choice"> Remove</i>
 											</p>
 											</div>
 										{% endfor %}
 										{% if question.poll.choice_set.all|length < 5 %}
-											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice">Add Another</i>
+											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice"> Add Another</i>
 										{% else %}
-											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice" style="display:none">Add Another</i>
+											<i id="{{ forloop.counter }}---{{ question.type }}" class="fa fa-plus-circle add-choice" style="display:none"> Add Another</i>
 										{% endif %}
 								</div>
 							{% endif %}
 							</div>
 						{% endfor %}
 					</div>
-					<i class="fa fa-plus-circle add-q">Add Question</i>
+					<i class="fa fa-plus-circle add-q"> Add Question</i>
 					<p>
 					{% if clone %}
 						<input class="submit" type="submit" value="Clone" id="createPollSubmit"/>
@@ -385,6 +410,7 @@
 			var choice_count = {};
 			var choice_list = {};
 			var protectedResultSurvey = false;
+			var addCommentSurvey = false;
 			function add_another_choice(question_count_select,selectedType){
 				var question_choice_count = choice_count[question_count_select];
 	  			choice_list[question_count_select].push(question_choice_count);
@@ -405,7 +431,7 @@
 					choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
 					choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 					choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
-					choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-plus-circle remove-choice">Remove</i></p></div>';
+					choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
 					// console.log($("#"+choice_elem_div).last());
 					$("#"+choice_elem_div).append(choice_elem);
 				}
@@ -446,6 +472,7 @@
 			}
 			$(document).ready(function(){
 				protectedResultSurvey = $("#protectResult").is(':checked');
+				addCommentSurvey = $("#addComment").is(':checked');
 				$(".fileButtonClass").click(function(){
 					var elemId = $(this)[0].id;
 					$("#"+elemId.replace("file","image")).hide();
@@ -468,6 +495,7 @@
 					choice_count[question_count] += 1;
 				{% endfor %}
 				question_count += 1
+				var display_question_count = question_count;
 				console.log(question_count,question_list,choice_count,choice_list);
 
 				$(".add-q").click(function(){
@@ -476,7 +504,7 @@
 			  		var question_count_str = question_count.toString();
 			  		question_list.push(question_count_str);
 			  		var question_elem = '<div class="survey-question-div" id="questionDiv'+question_count_str+'">';
-			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-plus-circle remove-question">Remove</i><p class="form-p"><label class=" required" for="qText';
+			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question"> Remove</i><p class="form-p"> Question <span class="display_question_count">'+display_question_count+'</span>:</p><p class="form-p"><label class=" required" for="qText';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question</label><textarea id ="qText';
 			  		question_elem += question_count_str;
@@ -493,6 +521,10 @@
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		else
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(addCommentSurvey)
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  		else
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -500,6 +532,7 @@
 			  		// console.log(question_elem);
 			  		$(".survey-questions").append(question_elem);
 			  		question_count += 1;
+			  		display_question_count += 1;
 			  	});
 
 				$(".survey-questions").on("click",".remove-choice",function(){
@@ -533,8 +566,13 @@
 					if(selectedType != "text"){
 						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
 						$("#"+question_div).append(add_another_choice_elem);
-						$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice">Add Another</i>');
+						$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
 						add_another_choice(question_count_select,selectedType);
+					}
+					if(selectedType == "radio"){
+						$("#addComment"+question_count_select+"p").show();
+					} else {
+						$("#addComment"+question_count_select+"p").hide();
 					}
 				});
 
@@ -556,6 +594,12 @@
 					  return value != question_count_select3;
 					})
 					delete choice_list[question_count_select3];
+					var refresh_display_count = 1;
+					$(".display_question_count").each(function(i){
+						$(this)[0].innerHTML = refresh_display_count;
+						refresh_display_count += 1;
+					});
+					display_question_count = refresh_display_count;
 				});
 
 				$('.survey-questions').on("click",'.fileLabel',function(){
@@ -621,8 +665,18 @@
 					var checked = false;
 					if($("#protectResult").is(':checked'))
 						checked = true;
-					for(var i=1; i<question_count; i++){
-						$("#protectResult"+i).prop( "checked", checked );
+					for(var i=0; i<question_list.length; i++){
+						$("#protectResult"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
+				$("#addComment").click(function(){
+					addCommentSurvey = !addCommentSurvey;
+					var checked = false;
+					if($("#addComment").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#addComment"+question_list[i]).prop( "checked", checked );
 					}
 				});
 
