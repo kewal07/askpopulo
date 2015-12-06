@@ -11,7 +11,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question,VoteApi
+from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question,VoteApi,VoteText, Vote, Choice
 from categories.models import Category
 import json
 import base64
@@ -454,6 +454,7 @@ class AdminDashboard(BaseViewDetail):
 	def get_context_data(self, **kwargs):
 		try:
 			data = super(AdminDashboard, self).get_context_data(**kwargs)
+			choice_id_text_data = {}
 			user = self.request.user
 			polls_vote_list = []
 			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
@@ -493,6 +494,12 @@ class AdminDashboard(BaseViewDetail):
 				pole_dict['votes'] += VoteApi.objects.filter(question=que).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 				total_views += que.numViews
 				polls_vote_list.append(pole_dict)
+				for index,choice in enumerate(Choice.objects.filter(question_id=que.id)):
+					key = str(que.id) + "---" + str(choice.id)
+					val = "Choice "+str(index+1)
+					if choice.choice_text:
+						val = choice.choice_text
+					choice_id_text_data[key] = val
 			groups = ExtendedGroup.objects.filter(user_id = user.id).values('group_id')
 			group_list = []
 			for group in groups:
@@ -546,6 +553,9 @@ class AdminDashboard(BaseViewDetail):
 					minVotedCount = 99999
 					questionChoices = x.question.choice_set.all()
 					totalResponses = x.question.voted_set.count()
+					comment_choice_data = {}
+					choice_data = {}
+					comments = []
 					for index,choice in enumerate(questionChoices):
 						vote_set = choice.vote_set
 						numVotes = vote_set.count()
@@ -557,8 +567,22 @@ class AdminDashboard(BaseViewDetail):
 							maxVotedCount = numVotes
 						if(numVotes <= minVotedCount):
 							minVotedCount = numVotes
+						choice_data[choice.id] = "Choice " + str(index+1)
+						key = str(x.question.id) + "---" + str(choice.id)
+						val = "Choice "+str(index+1)
+						if choice.choice_text:
+							val = choice.choice_text
+						choice_id_text_data[key] = val
+					for voteText in VoteText.objects.filter(question_id=x.question.id):
+						comment_text = ""
+						votes = Vote.objects.filter(user_id=voteText.user.id,choice__in=questionChoices)
+						for vote in votes:
+							comment_text += choice_data.get(vote.choice.id) + ","
+						comment_text = comment_text[:-1] + " :"
+						comment_text += voteText.answer_text
+						comments.append(comment_text)
 
-					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":choice_dict.get(maxVotedCount,""),"minVotes":choice_dict.get(minVotedCount,"")})
+					sur_dict['polls'].append({"question":x.question,"q_type":x.question_type,"totalResponses":totalResponses,"maxVotes":choice_dict.get(maxVotedCount,""),"minVotes":choice_dict.get(minVotedCount,""), "comments":comments})
 				survey_detail_list.append(sur_dict)
 				# sur_dict['polls'] = [ {"question":x.question,"q_type":x.question_type} for x in Survey_Question.objects.filter(survey_id=survey.id)]
 				# survey_detail_list.append(sur_dict)
@@ -590,6 +614,7 @@ class AdminDashboard(BaseViewDetail):
 			data['votes_count'] = votes_count
 			data['total_views'] = total_views
 			data['categories'] = Category.objects.all()
+			data['choice_id_text_data'] = choice_id_text_data
 			# print(data)
 			return data
 		except Exception as e:

@@ -261,7 +261,7 @@
 						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description" maxlength="400"></textarea>
 					</p>
 					<p class="form-p">
-						<label for="thanks-msg">Thanks Message</label>
+						<label for="thanks-msg">Survey Submit Text</label>
 						<textarea id ="thanks-msg" name="thanks-msg" placeholder="Enter the thank you message to be displayed in the end of max 400 characters" maxlength="400">Thank You for Completing the Survey!!!</textarea>
 					</p>
 					<p class="form-p">
@@ -522,7 +522,7 @@
 					</p>
 					<p class="anonymous" style="margin-top:2rem">
 						<input id="addComment" name="addComment" type="checkbox">
-						<label for="addComment">Add Comment to every Question </label>
+						<label for="addComment">Require Feedback on every Question </label>
 					</p>
 					<div class="survey-questions">
 					</div>
@@ -582,11 +582,6 @@
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
-									<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
-										{% for text in poll.question.votetext_set.all %}
-											<p class="answer-text">{{ text.answer_text }}</p>
-										{% endfor %}
-									</div>
 									{% if poll.q_type != "text" %}
 										<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 											<div class="choices clearfix">
@@ -608,10 +603,18 @@
 											{% endif %}
 											{% endfor %}
 											</div>
+											<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
+												{% if poll.comments|length > 0 %}
+													<p>Comments :</p>
+												{% endif %}
+												{% for text in poll.comments %}
+													<p class="answer-text">{{ text }}</p>
+												{% endfor %}
+											</div>
 											<div id="advanced-pollsChart---{{ poll.question.id }}" class="pollsChartClass">
 											</div>
+											<p style="margin-bottom:1rem;font-weight:bold;text-align:center"> Comparative Demographic Analysis </p>
 											<div class="advancedAnaCmp" id="advancedAna">
-												<p style="margin-bottom:1rem;"> Filter by different parameters </p>
 												<div class="advancedCmpSelect">
 													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
 														<option value="nochoice">Gender</option>
@@ -642,7 +645,6 @@
 											</div>
 											</div>
 											<div class="advancedAnaCmp" id="advancedAna">
-												<p style="margin-bottom:1rem;"> Filter by different parameters </p>
 												<div class="advancedCmpSelect">
 													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
 														<option value="nochoice">Gender</option>
@@ -680,6 +682,7 @@
 														<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
 													{% endfor %}
 												</select>
+												<span  class="choice-filter choice---{{ poll.question.id }}---1">No Choice Filter</span>
 												<div class="gender">
 													<div class="graphContainer">
 														<p> Gender </p>
@@ -687,6 +690,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---1">No Choice Filter</span>
 												<div class="age">
 													<div class="graphContainer">
 														<p> Age </p>
@@ -694,6 +698,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---1">No Choice Filter</span>
 												<div class="location">
 													<div class="graphContainer">
 														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
@@ -701,6 +706,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---1">No Choice Filter</span>
 												<div class="others">
 													<div class="graphContainer">
 														<p> Profession </p>
@@ -717,6 +723,7 @@
 														<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
 													{% endfor %}
 												</select>
+												<span  class="choice-filter choice---{{ poll.question.id }}---2">No Choice Filter</span>
 												<div class="gender">
 													<div class="graphContainer">
 														<p> Gender </p>
@@ -724,6 +731,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---2">No Choice Filter</span>
 												<div class="age">
 													<div class="graphContainer">
 														<p> Age </p>
@@ -731,6 +739,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---2">No Choice Filter</span>
 												<div class="location">
 													<div class="graphContainer">
 														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
@@ -738,6 +747,7 @@
 														</div>
 													</div>
 												</div>
+												<span  class="choice-filter choice---{{ poll.question.id }}---2">No Choice Filter</span>
 												<div class="others">
 													<div class="graphContainer">
 														<p> Profession </p>
@@ -1028,11 +1038,11 @@
 							<p class="advanced-ana-bar-graph" style="margin-top:2rem" id ="advanced-ana-bar-graph-1---{{ question.poll.id }}">Results With All Responses : {{ question.allvotes }}</p>
 							<div id="advanced-pollsChart---{{ question.poll.id }}---extra" class="pollsChartClass">
 							</div>
-							<p class="advanced-ana-bar-graph" id ="advanced-ana-bar-graph-2---{{ question.poll.id }}">Results Which Have Demographic Data </p>
+							<p class="advanced-ana-bar-graph" id ="advanced-ana-bar-graph-2---{{ question.poll.id }}">Results Which Have Demographic Data : {{ question.votes }} </p>
 							<div id="advanced-pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
+							<p style="margin-bottom:1rem;font-weight:bold;text-align:center"> Comparative Demographic Analysis </p>
 							<div class="advancedAnaCmp" id="advancedAna">
-								<p style="margin-bottom:1rem;"> Filter by different parameters </p>
 								<div class="advancedCmpSelect">
 									<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ question.poll.id }}---Gender---1">
 										<option value="nochoice">Gender</option>
@@ -1063,7 +1073,6 @@
 							</div>
 							</div>
 							<div class="advancedAnaCmp" id="advancedAna">
-								<p style="margin-bottom:1rem;"> Filter by different parameters </p>
 								<div class="advancedCmpSelect">
 									<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ question.poll.id }}---Gender---2">
 										<option value="nochoice">Gender</option>
@@ -1101,6 +1110,7 @@
 										<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
 									{% endfor %}
 								</select>
+								<span  class="choice-filter choice---{{ question.poll.id }}---1">No Choice Filter</span>
 								<div class="gender">
 									<div class="graphContainer">
 										<p> Gender </p>
@@ -1108,6 +1118,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---1">No Choice Filter</span>
 								<div class="age">
 									<div class="graphContainer">
 										<p> Age </p>
@@ -1115,6 +1126,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---1">No Choice Filter</span>
 								<div class="location">
 									<div class="graphContainer">
 										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
@@ -1122,6 +1134,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---1">No Choice Filter</span>
 								<div class="others">
 									<div class="graphContainer">
 										<p> Profession </p>
@@ -1138,6 +1151,7 @@
 										<option value="choice{{ choice.id }}">Choice {{ forloop.counter }}</option>
 									{% endfor %}
 								</select>
+								<span  class="choice-filter choice---{{ question.poll.id }}---2">No Choice Filter</span>
 								<div class="gender">
 									<div class="graphContainer">
 										<p> Gender </p>
@@ -1145,6 +1159,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---2">No Choice Filter</span>
 								<div class="age">
 									<div class="graphContainer">
 										<p> Age </p>
@@ -1152,6 +1167,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---2">No Choice Filter</span>
 								<div class="location">
 									<div class="graphContainer">
 										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
@@ -1159,6 +1175,7 @@
 										</div>
 									</div>
 								</div>
+								<span  class="choice-filter choice---{{ question.poll.id }}---2">No Choice Filter</span>
 								<div class="others">
 									<div class="graphContainer">
 										<p> Profession </p>
@@ -1285,6 +1302,14 @@
 			{% for group in groups %}
 				availableGroupTags.push("{{ group.groupName }}");
 			{% endfor %}
+
+			var choice_display = {};
+			// console.log({{ choice_id_text_data|safe }});
+			{% for key,val in choice_id_text_data.items %}
+				// console.log("{{ key }}");
+				choice_display["{{ key }}"] = "{{ val }}";
+			{% endfor %}
+			// console.log(choice_display);
 			
 			function validateEmail(field) {
     			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
@@ -1507,9 +1532,9 @@
 			  		else
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		if(addCommentSurvey)
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		else
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
@@ -1869,7 +1894,8 @@
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1].replace("Select","");
 					var graphId = elemId.split("---")[2];
-					// console.log(elemId);
+					var choice_text_para = "choice---"+pollId+"---"+graphId;
+					console.log(choice_text_para);
 					// console.log(pollId);
 					var isMatch = /^advanced-*/.test(elemId);
 					// console.log(isMatch);
@@ -1882,6 +1908,8 @@
 					// console.log(selectedChoice);
 					if(selectedChoice != "nochoice"){
 						var selectedChoiceId = parseInt(selectedChoice.replace("choice",""));
+						console.log(pollId+"---"+selectedChoiceId,choice_display);
+						$("."+choice_text_para).html(choice_display[pollId+"---"+selectedChoiceId]);
 						// $(analysisDivId).hide();
 						// $(analysisDivId).toggle("slow");
 						// console.log(selectedChoiceId);
@@ -1896,6 +1924,7 @@
 						}
 						// }, delay); 
 					}else{
+						$("."+choice_text_para).html("No Choice Filter");
 						if($(analysisDivId).is(':visible')){
 						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
 						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);

@@ -216,9 +216,9 @@
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			console.log($(".surveySubmit"));
-			if($(".surveySubmit").length == 0){
-				confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
-			}
+			// if($(".surveySubmit").length == 0){
+			// 	confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
+			// }
 			$('.surveySubmit').bind('click', function()
 			{
 				{% if user.is_authenticated %}

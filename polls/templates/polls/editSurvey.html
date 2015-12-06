@@ -26,7 +26,7 @@
 						<textarea id ="surveyDescription" name="surveyDescription" placeholder="Description" maxlength="400">{{ survey.description }}</textarea>
 					</p>
 					<p class="form-p">
-						<label for="thanks-msg">Thanks Message</label>
+						<label for="thanks-msg">Survey Submit Text</label>
 						<textarea id ="thanks-msg" name="thanks-msg" placeholder="Enter the thank you message to be displayed in the end of max 400 characters" maxlength="400">{{ survey.thanks_msg }}</textarea>
 					</p>
 					<p>
@@ -302,7 +302,7 @@
 						{% else %}
 							<input id="addComment" name="addComment" type="checkbox">
 						{% endif %}
-						<label for="addComment">Add Comment to All Question </label>
+						<label for="addComment">Require Feedback on every Question </label>
 					</p>
 					<div class="survey-questions">
 						{% for question in polls %}
@@ -335,7 +335,7 @@
 									{% else %}
 										<input id="addComment{{ forloop.counter }}" name="addComment{{ forloop.counter }}" type="checkbox">
 									{% endif %}
-									<label for="addComment{{ forloop.counter }}">Add Comment </label>
+									<label for="addComment{{ forloop.counter }}">Require Feedback </label>
 								</p>
 								<p class="form-p">
 									<label for="qType{{ forloop.counter }}">Question Type</label>
@@ -522,9 +522,9 @@
 			  		else
 			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		if(addCommentSurvey)
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		else
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Add Comment </label></p>';
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';

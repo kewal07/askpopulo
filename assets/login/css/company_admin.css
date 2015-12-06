@@ -660,8 +660,18 @@ th.question-table-heading {
 .add-q,.add-choice{
 	cursor: pointer;
 }
+.remove-choice{
+	cursor: pointer;
+	margin-left: 1rem;
+}
 .createPollContentForm textarea{
 	margin-top: 0rem !important;
+}
+.choice-filter{
+	text-align: center;
+	display: block;
+	font-weight: bold;
+    margin-bottom: 0.5rem;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
