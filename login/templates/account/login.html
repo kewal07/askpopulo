@@ -6,6 +6,9 @@
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/login.css' %}" />
 {% endblock %}
+{% block extra_js %}
+	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
+{% endblock %}
 {% block content %}
 <section id="login">
 	<div class="login">
@@ -21,10 +24,11 @@
 
 			<div class="loginContentTable">
 				<div class="information-video">
-					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
 					<div class="slider">
-						<img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg">
+						<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div>
+						<!-- <img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg"> -->
 					</div>
+					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
 				</div>
 				<div class="socialaccount_ballot">
 					<div class="social_providers">
@@ -60,6 +64,7 @@
 					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
 					<div class="slider">
 						<img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg">
+						<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div>
 					</div>
 				</div>
 				<div class="socialaccount_ballot">

@@ -51,4 +51,5 @@ urlpatterns = patterns('',
 	url(r'^exportexcel', views.excel_view,name="exportexcel"),
 	url(r'^exportpdf/(?P<pk>\d+)', views.PDFView.as_view(),name="exportpdf"),
 	url(r'^foodtechstartups', TemplateView.as_view(template_name='foodstartups.html'), name='foodstartups'),
+	#url(r'^servemailpollresponse', views.responseOnEmail, name='responseOnEmail'),
 )
