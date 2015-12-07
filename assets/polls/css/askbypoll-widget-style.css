@@ -195,6 +195,8 @@ p.askbypoll-embed-poll-powered-by-p{
     color:black !important;
     position: absolute;
     right:0;
+    font-style: italic;
+    font-size: 1rem;
 }
 a.askbypoll-embed-poll-askbypoll-url{
     text-decoration: none;
