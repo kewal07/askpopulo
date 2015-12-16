@@ -1951,9 +1951,6 @@ def vote_embed_poll(request):
 
 def results_embed_poll(request):
 	try:
-		print(request.GET)
-		print("Age")
-		print(request.GET.get('age',18))
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		dataStored = request.GET.get('dataStored','false')
 		callback = request.GET.get('callback', '')
@@ -1962,7 +1959,7 @@ def results_embed_poll(request):
 		choices = Choice.objects.filter(question_id=pollId)
 
 		user_age = 0
-		gender = "D"
+		gender = 'D'
 		email = ''
 		profession = ''
 		print(alreadyVoted, dataStored)
@@ -1989,13 +1986,14 @@ def results_embed_poll(request):
 				new_extended_user = ExtendedUser(user=new_user)
 				new_extended_user.save()
 				if user_age > 0:
-					new_extended_user.birthDay = datetime.date.today().year - user_age
+					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
 				if profession:
 					new_extended_user.profession = profession
 				new_extended_user.gender = gender
 				new_extended_user.country = existingVote.country
 				new_extended_user.state = existingVote.state
 				new_extended_user.city = existingVote.city
+				#print(type(datetime.date.today().year - user_age), type(new_extended_user.gender),type(gender),type(new_extended_user.country), type(existingVote.country), type(new_extended_user.state), type(existingVote.state), type(new_extended_user.city), type(existingVote.city),type(email))
 				new_extended_user.save()
 				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
@@ -2040,6 +2038,9 @@ def results_embed_poll(request):
 			user_age = voteApi.calculate_age()
 			profession = voteApi.profession
 			country = voteApi.country
+			if not gender:
+				gender = 'D'
+			#print(gender)
 			gender_dic[gender] += 1
 			if user_age > 50:
 				age_dic['over_50'] += 1

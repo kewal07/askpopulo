@@ -214,10 +214,13 @@ function main() {
 			if(askbypollAge.trim() == "" || askbypollGender == "notSelected" || askbypollProfession == "notSelected"){
 				$("#askbypoll-age---"+pollId).parent().prepend('<span class="askbypoll-embed-error"> Age Gender Profession are mandatory</span>');
 			}else{
-				var jsonp_url = "https://www.askbypoll.com/results-embed-poll?pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
 				var a = new Date();
-				a = new Date(a.getTime() +1000*60*60*24);
+                                a = new Date(a.getTime() +1000*60*60*24);
 				document.cookie = 'ASKBYPOLL_DATA_GIVEN_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/';
+				var jsonp_url = "https://www.askbypoll.com/results-embed-poll?pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
+				//var a = new Date();
+				//a = new Date(a.getTime() +1000*60*60*24);
+				//document.cookie = 'ASKBYPOLL_DATA_GIVEN_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/';
 				$.getJSON(jsonp_url, function(data) {
 					$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
 					pollDiv.html(data.html);

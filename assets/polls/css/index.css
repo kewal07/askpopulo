@@ -354,6 +354,9 @@ button.followButton.unfollow{
 	margin-left: 3rem;
 }
 @media only screen and (max-width: 480px){
+	#indexExpiryLi{
+		width:14rem;
+	}
 	.queDivInfoText{
 		display:none;
 	}
@@ -473,7 +476,7 @@ button.followButton.unfollow{
 		top:59%;
 	}
 	.expiry-li{
-		width:30%;
+		margin-right:0rem !important;
 	}
 	.upvoteIndex,.upvoteDetailVote .fa-2x{
 		font-size:1rem;
