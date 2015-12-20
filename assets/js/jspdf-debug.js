@@ -2324,19 +2324,19 @@ var jsPDF = (function(global) {
 	 * Async method using Blob and FileReader could be best, but i'm not sure how to fit it into the flow?
 	 */
 	jsPDFAPI.arrayBufferToBinaryString = function(buffer) {
-		if(this.isArrayBuffer(buffer))
-			buffer = new Uint8Array(buffer);
+		// if(this.isArrayBuffer(buffer))
+		// 	buffer = new Uint8Array(buffer);
 
-	    var binary_string = '';
-	    var len = buffer.byteLength;
-	    for (var i = 0; i < len; i++) {
-	        binary_string += String.fromCharCode(buffer[i]);
-	    }
-	    return binary_string;
+	 //    var binary_string = '';
+	 //    var len = buffer.byteLength;
+	 //    for (var i = 0; i < len; i++) {
+	 //        binary_string += String.fromCharCode(buffer[i]);
+	 //    }
+	 //    return binary_string;
 	    /*
 	     * Another solution is the method below - convert array buffer straight to base64 and then use atob
 	     */
-		//return atob(this.arrayBufferToBase64(buffer));
+		return atob(this.arrayBufferToBase64(buffer));
 	};
 
 	/**

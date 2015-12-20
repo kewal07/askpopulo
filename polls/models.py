@@ -51,6 +51,13 @@ class Question(models.Model):
 	protectResult = models.BooleanField(default=0)
 	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 
+	def iseditable(self, request_user):
+		editable = False
+		if request_user.is_superuser:
+			editable = True
+		elif request_user == self.user and self.voted_set.count() < 1 and self.voteapi_set.count() < 1:
+			editable = True
+		return editable
 	def save(self, *args, **kwargs):
 		qText = self.question_text
 		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
@@ -214,6 +221,7 @@ class Survey_Question(models.Model):
 	question = models.ForeignKey(Question)
 	question_type = models.CharField(max_length=20)
 	add_comment = models.BooleanField(default=0)
+	mandatory = models.BooleanField(default=0)
 	def __str__(self):
 		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 

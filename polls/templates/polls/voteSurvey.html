@@ -71,7 +71,7 @@
 					{% endif %}
 					<div class="survey-questions">
 						{% for question in polls %}
-						<div class="survey-question">
+						<div class="survey-question" id="survey-question{{ question.poll.id }}">
 							<p class="que_text">{{ question.poll.question_text }}</p>
 							{% if question.poll.description %}
 								<p class="question_description_header">
@@ -84,6 +84,8 @@
 								{% csrf_token %}
 								<input type="hidden" name="question" value="{{ question.poll.id }}" />
 								<input type="hidden" name="questionType" value="{{ question.type }}" />
+								<input type="hidden" name="mandatory" value="{{ question.mandatory }}" />
+								<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
 								{% if question.type == "text" %}
 									<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 								{% else %}
@@ -117,7 +119,7 @@
 										<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 									{% endif %}
 								{% endif %}
-								{% if question.user_already_voted %}
+								{% if question.user_already_voted or expired%}
 									<script type="text/javascript">
 									$(document).ready(function(){
 										if($("#pollsChart---"+{{ question.poll.id }}).length >0)
@@ -132,24 +134,16 @@
 									});
 									</script>
 								{% else %}
-									{% if expired %}
-										<input class="submit voteSubmit" type="submit" value="Timed Out" id="{{ question.poll.id }}---{{ question.poll.que_slug }}" disabled="disabled"/>
-									{% else %}
-										<input class="submit voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ question.poll.id }}---{{ question.poll.que_slug }}---{{ question.poll.isBet }}"/>
-									{% endif %}
-									{% if user.is_authenticated and user.id == question.user.id or expired %}
-										{% if user.is_authenticated %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
-										{% else %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.poll.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Results</a>
-										{% endif %}
-									{% endif %}
+									
 								{% endif %}
 							</form>
 							</p>
 						</div>
 						{% endfor %}
 					</div>
+					{% if not user_already_voted and not expired %}
+						<input class="submit voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
+					{% endif %}
 				</div>
 			</div>
 			<div class="pollInfo  pollsInfoVotePage clearfix">
@@ -177,10 +171,12 @@
 								{% endif %}
 
 								function disableVoteButton(){
-									$('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
-									$('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
-									$('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
-									$('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
+									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
+									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
+									// $('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
+									// $('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
+									$('#vote{{ survey.id }}').attr('disabled','disabled');
+									$('#vote{{ survey.id }}').attr('value','Expired');
 								}
 							</script>
 						</li>
@@ -212,58 +208,161 @@
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				};
 		{% endif %}
+		function saveVotes(){
+			console.log("save as no error and draw charts too");
+			var form_n = $('.optionsForm').length;
+			var ajax_calls = 0;
+			$('.optionsForm').each(function(){
+				var elemid = $(this)[0].id;
+				// console.log(elemid);
+				console.log($(this).serialize());
+				var form_data = $(this).serialize();
+				console.log(form_data);
+				form_data += '&' + 'saveRequired=True';
+				console.log(form_data);
+				var queid = elemid.replace("optionsForm","");
+					$.ajax(
+					{
+						type: 'POST',
+						url:'',
+						data:form_data,
+						success:function(response)
+						{
+							// $(".errorlist").remove();
+							ajax_calls += 1;
+							console.log(response,ajax_calls,form_n);
+							if("success" in response){
+								// if($("#pollsChart---"+queid).length >0)
+								// 	drawPollsChart("{{ csrf_token }}","",parseInt(queid));
+								// else{
+								// 	if($("#choiceText"+queid).val().length > 0){
+								// 		$("#choiceText"+queid).attr('disabled','disabled');
+								// 		if($("#pollsVoted---"+queid).length >0)
+								// 			$("#pollsVoted---"+queid).show();
+								// 	}
+								// }
+								// if($("#choiceText"+queid+"Comment").length >0)
+								// 	$("#choiceText"+queid+"Comment").attr('disabled','disabled');
+								// 	$('.surveySubmit').remove();
+								// if($(".surveySubmit").length == 0){
+								if(ajax_calls == form_n)
+									confirm_redirect_only('#overlay-inAbox6',response["success"],'');
+								// }
+							}else{
+								for(key in response){
+									console.log(key,response[key],$("#survey-question"+key));
+									$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
+									// $("#"+voteSubmitId).removeAttr("disabled");
+								}
+							}
+						}
+					});
+			});
+		}
 		$(document).ready(function()
 		{
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			console.log($(".surveySubmit"));
-			// if($(".surveySubmit").length == 0){
-			// 	confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
-			// }
+			var question_count = $('.optionsForm').length;
+			var question_covered = 0;
 			$('.surveySubmit').bind('click', function()
 			{
+				question_covered = 0;
+				console.log("sur sub");
+				$(".errorlist").remove();
 				{% if user.is_authenticated %}
-					var voteSubmitId = $(this)[0].id;
-					var queid = $(this)[0].id.replace('vote','').split("---")[0];
-					var elemid = "#optionsForm"+queid;//$(this)[0].id
-					$(elemid).bind('submit', function()
-					{
-						$("#"+voteSubmitId).attr("disabled","disabled");
-						$.ajax(
-						{
-							type: 'POST',
-							url:'',
-							data:$(elemid).serialize(),
-							success:function(response)
+					$(this).attr("disabled","disabled");
+					$('.optionsForm').each(function(){
+						var elemid = $(this)[0].id;
+						// console.log(elemid);
+						console.log($(this).serialize());
+						var form_data = $(this).serialize();
+						console.log(form_data);
+						form_data += '&' + 'saveRequired=False';
+						console.log(form_data);
+						// $(elemid).bind('submit', function(){
+						// 	$("#"+voteSubmitId).attr("disabled","disabled");
+							$.ajax(
 							{
-								$(".errorlist").remove();
-								if(jQuery.isEmptyObject(response)){
-									if($("#pollsChart---"+queid).length >0)
-										drawPollsChart("{{ csrf_token }}","",parseInt(queid));
-									else{
-										$("#choiceText"+queid).attr('disabled','disabled');
-										if($("#pollsVoted---"+queid).length >0)
-											$("#pollsVoted---"+queid).show();
+								type: 'POST',
+								url:'',
+								data:form_data,
+								success:function(response)
+								{
+									// $(".errorlist").remove();
+									question_covered += 1;
+									console.log(response);
+									if("success" in response){
+									}else{
+										for(key in response){
+											console.log(key,response[key],$("#survey-question"+key));
+											$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
+											// $("#"+voteSubmitId).removeAttr("disabled");
+										}
 									}
-									if($("#choiceText"+queid+"Comment").length >0)
-										$("#choiceText"+queid+"Comment").attr('disabled','disabled');
-									$("#"+voteSubmitId).remove();
-									if($(".surveySubmit").length == 0){
-										confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
-									}
-								}else{
-									$("#"+voteSubmitId).parent().append('<span style="position:absolute" class="errorlist"><br>Please enter an answer</span>');
-									$("#"+voteSubmitId).removeAttr("disabled");
+									console.log(question_covered,question_count,"error",$(".errorlist"),$(".errorlist").length);
+									if(question_covered == question_count && $(".errorlist").length == 0)
+										saveVotes();
 								}
-							}
-						});
-						return false;
+							});
+						// 	return false;
+						// });
 					});
+					$(this).removeAttr("disabled");
 				{% else %}
 					url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}'
 					// console.log(url);
 					$(location).attr('href',url);
 				{% endif %}
 			});
+			// if($(".surveySubmit").length == 0){
+			// 	confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
+			// }
+			// $('.surveySubmit').bind('click', function()
+			// {
+			// 	{% if user.is_authenticated %}
+			// 		var voteSubmitId = $(this)[0].id;
+			// 		var queid = $(this)[0].id.replace('vote','').split("---")[0];
+			// 		var elemid = "#optionsForm"+queid;//$(this)[0].id
+			// 		$(elemid).bind('submit', function()
+			// 		{
+			// 			$("#"+voteSubmitId).attr("disabled","disabled");
+			// 			$.ajax(
+			// 			{
+			// 				type: 'POST',
+			// 				url:'',
+			// 				data:$(elemid).serialize(),
+			// 				success:function(response)
+			// 				{
+			// 					$(".errorlist").remove();
+			// 					if(jQuery.isEmptyObject(response)){
+			// 						if($("#pollsChart---"+queid).length >0)
+			// 							drawPollsChart("{{ csrf_token }}","",parseInt(queid));
+			// 						else{
+			// 							$("#choiceText"+queid).attr('disabled','disabled');
+			// 							if($("#pollsVoted---"+queid).length >0)
+			// 								$("#pollsVoted---"+queid).show();
+			// 						}
+			// 						if($("#choiceText"+queid+"Comment").length >0)
+			// 							$("#choiceText"+queid+"Comment").attr('disabled','disabled');
+			// 						$("#"+voteSubmitId).remove();
+			// 						if($(".surveySubmit").length == 0){
+			// 							confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
+			// 						}
+			// 					}else{
+			// 						$("#"+voteSubmitId).parent().append('<span style="position:absolute" class="errorlist"><br>Please enter an answer</span>');
+			// 						$("#"+voteSubmitId).removeAttr("disabled");
+			// 					}
+			// 				}
+			// 			});
+			// 			return false;
+			// 		});
+			// 	{% else %}
+			// 		url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}'
+			// 		// console.log(url);
+			// 		$(location).attr('href',url);
+			// 	{% endif %}
+			// });
 		});
 	</script>
 {% endblock %}
