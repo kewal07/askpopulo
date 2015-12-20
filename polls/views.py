@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 import os,linecache
 import sys
 from django.shortcuts import render
@@ -1864,7 +1865,7 @@ def embed_poll(request):
 			analysisNeeded = False
 		req = {}
 		poll = Question.objects.get(pk=pollId)
-		logo_html = '<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		choices = Choice.objects.filter(question_id=pollId)
 		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
@@ -1983,9 +1984,6 @@ def vote_embed_poll(request):
 
 def results_embed_poll(request):
 	try:
-		print(request.GET)
-		print("Age")
-		print(request.GET.get('age',18))
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		dataStored = request.GET.get('dataStored','false')
 		callback = request.GET.get('callback', '')
@@ -1994,7 +1992,7 @@ def results_embed_poll(request):
 		choices = Choice.objects.filter(question_id=pollId)
 
 		user_age = 0
-		gender = "D"
+		gender = 'D'
 		email = ''
 		profession = ''
 		print(alreadyVoted, dataStored)
@@ -2021,13 +2019,14 @@ def results_embed_poll(request):
 				new_extended_user = ExtendedUser(user=new_user)
 				new_extended_user.save()
 				if user_age > 0:
-					new_extended_user.birthDay = datetime.date.today().year - user_age
+					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
 				if profession:
 					new_extended_user.profession = profession
 				new_extended_user.gender = gender
 				new_extended_user.country = existingVote.country
 				new_extended_user.state = existingVote.state
 				new_extended_user.city = existingVote.city
+				#print(type(datetime.date.today().year - user_age), type(new_extended_user.gender),type(gender),type(new_extended_user.country), type(existingVote.country), type(new_extended_user.state), type(existingVote.state), type(new_extended_user.city), type(existingVote.city),type(email))
 				new_extended_user.save()
 				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
@@ -2072,6 +2071,9 @@ def results_embed_poll(request):
 			user_age = voteApi.calculate_age()
 			profession = voteApi.profession
 			country = voteApi.country
+			if not gender:
+				gender = 'D'
+			#print(gender)
 			gender_dic[gender] += 1
 			if user_age > 50:
 				age_dic['over_50'] += 1
@@ -2117,7 +2119,7 @@ def results_embed_poll(request):
 					# if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 					# 	country = 'United Kingdom'
 					country_dic[country] = country_dic.get(country,0) + 1	
-		logo_html = '<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---1---'+str(pollId)+'"><div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'+logo_html+'<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'"><p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'+poll.question_text+'</p></div><div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'" >'
@@ -2484,3 +2486,4 @@ def get_age_data(user_age,age_dic):
 	elif user_age > 0:
 		age_dic['under_19'] = age_dic.get('under_19',0) + 1
 	return age_dic
+

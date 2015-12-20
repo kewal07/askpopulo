@@ -1,0 +1,117 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_js %}
+	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
+{% endblock %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'foodstartup.css' %}" />
+	<style>
+		.questions{
+			opacity: 1 !important;
+		}
+		p {
+			font-family: sans-serif !important;
+		}
+		td {
+    		height:25px;
+		}	 
+</style>
+{% endblock %}
+{% block content %}
+<section id="content">
+	<div class="questions">
+			<center><H1><font style="font-size: x-large;font-weight: 700;">Order Immediate Fix of Infrastructure Issues In Bellandur</font></H1></center><HR><br><br>
+
+				<div class = "dataContainer">
+					<div class="figBox" id="figBox1"> 
+						<img style="width:100%; height:400px;" src="/static/bellandur.jpg">
+					</div>
+				</div>
+
+				<P align="justify" style="line-height:150%">We are writing to draw your urgent attention to the rapidly deteriorating state of affairs in Bellandur, housing more than 100,000 residents & equal number of office going people.
+				</P><br><br>
+
+				<P align="justify" style="line-height:150%">The ORR stretch from Ibblur to Marathahalli is home to Ecospace, Embassy Tech Village, Prestige Tech park and Cessna Business Park. In addition we have a world class hospital, scores of commercial buildings, offices and more than 50,000 residential units (and still growing). Several lakh square feet of space, both residential and commercial, is under construction.
+				</P><br><br>
+
+				<P align="justify" style="line-height:150%">The Sarjapur road, adjoining ORR, houses Wipro corporate office - currently 10,000 employees. A new Techpark sprawling on 65 acres is coming up in Carmelaram, near Decathlon Sarjapur road. Many more residential units dot the scape from ibblur junction to Sarjapura. Haralur road, Hosa road and adjoining areas have apartments with thousands of flats and thousands more under construction. Sarjapura road and Varthur road connected by SH-35 also are home to around 30+ schools.
+				</P><br><br>
+
+				<P align="justify" style="line-height:150%">Lakhs of people live here, and lakhs more come to work.<strong style="font-weight:700;"> There has been 400% growth in the number of households in the last 10 years.</strong><br>
+				</P><br>
+
+				<P align="justify" style="line-height:150%">Despite this, the state of Sarjapura Road and Outer Ring Road has remained the same. All this activity in the Sarjapur ORR corridor has put tremendous stress on the resources affecting quality of life of residents and commuters alike. All these roads have not been widened or improved since Bellandur and Devarabisanahalli flyovers were built more than 5 years ago. Since then, the traffic has increased manifold. Sarjapura road widening is a project pending since last 10 years.<br>
+				</P><br>
+
+				<P align="justify" style="line-height:150%">Traffic snarls on Outer Ring Road, Sarjapura Road and surrounding areas are a daily affair now. There is no place to walk, let alone drive. Drains are open or overflow with sewage.
+				</P><br><br>
+
+				<P align="justify" style="line-height:150%">This has seriously deteriorated mobility and have adversely affected commute time for both employees of the numerous companies and the daily wage workers who can least afford it. All residents rich and poor in this area are suffering due to rise in pollution, overcrowding and traffic congestion. Children are frequently stuck in jams and return home tired. It is scary to think the effect the pollution has on their growing bodies. Cases of asthma and allergic cough are quite common.<br>
+				</P><br><br>
+
+				<P align="justify" style="line-height:150%">ORR companies contributed about <strong style="font-weight:700;"> Rs 100 Cr property tax </strong> last year to the state govt. But there has been spends worth <strong style="font-weight:700;"> only Rs 5 Cr </strong> in the last few years. As one of the highest tax payer constituency in Bangalore, we are furious with this poor report card. We should hold our elected officials such as the corporator and the MLA responsible. We deserve to have better quality of life and better infrastructure in the near future.
+				</P><br><br>
+
+				<strong style="font-weight:700;"> WE DEMAND ACTION NOW! </strong><br><br><br>
+
+				<P align="justify" style="line-height:150%"> <strong style="font-weight:600;"> Immediate: </strong><br>
+					-	Fix potholes and lay new roads on ORR, Sarjapur Road and all internal roads in Sarjapur ORR areas.<br>
+					-	Covered drains, Garbage Free Sidewalks & Skywalks for pedestrians.<br>  
+					-	Scientific planning of Junctions, U-turns, Bus Bays and Bus Stops. Civil works to be carried out according to the Traffic Plan.<br>
+					-	Removal of all encroachments from major roads and service road of ORR.<br>
+					-	Constitute a committee (citizens, corporates & government agencies) to improve ORR Sarjapur corridor.<br>
+				</P><br>
+
+				<P align="justify" style="line-height:150%"> <strong style="font-weight:600;"> Long-term: </strong><br>
+					-	Release the DPR (Detailed Project Report) for Sarjapur road widening and collaborate with the above committee with detailed timelines. This road widening has been approved in Karnataka Govt. Budget<br>
+					-	Identify alternate routes, acquire additional land for roads, widen the narrow routes to reduce load on arterial roads and implement new roads as per CDP 2015.<br>  
+					-	Plan for mass transit in this corridor such as BRTS, Mono-rail or Metro, as feasible<br>
+				</P><br><br>
+				<P align="justify" style="line-height:150%"> Time to take action. Raise your voice and vote below:</P><br>
+				<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3490"></div>
+				<br><br>
+				
+				<ul id="foodStartUpsShare" class="share-buttons">
+					<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/foodtechstartups" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-hashtags="AskByPoll" style="margin-left:1rem;">Tweet</a></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/foodtechstartups" style="margin-left:1rem;"></div></li>
+				</ul>
+
+				<div id="disqus_thread">
+				</div>
+				<script type="text/javascript">
+
+					(function(d, s, id) 
+					{
+		  				var js, fjs = d.getElementsByTagName(s)[0];
+		  				if (d.getElementById(id)) return;
+		  				js = d.createElement(s); js.id = id;
+		  				js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
+		  				fjs.parentNode.insertBefore(js, fjs);
+					}
+					(document, 'script', 'facebook-jssdk'));
+
+					!function(d,s,id)
+					{
+						var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+						if(!d.getElementById(id))
+						{
+							js=d.createElement(s);
+							js.id=id;
+							js.src=p+'://platform.twitter.com/widgets.js';
+							fjs.parentNode.insertBefore(js,fjs);
+						}
+					}(document, 'script', 'twitter-wjs');
+
+					var disqus_shortname = 'askbypoll';
+					/* * * DON'T EDIT BELOW THIS LINE * * */
+					(function() {
+					    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					})();
+				</script>
+			</div>
+{% endblock %}
+
