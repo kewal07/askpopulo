@@ -1,10 +1,10 @@
 @import url('http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css');
 
-* {
+/** {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    /*box-sizing: border-box;*/
-}
+    /*box-sizing: border-box;*
+}*/
 .askbypoll-embed-content{
     border:1px solid;
 }
@@ -72,9 +72,9 @@ img.askbypoll-embed-poll-question-choice-img{
 .askbypoll-embed-poll-question-choice:nth-of-type(3) {
     margin-right:2rem;
 }
-.askbypoll-embed-poll-choice{
+/*.askbypoll-embed-poll-choice{
 	display: inline;
-}
+}*/
 
 .askbypoll-embed-progress-bar{
 	width: 0;
@@ -98,12 +98,13 @@ img.askbypoll-embed-poll-question-choice-img{
     from {width: 0%;}
 /*    to {width: 10%;}*/
 }
-.askbypoll-embed-poll-choice{
+/*.askbypoll-embed-poll-choice{
 	display:inline-block;
 	position: relative;
 	width:40%;
 	margin:1.5rem;
-}
+}*/
+
 .askbypoll-progress-bar-Img-div{
     position:relative;
 }
@@ -152,10 +153,17 @@ select{
     font-family: 'Montserrat', sans-serif;
     color:#fff !important;
     position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 .askbypoll-embed-poll-question{
     border-bottom:1px solid;
     border-color:black;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    text-align: justify;
+    line-height: 1.5rem;
 }
 .askbypoll-embed-poll-question-text{
     font-size:1.3rem !important;
@@ -190,6 +198,7 @@ select{
 .askbypoll-embed-poll-powered-by{
     position: relative;
     height: 20px;
+    margin-top: 1rem;
 }
 p.askbypoll-embed-poll-powered-by-p{
     color:black !important;
@@ -219,15 +228,16 @@ img.askbypoll-embed-poll-question-choice-img{
     cursor:pointer;
 }
 
-.askbypoll-embed-poll-choice{
+/*.askbypoll-embed-poll-choice{
     display: inline;
-}
+}*/
 
 .askbypoll-embed-poll-choice{
-    display:inline-block;
+    /*display:inline-block;*/
     position: relative;
-    width:40%;
-    margin:1.5rem;
+    width:80%;
+    /*margin:1.5rem;*/
+    margin-top:1rem;
 }
 .askbypoll-progress-bar-Img-div{
     position:relative;

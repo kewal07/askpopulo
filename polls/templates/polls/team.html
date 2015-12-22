@@ -4,14 +4,20 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 	<link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
 	<style>
+		p{
+		   text-align:justify;
+		   margin-bottom:1rem;
+		}
 		body{
 			font-family: 'Arvo', serif;
+			font-size:1rem;
 		}
 		.questions{
 			padding-bottom: 5rem;
+			padding-top: 3rem;
 		}
 		.abt-us-img{
-			width: 200px;
+		    width: 200px;
 		    height: 265px;
 		    padding: 1rem;
 		    display: inline-block;
@@ -28,6 +34,9 @@
 		.kewal{
 				float:left;
 			}
+		#companyDetailP{
+			text-align:justify;
+		}
 		@media only screen and (max-width: 960px){
 			.abt-us-img{
 				width: 90%;
@@ -52,6 +61,12 @@
 {% endblock %}
 {% block content %}
 	<section id="content">
+		<div class="questions">
+			<img src="/static/pollsLogo.png" alt="AskByPoll" style="display: block; margin: 0 auto; margin-bottom: 2rem; height: 6rem;">
+			<p id="companyDetailP"> AskByPoll is a Cloud Based Consumer Insights Platform whose intent is to easy the decision making process for users and organizations. AskByPoll offers easy to use tools like Polls and Surveys that can be used to gather the consumer insights by placing them on the AskByPoll website / dedicated page or by embedding them on the organization's webpage or email. Organizations are provided advanced and pre-polulated analytics which reduces the decision making cycles for the organizations.
+
+AskByPoll is the consumer brand of Ollivander’s Technologies Pvt. Ltd. We strive to maintain an open and motivating culture where everyone gets a sense of ownership and responsibility. Our team spends hours designing new features with the core objective to make the process of gathering consumer insights fast, easy and affordable and ease the decision making process.</p>
+		</div>
 		<div class="questions">
 			<img class="abt-us-img" src="/static/sandeep.png">
 			<div class="abt-us-text">
