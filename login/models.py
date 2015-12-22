@@ -86,6 +86,7 @@ class Company(BaseModel):
 	company_url = models.CharField(max_length=255,null=True,blank=True)
 	company_facebook = models.CharField(max_length=255,null=True,blank=True)
 	company_twitter = models.CharField(max_length=255,null=True,blank=True)
+	num_of_choices = models.IntegerField(default=4)
 
 	def save(self, *args, **kwargs):
 		cname = self.name

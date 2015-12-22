@@ -415,6 +415,7 @@ class EditView(BaseViewDetail):
 			for cat in question.questionwithcategory_set.all():
 				categories += cat.category.category_title+","
 			context["question_categories"] = categories
+			context['extra_choices'] = request.user.extendeduser.company.num_of_choices - question.choice_set.count()
 			return self.render_to_response(context)
 		
 class DeleteView(BaseViewDetail):
@@ -444,6 +445,7 @@ class CreatePollView(BaseViewList):
 		context['categories'] = Category.objects.all()
 		groups = [x.group.name for x in ExtendedGroup.objects.filter(user_id = user.id)]
 		context['groups'] = groups
+		context['extra_choices'] = user.extendeduser.company.num_of_choices - 4 
 		return context
 	
 	def post(self, request, *args, **kwargs):
@@ -583,6 +585,26 @@ class CreatePollView(BaseViewList):
 				choice4Image = request.FILES.get('choice4')
 			if choice4Image:
 				images.append(choice4Image)
+			extra_choices = []
+			if user.extendeduser.company.num_of_choices > 4:
+				for i in range(5,user.extendeduser.company.num_of_choices+1):
+					if request.POST.getlist('choice'+str(i)):
+						choice = request.POST.getlist('choice'+str(i))[0].strip()
+						if choice:
+							choices.append(choice)
+						if edit and request.POST.get('imagechoice'+str(i),""):
+							choiceid = request.POST.get('imagechoice'+str(i)).split("---")[1]
+							choiceImage = Choice.objects.get(pk=choiceid).choice_image
+							imagePathList.append(choiceImage.path)
+						else:
+							choiceImage = request.FILES.get('choice'+str(i))
+						if choiceImage:
+							images.append(choiceImage)
+						extra_choice = {}
+						extra_choice["choice"] = choice
+						extra_choice["image"] = choiceImage
+						extra_choice["choice_id_text"] = 'choice'+str(i)
+						extra_choices.append(extra_choice)
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			isBet = request.POST.get('bet')
@@ -712,6 +734,12 @@ class CreatePollView(BaseViewList):
 				choice.save()
 				if queBetAmount and queBetChoiceText == "choice4":
 					queBetChoice = choice
+			for choice_dict in extra_choices:
+				if choice_dict["choice"] or choice_dict["image"]:
+					choice = Choice(question=question,choice_text=choice_dict["choice"],choice_image=choice_dict["image"])
+					choice.save()
+					if queBetAmount and queBetChoiceText == choice_dict["choice_id_text"]:
+						queBetChoice = choice
 		if queBetChoice:
 			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)
 			vote.save()

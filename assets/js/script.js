@@ -51,7 +51,7 @@ $(document).ready(function(){
     	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
 	})
 
-	$('.fileLabel').click(function(){
+	$('body').on('click','.fileLabel',function(){
 	    $(this).prev().children().first().click();
 	});
 	/* End of file browse*/
