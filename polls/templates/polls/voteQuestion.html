@@ -46,7 +46,7 @@
 					<p class="que_text">{{ question.question_text }}
 					{% if user.is_authenticated %}
 					{% if user == question.user or user.is_superuser %}
-					{% if question.voted_set.count < 1 or user.is_superuser %}
+					{% if editable %}
 					<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 					{% endif %}
 					<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>

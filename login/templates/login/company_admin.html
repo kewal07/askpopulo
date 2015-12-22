@@ -521,6 +521,10 @@
 						<label for="protectResult">Protect Survey Result </label>
 					</p>
 					<p class="anonymous" style="margin-top:2rem">
+						<input id="mandatory" name="mandatory" type="checkbox">
+						<label for="mandatory">Make All Questions Mandatory </label>
+					</p>
+					<p class="anonymous" style="margin-top:2rem">
 						<input id="addComment" name="addComment" type="checkbox">
 						<label for="addComment">Require Feedback on every Question </label>
 					</p>
@@ -1422,15 +1426,16 @@
 				});
 			}
 
+			var display_question_count = 1;
+			var featureImageWrapped = false;
+			var question_count = 1;
+			var question_list = [];
+			var choice_count = {};
+			var choice_list = {};
+			var protectedResultSurvey = false;
+			var mandatorySurvey = false;
+			var addCommentSurvey = false;
 			function createSurvey(){
-				var display_question_count = 1;
-				var question_count = 1;
-				var question_list = [];
-				var choice_count = {};
-				var choice_list = {};
-				var protectedResultSurvey = false;
-				var addCommentSurvey = false;
-
 				$(".create-survey").toggle("slow");
 			
 				$( "#categories" ).autocomplete({
@@ -1475,197 +1480,42 @@
 			  		$("#featuredimage_tooltip").toggle();
 			  	});
 
-			  	/*For file browse */
-				var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-				var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
-				// var upImg = $('<img id="upImg" width=>')
-				var fileInput = $("#shareImage").after(label).wrap(invisible);
-				// $("#"+choice_file_id).hide();
 
-				fileInput.change(function(){
-					// $('#upImgText').hide();
-				    $this = $(this);
-				    var fileVal = $this.val();
-			    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
-			    	var fileName = fileVal.substr(fileNameIndex);
-			    	if (this.files && this.files[0]) {
-			            var reader = new FileReader();
-			            
-			            reader.onload = function (e) {
-			                imgSrc = e.target.result;
-							console.log($this.parent().children().first());
-							// $(".upImg").attr('src', e.target.result);
-							$this.parent().next().children().first().attr('src', e.target.result);
-							// $(".upImg").show();
-							$this.parent().next().children().first().show();
-			            }
-			            
-			            reader.readAsDataURL(this.files[0]);
-			        }
-					// $("#upImgText").text(fileName);
-					$this.parent().next().children().first().next().hide();
-			    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
-				})
-				/* End of file browse*/
-			  	$(".add-q").click(function(){
-			  		choice_count[question_count] = 1;
-			  		choice_list[question_count] = [];
-			  		var question_id = "question"+(question_count.toString());
-			  		var question_count_str = question_count.toString();
-			  		question_list.push(question_count_str);
-			  		var question_elem = '<div class="survey-question-div" id="questionDiv'+question_count_str+'">';
-			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question"> Remove</i><p class="form-p"> Question <span class="display_question_count">'+display_question_count+'</span>:</p><p class="form-p"><label class=" required" for="qText';
-			  		question_elem += question_count_str;
-			  		question_elem += '">Question</label><textarea id ="qText';
-			  		question_elem += question_count_str;
-			  		question_elem += '" name="qText';
-			  		question_elem += question_count_str;
-			  		question_elem += '" placeholder="Ask the people" maxlength="200"></textarea></p><p class="form-p"><label for="qDesc';
-			  		question_elem += question_count_str;
-			  		question_elem += '">Description</label><textarea id ="qDesc';
-			  		question_elem += question_count_str;
-			  		question_elem += '" name="qDesc';
-			  		question_elem += question_count_str;
-			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
-			  		if(protectedResultSurvey)
-			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
-			  		else
-			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
-			  		if(addCommentSurvey)
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
-			  		else
-			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
-			  		question_elem += '<p class="form-p"><label for="qType';
-			  		question_elem += question_count_str;
-			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
-			  		question_elem += '</div>';
-			  		// console.log(question_elem);
-			  		$(".survey-questions").append(question_elem);
-			  		$(".remove-question").click(function(){
-			  			var elemId = $(this)[0].id;
-						var question_count_select3 = elemId.replace("remove-question","");
-						$("#questionDiv"+question_count_select3).remove();
-						question_list = jQuery.grep(question_list, function(value) {
-						  return value != question_count_select3;
-						})
-						delete choice_list[question_count_select3];
-						var refresh_display_count = 1;
-						$(".display_question_count").each(function(i){
-							$(this)[0].innerHTML = refresh_display_count;
-							refresh_display_count += 1;
-						});
-						display_question_count = refresh_display_count;
-						// console.log("remove",display_question_count);
-					});
-			  		question_count += 1;
-			  		display_question_count += 1;
-			  		function add_another_choice(question_count_select,selectedType){
-						var question_choice_count = choice_count[question_count_select];
-			  			choice_list[question_count_select].push(question_choice_count);
-			  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
-			  			var question_div = "questionDiv"+question_count_select;
-						var choice_elem_id = question_div+'choice'+question_choice_count;
-						var choice_file_id = question_div+'choice'+question_choice_count+'file';
-						console.log(question_count_select,selectedType,question_div);
-						var font_awesome_str = "";
-						var choice_elem = "";
-						if(selectedType === "radio"){
-							font_awesome_str = "";
-						} else if(selectedType === "checkbox"){
-							font_awesome_str = "";
-						}
-						if(selectedType != "text"){
-							choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
-							choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
-							choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
-							choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
-							choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
-							// console.log($("#"+choice_elem_div).last());
-							$("#"+choice_elem_div).append(choice_elem);
-						}
-						choice_count[question_count_select]+=1;
-						$(".remove-choice").click(function(){
-							var elemId = $(this)[0].id;
-							var question_count_select2 = elemId.split("---")[0];
-							var question_choice_count2 = elemId.split("---")[1];
-							var selectedType2 = elemId.split("---")[2];
-							$("#questionDiv"+question_count_select2+"choice"+question_choice_count2+"Div").remove();
-							choice_list[question_count_select2] = jQuery.grep(choice_list[question_count_select2], function(value) {
-							  return value != question_choice_count2;
-							})
-							if(choice_list[question_count_select2].length < 5){
-								if ($("#"+question_count_select2+'---'+selectedType2).length > 0) {
-								    $("#"+question_count_select2+'---'+selectedType2).show();
-								}
-							}
-							// choice_list[question_count_select2].remove(question_choice_count2);
-						});
-						/*For file browse */
-							var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-							var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
-							// var upImg = $('<img id="upImg" width=>')
-							var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
-							// $("#"+choice_file_id).hide();
+			  	if(!featureImageWrapped){
+			  		featureImageWrapped = true;
+				  	/*For file browse */
+					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+					var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+					// var upImg = $('<img id="upImg" width=>')
+					var fileInput = $("#shareImage").after(label).wrap(invisible);
+					// $("#"+choice_file_id).hide();
 
-							fileInput.change(function(){
-								// $('#upImgText').hide();
-							    $this = $(this);
-							    var fileVal = $this.val();
-						    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
-						    	var fileName = fileVal.substr(fileNameIndex);
-						    	if (this.files && this.files[0]) {
-						            var reader = new FileReader();
-						            
-						            reader.onload = function (e) {
-						                imgSrc = e.target.result;
-										console.log($this.parent().children().first());
-										// $(".upImg").attr('src', e.target.result);
-										$this.parent().next().children().first().attr('src', e.target.result);
-										// $(".upImg").show();
-										$this.parent().next().children().first().show();
-						            }
-						            
-						            reader.readAsDataURL(this.files[0]);
-						        }
-								// $("#upImgText").text(fileName);
-								$this.parent().next().children().first().next().hide();
-						    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
-							})
-						/* End of file browse*/
-					}
-			  		$(".question-type-select").change(function(){
-			  			var select_elem_id = $(this)[0].id;
-			  			var question_count_select = select_elem_id.replace("question-type-select","");
-			  			choice_count[question_count_select] = 1;
-			  			choice_list[question_count_select] = [];
-			  			var question_choice_count = choice_count[question_count_select];
-			  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
-			  			var question_div = "questionDiv"+question_count_select;
-						$("#"+choice_elem_div).remove();
-			  			// console.log($("#"+choice_elem_div));
-			  			var selectedType = $("#"+select_elem_id+" option:selected").val();
-						if(selectedType != "text"){
-							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
-							$("#"+question_div).append(add_another_choice_elem);
-							$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
-							add_another_choice(question_count_select,selectedType);
-						}
-						if(selectedType == "radio"){
-							$("#addComment"+question_count_select+"p").show();
-						} else {
-							$("#addComment"+question_count_select+"p").hide();
-						}
-						$(".add-choice").on("click",function(){
-							var elemId = $(this)[0].id;
-							var question_count_select1 = elemId.split("---")[0];
-							var selectedType1 = elemId.split("---")[1];
-							add_another_choice(question_count_select1,selectedType1);
-							if(choice_list[question_count_select1].length >= 5){
-								$("#"+question_count_select1+'---'+selectedType1).hide();
-							}
-						});
-					});
-			  	});
+					fileInput.change(function(){
+						// $('#upImgText').hide();
+					    $this = $(this);
+					    var fileVal = $this.val();
+				    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+				    	var fileName = fileVal.substr(fileNameIndex);
+				    	if (this.files && this.files[0]) {
+				            var reader = new FileReader();
+				            
+				            reader.onload = function (e) {
+				                imgSrc = e.target.result;
+								console.log($this.parent().children().first());
+								// $(".upImg").attr('src', e.target.result);
+								$this.parent().next().children().first().attr('src', e.target.result);
+								// $(".upImg").show();
+								$this.parent().next().children().first().show();
+				            }
+				            
+				            reader.readAsDataURL(this.files[0]);
+				        }
+						// $("#upImgText").text(fileName);
+						$this.parent().next().children().first().next().hide();
+				    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+					})
+					/* End of file browse*/
+				}
 
 				$('.surveySubmit').bind('click', function(event)
 				{
@@ -1687,8 +1537,18 @@
 							{
 								$(".errorlist").remove();
 								console.log(obj);
-								if(obj.hasOwnProperty("success"))
+								if(obj.hasOwnProperty("success")){
 									$('#dashboard-surveys-tab').trigger("click");
+									display_question_count = 1;
+									featureImageWrapped = false;
+									question_count = 1;
+									question_list = [];
+									choice_count = {};
+									choice_list = {};
+									protectedResultSurvey = false;
+									addCommentSurvey = false;
+									mandatorySurvey = false;
+								}
 								else{
 									for(var key in obj){
 									    if (obj.hasOwnProperty(key)){
@@ -1708,26 +1568,66 @@
 					{% endif %}
 				});
 
-				$("#surveys-content").on("click","#protectResult",function(){
-					protectedResultSurvey = !protectedResultSurvey;
-					var checked = false;
-					if($("#protectResult").is(':checked'))
-						checked = true;
-					for(var i=0; i<question_list.length; i++){
-						$("#protectResult"+question_list[i]).prop( "checked", checked );
-					}
-				});
+			}
 
-				$("#surveys-content").on("click","#addComment",function(){
-					addCommentSurvey = !addCommentSurvey;
-					var checked = false;
-					if($("#addComment").is(':checked'))
-						checked = true;
-					for(var i=0; i<question_list.length; i++){
-						$("#addComment"+question_list[i]).prop( "checked", checked );
-					}
-				});
+			function add_another_choice(question_count_select,selectedType){
+				var question_choice_count = choice_count[question_count_select];
+	  			choice_list[question_count_select].push(question_choice_count);
+	  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
+	  			var question_div = "questionDiv"+question_count_select;
+				var choice_elem_id = question_div+'choice'+question_choice_count;
+				var choice_file_id = question_div+'choice'+question_choice_count+'file';
+				// console.log(question_count_select,selectedType,question_div);
+				var font_awesome_str = "";
+				var choice_elem = "";
+				if(selectedType === "radio"){
+					font_awesome_str = "";
+				} else if(selectedType === "checkbox"){
+					font_awesome_str = "";
+				}
+				if(selectedType != "text"){
+					choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
+					choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
+					choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
+					choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
+					choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
+					// console.log($("#"+choice_elem_div),choice_elem);
+					$("#"+choice_elem_div).append(choice_elem);
+				}
+				choice_count[question_count_select]+=1;
+				
+				/*For file browse */
+					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+					var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+					// var upImg = $('<img id="upImg" width=>')
+					var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
+					// $("#"+choice_file_id).hide();
 
+					fileInput.change(function(){
+						// $('#upImgText').hide();
+					    $this = $(this);
+					    var fileVal = $this.val();
+				    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+				    	var fileName = fileVal.substr(fileNameIndex);
+				    	if (this.files && this.files[0]) {
+				            var reader = new FileReader();
+				            
+				            reader.onload = function (e) {
+				                imgSrc = e.target.result;
+								console.log($this.parent().children().first());
+								// $(".upImg").attr('src', e.target.result);
+								$this.parent().next().children().first().attr('src', e.target.result);
+								// $(".upImg").show();
+								$this.parent().next().children().first().show();
+				            }
+				            
+				            reader.readAsDataURL(this.files[0]);
+				        }
+						// $("#upImgText").text(fileName);
+						$this.parent().next().children().first().next().hide();
+				    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+					})
+				/* End of file browse*/
 			}
 	
 			$(document).ready(function(){
@@ -1968,6 +1868,151 @@
 					populateState(common_elem_id_str+"State---"+graphId,selectedChoice_country);
 				});
 
+				$("#surveys-content").on("click",".add-q",function(){
+			  		choice_count[question_count] = 1;
+			  		choice_list[question_count] = [];
+			  		var question_count_str = question_count.toString();
+			  		question_list.push(question_count_str);
+			  		var question_elem = '<div class="survey-question-div" id="questionDiv'+question_count_str+'">';
+			  		question_elem += '<i id="remove-question' +question_count_str+ '"class="fa fa-times-circle remove-question"> Remove</i><p class="form-p"> Question <span class="display_question_count">'+display_question_count+'</span>:</p><p class="form-p"><label class=" required" for="qText';
+			  		question_elem += question_count_str;
+			  		question_elem += '">Question</label><textarea id ="qText';
+			  		question_elem += question_count_str;
+			  		question_elem += '" name="qText';
+			  		question_elem += question_count_str;
+			  		question_elem += '" placeholder="Ask the people" maxlength="200"></textarea></p><p class="form-p"><label for="qDesc';
+			  		question_elem += question_count_str;
+			  		question_elem += '">Description</label><textarea id ="qDesc';
+			  		question_elem += question_count_str;
+			  		question_elem += '" name="qDesc';
+			  		question_elem += question_count_str;
+			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
+			  		if(mandatorySurvey)
+			  			question_elem += '<p class="anonymous"><input id="mandatory' +question_count_str+ '" name="mandatory' +question_count_str+ '" type="checkbox" checked><label for="mandatory' +question_count_str+ '">Mandatory </label></p>';
+			  		else
+			  			question_elem += '<p class="anonymous"><input id="mandatory' +question_count_str+ '" name="mandatory' +question_count_str+ '" type="checkbox"><label for="mandatory' +question_count_str+ '">Mandatory </label></p>';
+			  		if(protectedResultSurvey)
+			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		else
+			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(addCommentSurvey)
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
+			  		else
+			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
+			  		question_elem += '<p class="form-p"><label for="qType';
+			  		question_elem += question_count_str;
+			  		// change for radio default start
+			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="text">Text</option></select></p>';
+			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
+			  		// change for radio default end
+			  		question_elem += '</div>';
+			  		// console.log(question_elem);
+			  		$(".survey-questions").append(question_elem);
+			  		// change for radio default start
+			  		add_another_choice(question_count,"radio");
+			  		$("#addComment"+question_count_str+"p").show();
+			  		// change for radio default end
+			  		question_count += 1;
+			  		display_question_count += 1;
+			  	});
+
+				$("#surveys-content").on("click",".remove-choice",function(){
+					var elemId = $(this)[0].id;
+					var question_count_select2 = elemId.split("---")[0];
+					var question_choice_count2 = elemId.split("---")[1];
+					var selectedType2 = elemId.split("---")[2];
+					$("#questionDiv"+question_count_select2+"choice"+question_choice_count2+"Div").remove();
+					choice_list[question_count_select2] = jQuery.grep(choice_list[question_count_select2], function(value) {
+					  return value != question_choice_count2;
+					})
+					if(choice_list[question_count_select2].length < 5){
+						if ($("#"+question_count_select2+'---'+selectedType2).length > 0) {
+						    $("#"+question_count_select2+'---'+selectedType2).show();
+						}
+					}
+					// choice_list[question_count_select2].remove(question_choice_count2);
+				});
+
+				$("#surveys-content").on("change",".question-type-select",function(){
+		  			var select_elem_id = $(this)[0].id;
+		  			var question_count_select = select_elem_id.replace("question-type-select","");
+		  			choice_count[question_count_select] = 1;
+		  			choice_list[question_count_select] = [];
+		  			var question_choice_count = choice_count[question_count_select];
+		  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
+		  			var question_div = "questionDiv"+question_count_select;
+					$("#"+choice_elem_div).remove();
+		  			// console.log($("#"+choice_elem_div));
+		  			var selectedType = $("#"+select_elem_id+" option:selected").val();
+					if(selectedType != "text"){
+						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
+						$("#"+question_div).append(add_another_choice_elem);
+						$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
+						add_another_choice(question_count_select,selectedType);
+					}
+					if(selectedType == "radio"){
+						$("#addComment"+question_count_select+"p").show();
+					} else {
+						$("#addComment"+question_count_select+"p").hide();
+					}
+				});
+
+				$("#surveys-content").on("click",".add-choice",function(){
+					var elemId = $(this)[0].id;
+					var question_count_select1 = elemId.split("---")[0];
+					var selectedType1 = elemId.split("---")[1];
+					add_another_choice(question_count_select1,selectedType1);
+					if(choice_list[question_count_select1].length >= 5){
+						$("#"+question_count_select1+'---'+selectedType1).hide();
+					}
+				});
+
+				$("#surveys-content").on("click",".remove-question",function(){
+					var elemId = $(this)[0].id;
+					var question_count_select3 = elemId.replace("remove-question","");
+					$("#questionDiv"+question_count_select3).remove();
+					question_list = jQuery.grep(question_list, function(value) {
+					  return value != question_count_select3;
+					})
+					delete choice_list[question_count_select3];
+					var refresh_display_count = 1;
+					$(".display_question_count").each(function(i){
+						$(this)[0].innerHTML = refresh_display_count;
+						refresh_display_count += 1;
+					});
+					display_question_count = refresh_display_count;
+				});
+
+				$("#surveys-content").on("click","#protectResult",function(){
+					protectedResultSurvey = !protectedResultSurvey;
+					var checked = false;
+					if($("#protectResult").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#protectResult"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
+				$("#surveys-content").on("click","#mandatory",function(){
+					mandatorySurvey = !mandatorySurvey;
+					var checked = false;
+					if($("#mandatory").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#mandatory"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
+				$("#surveys-content").on("click","#addComment",function(){
+					addCommentSurvey = !addCommentSurvey;
+					var checked = false;
+					if($("#addComment").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#addComment"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
 				$("#export-content").on("click",".export-pdf",function(){
 					var survey_id = $(this)[0].id.replace("export-pdf","");
 					$("#export-content").html('<p class="coming-soon">Please wait for some time.. We are making some sense of the data for you..</p>');
@@ -1992,88 +2037,75 @@
 					        	new_html.innerHTML = response;
 					        	$('body').append('<div id="pdf-body">'+response+'</div>');
 					        	
-					  			var a4  =[ 595.28,  841.89];
 					  			setTimeout(function(){
 					  				var pageLenth = $('.pdf-pages').length;
 					  				var pageRendered = 0;
+					  				var a4  =[ 595.28,  841.89];
 						  			var doc = new jsPDF('p', 'pt', 'a4', false);
-						  			var dataimgs = [];
-						  			var targets = []
-						  			for(var j=0; j<pageLenth+1; j++){
-						  				dataimgs.push("");
-						  				targets.push("");
-						  			}
 						  			doc.setProperties({
 										title: 'Survey Analysis',
 										subject: 'Survey Analysis',
 										author: 'AskByPoll',
 										creator: 'AskByPoll'
 									});
-									html2canvas($("#pdf-survey-footer"), {
+									// var dataimgs = [];
+						  			var targets = []
+						  			var bgimg = new Image();
+						            bgimg.src = "/static/login/images/analytics-raw.jpg";
+						            bgimg.onload = function(){
+									    var bgimgloaded = getBase64Image(bgimg, a4);
+									    // return dataURI;
+									    html2canvas($("#pdf-survey-footer"), {
 								        onrendered: function (canvas) {
 								            //Set hidden field's value to image data (base-64 string
-								            var	dataimg = (canvas.toDataURL("image/png"));
-								            dataimgs[pageLenth] = dataimg;
-									    },
-									});
-									  	    var bgimg = new Image();
-									            bgimg.src = "/static/login/images/analytics-raw.jpg";
-									            function getBase64Image(img) {
-												    var canvas = document.createElement("canvas");
-												    canvas.width = a4[0];
-												    canvas.height = a4[1];
-												    var ctx = canvas.getContext("2d");
-												    ctx.drawImage(img, 0, 0);
-												    var dataURL = canvas.toDataURL("image/jpeg");
-												    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-												}
-									            bgimg.onload = function(){
-												    var dataURI = getBase64Image(bgimg);
-												    return dataURI;
-												}
-									var bgimgloaded = bgimg.onload();
-						  			$(".pdf-pages").each(function(i){
-						  				// console.log($(this));
-						  				var target = $(this);//$("#"+$(this)[i].id);
-						  				targets[i] = $(this)[0].id;
-						  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
-						  				html2canvas(target, {
-									        onrendered: function (canvas) {
-									            //Set hidden field's value to image data (base-64 string
-									            var pageIndex = targets.indexOf(target[0].id);
-									             console.log("rendered",target);
-									             console.log(pageIndex);
-									             console.log(target[0].id);
-									            pageRendered += 1
-									            var	dataimg = (canvas.toDataURL("image/png"));
-									            dataimgs[pageIndex] = dataimg;
-												if(pageLenth == pageRendered){ 
-									            	for(var j=0; j<pageLenth; j++){
-												if(j == 0){
+								            var	footerimg = (canvas.toDataURL("image/png"));
+								            for(var j=0; j<pageLenth; j++){
+								  				// dataimgs.push("");
+								  				targets.push("");
+								  				if(j == 0){
 													doc.addImage(bgimgloaded,'JPEG',0,0,a4[0],a4[1],'mybgimg');
-									            			doc.addImage(dataimgs[j], 'JPEG',20,20);
-													doc.addImage(dataimgs[pageLenth], 'JPEG',0,790,a4[0],55,'myfooterimg');
+									            	doc.addImage(footerimg, 'JPEG',0,790,a4[0],55,'myfooterimg');
 												}
 												else{
-												if(j != pageLenth - 2){
-										  				doc.addImage('mybgimg','JPEG',0,0,a4[0],a4[1]);
-									            		doc.addImage(dataimgs[j], 'JPEG',20,20);
-									            		doc.addImage('myfooterimg', 'JPEG',0,790,a4[0],55);
+													doc.addImage('mybgimg','JPEG',0,0,a4[0],a4[1]);
+									            	doc.addImage('myfooterimg', 'JPEG',0,790,a4[0],55);
 												}
-												}
-									            		if(j != pageLenth - 1 && j != pageLenth - 2)
-									            			doc.addPage();
-												console.log(j,pageLenth);
-										  			}
-													console.log("saving");
-										  			doc.save('Survey-'+survey_id+'-pdf.pdf');
-													$('body').find($("#pdf-body")).remove();
-													$("#dashboard-menu").show();
-													$('#dashboard-export-tab').click();
-												}
-										    },
-										});
+												if(j != pageLenth-1)
+													doc.addPage();
+								  			}
+								  			$(".pdf-pages").each(function(i){
+								  				// console.log($(this));
+								  				var target = $(this);//$("#"+$(this)[i].id);
+								  				targets[i] = $(this)[0].id;
+								  				//target.width((a4[0]*1.33333) -80).css('max-width','none');
+								  				html2canvas(target, {
+											        onrendered: function (canvas) {
+											            //Set hidden field's value to image data (base-64 string
+											            var pageIndex = targets.indexOf(target[0].id);
+														console.log("rendered",target);
+														console.log(pageIndex);
+														console.log(target[0].id);
+											            pageRendered += 1
+											            var	dataimg = (canvas.toDataURL("image/png"));
+											            // dataimgs[pageIndex] = dataimg;
+											            doc.setPage(pageIndex+1);
+											            doc.addImage(dataimg, 'JPEG',20,20);
+											            // sleep(1000);
+											            console.log(pageLenth,pageRendered);
+														if(pageLenth == pageRendered){ 
+												            console.log("saving");
+												  			doc.save('Survey-'+survey_id+'-pdf.pdf');
+															$('body').find($("#pdf-body")).remove();
+															$("#dashboard-menu").show();
+															$('#dashboard-export-tab').click();
+														}
+												    },
+												});
+											});
+									    },
 									});
+									}
+									// bgimg.onload();
 								}, 5000);
 							}
 						});

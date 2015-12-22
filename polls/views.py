@@ -186,7 +186,7 @@ class IndexView(BaseViewList):
 			followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
 			following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
 			data['connection'] = len(followers) + len(following)
-			print(data['connection'])
+			# print(data['connection'])
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
@@ -195,6 +195,7 @@ class IndexView(BaseViewList):
 			data['subscribed'] = sub_que
 			data['expired'] = False
 			data['upvoteCount'] = mainquestion.upvoteCount
+			data['editable'] = mainquestion.iseditable(user)
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -276,6 +277,7 @@ class VoteView(BaseViewDetail):
 			context['expired'] = True
 		context['votes'] = context['question'].voted_set.count()
 		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
+		context['editable'] = context['question'].iseditable(user)
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -386,11 +388,11 @@ class EditView(BaseViewDetail):
 		self.object = self.get_object()
 		context = super(EditView, self).get_context_data(object=self.object)
 		question = context['question']
-		canEdit = True
-		if (question.voted_set.count() > 0 and not request.user.is_superuser):
-			canEdit = False
-		if question.user != request.user and not request.user.is_superuser:
-			canEdit = False
+		canEdit = question.iseditable(request.user)
+		# if (question.voted_set.count() > 0 and not request.user.is_superuser):
+		# 	canEdit = False
+		# if question.user != request.user and not request.user.is_superuser:
+		# 	canEdit = False
 		if not canEdit:
 			url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 			return HttpResponseRedirect(url)
@@ -413,6 +415,7 @@ class EditView(BaseViewDetail):
 			for cat in question.questionwithcategory_set.all():
 				categories += cat.category.category_title+","
 			context["question_categories"] = categories
+			context['extra_choices'] = request.user.extendeduser.company.num_of_choices - question.choice_set.count()
 			return self.render_to_response(context)
 		
 class DeleteView(BaseViewDetail):
@@ -442,6 +445,7 @@ class CreatePollView(BaseViewList):
 		context['categories'] = Category.objects.all()
 		groups = [x.group.name for x in ExtendedGroup.objects.filter(user_id = user.id)]
 		context['groups'] = groups
+		context['extra_choices'] = user.extendeduser.company.num_of_choices - 4 
 		return context
 	
 	def post(self, request, *args, **kwargs):
@@ -581,6 +585,26 @@ class CreatePollView(BaseViewList):
 				choice4Image = request.FILES.get('choice4')
 			if choice4Image:
 				images.append(choice4Image)
+			extra_choices = []
+			if user.extendeduser.company.num_of_choices > 4:
+				for i in range(5,user.extendeduser.company.num_of_choices+1):
+					if request.POST.getlist('choice'+str(i)):
+						choice = request.POST.getlist('choice'+str(i))[0].strip()
+						if choice:
+							choices.append(choice)
+						if edit and request.POST.get('imagechoice'+str(i),""):
+							choiceid = request.POST.get('imagechoice'+str(i)).split("---")[1]
+							choiceImage = Choice.objects.get(pk=choiceid).choice_image
+							imagePathList.append(choiceImage.path)
+						else:
+							choiceImage = request.FILES.get('choice'+str(i))
+						if choiceImage:
+							images.append(choiceImage)
+						extra_choice = {}
+						extra_choice["choice"] = choice
+						extra_choice["image"] = choiceImage
+						extra_choice["choice_id_text"] = 'choice'+str(i)
+						extra_choices.append(extra_choice)
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			isBet = request.POST.get('bet')
@@ -710,6 +734,12 @@ class CreatePollView(BaseViewList):
 				choice.save()
 				if queBetAmount and queBetChoiceText == "choice4":
 					queBetChoice = choice
+			for choice_dict in extra_choices:
+				if choice_dict["choice"] or choice_dict["image"]:
+					choice = Choice(question=question,choice_text=choice_dict["choice"],choice_image=choice_dict["image"])
+					choice.save()
+					if queBetAmount and queBetChoiceText == choice_dict["choice_id_text"]:
+						queBetChoice = choice
 		if queBetChoice:
 			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)
 			vote.save()
@@ -1087,6 +1117,7 @@ class CompanyIndexView(BaseViewList):
 			data['subscribed'] = sub_que
 			data['expired'] = False
 			data['upvoteCount'] = mainquestion.upvoteCount
+			data['editable'] = mainquestion.iseditable(user)
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -1423,11 +1454,13 @@ class CreateSurveyView(BaseViewList):
 				que_type = post_data.get("qType"+str(que_index)).strip()
 				protectResult = post_data.get("protectResult"+str(que_index),False)
 				addComment = post_data.get("addComment"+str(que_index),False)
+				mandatory = post_data.get("mandatory"+str(que_index),False)
 				poll['text'] = que_text
 				poll['desc'] = que_desc
 				poll['type'] = que_type
 				poll['protectResult'] = protectResult
 				poll['addComment'] = addComment
+				poll['mandatory'] = mandatory
 				choices = []
 				images = []
 				queError = ""
@@ -1551,12 +1584,15 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			addComment = 0
 			if poll['addComment']:
 				addComment = 1
+			mandatory = 0
+			if poll['mandatory']:
+				mandatory = 1
 			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
 			question.save()
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])
 				choice.save()
-			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment)
+			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment,mandatory=mandatory)
 			survey_que.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1615,8 +1651,10 @@ class SurveyVoteView(BaseViewDetail):
 			)
 			context['ssoData'] = ssoData
 			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
+			print(question_user_vote,"print(question_user_vote)")
 			if question_user_vote:
 				question_user_vote = question_user_vote[0]
+				print(question_user_vote)
 				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
 					user_already_voted = True
 			context['user_already_voted'] = user_already_voted
@@ -1625,7 +1663,7 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
-			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
+			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1647,55 +1685,74 @@ class SurveyVoteView(BaseViewDetail):
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
+			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
+			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
+			survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
 			que_type = request.POST.get('questionType')
+			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
+			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
+			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
 			queSlug = question.que_slug
+			success_msg_text = "Come back any time to answer the rest of the questions."
+			data={}
+			print(success_msg_text,user.is_authenticated())
 			if user.is_authenticated():
 				choice_list = request.POST.getlist('choice'+str(questionId))
 				choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-				print(choice_list,choice_list_comment)
+				# print(choice_list,choice_list_comment)
 				choice_list = list(filter(None, choice_list))
 				choice_list_comment = list(filter(None, choice_list_comment))
-				print(choice_list,choice_list_comment)
+				# print(choice_list,choice_list_comment,mandatory,saveRequired)
 				if choice_list:
-					if que_type != "text":
-						for choiceId in choice_list:
-							choice = Choice.objects.get(pk=choiceId)
-							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-							voted,created = Voted.objects.get_or_create(user=user, question=question)
-							if que_type == "radio":
-								if created:
+					if saveRequired:
+						if que_type != "text":
+							for choiceId in choice_list:
+								choice = Choice.objects.get(pk=choiceId)
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								voted,created = Voted.objects.get_or_create(user=user, question=question)
+								if que_type == "radio":
+									if created:
+										vote,created = Vote.objects.get_or_create(user=user, choice=choice)
+								else:
 									vote,created = Vote.objects.get_or_create(user=user, choice=choice)
-							else:
-								vote,created = Vote.objects.get_or_create(user=user, choice=choice)
-						if choice_list_comment:
-							voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0])
-							voteText.save()
-					else:
-						voted,created = Voted.objects.get_or_create(user=user, question=question)
-						if created:
-							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-							voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
-							voteText.save()
-					survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
-					survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
-					survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
-					survey_voted.user_answer_count += 1
-					survey_voted.save()
+							if choice_list_comment:
+								voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0])
+								voteText.save()
+						else:
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
+							if created:
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
+								voteText.save()
+						# survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
+						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
+						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
+						survey_voted.save()
 				else:
-					data={}
-					data[str(questionId)] = "Please enter an answer"
-					return HttpResponse(json.dumps(data),content_type='application/json')
-				return HttpResponse(json.dumps({}),content_type='application/json')
+					if mandatory and not already_voted:
+						# print("mandatory for",questionId,type(mandatory))
+						data[str(questionId)] = "Please enter an answer"
+					# return HttpResponse(json.dumps(data),content_type='application/json')
+				if survey_voted.user_answer_count == survey_voted.survey_question_count:
+					success_msg_text = survey.thanks_msg
+				if survey_voted.user_answer_count == 0:
+					success_msg_text = "You have not answered any questions"
+					survey_voted.delete()
+				if data == {}:
+					data["success"]=success_msg_text
+				print(success_msg_text)
+				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
-					if request.is_ajax():
-						return HttpResponse(json.dumps({}),content_type='application/json')
-					next_url = request.path
-					extra_params = '?next=%s'%next_url
-					url = reverse('account_login')
-					full_url = '%s%s'%(url,extra_params)
-					if request.is_ajax():
-						return HttpResponse(json.dumps({}),content_type='application/json')
-					return HttpResponseRedirect(full_url)
+				print(success_msg_text)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
+				next_url = request.path
+				extra_params = '?next=%s'%next_url
+				url = reverse('account_login')
+				full_url = '%s%s'%(url,extra_params)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
+				return HttpResponseRedirect(full_url)
 			return HttpResponseRedirect(url)
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1754,15 +1811,19 @@ class SurveyEditView(BaseViewDetail):
 			context['polls'] = []
 			surveyResultProtected = True
 			surveyAddComment = True
+			surveyMandatory = True
 			for x in Survey_Question.objects.filter(survey_id=survey.id):
 				if not x.question.protectResult:
 					surveyResultProtected = False
 				if not x.add_comment:
 					surveyAddComment = False
-				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
+				if not x.mandatory:
+					surveyMandatory = False
+				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
 				context['polls'].append(poll_dict)
 			context["surveyResultProtected"] = surveyResultProtected
 			context["surveyAddComment"] = surveyAddComment
+			context["surveyMandatory"] = surveyMandatory
 			return self.render_to_response(context)
 
 class SurveyDeleteView(BaseViewDetail):

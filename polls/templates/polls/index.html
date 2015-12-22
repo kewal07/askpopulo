@@ -80,7 +80,7 @@
 									<a class="descIndex" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{ question.question.description }}</a>
 									{% if user.is_authenticated %}
 									{% if user == question.question.user or user.is_superuser %}
-									{% if question.question.voted_set.count < 1 or user.is_superuser %}
+									{% if question.editable %}
 									<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 									{% endif %}
 									<a class="delete-icon" href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>

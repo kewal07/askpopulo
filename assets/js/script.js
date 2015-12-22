@@ -51,7 +51,7 @@ $(document).ready(function(){
     	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
 	})
 
-	$('.fileLabel').click(function(){
+	$('body').on('click','.fileLabel',function(){
 	    $(this).prev().children().first().click();
 	});
 	/* End of file browse*/
@@ -1005,3 +1005,22 @@ function back(csrf_token,analyse_type,pollId){
     drawLocationChart(csrf_token,analyse_type,pollId,backChoiceId,bakgraphId);
 }
 /* Function for charts end */
+
+function getBase64Image(img, a4) {
+    var canvas = document.createElement("canvas");
+    canvas.width = a4[0];
+    canvas.height = a4[1];
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = canvas.toDataURL("image/jpeg");
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
