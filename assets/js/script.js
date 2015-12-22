@@ -566,12 +566,19 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
 		// console.log(inData);
 	}
 	var data = google.visualization.arrayToDataTable(pollsData);
+	// set a padding value to cover the height of title and axis values
+	// var paddingHeight = 10;// * data.getNumberOfRows();
+	// set the height to be covered by the rows
+	var rowHeight = data.getNumberOfRows() * 40;
+	// set the total chart height
+	var chartHeight = rowHeight ;//+ paddingHeight;
 	var dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
 	var options = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {left:80,width: '60%',height:'100%'},
+          height: chartHeight,
           fontSize:14,
           bars: {
-            groupWidth: 100
+            groupWidth: '100%'
           },
           annotations:{
           	textStyle: {
@@ -662,10 +669,11 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
     function displayAnnotation(e){
         data = google.visualization.arrayToDataTable(pollsData);
         options = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {left:80,width: '60%',height:'100%'},
           fontSize:14,
+          height:chartHeight,
           bars: {
-            groupWidth: 100
+            groupWidth: '100%'
           },
           annotations:{
           	textStyle: {
