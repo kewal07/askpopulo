@@ -705,7 +705,7 @@
 												<span  class="choice-filter choice---{{ poll.question.id }}---1">No Choice Filter</span>
 												<div class="location">
 													<div class="graphContainer">
-														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }},1)"><i class="fa fa-arrow-left"></i></div>
 														<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp1" id="advanced-locationChart---{{ poll.question.id }}---1">
 														</div>
 													</div>
@@ -746,7 +746,7 @@
 												<span  class="choice-filter choice---{{ poll.question.id }}---2">No Choice Filter</span>
 												<div class="location">
 													<div class="graphContainer">
-														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }})"><i class="fa fa-arrow-left"></i></div>
+														<p> Location </p><div id="advanced-mapBackButton---{{ poll.question.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ poll.question.id }},2)"><i class="fa fa-arrow-left"></i></div>
 														<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp2" id="advanced-locationChart---{{ poll.question.id }}---2">
 														</div>
 													</div>
@@ -1133,7 +1133,7 @@
 								<span  class="choice-filter choice---{{ question.poll.id }}---1">No Choice Filter</span>
 								<div class="location">
 									<div class="graphContainer">
-										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }},1)"><i class="fa fa-arrow-left"></i></div>
 										<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp1" id="advanced-locationChart---{{ question.poll.id }}---1">
 										</div>
 									</div>
@@ -1174,7 +1174,7 @@
 								<span  class="choice-filter choice---{{ question.poll.id }}---2">No Choice Filter</span>
 								<div class="location">
 									<div class="graphContainer">
-										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }})"><i class="fa fa-arrow-left"></i></div>
+										<p> Location </p><div id="advanced-mapBackButton---{{ question.poll.id }}" class="back" onClick="back('{{ csrf_token }}','advanced-',{{ question.poll.id }},2)"><i class="fa fa-arrow-left"></i></div>
 										<div class="question_analyse_chart_loc question_analyse_chart_loc_cmp2" id="advanced-locationChart---{{ question.poll.id }}---2">
 										</div>
 									</div>
