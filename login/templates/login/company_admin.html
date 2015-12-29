@@ -1196,7 +1196,7 @@
 		</div>
 		<div id="export-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Export Survey Reports
+				Export Reports
 			</div>
 			<div class="dashboard-stats clearfix">
 				<ul class="dashboard-recent">
@@ -1212,6 +1212,27 @@
 									<p class="check">
 										<span class="see-more-details see-more-details-p export-excel" id="export-excel{{ survey_det.survey.id }}"><a href="/exportexcel?sid={{ survey_det.survey.id }}"> Export as Excel</a></span>
 										<span class="see-more-details see-more-details-p export-pdf" id="export-pdf{{ survey_det.survey.id }}">Export as PDF</span>
+									</p>
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="dashboard-stats clearfix">
+				<ul class="dashboard-recent">
+					<li> Polls</li>
+					{% for question in polls %}
+						<li class="li-margin-polls">
+							<div class="liDetail">
+								<div class="check_analyse">
+									<p class="main">
+										{{ question.poll.question_text }}
+									</p>
+									<p class="pollsDesc">{{ question.poll.description }}</p>
+									<p class="check">
+										<span class="see-more-details see-more-details-p export-excel" id="export-excel{{ survey_det.survey.id }}"><a href="/exportexcel?qid={{ question.poll.id }}"> Export as Excel</a></span>
+										<span class="see-more-details see-more-details-p export-pdf" id="export-pdf{{ question.poll.id }}-poll">Export as PDF</span>
 									</p>
 								</div>
 							</div>
@@ -2015,13 +2036,20 @@
 
 				$("#export-content").on("click",".export-pdf",function(){
 					var survey_id = $(this)[0].id.replace("export-pdf","");
+					var export_url = "/exportpdf/"+survey_id;
+					var file_name = 'Survey-'+survey_id+'-pdf.pdf';
+					if( survey_id.indexOf("poll") != -1){
+						survey_id = survey_id.replace("-poll","");
+						export_url = "/exportpdfpoll/"+survey_id
+						file_name = 'Poll-'+survey_id+'-pdf.pdf';
+					}
 					$("#export-content").html('<p class="coming-soon">Please wait for some time.. We are making some sense of the data for you..</p>');
 					$("#dashboard-menu").hide();
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
 							type: 'GET',
-							url:"/exportpdf/"+survey_id,
+							url:export_url,
 							statusCode: {
 								404: function() {
 									$('#overlay-inAbox').children().children().first().text("No Survey Selected");
@@ -2094,7 +2122,7 @@
 											            console.log(pageLenth,pageRendered);
 														if(pageLenth == pageRendered){ 
 												            console.log("saving");
-												  			doc.save('Survey-'+survey_id+'-pdf.pdf');
+												  			doc.save(file_name);
 															$('body').find($("#pdf-body")).remove();
 															$("#dashboard-menu").show();
 															$('#dashboard-export-tab').click();

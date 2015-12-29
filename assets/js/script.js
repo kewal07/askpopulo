@@ -605,7 +605,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
@@ -642,7 +642,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
@@ -737,7 +737,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
