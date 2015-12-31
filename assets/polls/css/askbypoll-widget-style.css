@@ -5,6 +5,10 @@
     -moz-box-sizing: border-box;
     /*box-sizing: border-box;*
 }*/
+#askbypoll-thankyou-message{
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+}
 .askbypoll-embed-content{
     border:1px solid;
 }

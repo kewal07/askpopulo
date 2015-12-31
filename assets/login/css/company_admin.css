@@ -126,6 +126,15 @@ svg{
 	-webkit-transform:rotateX(0deg) rotateY(20deg);
 	-webkit-animation:anim2 ease-in-out 60s infinite alternate;
 }
+
+.mail-poll{
+	margin-right:24rem;
+}
+.shareOnMail{
+	display:none;
+	border:1px dashed;
+}
+
 @-webkit-keyframes anim2{
 	from {-webkit-transform:rotateY(0deg)}
 	50% {-webkit-transform:rotateY(360deg)}
