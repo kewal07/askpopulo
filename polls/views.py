@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import login
 import os,linecache
 import sys
 from django.shortcuts import render
@@ -7,6 +8,7 @@ from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi
+# from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -41,6 +43,7 @@ import requests
 import operator
 
 # Create your views here.
+shakey=(settings.SHAKEY).encode('utf-8')
 
 class TeamView(BaseViewList):
 	template_name = 'polls/team.html'
@@ -1873,6 +1876,10 @@ def embed_poll(request):
 		html += site_link_html
 		html += '</div>'
 		req ['html'] = html
+		if poll.protectResult == 1:
+			req['protect'] = 1
+		elif poll.protectResult == 0:
+			req['protect'] = 0
 		response = json.dumps(req)
 		response = callback + '(' + response + ');'
 		return HttpResponse(response,content_type="application/json")
@@ -1886,12 +1893,17 @@ def vote_embed_poll(request):
 		callback = request.GET.get('callback', '')
 		choiceId = int(request.GET.get('choiceId',0))
 		pollId = int(request.GET.get('pollId'))
+		poll = Question.objects.get(pk=pollId)
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		ipAddress = getIpAddress(request)
 		# ipAddress = '139.130.4.22'
 
 		question = Question.objects.get(pk=pollId)
 		req = {}
+		if poll.protectResult == 0:
+			req['protect'] = 0
+		elif poll.protectResult == 1:
+			req['protect'] = 1
 
 		#if((not existingVotes or timeDifference.total_seconds()>86400) and not(choiceId == 0)):
 		if((not alreadyVoted == 'true') and not(choiceId == 0)):
@@ -2089,8 +2101,9 @@ def results_embed_poll(request):
 		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
+
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---1---'+str(pollId)+'"><div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'+logo_html+'<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'"><p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'+poll.question_text+'</p></div><div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'" >'
-		# print(choice_data,percent,totalVotes)
+
 		for index,choice in enumerate(choices):
 			choice_text = "Option "+str(index)
 			# print(percent[choice_data[choice.id]])
@@ -2107,7 +2120,13 @@ def results_embed_poll(request):
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" ></div></section>'
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" ></div></section>'
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div style="margin: 0px auto !important;"" class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" ></div></section>'
+
 		req = {}
+		if poll.protectResult == 1:
+			req['protect'] = 1
+		elif poll.protectResult == 0:
+			req['protect'] = 0
+
 		req ['html'] = html
 		req["gender_dic"] = gender_dic
 		req['age_dic'] = age_dic
@@ -2115,8 +2134,6 @@ def results_embed_poll(request):
 		req["country_dic"] = country_dic
 		response = json.dumps(req)
 		response = callback + '(' + response + ');'
-		print(" Yes reached here ")
-		print(req)
 		return HttpResponse(response,content_type="application/json")
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -2453,4 +2470,3 @@ def get_age_data(user_age,age_dic):
 	elif user_age > 0:
 		age_dic['under_19'] = age_dic.get('under_19',0) + 1
 	return age_dic
-
