@@ -10,7 +10,6 @@ html{
 	display:block;
 }
 .pollsChart{
-  height: 200px;
   position: relative;
   text-transform: capitalize;
 }
@@ -132,7 +131,6 @@ ul.share-buttons li{
 }
 @media only screen and (max-width: 660px){
 	.pollsChart{
-		height: 180px;
 		position: relative;
 	}
 	.userInfo{
@@ -235,7 +233,6 @@ ul.share-buttons li{
 @media only screen and (min-width:661px) and (max-width: 960px){
 
 .pollsChart{
-		height: 180px;
 		position: relative;
 		left: -3%;
 	}

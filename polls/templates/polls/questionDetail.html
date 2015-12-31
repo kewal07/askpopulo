@@ -59,7 +59,7 @@
 						<p class="que_text">{{ question.question_text }}
 						{% if user.is_authenticated %}
 						{% if user == question.user or user.is_superuser %}
-							{% if question.voted_set.count < 1 or user.is_superuser %}
+							{% if editable %}
 								<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
 							{% endif %}
 								<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
@@ -106,7 +106,7 @@
 						</div>
 						</p>
 						{% if question.protectResult and user != question.user %}
-						<p style="font-size:1.5rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;"> Thanks for Voting. Results have been protected by Admin.</p>
+						<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;"> Thanks for Voting. Results have been protected.</p>
 						{% else %}
 						<div class="pollsChart" id="pollsChart---{{ question.id }}">
 						</div>
@@ -143,7 +143,7 @@
 					</div>
 					<div class="location">
 						<div class="graphContainer">
-							<p> Location </p><div class="back" onClick="back()"><i class="fa fa-arrow-left"></i></div>
+							<p> Location </p><div class="back" onClick="back('{{ csrf_token }}','',{{ question.id }})"><i class="fa fa-arrow-left"></i></div>
 							<div class="locationChart" id="locationChart---{{ question.id }}">
 							</div>
 						</div>

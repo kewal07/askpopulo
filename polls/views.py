@@ -189,7 +189,7 @@ class IndexView(BaseViewList):
 			followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
 			following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
 			data['connection'] = len(followers) + len(following)
-			print(data['connection'])
+			# print(data['connection'])
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
@@ -198,6 +198,7 @@ class IndexView(BaseViewList):
 			data['subscribed'] = sub_que
 			data['expired'] = False
 			data['upvoteCount'] = mainquestion.upvoteCount
+			data['editable'] = mainquestion.iseditable(user)
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -279,6 +280,7 @@ class VoteView(BaseViewDetail):
 			context['expired'] = True
 		context['votes'] = context['question'].voted_set.count()
 		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
+		context['editable'] = context['question'].iseditable(user)
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -389,11 +391,11 @@ class EditView(BaseViewDetail):
 		self.object = self.get_object()
 		context = super(EditView, self).get_context_data(object=self.object)
 		question = context['question']
-		canEdit = True
-		if (question.voted_set.count() > 0 and not request.user.is_superuser):
-			canEdit = False
-		if question.user != request.user and not request.user.is_superuser:
-			canEdit = False
+		canEdit = question.iseditable(request.user)
+		# if (question.voted_set.count() > 0 and not request.user.is_superuser):
+		# 	canEdit = False
+		# if question.user != request.user and not request.user.is_superuser:
+		# 	canEdit = False
 		if not canEdit:
 			url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
 			return HttpResponseRedirect(url)
@@ -416,6 +418,7 @@ class EditView(BaseViewDetail):
 			for cat in question.questionwithcategory_set.all():
 				categories += cat.category.category_title+","
 			context["question_categories"] = categories
+			context['extra_choices'] = request.user.extendeduser.company.num_of_choices - question.choice_set.count()
 			return self.render_to_response(context)
 		
 class DeleteView(BaseViewDetail):
@@ -445,6 +448,7 @@ class CreatePollView(BaseViewList):
 		context['categories'] = Category.objects.all()
 		groups = [x.group.name for x in ExtendedGroup.objects.filter(user_id = user.id)]
 		context['groups'] = groups
+		context['extra_choices'] = user.extendeduser.company.num_of_choices - 4 
 		return context
 	
 	def post(self, request, *args, **kwargs):
@@ -584,6 +588,26 @@ class CreatePollView(BaseViewList):
 				choice4Image = request.FILES.get('choice4')
 			if choice4Image:
 				images.append(choice4Image)
+			extra_choices = []
+			if user.extendeduser.company.num_of_choices > 4:
+				for i in range(5,user.extendeduser.company.num_of_choices+1):
+					if request.POST.getlist('choice'+str(i)):
+						choice = request.POST.getlist('choice'+str(i))[0].strip()
+						if choice:
+							choices.append(choice)
+						if edit and request.POST.get('imagechoice'+str(i),""):
+							choiceid = request.POST.get('imagechoice'+str(i)).split("---")[1]
+							choiceImage = Choice.objects.get(pk=choiceid).choice_image
+							imagePathList.append(choiceImage.path)
+						else:
+							choiceImage = request.FILES.get('choice'+str(i))
+						if choiceImage:
+							images.append(choiceImage)
+						extra_choice = {}
+						extra_choice["choice"] = choice
+						extra_choice["image"] = choiceImage
+						extra_choice["choice_id_text"] = 'choice'+str(i)
+						extra_choices.append(extra_choice)
 			isAnon = request.POST.get('anonymous')
 			isPrivate = request.POST.get('private')
 			isBet = request.POST.get('bet')
@@ -713,6 +737,12 @@ class CreatePollView(BaseViewList):
 				choice.save()
 				if queBetAmount and queBetChoiceText == "choice4":
 					queBetChoice = choice
+			for choice_dict in extra_choices:
+				if choice_dict["choice"] or choice_dict["image"]:
+					choice = Choice(question=question,choice_text=choice_dict["choice"],choice_image=choice_dict["image"])
+					choice.save()
+					if queBetAmount and queBetChoiceText == choice_dict["choice_id_text"]:
+						queBetChoice = choice
 		if queBetChoice:
 			vote = Vote(user=question.user,choice=queBetChoice,betCredit=queBetAmount)
 			vote.save()
@@ -1090,6 +1120,7 @@ class CompanyIndexView(BaseViewList):
 			data['subscribed'] = sub_que
 			data['expired'] = False
 			data['upvoteCount'] = mainquestion.upvoteCount
+			data['editable'] = mainquestion.iseditable(user)
 			if mainquestion.expiry and mainquestion.expiry < curtime:
 				data['expired'] = True
 			user_already_voted = False
@@ -1426,11 +1457,13 @@ class CreateSurveyView(BaseViewList):
 				que_type = post_data.get("qType"+str(que_index)).strip()
 				protectResult = post_data.get("protectResult"+str(que_index),False)
 				addComment = post_data.get("addComment"+str(que_index),False)
+				mandatory = post_data.get("mandatory"+str(que_index),False)
 				poll['text'] = que_text
 				poll['desc'] = que_desc
 				poll['type'] = que_type
 				poll['protectResult'] = protectResult
 				poll['addComment'] = addComment
+				poll['mandatory'] = mandatory
 				choices = []
 				images = []
 				queError = ""
@@ -1554,12 +1587,15 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			addComment = 0
 			if poll['addComment']:
 				addComment = 1
+			mandatory = 0
+			if poll['mandatory']:
+				mandatory = 1
 			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
 			question.save()
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])
 				choice.save()
-			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment)
+			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment,mandatory=mandatory)
 			survey_que.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1618,8 +1654,10 @@ class SurveyVoteView(BaseViewDetail):
 			)
 			context['ssoData'] = ssoData
 			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
+			print(question_user_vote,"print(question_user_vote)")
 			if question_user_vote:
 				question_user_vote = question_user_vote[0]
+				print(question_user_vote)
 				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
 					user_already_voted = True
 			context['user_already_voted'] = user_already_voted
@@ -1628,7 +1666,7 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
-			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
+			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1650,55 +1688,74 @@ class SurveyVoteView(BaseViewDetail):
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
+			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
+			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
+			survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
 			que_type = request.POST.get('questionType')
+			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
+			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
+			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
 			queSlug = question.que_slug
+			success_msg_text = "Come back any time to answer the rest of the questions."
+			data={}
+			print(success_msg_text,user.is_authenticated())
 			if user.is_authenticated():
 				choice_list = request.POST.getlist('choice'+str(questionId))
 				choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-				print(choice_list,choice_list_comment)
+				# print(choice_list,choice_list_comment)
 				choice_list = list(filter(None, choice_list))
 				choice_list_comment = list(filter(None, choice_list_comment))
-				print(choice_list,choice_list_comment)
+				# print(choice_list,choice_list_comment,mandatory,saveRequired)
 				if choice_list:
-					if que_type != "text":
-						for choiceId in choice_list:
-							choice = Choice.objects.get(pk=choiceId)
-							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-							voted,created = Voted.objects.get_or_create(user=user, question=question)
-							if que_type == "radio":
-								if created:
+					if saveRequired:
+						if que_type != "text":
+							for choiceId in choice_list:
+								choice = Choice.objects.get(pk=choiceId)
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								voted,created = Voted.objects.get_or_create(user=user, question=question)
+								if que_type == "radio":
+									if created:
+										vote,created = Vote.objects.get_or_create(user=user, choice=choice)
+								else:
 									vote,created = Vote.objects.get_or_create(user=user, choice=choice)
-							else:
-								vote,created = Vote.objects.get_or_create(user=user, choice=choice)
-						if choice_list_comment:
-							voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0])
-							voteText.save()
-					else:
-						voted,created = Voted.objects.get_or_create(user=user, question=question)
-						if created:
-							subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-							voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
-							voteText.save()
-					survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
-					survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
-					survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
-					survey_voted.user_answer_count += 1
-					survey_voted.save()
+							if choice_list_comment:
+								voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0])
+								voteText.save()
+						else:
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
+							if created:
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
+								voteText.save()
+						# survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
+						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
+						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
+						survey_voted.save()
 				else:
-					data={}
-					data[str(questionId)] = "Please enter an answer"
-					return HttpResponse(json.dumps(data),content_type='application/json')
-				return HttpResponse(json.dumps({}),content_type='application/json')
+					if mandatory and not already_voted:
+						# print("mandatory for",questionId,type(mandatory))
+						data[str(questionId)] = "Please enter an answer"
+					# return HttpResponse(json.dumps(data),content_type='application/json')
+				if survey_voted.user_answer_count == survey_voted.survey_question_count:
+					success_msg_text = survey.thanks_msg
+				if survey_voted.user_answer_count == 0:
+					success_msg_text = "You have not answered any questions"
+					survey_voted.delete()
+				if data == {}:
+					data["success"]=success_msg_text
+				print(success_msg_text)
+				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
-					if request.is_ajax():
-						return HttpResponse(json.dumps({}),content_type='application/json')
-					next_url = request.path
-					extra_params = '?next=%s'%next_url
-					url = reverse('account_login')
-					full_url = '%s%s'%(url,extra_params)
-					if request.is_ajax():
-						return HttpResponse(json.dumps({}),content_type='application/json')
-					return HttpResponseRedirect(full_url)
+				print(success_msg_text)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
+				next_url = request.path
+				extra_params = '?next=%s'%next_url
+				url = reverse('account_login')
+				full_url = '%s%s'%(url,extra_params)
+				if request.is_ajax():
+					return HttpResponse(json.dumps({}),content_type='application/json')
+				return HttpResponseRedirect(full_url)
 			return HttpResponseRedirect(url)
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1757,15 +1814,19 @@ class SurveyEditView(BaseViewDetail):
 			context['polls'] = []
 			surveyResultProtected = True
 			surveyAddComment = True
+			surveyMandatory = True
 			for x in Survey_Question.objects.filter(survey_id=survey.id):
 				if not x.question.protectResult:
 					surveyResultProtected = False
 				if not x.add_comment:
 					surveyAddComment = False
-				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment}
+				if not x.mandatory:
+					surveyMandatory = False
+				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
 				context['polls'].append(poll_dict)
 			context["surveyResultProtected"] = surveyResultProtected
 			context["surveyAddComment"] = surveyAddComment
+			context["surveyMandatory"] = surveyMandatory
 			return self.render_to_response(context)
 
 class SurveyDeleteView(BaseViewDetail):
@@ -2259,22 +2320,91 @@ def excel_view(request):
 			i += 1
 		wb.save(response)
 		return response
+	if request.GET.get("qid"):
+		question_id = int(request.GET.get("qid",-1))
+		try:
+			question = Question.objects.get(pk=question_id)
+		except:
+			errors['notfound'] = "Poll provided not found"
+			return HttpResponseNotFound(errors,content_type="application/json")
+		response = HttpResponse(content_type='application/ms-excel')
+		fname = "Poll_%s_Data.xls"%(question_id)
+		response['Content-Disposition'] = 'attachment; filename=%s' % fname
+		wb = xlwt.Workbook()
+		ws0 = wb.add_sheet('Definitions', cell_overwrite_ok=True)
+		ws1 = wb.add_sheet('Raw Data', cell_overwrite_ok=True)
+		# write to the description sheet
+		write_to_description(ws0,"poll")
+		# description sheet end
+		ws1.write(0,0,"Country",normal_style)
+		ws1.write(0,1,"State",normal_style)
+		ws1.write(0,2,"Gender",normal_style)
+		ws1.write(0,3,"Age Group",normal_style)
+		ws1.write(0,4,"Profession",normal_style)
+		ws1.write(0,5,"Result",normal_style)
+		i = 1
+		voted_list = Voted.objects.filter(question_id = question_id)
+		considered_email = []
+		choice_list = Choice.objects.filter(question_id=question.id)
+		for voted in voted_list:
+			j = 5
+			vote_user = voted.user
+			considered_email.append(vote_user.email)
+			ws1.write(i,0,vote_user.extendeduser.country,normal_style)
+			ws1.write(i,1,vote_user.extendeduser.state,normal_style)
+			ws1.write(i,2,gender_excel_dic.get(vote_user.extendeduser.gender),normal_style)
+			ws1.write(i,3,get_age_group_excel(vote_user.extendeduser.calculate_age()),normal_style)
+			ws1.write(i,4,prof_excel_dic.get(vote_user.extendeduser.profession),normal_style)
+			for c_index,choice in enumerate(choice_list):
+				if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+					answer_text = c_index+1
+					ws1.write(i,j,answer_text,normal_style)
+					j += 1
+			i += 1
+		voted_list = VoteApi.objects.filter(question_id = question_id)
+		for voted in voted_list:
+			j = 5
+			if voted.email and voted.email in considered_email:
+				continue
+			# vote_user = voted.user
+			if voted.gender and voted.age and voted.profession:
+				ws1.write(i,0,voted.country,normal_style)
+				ws1.write(i,1,voted.state,normal_style)
+				ws1.write(i,2,gender_excel_dic.get(voted.gender),normal_style)
+				ws1.write(i,3,get_age_group_excel(voted.age),normal_style)
+				ws1.write(i,4,prof_excel_dic.get(voted.profession),normal_style)
+				for c_index,choice in enumerate(choice_list):
+					if voted.choice == choice:
+						answer_text = c_index+1
+						ws1.write(i,j,answer_text,normal_style)
+						j += 1
+				i += 1
+		wb.save(response)
+		return response
 	errors['notfound'] = "No data provided"
 	return HttpResponseNotFound(errors,content_type="application/json")
 
-def write_to_description(ws0):
+def write_to_description(ws0, obj_type="survey"):
 	ws0.col(0).width = 25*256
-	ws0.write(0,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",normal_style)
-	ws0.write(1,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",normal_style)
-	ws0.write_merge(3,3,0,1,"Gender",border_style)
-	ws0.write(4,0,"Male",border_style)
-	ws0.write(4,1,1,border_style)
-	ws0.write(5,0,"Female",border_style)
-	ws0.write(5,1,2,border_style)
-	ws0.write(6,0,"Not Disclosed",border_style)
-	ws0.write(6,1,3,border_style)
-	ws0.write_merge(8,8,0,1,"Age Group",border_style)
-	x = 9
+	i = 0
+	if obj_type == "survey":
+		ws0.write(i,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",normal_style)
+		i += 1
+		ws0.write(i,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",normal_style)
+		i += 2
+	ws0.write_merge(i,i,0,1,"Gender",border_style)
+	i += 1
+	ws0.write(i,0,"Male",border_style)
+	ws0.write(i,1,1,border_style)
+	i += 1
+	ws0.write(i,0,"Female",border_style)
+	ws0.write(i,1,2,border_style)
+	i += 1
+	ws0.write(i,0,"Not Disclosed",border_style)
+	ws0.write(i,1,3,border_style)
+	i += 2
+	ws0.write_merge(i,i,0,1,"Age Group",border_style)
+	x = i + 1
 	for key,val in age_excel_dic.items():
 		ws0.write(x,0,val,border_style)
 		ws0.write(x,1,key,border_style)
@@ -2283,7 +2413,7 @@ def write_to_description(ws0):
 	ws0.write_merge(x,x,0,1,"Profession",border_style)
 	x += 1
 	sorted_prof_excel_dic = sorted(prof_excel_dic.items(), key=operator.itemgetter(1))
-	print(sorted_prof_excel_dic)
+	# print(sorted_prof_excel_dic)
 	for key_val in sorted_prof_excel_dic:
 		ws0.write(x,0,key_val[0],border_style)
 		ws0.write(x,1,key_val[1],border_style)
@@ -2391,7 +2521,7 @@ class PDFView(generic.DetailView):
 						total_choice_vote += 1
 						age = vote.user.extendeduser.calculate_age()
 						if age > 25 and age < 31:
-							choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+							choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0) + 1
 							total_choice_vote_filter += 1
 						gender = vote.user.extendeduser.gender
 						profession = vote.user.extendeduser.profession
@@ -2409,7 +2539,7 @@ class PDFView(generic.DetailView):
 						country = vote.country
 						if age and gender and profession:
 							if age > 25 and age < 31:
-								choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+								choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0) + 1
 								total_choice_vote_filter += 1
 							choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
 							total_choice_vote += 1
@@ -2449,6 +2579,140 @@ class PDFView(generic.DetailView):
 		context["maxVotedQuestion"] = maxVotedQuestion
 		# print(context)
 		return context
+
+class PDFPollView(generic.DetailView):
+	model = Question
+
+	def get_template_names(self):
+		template_name = "polls/pdf_report_poll.html"
+		return [template_name]
+	
+	def get_context_data(self, **kwargs):
+		context = super(PDFPollView, self).get_context_data(**kwargs)
+		question = context['question']
+		questionChoices = question.choice_set.all()
+		totalResponses = question.voted_set.count()
+		maxVotes = -1
+		minVotes = 99999
+		maxVotedChoiceList = []
+		minVotedChoiceList = []
+		maxVotedChoice = ""
+		maxVotedChoiceStr = ""
+		maxVotedCount = -1
+		minVotedCount = 99999
+		choice_dict = {} 
+		choice_vote_count = {}
+		choice_vote_count_all = {}
+		total_choice_vote = 0
+		total_choice_vote_all = 0
+		choice_vote_count_filter = {}
+		total_choice_vote_filter = 0
+		age_dict = {}
+		gender_dict = {}
+		gender_dict['M'] = 0
+		gender_dict['F'] = 0
+		gender_dict['D'] = 0
+		prof_dict = {}
+		country_dict = {}
+		age_dict_filter = {}
+		gender_dict_filter = {}
+		gender_dict_filter['M'] = 0
+		gender_dict_filter['F'] = 0
+		gender_dict_filter['D'] = 0
+		prof_dict_filter = {}
+		country_dict_filter = {}
+		for index,choice in enumerate(questionChoices):
+			choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
+			choice_vote_count_all["choice"+str(index+1)] = choice_vote_count_all.get("choice"+str(index+1),0)
+			choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0)
+			vote_set = choice.vote_set
+			numVotes = vote_set.count()
+			vote_api_set = choice.voteapi_set
+			numVotes += vote_api_set.count()
+			if(numVotes >= maxVotedCount):
+				maxVotedCount = numVotes
+				maxVotedChoice = choice.id
+				maxVotedChoiceStr = "Choice"+str(index+1)
+			for vote in Vote.objects.filter(choice_id = choice.id):
+				choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+				total_choice_vote += 1
+				choice_vote_count_all["choice"+str(index+1)] = choice_vote_count_all.get("choice"+str(index+1),0) + 1
+				total_choice_vote_all += 1
+				age = vote.user.extendeduser.calculate_age()
+				if age > 25 and age < 31:
+					choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0) + 1
+					total_choice_vote_filter += 1
+				gender = vote.user.extendeduser.gender
+				profession = vote.user.extendeduser.profession
+				country = vote.user.extendeduser.country
+				age_dict = get_age_data(age,age_dict)
+				gender_dict[gender] = gender_dict.get(gender,0) + 1
+				prof_dict[profession] = prof_dict.get(profession,0) + 1
+				if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+						country = 'United Kingdom'
+				country_dict[country] = country_dict.get(country,0) + 1
+			for vote in VoteApi.objects.filter(choice_id=choice.id):
+				age = vote.age
+				gender = vote.gender
+				profession = vote.profession
+				country = vote.country
+				choice_vote_count_all["choice"+str(index+1)] = choice_vote_count_all.get("choice"+str(index+1),0) + 1
+				total_choice_vote_all += 1
+				if age and gender and profession:
+					if age > 25 and age < 31:
+						choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0) + 1
+						total_choice_vote_filter += 1
+					choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
+					total_choice_vote += 1
+					age_dict = get_age_data(age,age_dict)
+					gender_dict[gender] = gender_dict.get(gender,0) + 1
+					prof_dict[profession] = prof_dict.get(profession,0) + 1
+					if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+							country = 'United Kingdom'
+					country_dict[country] = country_dict.get(country,0) + 1
+		for vote in Vote.objects.filter(choice_id = maxVotedChoice):
+			age = vote.user.extendeduser.calculate_age()
+			gender = vote.user.extendeduser.gender
+			profession = vote.user.extendeduser.profession
+			country = vote.user.extendeduser.country
+			age_dict_filter = get_age_data(age,age_dict_filter)
+			gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
+			prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
+			if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+					country = 'United Kingdom'
+			country_dict_filter[country] = country_dict.get(country,0) + 1
+		for vote in VoteApi.objects.filter(choice_id = maxVotedChoice):
+			age = vote.age
+			gender = vote.gender
+			profession = vote.profession
+			country = vote.country
+			if age and gender and profession:
+				age_dict_filter = get_age_data(age,age_dict_filter)
+				gender_dict_filter[gender] = gender_dict.get(gender,0) + 1
+				prof_dict_filter[profession] = prof_dict.get(profession,0) + 1
+				if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
+						country = 'United Kingdom'
+				country_dict_filter[country] = country_dict.get(country,0) + 1
+		# survey_polls.append({ "question":x.question, "q_type":x.question_type, "totalResponses":totalResponses, "maxVotes":choice_dict.get(maxVotedCount,""), "minVotes":choice_dict.get(minVotedCount,""), "choice_graph":choice_vote_count, "choice_graph_filter":choice_vote_count_filter, "total_choice_vote":total_choice_vote, "total_choice_vote_filter":total_choice_vote_filter, "age_graph":age_dict, "gender_graph":gender_dict, "prof_graph":prof_dict, "country_graph":country_dict, "age_graph_filter":age_dict_filter,"gender_graph_filter":gender_dict_filter, "prof_graph_filter":prof_dict_filter, "country_graph_filter":country_dict_filter, "maxVotedChoiceStr":maxVotedChoiceStr, "que_text_answers":que_text_answers })
+		context["choice_graph"] = choice_vote_count
+		context["choice_graph_all"] = choice_vote_count_all
+		context["choice_graph_filter"] = choice_vote_count_filter
+		context["total_choice_vote"] = total_choice_vote
+		context["total_choice_vote_all"] = total_choice_vote_all
+		context["total_choice_vote_filter"] = total_choice_vote_filter
+		context["age_graph"] = age_dict
+		context["gender_graph"] = gender_dict
+		context["prof_graph"] = prof_dict
+		context["country_graph"] = country_dict
+		context["age_graph_filter"] = age_dict_filter
+		context["gender_graph_filter"] = gender_dict_filter
+		context["prof_graph_filter"] = prof_dict_filter
+		context["country_graph_filter"] = country_dict_filter
+		context["maxVotedChoiceStr"] = maxVotedChoiceStr
+		
+		# print(context)
+		return context
+
 
 def get_age_data(user_age,age_dic):
 	age_dic['over_50'] = age_dic.get('over_50',0)

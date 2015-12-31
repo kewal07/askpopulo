@@ -198,6 +198,9 @@ form.createPollContentForm label{
   margin: 0 auto;
   height: 3rem;
 }
+.add-choice{
+  cursor: pointer;
+}
 @media only screen and (max-width:960px){
   #createPoll{
     margin:0;

@@ -51,7 +51,7 @@ $(document).ready(function(){
     	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
 	})
 
-	$('.fileLabel').click(function(){
+	$('body').on('click','.fileLabel',function(){
 	    $(this).prev().children().first().click();
 	});
 	/* End of file browse*/
@@ -566,12 +566,19 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
 		// console.log(inData);
 	}
 	var data = google.visualization.arrayToDataTable(pollsData);
+	// set a padding value to cover the height of title and axis values
+	// var paddingHeight = 10;// * data.getNumberOfRows();
+	// set the height to be covered by the rows
+	var rowHeight = data.getNumberOfRows() * 40;
+	// set the total chart height
+	var chartHeight = rowHeight ;//+ paddingHeight;
 	var dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
 	var options = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {left:80,width: '60%',height:'100%'},
+          height: chartHeight,
           fontSize:14,
           bars: {
-            groupWidth: 100
+            groupWidth: '100%'
           },
           annotations:{
           	textStyle: {
@@ -598,7 +605,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
@@ -635,7 +642,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
@@ -662,10 +669,11 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
     function displayAnnotation(e){
         data = google.visualization.arrayToDataTable(pollsData);
         options = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {left:80,width: '60%',height:'100%'},
           fontSize:14,
+          height:chartHeight,
           bars: {
-            groupWidth: 100
+            groupWidth: '100%'
           },
           annotations:{
           	textStyle: {
@@ -729,7 +737,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
           },
            animation:{
               startup:true,
-              duration: 3000,
+              duration: 2000,
               easing: 'inAndOut',
          },
         };
@@ -895,16 +903,25 @@ function drawOthersChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
 	}
 }
 
+var backChoiceId = "";
+// var bakgraphId = "";
+var backdict = {};
+
 function drawLocationChart(csrf_token,analyse_type,pollId,choiceId,graphId) {
     // $('#mapBackButton').removeClass('back');
 	var conData = [['Country', 'Votes']];
 	var conDict = {};
 	if(typeof choiceId == 'undefined' || choiceId === null)
   		choiceId = "nochoice"
-  	if(typeof graphId == 'undefined')
+	// console.log(typeof graphId,choiceId);
+  	if(typeof graphId == 'undefined' || graphId == 'undefined')
 	  	graphId = ""
 	else
 	  	graphId = "---"+graphId.replace("---","");
+	// console.log(graphId);
+	backdict[pollId+"---"+graphId] = choiceId;
+	// console.log(backdict);
+	
   	var advanced_analyse_dic = {};
 	$.ajax({
 	    url: "/advanced_analyse_choice",
@@ -946,12 +963,11 @@ var regionDict = {
 	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
 }
 
-var backChoiceId = "";
-var bakgraphId = "";
-	
 function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId,graphId){
 	backChoiceId = choiceId;
-	bakgraphId = graphId;
+	backdict[pollId+"---"+graphId] = choiceId;
+	// console.log(backdict);
+	// bakgraphId = graphId;
 	var options = {
       region: region,
       displayMode: 'regions',
@@ -1000,8 +1016,34 @@ function drawStateMap(csrf_token,analyse_type,region,pollId,choiceId,graphId){
 	}
 }
     
-function back(csrf_token,analyse_type,pollId){  
-	$("#"+analyse_type+"mapBackButton").css("display", "none");  
+function back(csrf_token,analyse_type,pollId,bakgraphId){  
+	$("#"+analyse_type+"mapBackButton").css("display", "none");
+	if (typeof bakgraphId != "undefined"){
+		backChoiceId = backdict[pollId+"------"+bakgraphId];
+		bakgraphId = bakgraphId + ""
+	} else{
+		backChoiceId = backdict[pollId+"---"];
+	}
+	// console.log(bakgraphId,backChoiceId,backdict);
     drawLocationChart(csrf_token,analyse_type,pollId,backChoiceId,bakgraphId);
 }
 /* Function for charts end */
+
+function getBase64Image(img, a4) {
+    var canvas = document.createElement("canvas");
+    canvas.width = a4[0];
+    canvas.height = a4[1];
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = canvas.toDataURL("image/jpeg");
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}

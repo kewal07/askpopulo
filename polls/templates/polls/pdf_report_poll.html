@@ -1,0 +1,253 @@
+{% extends "polls/report_common.html" %}
+{% load static %}
+{% block meta_data_extra %}
+{% endblock %}
+{% block extra_css %}
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
+{% endblock %}
+{% block extra_js %}
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1", {packages:["corechart"]});
+		function drawPollsChartPDF(choice_data,elementId,total_votes) {
+			var pollsData = [];
+			var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
+			var colCount = 0;
+			pollsData.push(['Element', 'Votes', { role: 'style' }, { role: 'annotation' }]);
+			var choiceLength = Object.keys(choice_data).length;
+			for(var i=1 ; i<=choiceLength; i++){
+				var inData = [];
+				inData.push("Choice"+i);
+				inData.push(choice_data["choice"+i]);
+				inData.push(pollsColors[colCount++]);
+				var percent = 0;
+				if(total_votes > 0)
+					percent = Math.round((choice_data["choice"+i]/total_votes)*100);
+				inData.push(percent+"%");
+				pollsData.push(inData);
+			}
+			var data = google.visualization.arrayToDataTable(pollsData);
+			var rowHeight = data.getNumberOfRows() * 20;
+			// set the total chart height
+			var chartHeight = rowHeight ;
+			var options = {
+	          chartArea: {left:80,width: '650px',height:'100%'},
+	          height: chartHeight,
+	          // fontSize:14,
+	          bars: {
+	            groupWidth: 10
+	          },
+	          annotations:{
+	          	textStyle: {
+			      opacity: 1       // The transparency of the text.
+			    }	        
+	          },
+	          hAxis: {
+	            title: '',
+	            minValue: 0,
+	            gridlines: {
+	              color: 'transparent'
+	              },
+	            textPosition: 'none',
+	            baselineColor: 'transparent'
+	          },
+	          vAxis: {
+	            title: '',
+	            gridlines: {
+	              color: 'transparent'
+	              },
+	          },
+	          legend:{
+	              position:'none'
+	          },
+	        };
+
+        	var chart = new google.visualization.BarChart(document.getElementById(elementId));
+        	google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      document.getElementById(elementId).innerHTML = '<img width="650px" height="auto" src="' + chart.getImageURI() + '">';
+		    });
+        	chart.draw(data, options);
+		}
+		function drawAgeChartPDF(age_dic,elementId) {
+			var data = google.visualization.arrayToDataTable([
+			  ['Task', 'Hours per Day'],
+			  ['Upto 19',age_dic['under_19']],
+			  ['19-25',age_dic['bet_20_25']],
+			  ['26-30',age_dic['bet_26_30']],
+			  ['31-35',age_dic['bet_31_35']],
+			  ['36-50',age_dic['bet_36_50']],
+			  ['50 Above',age_dic['over_50']]
+			]);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+		    chart.draw(data, options);
+	  	}
+	  	function drawGenderChartPDF(gender_dic,elementId) {
+			var data = google.visualization.arrayToDataTable([
+			  ['Task', 'Hours per Day'],
+			  ['Male', gender_dic["M"]],
+			  ['Female',gender_dic["F"]],
+			  ['Not Say', gender_dic["D"]]
+			]);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+		function drawProfessionChartPDF(prof_dic,elementId) {
+			var profData = [['Profession','Votes']];
+			for(prof in prof_dic)
+				profData.push([prof,prof_dic[prof]]);
+			var data = google.visualization.arrayToDataTable(profData);
+			var options = {
+			  // 'backgroundColor': 'transparent',
+			  'width':325,
+              // 'height':325
+			};
+			var chart = new google.visualization.PieChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+		function drawRegionsMapPDF(country_dic,elementId) {
+			console.log(country_dic);
+			var conData = [['Country', 'Votes']];
+			for(con in country_dic){
+				conData.push([con,country_dic[con]]);
+			}
+			var data = google.visualization.arrayToDataTable(conData);
+			var options = {
+				// 'backgroundColor': 'transparent'
+			};
+			var chart = new google.visualization.GeoChart(document.getElementById(elementId));
+			google.visualization.events.addListener(chart, 'ready', function () {
+        		console.log(chart.getImageURI());
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		    });
+			chart.draw(data, options);
+		}
+	</script>
+{% endblock %}
+{% block content %}
+
+		<div class="pdf-pages" id="pdf-page0">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Question Details</h1>
+				<p class="data-heading-pdf">
+					Title : {{ question.question_text }}
+				</p>
+				<p class="pdf-data pdf-data-tabbed">
+					Description : {{ question.description }}
+				</p>
+				{% for choice in question.choice_set.all %}
+					{% if choice.choice_image %}
+						<div class="choice-figure">
+							<img width="100px" height="100px" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+							<p class="choiceFigCaption">
+								{% if choice.choice_text %}
+									Choice{{ forloop.counter }} : {{ choice.choice_text }}
+								{% else %}
+									Choice{{ forloop.counter }}
+								{% endif %}
+							</p>
+						</div>
+					{% else %}
+						<p class="pdf-data">Choice{{ forloop.counter }} : "{{ choice.choice_text }}"</p>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="pdf-pages" id="pdf-pages-poll0">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Question Details</h1>
+				<p class="pdf-data pdf-data-bold">
+					Results With All Responses : {{ total_choice_vote_all }}
+				</p>
+				<div id="pollsChart-pdf{{ question.id }}" class="pollsChartPDF"></div>
+				<p class="pdf-data pdf-data-bold">
+					Results Which Have Demographic Data : {{ total_choice_vote }}
+				</p>
+				<div id="pollsChart-pdf-all{{ question.id }}" class="pollsChartPDF"></div>
+				<script type="text/javascript">
+					google.setOnLoadCallback(drawPollsChartPDF({{ choice_graph|safe }},"pollsChart-pdf{{ question.id }}",{{ total_choice_vote }}));
+					google.setOnLoadCallback(drawPollsChartPDF({{ choice_graph_all|safe }},"pollsChart-pdf-all{{ question.id }}",{{ total_choice_vote_all }}));
+				</script>
+			</div>
+		</div>
+
+		<div class="pdf-pages" id="pdf-pages-poll1">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">Question Details</h1>
+				<p class="pdf-data pdf-data-bold">
+					Results Which Have Demographic Data : {{ total_choice_vote }}
+				</p>
+				<div id="analysis-pdf">
+					<div class="pdf-chart" id="genderchart{{ question.id }}"></div>
+					<div class="pdf-chart" id="agechart{{ question.id }}"></div>
+					<div class="pdf-chart" id="locationchart{{ question.id }}"></div>
+					<div class="pdf-chart" id="professionchart{{ question.id }}"></div>
+				</div>
+				<script type="text/javascript">
+					google.setOnLoadCallback(drawAgeChartPDF({{ age_graph|safe }},"agechart{{ question.id }}"));
+					google.setOnLoadCallback(drawGenderChartPDF({{ gender_graph|safe }},"genderchart{{ question.id }}"));
+					google.setOnLoadCallback(drawProfessionChartPDF({{ prof_graph|safe }},"professionchart{{ question.id }}"));
+					google.setOnLoadCallback(drawRegionsMapPDF({{ country_graph|safe }},"locationchart{{ question.id }}"));
+				</script>
+			</div>
+		</div>
+
+		<div class="pdf-pages" id="last-page">
+			<div class="survey-overview survey-overview-pdf">
+				<h1 class="page-main-heading">About AskByPoll</h1>
+				<div class="pdf-info">
+				<p class="pdf-data">
+					AskByPoll is a modern age research and decision making tool that helps in performing primary research through quick polls and surveys. The platform provides a community of voters who can help in providing their opinion based on the nature of the question. The platform provides quantitative and qualitative results on a question and easy to use real time analytics tools for quicker decision making
+				</p>
+				<p class="pdf-data pdf-data-bold">
+					We can also help you out with the analysis of any research you have performed on AskByPoll. We would conduct the analysis at the backend and provide you with business critical recommendations derived from our platform
+				</p>
+				<p class="pdf-data">
+					To get more details about the platform & services reach out to us at: support@askbypoll.com or call us at +917829716024, +917411132182
+				</p>
+				</div>
+				<p class="pdf-data pdf-data-sundar">
+					Contact Details:<br>
+					Email: support@askbypoll.com | Call: +917829716024 (India) <br>
+					Facebook: /askbypoll      Twitter: @AskByPoll
+				</p>
+			</div>
+		</div>
+
+		<div id="pdf-survey-footer">
+			<img class="pdf-footer-logo" src="/static/logoAndText.png">
+			<p class="pdf-data pdf-data-footer">
+				Contact us @ support @ askbypoll.com
+			</p>
+		</div>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$('.choice_image').css({"width":"120px","height":"120px"});
+		});
+	</script>
+{% endblock %}

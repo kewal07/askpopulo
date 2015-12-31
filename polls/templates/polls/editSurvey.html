@@ -297,6 +297,14 @@
 						<label for="protectResult">Protect Survey Result </label>
 					</p>
 					<p class="anonymous" style="margin-top:2rem">
+						{% if surveyMandatory %}
+							<input id="mandatory" name="mandatory" type="checkbox" checked>
+						{% else %}
+							<input id="mandatory" name="mandatory" type="checkbox">
+						{% endif %}
+						<label for="mandatory">Make All Questions Mandatory </label>
+					</p>
+					<p class="anonymous" style="margin-top:2rem">
 						{% if surveyAddComment %}
 							<input id="addComment" name="addComment" type="checkbox" checked>
 						{% else %}
@@ -316,6 +324,14 @@
 								<p>
 									<label for="qDesc{{ forloop.counter }}">Description</label>
 									<textarea id ="qDesc{{ forloop.counter }}" name="qDesc{{ forloop.counter }}" placeholder="Description" maxlength="400">{{ question.poll.description }}</textarea>
+								</p>
+								<p class="anonymous">
+									{% if question.mandatory %}
+										<input id="mandatory{{ forloop.counter }}" name="mandatory{{ forloop.counter }}" type="checkbox" checked>
+									{% else %}
+										<input id="mandatory{{ forloop.counter }}" name="mandatory{{ forloop.counter }}" type="checkbox">
+									{% endif %}
+									<label for="mandatory{{ forloop.counter }}">Mandatory </label>
 								</p>
 								<p class="anonymous">
 									{% if question.poll.protectResult %}
@@ -411,6 +427,7 @@
 			var choice_list = {};
 			var protectedResultSurvey = false;
 			var addCommentSurvey = false;
+			var mandatorySurvey = false;
 			function add_another_choice(question_count_select,selectedType){
 				var question_choice_count = choice_count[question_count_select];
 	  			choice_list[question_count_select].push(question_choice_count);
@@ -473,6 +490,7 @@
 			$(document).ready(function(){
 				protectedResultSurvey = $("#protectResult").is(':checked');
 				addCommentSurvey = $("#addComment").is(':checked');
+				mandatorySurvey = $("#mandatory").is(':checked');
 				$(".fileButtonClass").click(function(){
 					var elemId = $(this)[0].id;
 					$("#"+elemId.replace("file","image")).hide();
@@ -517,20 +535,31 @@
 			  		question_elem += '" name="qDesc';
 			  		question_elem += question_count_str;
 			  		question_elem += '" placeholder="Description" maxlength="400"></textarea></p>';
-			  		if(protectedResultSurvey)
-			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		if(mandatorySurvey)
+			  			question_elem += '<p class="anonymous"><input id="mandatory' +question_count_str+ '" name="mandatory' +question_count_str+ '" type="checkbox" checked><label for="mandatory' +question_count_str+ '">Mandatory </label></p>';
 			  		else
-			  			question_elem += '<p class="anonymous"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  			question_elem += '<p class="anonymous"><input id="mandatory' +question_count_str+ '" name="mandatory' +question_count_str+ '" type="checkbox"><label for="mandatory' +question_count_str+ '">Mandatory </label></p>';
+			  		if(protectedResultSurvey)
+			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox" checked><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
+			  		else
+			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="protectResult' +question_count_str+ '" name="protectResult' +question_count_str+ '" type="checkbox"><label for="protectResult' +question_count_str+ '">Protect Result </label></p>';
 			  		if(addCommentSurvey)
 			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox" checked><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		else
 			  			question_elem += '<p id="addComment' +question_count_str+ 'p" class="anonymous" style="display:none;margin-top:1rem"><input id="addComment' +question_count_str+ '" name="addComment' +question_count_str+ '" type="checkbox"><label for="addComment' +question_count_str+ '">Require Feedback </label></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
-			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="text">Text</option><option value="radio">Single Select</option><option value="checkbox">Multi Select</option></select></p>';
+			  		// change for radio default start
+			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="text">Text</option></select></p>';
+			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
+			  		// change for radio default end
 			  		question_elem += '</div>';
 			  		// console.log(question_elem);
 			  		$(".survey-questions").append(question_elem);
+			  		// change for radio default start
+			  		add_another_choice(question_count,"radio");
+			  		$("#addComment"+question_count_str+"p").show();
+			  		// change for radio default end
 			  		question_count += 1;
 			  		display_question_count += 1;
 			  	});
@@ -667,6 +696,16 @@
 						checked = true;
 					for(var i=0; i<question_list.length; i++){
 						$("#protectResult"+question_list[i]).prop( "checked", checked );
+					}
+				});
+
+				$("#mandatory").click(function(){
+					mandatorySurvey = !mandatorySurvey;
+					var checked = false;
+					if($("#mandatory").is(':checked'))
+						checked = true;
+					for(var i=0; i<question_list.length; i++){
+						$("#mandatory"+question_list[i]).prop( "checked", checked );
 					}
 				});
 

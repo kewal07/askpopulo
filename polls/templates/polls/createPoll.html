@@ -356,24 +356,28 @@
 					</p>
 					<p>
 						<label class=" required" for="choice1">Choice 1</label>
-						<input id="choice1" class="createPollText" type="text" name="choice1" placeholder="First Choice" maxlength="200">
+						<input id="choice1" class="createPollText choice-input-text" type="text" name="choice1" placeholder="First Choice" maxlength="200">
 						<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
 					</p>
 					<p>
 						<label class=" required" for="choice2">Choice 2</label>
-						<input id="choice2" class="createPollText" type="text" name="choice2" placeholder="Second Choice" maxlength="200">
+						<input id="choice2" class="createPollText choice-input-text" type="text" name="choice2" placeholder="Second Choice" maxlength="200">
 						<input id="choice2" class="fileButtonClass" type="file" name="choice2" accept="image/*">
 					</p>
 					<p>
 						<label for="choice3">Choice 3</label>
-						<input id="choice3" class="createPollText" type="text" name="choice3" placeholder="Third Choice" maxlength="200">
+						<input id="choice3" class="createPollText choice-input-text" type="text" name="choice3" placeholder="Third Choice" maxlength="200">
 						<input id="choice3" class="fileButtonClass" type="file" name="choice3" accept="image/*">
 					</p>
 					<p>
 						<label for="choice4">Choice 4</label>
-						<input id="choice4" class="createPollText" type="text" name="choice4" placeholder="Fourth Choice" maxlength="200">
+						<input id="choice4" class="createPollText choice-input-text" type="text" name="choice4" placeholder="Fourth Choice" maxlength="200">
 						<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
 					</p>
+					{% if data.extra_choices > 0 %}
+						<div id="extra-choices-div"></div>
+						<i id="add-choice-admin" class="fa fa-plus-circle add-choice"> Add Another Choice</i>			
+					{% endif %}
 					<p>
 						<label for="categories">Category <i id="category_tooltip_fa" class="fa fa-info-circle"></i></label>
 						<input id="categories" type="text" name="categories">
@@ -386,7 +390,7 @@
 							<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
 						</p>
 						<div class="admin-checkbox">
-							<p class="anonymous">
+							<p class="anonymous" id="makeFeaturedP">
 								<input id="makeFeatured" name="makeFeatured" type="checkbox">
 								<label for="makeFeatured">Featured <i id="makeFeatured_fa" class="fa fa-info-circle"></i></label>
 							</p>
@@ -465,6 +469,48 @@
 				maxselection: 5,
 				elemId: "selectedGroups"
 			});
+		function add_another_choice(added_choice_count){
+			choice_elem = '<p>';
+			choice_elem += '<label for="choice'+added_choice_count+'">Choice '+added_choice_count+'</label><input id="choice'+added_choice_count;
+			choice_elem += '" class="createPollText choice-input-text" type="text" name="choice'+added_choice_count+'" placeholder="Enter Choice" maxlength="200">';
+			choice_elem += '<input id="choice'+added_choice_count+'file" class="fileButtonClass" type="file" name="choice'+added_choice_count+'" accept="image/*">';
+			choice_elem += '</p>';
+			// console.log($("#"+choice_elem_div).last());
+			$("#extra-choices-div").append(choice_elem);
+			
+			/*For file browse */
+				var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+				var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+				// var upImg = $('<img id="upImg" width=>')
+				var fileInput = $("#choice"+added_choice_count+"file").after(label).wrap(invisible);
+				// $("#"+choice_file_id).hide();
+
+				fileInput.change(function(){
+					// $('#upImgText').hide();
+				    $this = $(this);
+				    var fileVal = $this.val();
+			    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+			    	var fileName = fileVal.substr(fileNameIndex);
+			    	if (this.files && this.files[0]) {
+			            var reader = new FileReader();
+			            
+			            reader.onload = function (e) {
+			                imgSrc = e.target.result;
+							console.log($this.parent().children().first());
+							// $(".upImg").attr('src', e.target.result);
+							$this.parent().next().children().first().attr('src', e.target.result);
+							// $(".upImg").show();
+							$this.parent().next().children().first().show();
+			            }
+			            
+			            reader.readAsDataURL(this.files[0]);
+			        }
+					// $("#upImgText").text(fileName);
+					$this.parent().next().children().first().next().hide();
+			    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+				})
+			/* End of file browse*/
+		}
 		$(document).ready(function()
 		{
 			$('#bet').click(function() {
@@ -488,6 +534,18 @@
     			}
     			$("#betChoice")[0].innerHTML= innerHval;
     			// console.log($("#betChoice")[0]);
+			});
+
+			var added_choice_count = $(".choice-input-text").length;
+			$(".add-choice").click(function(){
+				added_choice_count += 1;
+				if(added_choice_count > 4){
+					$("#makeFeaturedP").remove();
+				}
+				if(added_choice_count <= {{ user.extendeduser.company.num_of_choices }})
+					add_another_choice(added_choice_count);
+				if(added_choice_count > {{ user.extendeduser.company.num_of_choices }})
+					$(".add-choice").hide();
 			});
 
 			$('.submit').bind('click', function()
