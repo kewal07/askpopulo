@@ -578,7 +578,8 @@ class AdminDashboard(BaseViewDetail):
 						votes = Vote.objects.filter(user_id=voteText.user.id,choice__in=questionChoices)
 						for vote in votes:
 							comment_text += choice_data.get(vote.choice.id) + ","
-						comment_text = comment_text[:-1] + " :"
+						if comment_text:
+							comment_text = comment_text[:-1] + " :"
 						comment_text += voteText.answer_text
 						comments.append(comment_text)
 

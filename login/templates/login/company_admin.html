@@ -586,8 +586,9 @@
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
+									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 									{% if poll.q_type != "text" %}
-										<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
+										
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
@@ -760,10 +761,15 @@
 													</div>
 												</div>
 											</div>
-										</div>
-									{% else %}
 										
+									{% else %}
+										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
+											{% for text in poll.comments %}
+												<p class="answer-text">{{ text }}</p>
+											{% endfor %}
+										</div>
 									{% endif %}
+									</div>
 								{% endfor %}
 							</div>
 							<div class="survey-overview">
@@ -1538,57 +1544,6 @@
 					/* End of file browse*/
 				}
 
-				$('.surveySubmit').bind('click', function(event)
-				{
-					event.preventDefault();
-					var elemid = "#create-survey-form";
-					var form_data = new FormData($(elemid)[0]);
-					form_data.append('question_count', JSON.stringify(question_list));
-					form_data.append('choice_count', JSON.stringify(choice_list));
-					$("#createSurveySubmit").attr("disabled","disabled");
-					{% if user.is_authenticated %}
-						$.ajax(
-						{
-							type: 'POST',
-							url:"/create_survey",
-							data:form_data,
-							processData: false,
-							contentType: false,
-							success:function(obj)
-							{
-								$(".errorlist").remove();
-								console.log(obj);
-								if(obj.hasOwnProperty("success")){
-									$('#dashboard-surveys-tab').trigger("click");
-									display_question_count = 1;
-									featureImageWrapped = false;
-									question_count = 1;
-									question_list = [];
-									choice_count = {};
-									choice_list = {};
-									protectedResultSurvey = false;
-									addCommentSurvey = false;
-									mandatorySurvey = false;
-								}
-								else{
-									for(var key in obj){
-									    if (obj.hasOwnProperty(key)){
-									    	if(key === "surveyError")
-										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
-										   	else{
-										   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
-										   	}
-									    }
-									}
-									$("#createSurveySubmit").removeAttr("disabled");
-								}
-							}
-						});
-					{% else %}
-						$(location).attr('href',create_url);
-					{% endif %}
-				});
-
 			}
 
 			function add_another_choice(question_count_select,selectedType){
@@ -1796,6 +1751,26 @@
 					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
 					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
 					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  $(window).resize(function() {
+						    if(this.resizeTO) clearTimeout(this.resizeTO);
+						    this.resizeTO = setTimeout(function() {
+								drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
+								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2"); 
+								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+						    }, 500);
+						});
 					}
 					else{
 						// $("#text-analyse---"+pollId+"Div").toggle("slow");
@@ -1842,6 +1817,15 @@
 						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
 						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
 						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+						  $(window).resize(function() {
+						    if(this.resizeTO) clearTimeout(this.resizeTO);
+						    this.resizeTO = setTimeout(function() {
+								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
+						    }, 500);
+						  });
 						}
 						// }, delay); 
 					}else{
@@ -1851,6 +1835,15 @@
 						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
 						  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
 						  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+						  $(window).resize(function() {
+						    if(this.resizeTO) clearTimeout(this.resizeTO);
+						    this.resizeTO = setTimeout(function() {
+								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),graphId);
+						    }, 500);
+						  });
 						}
 					}
 				});  
@@ -1876,6 +1869,12 @@
 					var selectedChoice_state = $(common_elem_id_str+"State---"+graphId).val();
 					// console.log(selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state);
 					drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId);
+					$(window).resize(function() {
+					    if(this.resizeTO) clearTimeout(this.resizeTO);
+					    this.resizeTO = setTimeout(function() {
+							drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId);
+					    }, 500);
+					});
 				});
 
 				$("#advanced-content,#surveys-content").on("change","select.advancedanalyseSelectCountry",function(){
@@ -2032,6 +2031,56 @@
 					for(var i=0; i<question_list.length; i++){
 						$("#addComment"+question_list[i]).prop( "checked", checked );
 					}
+				});
+
+				$("#surveys-content").on("click",".surveySubmit",function(event){
+					event.preventDefault();
+					var elemid = "#create-survey-form";
+					var form_data = new FormData($(elemid)[0]);
+					form_data.append('question_count', JSON.stringify(question_list));
+					form_data.append('choice_count', JSON.stringify(choice_list));
+					$("#createSurveySubmit").attr("disabled","disabled");
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/create_survey",
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(obj)
+							{
+								$(".errorlist").remove();
+								console.log(obj);
+								if(obj.hasOwnProperty("success")){
+									$('#dashboard-surveys-tab').trigger("click");
+									display_question_count = 1;
+									featureImageWrapped = false;
+									question_count = 1;
+									question_list = [];
+									choice_count = {};
+									choice_list = {};
+									protectedResultSurvey = false;
+									addCommentSurvey = false;
+									mandatorySurvey = false;
+								}
+								else{
+									for(var key in obj){
+									    if (obj.hasOwnProperty(key)){
+									    	if(key === "surveyError")
+										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
+										   	else{
+										   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
+										   	}
+									    }
+									}
+									$("#createSurveySubmit").removeAttr("disabled");
+								}
+							}
+						});
+					{% else %}
+						$(location).attr('href',create_url);
+					{% endif %}
 				});
 
 				$("#export-content").on("click",".export-pdf",function(){

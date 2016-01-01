@@ -610,7 +610,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
          },
         };
 	var optionsCol = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {width: '95%'},
           fontSize:14,
           bars: {
             groupWidth: 100
@@ -705,7 +705,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
          },
         };
         optionsCol = {
-          chartArea: {left:80,width: '60%'},
+          chartArea: {width: '95%'},
           fontSize:14,
           bars: {
             groupWidth: 100
