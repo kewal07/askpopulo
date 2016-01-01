@@ -32,7 +32,7 @@
 			// set the total chart height
 			var chartHeight = rowHeight ;
 			var options = {
-	          chartArea: {left:80,width: '650px',height:'100%'},
+	          chartArea: {left:80,width: '100%',height:'100%'},
 	          height: chartHeight,
 	          // fontSize:14,
 	          bars: {
@@ -66,7 +66,7 @@
         	var chart = new google.visualization.BarChart(document.getElementById(elementId));
         	google.visualization.events.addListener(chart, 'ready', function () {
         		console.log(chart.getImageURI());
-		      document.getElementById(elementId).innerHTML = '<img width="650px" height="auto" src="' + chart.getImageURI() + '">';
+		      document.getElementById(elementId).innerHTML = '<img width="100%" height="400px" src="' + chart.getImageURI() + '">';
 		    });
         	chart.draw(data, options);
 		}
@@ -82,13 +82,14 @@
 			]);
 			var options = {
 			  // 'backgroundColor': 'transparent',
-			  'width':325,
+			  // 'width':325,
               // 'height':325
+              title: 'Age'
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
         		console.log(chart.getImageURI());
-		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		      	document.getElementById(elementId).innerHTML = '<img width="100%" height="270px" src="' + chart.getImageURI() + '">';
 		    });
 		    chart.draw(data, options);
 	  	}
@@ -101,13 +102,14 @@
 			]);
 			var options = {
 			  // 'backgroundColor': 'transparent',
-			  'width':325,
+			  // 'width':325,
               // 'height':325
+              title: 'Gender'
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
         		console.log(chart.getImageURI());
-		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		      	document.getElementById(elementId).innerHTML = '<img width="100%" height="270px" src="' + chart.getImageURI() + '">';
 		    });
 			chart.draw(data, options);
 		}
@@ -118,13 +120,14 @@
 			var data = google.visualization.arrayToDataTable(profData);
 			var options = {
 			  // 'backgroundColor': 'transparent',
-			  'width':325,
+			  // 'width':325,
               // 'height':325
+              title: 'Profession'
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
         		console.log(chart.getImageURI());
-		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		      	document.getElementById(elementId).innerHTML = '<img width="100%" height="270px" src="' + chart.getImageURI() + '">';
 		    });
 			chart.draw(data, options);
 		}
@@ -179,7 +182,7 @@
 
 		<div class="pdf-pages" id="pdf-pages-poll0">
 			<div class="survey-overview survey-overview-pdf">
-				<h1 class="page-main-heading">Question Details</h1>
+				<h1 class="page-main-heading">Response Details</h1>
 				<p class="pdf-data pdf-data-bold">
 					Results With All Responses : {{ total_choice_vote_all }}
 				</p>
@@ -197,21 +200,21 @@
 
 		<div class="pdf-pages" id="pdf-pages-poll1">
 			<div class="survey-overview survey-overview-pdf">
-				<h1 class="page-main-heading">Question Details</h1>
+				<h1 class="page-main-heading">Analytics</h1>
 				<p class="pdf-data pdf-data-bold">
 					Results Which Have Demographic Data : {{ total_choice_vote }}
 				</p>
 				<div id="analysis-pdf">
-					<div class="pdf-chart" id="genderchart{{ question.id }}"></div>
-					<div class="pdf-chart" id="agechart{{ question.id }}"></div>
-					<div class="pdf-chart" id="locationchart{{ question.id }}"></div>
-					<div class="pdf-chart" id="professionchart{{ question.id }}"></div>
+					<div class="pdf-chart pdf-chart-poll" id="genderchart{{ question.id }}"></div>
+					<div class="pdf-chart pdf-chart-poll" id="agechart{{ question.id }}"></div>
+					<!-- <div class="pdf-chart" id="locationchart{{ question.id }}"></div> -->
+					<div class="pdf-chart pdf-chart-poll" id="professionchart{{ question.id }}"></div>
 				</div>
 				<script type="text/javascript">
 					google.setOnLoadCallback(drawAgeChartPDF({{ age_graph|safe }},"agechart{{ question.id }}"));
 					google.setOnLoadCallback(drawGenderChartPDF({{ gender_graph|safe }},"genderchart{{ question.id }}"));
 					google.setOnLoadCallback(drawProfessionChartPDF({{ prof_graph|safe }},"professionchart{{ question.id }}"));
-					google.setOnLoadCallback(drawRegionsMapPDF({{ country_graph|safe }},"locationchart{{ question.id }}"));
+					// google.setOnLoadCallback(drawRegionsMapPDF({{ country_graph|safe }},"locationchart{{ question.id }}"));
 				</script>
 			</div>
 		</div>

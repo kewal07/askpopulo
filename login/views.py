@@ -485,6 +485,7 @@ class AdminDashboard(BaseViewDetail):
 				dash_dict['views'] = dash_views
 				dash_dict['votes'] = dash_votes
 				dash_graph.append(dash_dict)
+			print(dash_graph)
 			data['dash_graph'] = dash_graph
 			for que in polls:
 				pole_dict = {}

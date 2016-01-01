@@ -80,6 +80,7 @@
 			  // 'backgroundColor': 'transparent',
 			  'width':325,
               // 'height':325
+              title: 'Age',
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
@@ -99,6 +100,7 @@
 			  // 'backgroundColor': 'transparent',
 			  'width':325,
               // 'height':325
+              title: 'Gender',
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
@@ -116,11 +118,12 @@
 			  // 'backgroundColor': 'transparent',
 			  'width':325,
               // 'height':325
+              title: 'Profession',
 			};
 			var chart = new google.visualization.PieChart(document.getElementById(elementId));
 			google.visualization.events.addListener(chart, 'ready', function () {
         		console.log(chart.getImageURI());
-		      	document.getElementById(elementId).innerHTML = '<img width="325px" src="' + chart.getImageURI() + '">';
+		      	document.getElementById(elementId).innerHTML = '<img width="325px" style="display:block;margin:0 auto" src="' + chart.getImageURI() + '">';
 		    });
 			chart.draw(data, options);
 		}
@@ -470,6 +473,9 @@
 		<div class="pdf-pages" id="pdf-pages-poll{{ forloop.counter }}">
 			<div class="survey-overview survey-overview-pdf">
 				<h1 class="page-main-heading">Per Question Survey Analysis</h1>
+				<p class="data-heading-pdf">
+					Question : {{ poll.question.question_text }}
+				</p>
 				{% for choice in poll.question.choice_set.all %}
 					{% if choice.choice_image %}
 						<div class="choice-figure">
@@ -486,23 +492,20 @@
 						<p class="pdf-data">Choice{{ forloop.counter }} : "{{ choice.choice_text }}"</p>
 					{% endif %}
 				{% endfor %}
-				<p class="data-heading-pdf">
-					Question : {{ poll.question.question_text }}
-				</p>
 				{% if poll.q_type != "text" %}
 					<div id="pollsChart-pdf{{ poll.question.id }}" class="pollsChartPDF"></div>
 					<div id="analysis-pdf">
 						<div class="pdf-chart" id="genderchart{{ poll.question.id }}"></div>
 						<div class="pdf-chart" id="agechart{{ poll.question.id }}"></div>
-						<div class="pdf-chart" id="locationchart{{ poll.question.id }}"></div>
-						<div class="pdf-chart" id="professionchart{{ poll.question.id }}"></div>
+						<!-- <div class="pdf-chart" id="locationchart{{ poll.question.id }}"></div> -->
+						<div class="pdf-chart pdf-chart-survey-prof" id="professionchart{{ poll.question.id }}"></div>
 					</div>
 					<script type="text/javascript">
 						google.setOnLoadCallback(drawPollsChartPDF({{ poll.choice_graph|safe }},"pollsChart-pdf{{ poll.question.id }}",{{ poll.total_choice_vote }}));
 						google.setOnLoadCallback(drawAgeChartPDF({{ poll.age_graph|safe }},"agechart{{ poll.question.id }}"));
 						google.setOnLoadCallback(drawGenderChartPDF({{ poll.gender_graph|safe }},"genderchart{{ poll.question.id }}"));
 						google.setOnLoadCallback(drawProfessionChartPDF({{ poll.prof_graph|safe }},"professionchart{{ poll.question.id }}"));
-						google.setOnLoadCallback(drawRegionsMapPDF({{ poll.country_graph|safe }},"locationchart{{ poll.question.id }}"));
+						// google.setOnLoadCallback(drawRegionsMapPDF({{ poll.country_graph|safe }},"locationchart{{ poll.question.id }}"));
 					</script>
 				{% else %}
 					{% for text in poll.que_text_answers %}

@@ -41,6 +41,14 @@ html{
 	width: 325px;
     display: inline-block;
 }
+.pdf-chart-poll{
+  width: 100%;
+  display: block;
+}
+.pdf-chart-survey-prof{
+  display: block;
+  margin: 0 auto;
+}
 .pdf-data{
 	background: white;
 	font-size: 0.8rem !important;

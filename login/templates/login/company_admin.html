@@ -58,7 +58,7 @@
 							<script>
 								 google.setOnLoadCallback(drawChart);
 						      	function drawChart() {
-								// console.log("chart draw called");
+								console.log("chart draw called");
 						      		var dashboardData = [['Month', 'Polls', 'Views', 'Votes']];
 									{% for dash_dict in dash_graph %}
 										var dash_list = ["{{ dash_dict.month_name }}",{{ dash_dict.polls }},{{ dash_dict.views }},{{ dash_dict.votes }}];
