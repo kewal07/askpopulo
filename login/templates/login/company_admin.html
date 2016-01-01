@@ -586,8 +586,9 @@
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
+									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 									{% if poll.q_type != "text" %}
-										<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
+										
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
@@ -760,10 +761,15 @@
 													</div>
 												</div>
 											</div>
-										</div>
-									{% else %}
 										
+									{% else %}
+										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
+											{% for text in poll.comments %}
+												<p class="answer-text">{{ text }}</p>
+											{% endfor %}
+										</div>
 									{% endif %}
+									</div>
 								{% endfor %}
 							</div>
 							<div class="survey-overview">
@@ -1538,57 +1544,6 @@
 					/* End of file browse*/
 				}
 
-				$('.surveySubmit').bind('click', function(event)
-				{
-					event.preventDefault();
-					var elemid = "#create-survey-form";
-					var form_data = new FormData($(elemid)[0]);
-					form_data.append('question_count', JSON.stringify(question_list));
-					form_data.append('choice_count', JSON.stringify(choice_list));
-					$("#createSurveySubmit").attr("disabled","disabled");
-					{% if user.is_authenticated %}
-						$.ajax(
-						{
-							type: 'POST',
-							url:"/create_survey",
-							data:form_data,
-							processData: false,
-							contentType: false,
-							success:function(obj)
-							{
-								$(".errorlist").remove();
-								console.log(obj);
-								if(obj.hasOwnProperty("success")){
-									$('#dashboard-surveys-tab').trigger("click");
-									display_question_count = 1;
-									featureImageWrapped = false;
-									question_count = 1;
-									question_list = [];
-									choice_count = {};
-									choice_list = {};
-									protectedResultSurvey = false;
-									addCommentSurvey = false;
-									mandatorySurvey = false;
-								}
-								else{
-									for(var key in obj){
-									    if (obj.hasOwnProperty(key)){
-									    	if(key === "surveyError")
-										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
-										   	else{
-										   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
-										   	}
-									    }
-									}
-									$("#createSurveySubmit").removeAttr("disabled");
-								}
-							}
-						});
-					{% else %}
-						$(location).attr('href',create_url);
-					{% endif %}
-				});
-
 			}
 
 			function add_another_choice(question_count_select,selectedType){
@@ -2032,6 +1987,56 @@
 					for(var i=0; i<question_list.length; i++){
 						$("#addComment"+question_list[i]).prop( "checked", checked );
 					}
+				});
+
+				$("#surveys-content").on("click",".surveySubmit",function(event){
+					event.preventDefault();
+					var elemid = "#create-survey-form";
+					var form_data = new FormData($(elemid)[0]);
+					form_data.append('question_count', JSON.stringify(question_list));
+					form_data.append('choice_count', JSON.stringify(choice_list));
+					$("#createSurveySubmit").attr("disabled","disabled");
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/create_survey",
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(obj)
+							{
+								$(".errorlist").remove();
+								console.log(obj);
+								if(obj.hasOwnProperty("success")){
+									$('#dashboard-surveys-tab').trigger("click");
+									display_question_count = 1;
+									featureImageWrapped = false;
+									question_count = 1;
+									question_list = [];
+									choice_count = {};
+									choice_list = {};
+									protectedResultSurvey = false;
+									addCommentSurvey = false;
+									mandatorySurvey = false;
+								}
+								else{
+									for(var key in obj){
+									    if (obj.hasOwnProperty(key)){
+									    	if(key === "surveyError")
+										        $(".create-survey").children().first().prepend('<span class="errorlist errorlistSurvey error-survey"><br>'+obj[key]+'</span>');
+										   	else{
+										   		$("#"+key).parent().append('<span class="errorlist errorlistSurvey"><br>'+obj[key]+'</span>');
+										   	}
+									    }
+									}
+									$("#createSurveySubmit").removeAttr("disabled");
+								}
+							}
+						});
+					{% else %}
+						$(location).attr('href',create_url);
+					{% endif %}
 				});
 
 				$("#export-content").on("click",".export-pdf",function(){

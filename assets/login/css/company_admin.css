@@ -244,6 +244,9 @@ li.followers{
 	border-bottom: 2px dashed;
     padding-bottom: 1.5rem;
 }
+.analysis{
+	margin-top: 0rem !important;
+}
 #advancedAna{
 	width:90%;
 	margin:0 auto;
@@ -631,15 +634,15 @@ th.question-table-heading {
     font-weight: bold;
 }
 .pollsChartClassColumn{
-	width: 70%;
-    margin-left: 1rem;
+	width: 100%;
+    /*margin-left: 1rem;*/
     display: inline-block;
     height: 330px;
 }
 .advancedanalyseSelectColumn1, .advancedanalyseSelectColumn2{
 	/*max-width: 17%;*/
 	width: 7rem;
-    display: block;
+    /*display: block;*/
     margin: 0;
     margin-bottom: 1rem;
 }
@@ -653,7 +656,7 @@ th.question-table-heading {
 }
 .advancedCmpSelect{
 	/*position: absolute;*/
-	width: 17%;
+	/*width: 17%;*/
 	display: inline-block;
 	margin-top: 3rem;
 	vertical-align: top;
