@@ -650,7 +650,7 @@ th.question-table-heading {
 	width:10rem;
 }
 .advancedAnaCmp{
-	width:45% !important;
+	width:49% !important;
 	/*margin: 0 !important;*/
 	display: inline-block !important;
 }
@@ -663,7 +663,7 @@ th.question-table-heading {
 }
 .question_analyse_chart_cmp1, .question_analyse_chart_cmp2, .question_analyse_chart_loc_cmp1, .question_analyse_chart_loc_cmp2{
 	height: 400px;
-	width: 500px;
+	width: 100%;
 }
 .remove-question{
 	cursor: pointer;
