@@ -104,6 +104,7 @@ function main() {
 					askbypoll_prof_data = data.prof_dic;
 					askbypoll_country_data = data.country_dic;
 					$("#askbypoll-content---1---"+pollId).show();
+					$("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
 					if(protectResult == 1){
 						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
 					}
@@ -257,6 +258,7 @@ function main() {
 						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
 						$('.askbypoll-embed-content-div').css('height','50px');
 					}
+					$("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
 					askByPoll_age_data = data.age_dic;
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;

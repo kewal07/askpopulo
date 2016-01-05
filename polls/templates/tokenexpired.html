@@ -1,0 +1,16 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+{% endblock %}
+{% block content %}
+		<div class="questions" style="margin-top:10%">
+			<div id="unsubscribe" style="width: 40%;margin: 0 auto;text-align: center;">
+				{% if questionId %}
+					<p class="infoP" style="position: relative; top: 0; bottom: 0; left: 0; right: 0; margin: 0 auto;"> oops!!! Seems like the link that you were trying to access is expired. Click <a href="{% url 'polls:polls_vote' questionId questionSlug %}" style="text-decoration:none;color:orange;pointer:cursor;"> {{ questionText }} </a> to give your opinion and analyze the results.</p><br><br>
+				{% else %}
+					<p class="infoP" style="position: relative; top: 0; bottom: 0; left: 0; right: 0; margin: 0 auto;"> oops!!! Seems like the link that you were trying to access is expired. Click <a href="https://www.askbypoll.com/accounts/login/?next=/" style="text-decoration:none;color:orange;pointer:cursor;"> here </a> to login to AskByPoll.
+				{% endif %}
+			</div>
+		</div>
+{% endblock %}

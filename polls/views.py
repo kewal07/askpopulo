@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login
+from allauth.account.models import EmailAddress
 import os,linecache
 import sys
 from django.shortcuts import render
@@ -8,7 +9,7 @@ from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
 from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi
-# from polls.models import PollTokens
+#from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
 import datetime
@@ -39,6 +40,9 @@ client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 from login.models import ExtendedGroup,ExtendedGroupFuture
 from django.contrib.auth.models import Group
 from django.db.models import Count
+import django.contrib.auth.hashers
+from django.shortcuts import redirect
+from django.template import loader
 import requests
 import operator
 
@@ -1897,6 +1901,8 @@ def embed_poll(request):
 		req = {}
 		poll = Question.objects.get(pk=pollId)
 		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		logo_html = '<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
+		widget_title = '<p id="askbypoll-widget-title"> YOUR OPINION MATTERS </p>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		choices = Choice.objects.filter(question_id=pollId)
 		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
@@ -1923,7 +1929,18 @@ def embed_poll(request):
 		question_html = '<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'">'
 		question_html += '<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'
 		question_html += poll.question_text
-		question_html += '</p></div>'
+		question_html += '</p>'
+
+		if poll.description:
+			question_html += '<span class="askbypoll-embed-poll-question-description-label">'
+			question_html += 'Description'
+			question_html += '</span>'
+			question_html += '<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---'+str(pollId)+'">'
+			question_html += poll.description
+			question_html += '</p>'
+
+		question_html += '</div>'
+
 		html = '<div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'
 		if analysisNeeded:
 			html += '<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---'+str(pollId)+'"><span class="askbypoll-enter-details">Enter Details To Analyse Results</span>'
@@ -1931,6 +1948,7 @@ def embed_poll(request):
 			html += '<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---'+str(pollId)+'" name="gender"><option value="notSelected">What\'s your Gender</option><option value="Female">Female</option><option value="Male">Male</option><option value="D">Rather Not Say</option></select>'
 			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button> <button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
 			html += '</div>'
+		html += widget_title
 		html += logo_html
 		html += question_html
 		html += choice_html
@@ -2056,7 +2074,7 @@ def results_embed_poll(request):
 			if email and not User.objects.filter(email=email):
 				new_user = User(first_name="User",email=email,username=email,password=email)
 				new_user.save()
-				new_extended_user = ExtendedUser(user=new_user)
+				new_extended_user = ExtendedUser(user=new_user, categories='1')
 				new_extended_user.save()
 				if user_age > 0:
 					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
@@ -2161,7 +2179,7 @@ def results_embed_poll(request):
 					country_dic[country] = country_dic.get(country,0) + 1	
 		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
-		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
+		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label>'#<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
 
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---1---'+str(pollId)+'"><div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'+logo_html+'<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'"><p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'+poll.question_text+'</p></div><div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'" >'
 
@@ -2180,7 +2198,7 @@ def results_embed_poll(request):
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---2---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-agechart---'+str(pollId)+'" ></div></section>'
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" ></div></section>'
 		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" ></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div style="margin: 0px auto !important;"" class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" ></div></section>'
+		#html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div style="margin: 0px auto !important;"" class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" ></div></section>'
 
 		req = {}
 		if poll.protectResult == 1:
@@ -2577,7 +2595,6 @@ class PDFView(generic.DetailView):
 		context["incompleteResponses"] = completeRate
 		context["polls"] = survey_polls
 		context["maxVotedQuestion"] = maxVotedQuestion
-		# print(context)
 		return context
 
 class PDFPollView(generic.DetailView):

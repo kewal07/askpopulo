@@ -5,6 +5,24 @@
     -moz-box-sizing: border-box;
     /*box-sizing: border-box;*
 }*/
+.askbypoll-embed-poll-question-description{
+    color: black;
+    margin-left: 10rem;
+    font-size: 0.8rem;
+}
+
+.askbypoll-embed-poll-question-description-label{
+    color: black;
+    margin-left: 10rem;
+    font-size: 0.7rem;
+}
+
+#askbypoll-widget-title{
+    color: black;
+    font-size: x-large;
+    margin-left: 10rem;
+    border-bottom: 5px solid orange;
+}
 #askbypoll-thankyou-message{
     font-family: 'Montserrat', sans-serif;
     color:black;
@@ -16,21 +34,12 @@
     margin:1rem 0;
     border:1px solid;
 }
-/*.askbypoll-embed-poll-wrapper{
-	width: 80%;
-    margin: 0 auto;
-    padding: 1rem;
-    background-color: #6952a0;
-	font-family: 'Montserrat', sans-serif;
-	color:#fff !important;
-	position: relative;
-}*/
 img.askbypoll-embed-poll-logo{
-	width: 40px;
-    height: 40px;
+	width: 130px;
+    height: 130px;
     position: absolute;
-    right: 0;
-    top: 0;
+    top: 1rem;
+    display: inline-block;
 }
 .askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
   text-transform: capitalize
@@ -163,15 +172,12 @@ select{
 }
 .askbypoll-embed-poll-question{
     border-bottom:1px solid;
-    border-color:black;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
     text-align: justify;
-    line-height: 1.5rem;
+    line-height:0.1rem;
 }
 .askbypoll-embed-poll-question-text{
     font-size:1.3rem !important;
-    margin-left:1.5rem;
+    margin-left:10rem;
     color:black !important;
 }
 .askbypoll-embed-poll-question-choice-text{
@@ -215,10 +221,6 @@ a.askbypoll-embed-poll-askbypoll-url{
     text-decoration: none;
     color:orange;
 }
-.askbypoll-embed-poll-question-choices{
-    /*margin-top:1rem;*/
-    margin-left:1.5rem;
-}
 img.askbypoll-embed-poll-question-choice-img{
     width: 180px;
     height: 150px;
@@ -239,7 +241,7 @@ img.askbypoll-embed-poll-question-choice-img{
 .askbypoll-embed-poll-choice{
     /*display:inline-block;*/
     position: relative;
-    width:80%;
+    width:97%;
     /*margin:1.5rem;*/
     margin-top:1rem;
 }
