@@ -1932,9 +1932,9 @@ def embed_poll(request):
 		question_html += '</p>'
 
 		if poll.description:
-			question_html += '<span class="askbypoll-embed-poll-question-description-label">'
+			question_html += '<p class="askbypoll-embed-poll-question-description-label">'
 			question_html += 'Description'
-			question_html += '</span>'
+			question_html += '</p>'
 			question_html += '<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---'+str(pollId)+'">'
 			question_html += poll.description
 			question_html += '</p>'

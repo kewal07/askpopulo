@@ -9,12 +9,21 @@
     color: black;
     margin-left: 10rem;
     font-size: 0.8rem;
+    display: inline-block;
+    padding-bottom: 0.5rem;
 }
 
 .askbypoll-embed-poll-question-description-label{
     color: black;
     margin-left: 10rem;
     font-size: 0.7rem;
+    display: none;
+}
+
+.askbypoll-embed-poll-question-choices {
+    /* margin-left: 1.5rem; */
+    margin: 0 auto;
+    width: 80%;
 }
 
 #askbypoll-widget-title{
@@ -22,6 +31,8 @@
     font-size: x-large;
     margin-left: 10rem;
     border-bottom: 5px solid orange;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.5rem;
 }
 #askbypoll-thankyou-message{
     font-family: 'Montserrat', sans-serif;
@@ -35,8 +46,8 @@
     border:1px solid;
 }
 img.askbypoll-embed-poll-logo{
-	width: 130px;
-    height: 130px;
+	width: 100px;
+    height: 100px;
     position: absolute;
     top: 1rem;
     display: inline-block;
@@ -49,7 +60,6 @@ a.askbypoll-embed-poll-askbypoll-url{
 	color:orange;
 }
 .askbypoll-embed-poll-question-choices{
-	/*margin-top:1rem;*/
 	margin-left:1.5rem;
 }
 img.askbypoll-embed-poll-question-choice-img{
@@ -173,7 +183,7 @@ select{
 .askbypoll-embed-poll-question{
     border-bottom:1px solid;
     text-align: justify;
-    line-height:0.1rem;
+    /*line-height:0.1rem;*/
 }
 .askbypoll-embed-poll-question-text{
     font-size:1.3rem !important;
@@ -221,11 +231,7 @@ a.askbypoll-embed-poll-askbypoll-url{
     text-decoration: none;
     color:orange;
 }
-img.askbypoll-embed-poll-question-choice-img{
-    width: 180px;
-    height: 150px;
-    display: block;
-}
+
 .askbypoll-embed-poll-question-choice{
     display: inline-block;
     position: relative;
