@@ -126,6 +126,15 @@ svg{
 	-webkit-transform:rotateX(0deg) rotateY(20deg);
 	-webkit-animation:anim2 ease-in-out 60s infinite alternate;
 }
+
+.mail-poll{
+	margin-right:24rem;
+}
+.shareOnMail{
+	display:none;
+	border:1px dashed;
+}
+
 @-webkit-keyframes anim2{
 	from {-webkit-transform:rotateY(0deg)}
 	50% {-webkit-transform:rotateY(360deg)}
@@ -234,6 +243,9 @@ li.followers{
 .li-margin-polls{
 	border-bottom: 2px dashed;
     padding-bottom: 1.5rem;
+}
+.analysis{
+	margin-top: 0rem !important;
 }
 #advancedAna{
 	width:90%;
@@ -622,15 +634,15 @@ th.question-table-heading {
     font-weight: bold;
 }
 .pollsChartClassColumn{
-	width: 70%;
-    margin-left: 1rem;
+	width: 100%;
+    /*margin-left: 1rem;*/
     display: inline-block;
     height: 330px;
 }
 .advancedanalyseSelectColumn1, .advancedanalyseSelectColumn2{
 	/*max-width: 17%;*/
 	width: 7rem;
-    display: block;
+    /*display: block;*/
     margin: 0;
     margin-bottom: 1rem;
 }
@@ -638,20 +650,20 @@ th.question-table-heading {
 	width:10rem;
 }
 .advancedAnaCmp{
-	width:45% !important;
+	width:49% !important;
 	/*margin: 0 !important;*/
 	display: inline-block !important;
 }
 .advancedCmpSelect{
 	/*position: absolute;*/
-	width: 17%;
+	/*width: 17%;*/
 	display: inline-block;
 	margin-top: 3rem;
 	vertical-align: top;
 }
 .question_analyse_chart_cmp1, .question_analyse_chart_cmp2, .question_analyse_chart_loc_cmp1, .question_analyse_chart_loc_cmp2{
 	height: 400px;
-	width: 500px;
+	width: 100%;
 }
 .remove-question{
 	cursor: pointer;

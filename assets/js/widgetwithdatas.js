@@ -76,6 +76,7 @@ function main() {
 		var askByPoll_gender_data;
 		var askbypoll_prof_data;
 		var askbypoll_country_data;
+		var protectResult = 0;
         /******* Load HTML *******/
 		$(".askbypoll-embed-poll").each(function(index){
 			//setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 1000);
@@ -96,12 +97,17 @@ function main() {
 				var pollDiv = $("#askbypoll-data-embed-poll---"+pollId);
 				var jsonp_url = "https://www.askbypoll.com/results-embed-poll?dataStored="+dataGiven+"&alreadyVoted="+alreadyVoted+"&pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
+					protectResult = data.protect;
 					pollDiv.html(data.html);
 					askByPoll_age_data = data.age_dic;
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;
 					askbypoll_country_data = data.country_dic;
 					$("#askbypoll-content---1---"+pollId).show();
+					$("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
+					if(protectResult == 1){
+						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+					}
 					google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
 					google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
 					google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
@@ -114,15 +120,22 @@ function main() {
 					$.getJSON(check_if_voted_url, function(data) {
 					if("result" in data){
 						var result = data.result;
-						for (var choice in result) {
-							if (result.hasOwnProperty(choice)) {
-								var progressBarId = "askbypoll-embed-progress-bar---"+choice;
-								var percent = result[choice].split('---')[0];
-								$('#'+progressBarId).css('display','inline-block');
-								$('#'+progressBarId).css('width',percent+'%');
-								//$('#'+progressBarId).css('background','yellow');
-								$('#askbypoll-result-choice---'+choice).text(percent+'%');
+						protectResult = data.protect;
+						
+						if(protectResult == 0){
+							for (var choice in result) {
+								if (result.hasOwnProperty(choice)) {
+									var progressBarId = "askbypoll-embed-progress-bar---"+choice;
+									var percent = result[choice].split('---')[0];
+									$('#'+progressBarId).css('display','inline-block');
+									$('#'+progressBarId).css('width',percent+'%');
+									//$('#'+progressBarId).css('background','yellow');
+									$('#askbypoll-result-choice---'+choice).text(percent+'%');
+								}
 							}
+						} else {
+							$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+							$('.askbypoll-embed-content-div').css('height','50px');
 						}
 					}
 
@@ -140,21 +153,28 @@ function main() {
 						event.stopPropagation();
 			else {
 				var a = new Date();
-				a = new Date(a.getTime() +1000*60*60*24);
+				a = new Date(a.getTime() +1000*60*60*24*7);
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
 				var choiceId = $(this).attr("id").split('---')[1];
 				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
-					for (var choice in result) {
-						if (result.hasOwnProperty(choice)) {
-							var progressBarId = "askbypoll-embed-progress-bar---"+choice;
-							var percent = result[choice].split('---')[0];
-							$('#'+progressBarId).css('display','inline-block');
-							$('#'+progressBarId).css('width',percent+'%');
-							//$('#'+progressBarId).css('background','yellow');
-							$('#askbypoll-result-choice---'+choice).text(percent+'%');
+					protectResult = data.protect;
+
+					if(protectResult == 0){
+						for (var choice in result) {
+							if (result.hasOwnProperty(choice)) {
+								var progressBarId = "askbypoll-embed-progress-bar---"+choice;
+								var percent = result[choice].split('---')[0];
+								$('#'+progressBarId).css('display','inline-block');
+								$('#'+progressBarId).css('width',percent+'%');
+								//$('#'+progressBarId).css('background','yellow');
+								$('#askbypoll-result-choice---'+choice).text(percent+'%');
+							}
 						}
+					} else {
+						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+						$('.askbypoll-embed-content-div').css('height','50px');
 					}
 					if(divId.startsWith('askbypoll-data')){
 						//$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
@@ -173,26 +193,33 @@ function main() {
 						event.stopPropagation();
 			else {
 				var a = new Date();
-				a = new Date(a.getTime() +1000*60*60*24);
+				a = new Date(a.getTime() +1000*60*60*24*7);
 				document.cookie = 'ASKBYPOLL_VOTED_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/'; 
 				var choiceId = $(this).attr("id").split('---')[1];
 				// var pollId = $(".askbypoll-embed-poll").attr('id').split('---')[1];
 				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&callback=?";
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
-					for (var choice in result) {
-						if (result.hasOwnProperty(choice)) {
-							var progressBarId = "askbypoll-embed-progress-bar---"+choice;
-							var votes = result[choice].split('---')[1];
-							var totalvotes = result[choice].split('---')[2];
-							var percent = 0;
-							if(totalvotes > 0)
-								percent = Math.round((votes/totalvotes)*100);
-							$('#'+progressBarId).css('display','inline-block');
-							$('#'+progressBarId).css('width',percent+'%');
-							//$('#'+progressBarId).css('background','yellow');
-							$('#askbypoll-result-choice---'+choice).text(percent+'%');
+					protectResult = data.protect;
+					
+					if(protectResult == 0){
+						for (var choice in result) {
+							if (result.hasOwnProperty(choice)) {
+								var progressBarId = "askbypoll-embed-progress-bar---"+choice;
+								var votes = result[choice].split('---')[1];
+								var totalvotes = result[choice].split('---')[2];
+								var percent = 0;
+								if(totalvotes > 0)
+									percent = Math.round((votes/totalvotes)*100);
+								$('#'+progressBarId).css('display','inline-block');
+								$('#'+progressBarId).css('width',percent+'%');
+								//$('#'+progressBarId).css('background','yellow');
+								$('#askbypoll-result-choice---'+choice).text(percent+'%');
+							}
 						}
+					} else {
+						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+						$('.askbypoll-embed-content-div').css('height','50px');
 					}
 					if(divId.startsWith('askbypoll-data')){
 						//$("#askbypoll-embed-poll-question-choices---"+pollId).css("opacity","0.5");
@@ -215,7 +242,7 @@ function main() {
 				$("#askbypoll-age---"+pollId).parent().prepend('<span class="askbypoll-embed-error"> Age Gender Profession are mandatory</span>');
 			}else{
 				var a = new Date();
-                                a = new Date(a.getTime() +1000*60*60*24);
+                                a = new Date(a.getTime() +1000*60*60*24*7);
 				document.cookie = 'ASKBYPOLL_DATA_GIVEN_'+pollId+'='+true+'; expires='+a.toGMTString()+';path=/';
 				var jsonp_url = "https://www.askbypoll.com/results-embed-poll?pollId="+pollId+"&age="+askbypollAge+"&gender="+askbypollGender+"&profession="+askbypollProfession+"&email="+askbypollEmail+"&callback=?";
 				//var a = new Date();
@@ -224,7 +251,14 @@ function main() {
 				$.getJSON(jsonp_url, function(data) {
 					$("#askbypoll-embed-overlay---"+pollId).toggle("slow");
 					pollDiv.html(data.html);
+					protectResult = data.protect;
 					$("#askbypoll-content---1---"+pollId).show();
+					if(protectResult == 1)
+					{
+						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+						$('.askbypoll-embed-content-div').css('height','50px');
+					}
+					$("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
 					askByPoll_age_data = data.age_dic;
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;
@@ -240,6 +274,12 @@ function main() {
 			var that = $(this);
 			var pollId = $(this).attr('id').split('---')[1];
 			var overlayId = "#askbypoll-embed-overlay---"+pollId;
+			
+			if(protectResult == 1) {
+				$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+				$('.askbypoll-embed-content-div').css('height','50px');
+			}
+			
 			$(overlayId).toggle('slow');
 		});
 
@@ -282,8 +322,14 @@ function main() {
 			  pieHole: 0.4,
     		  legend:'bottom'
 			};
-			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-agechart---"+pollId));
-			chart.draw(data, options);
+
+			if(protectResult == 0){
+				var chart = new google.visualization.PieChart(document.getElementById("askbypoll-agechart---"+pollId));
+				chart.draw(data, options);
+			} else {
+				$('#askbypoll-agechart---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+				$('.askbypoll-embed-content-div').css('height','50px');
+			}
 	  	}
 	  	function drawGenderChart(pollId, gender_dic) {
 			var data = google.visualization.arrayToDataTable([
@@ -298,8 +344,14 @@ function main() {
               legend:'bottom',
                backgroundColor: {'stroke':'#666', 'strokeWidth':'2'}
 			};
-			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-genderchart---"+pollId));
-			chart.draw(data, options);
+
+			if(protectResult == 0){
+				var chart = new google.visualization.PieChart(document.getElementById("askbypoll-genderchart---"+pollId));
+				chart.draw(data, options);
+			} else {
+				$('#askbypoll-genderchart---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+				$('.askbypoll-embed-content-div').css('height','50px');
+			}
 		}
 		function drawProfessionChart(pollId, prof_dic) {
 			var profData = [['Profession','Votes']];
@@ -312,8 +364,14 @@ function main() {
                legend:'bottom',
                backgroundColor: {'stroke':'#666', 'strokeWidth':'2'},
 			};
-			var chart = new google.visualization.PieChart(document.getElementById("askbypoll-professionchart---"+pollId));
-			chart.draw(data, options);
+
+			if(protectResult == 0){
+				var chart = new google.visualization.PieChart(document.getElementById("askbypoll-professionchart---"+pollId));
+				chart.draw(data, options);
+			} else {
+				$('#askbypoll-professionchart---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+				$('.askbypoll-embed-content-div').css('height','50px');
+			}
 		}
 		function drawRegionsMap(pollId, country_dic) {
 			var conData = [['Country', 'Votes']];
@@ -326,8 +384,14 @@ function main() {
 				//backgroundColor: {'strokeWidth':'2'},
 				'height':'700px'
 			};
-			var chart = new google.visualization.GeoChart(document.getElementById('askbypoll-regions_div---'+pollId));
-			chart.draw(data, options);
+
+			if(protectResult == 0){
+				var chart = new google.visualization.GeoChart(document.getElementById('askbypoll-regions_div---'+pollId));
+				chart.draw(data, options);
+			} else {
+				$('#askbypoll-regions_div---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
+				$('.askbypoll-embed-content-div').css('height','50px');
+			}
 		}
     });
 }

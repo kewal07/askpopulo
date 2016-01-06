@@ -491,6 +491,7 @@ class AdminDashboard(BaseViewDetail):
 				dash_dict['views'] = dash_views
 				dash_dict['votes'] = dash_votes
 				dash_graph.append(dash_dict)
+			print(dash_graph)
 			data['dash_graph'] = dash_graph
 			for que in polls:
 				pole_dict = {}
@@ -584,7 +585,8 @@ class AdminDashboard(BaseViewDetail):
 						votes = Vote.objects.filter(user_id=voteText.user.id,choice__in=questionChoices)
 						for vote in votes:
 							comment_text += choice_data.get(vote.choice.id) + ","
-						comment_text = comment_text[:-1] + " :"
+						if comment_text:
+							comment_text = comment_text[:-1] + " :"
 						comment_text += voteText.answer_text
 						comments.append(comment_text)
 
