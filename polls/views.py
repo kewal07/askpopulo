@@ -1901,8 +1901,8 @@ def embed_poll(request):
 		req = {}
 		poll = Question.objects.get(pk=pollId)
 		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
-		logo_html = '<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
-		widget_title = '<p id="askbypoll-widget-title"> YOUR OPINION MATTERS </p>'
+		logo_html = '<div><a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
+		widget_title = '<p id="askbypoll-widget-title"> YOUR OPINION MATTERS </p></div>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		choices = Choice.objects.filter(question_id=pollId)
 		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
@@ -1948,8 +1948,8 @@ def embed_poll(request):
 			html += '<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---'+str(pollId)+'" name="gender"><option value="notSelected">What\'s your Gender</option><option value="Female">Female</option><option value="Male">Male</option><option value="D">Rather Not Say</option></select>'
 			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button> <button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
 			html += '</div>'
-		html += widget_title
 		html += logo_html
+		html += widget_title
 		html += question_html
 		html += choice_html
 		html += site_link_html
