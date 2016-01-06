@@ -468,10 +468,16 @@ class AdminDashboard(BaseViewDetail):
 			cur_time = datetime.datetime.now()
 			month_names = ['Jan','Feb','March','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
 			for i in range(3):
-				month_num = cur_time.month - i
+				month_num = (cur_time.month - i)
+				year_considered = cur_time.year
+				if month_num < 1:
+					month_num += 12
+					year_considered -= 1
 				month_name = month_names[month_num-1]
+				# print(cur_time.month,month_num,cur_time.year,month_name,year_considered)
 				# dash_polls = Question.objects.filter(user_id = user.id,pub_date__month=month_num)
-				dash_polls = [ x for x in polls if x.pub_date.month == month_num]
+				dash_polls = [ x for x in polls if x.pub_date.month == month_num and x.pub_date.year == year_considered]
+				# print(dash_polls)
 				dash_polls_count = len(dash_polls)
 				dash_views = 0
 				dash_votes = 0

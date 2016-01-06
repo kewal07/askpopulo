@@ -36,9 +36,15 @@
 								{{ question.get_user_details.user_name }}
 							</a>
 						</p>
+						{% if not question.isAnonymous %}
+							<div class="usr-creds-msg" style="font-size:0.9rem">
+								<span class="usr-det">pCoins : {{ question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
+								<span class="usr-det .connections">Connection{{ connection|pluralize }} : {{ connection }} <i class="fa fa-users"></i></span>
+							</div>
+						{% endif %}
 						<p>
 							Asked on:<br>
-								<span id="{{ question.id }}pubdate"></span><br>
+							{{ question.pub_date }}
 						</p>
 					</div>
 				</div> 
