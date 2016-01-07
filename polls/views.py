@@ -1901,8 +1901,8 @@ def embed_poll(request):
 		req = {}
 		poll = Question.objects.get(pk=pollId)
 		#logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
-		logo_html = '<div class="askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---'+str(pollId)+'"><a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---'+str(pollId)+'"  href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
-		widget_title = '<p class="askbypoll-widget-title" id="askbypoll-widget-title---'+str(pollId)+'"> YOUR OPINION MATTERS </p></div>'
+		logo_html = '<div class="a-clearfix askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---'+str(pollId)+'"><a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---'+str(pollId)+'"  href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
+		widget_title = '<p class="askbypoll-widget-title" id="askbypoll-widget-title---'+str(pollId)+'"> YOUR OPINION MATTERS </p>'#</div>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		choices = Choice.objects.filter(question_id=pollId)
 		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
@@ -1927,16 +1927,15 @@ def embed_poll(request):
 				choice_html += '</div>'
 		choice_html += '</div>'
 		question_html = '<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'">'
+		question_html += widget_title
 		question_html += '<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'
 		question_html += poll.question_text
 		question_html += '</p>'
 
 		if poll.description:
-			question_html += '<p class="askbypoll-embed-poll-question-description-label">'
-			question_html += 'Description'
-			question_html += '</p>'
 			question_html += '<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---'+str(pollId)+'">'
-			question_html += poll.description
+			#question_html += 'Description:'
+			question_html += 'Description: '+poll.description
 			question_html += '</p>'
 
 		question_html += '</div>'
@@ -1949,8 +1948,11 @@ def embed_poll(request):
 			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button> <button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button>'
 			html += '</div>'
 		html += logo_html
-		html += widget_title
+		#html += question_html
+		#html += widget_title
 		html += question_html
+		html += '</div>'
+		#html += question_html
 		html += choice_html
 		html += site_link_html
 		html += '</div>'

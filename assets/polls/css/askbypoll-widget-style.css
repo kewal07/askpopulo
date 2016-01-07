@@ -5,12 +5,31 @@
     -moz-box-sizing: border-box;
     /*box-sizing: border-box;*
 }*/
+.a-clearfix:after {
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+     }
+.a-clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .a-clearfix { height: 1%; }
+.a-clearfix { display: block; }
+a.askbypoll-embed-poll-icon{
+    display:inline-block;
+    width:15%;
+}
+
 .askbypoll-embed-poll-question-description{
     color: black;
-    margin-left: 10rem;
     font-size: 0.8rem;
     display: inline-block;
     padding-bottom: 0.5rem;
+    margin-top:0.5rem;
+    font-size:0.8rem !important;
+    margin-bottom:0 !important;
 }
 
 .askbypoll-embed-poll-question-description-label{
@@ -23,34 +42,37 @@
 .askbypoll-embed-poll-question-choices {
     /* margin-left: 1.5rem; */
     margin: 0 auto;
-    width: 80%;
+    width: 90%;
 }
 
-#askbypoll-widget-title{
-    color: black;
-    font-size: x-large;
-    margin-left: 10rem;
+.askbypoll-widget-title{
+    color:black !important;
     border-bottom: 5px solid orange;
-    margin-bottom: 0.7rem;
+    margin-bottom: 0rem !important;
     padding-bottom: 0.5rem;
+    font-weight:bold !important;
 }
+
 #askbypoll-thankyou-message{
+    text-align:center;
     color:black;
 }
+
 .askbypoll-embed-content{
     border:1px solid;
 }
+
 .askbypoll-embed-poll{
     margin:1rem 0;
     border:1px solid;
 }
+
 img.askbypoll-embed-poll-logo{
 	width: 100px;
     height: 100px;
-    position: absolute;
-    top: 1rem;
     display: inline-block;
 }
+
 .askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
   text-transform: capitalize
 }
@@ -182,11 +204,16 @@ select{
 .askbypoll-embed-poll-question{
     border-bottom:1px solid;
     text-align: justify;
+    float: right;
+    width:83%;
     /*line-height:0.1rem;*/
+    /*margin-top:-3rem;*/
+    /*margin-left:-2rem;*/
 }
 .askbypoll-embed-poll-question-text{
     font-size:1.3rem !important;
-    margin-left:10rem;
+    line-height:initial !important;
+    margin-bottom:0;
     color:black !important;
 }
 .askbypoll-embed-poll-question-choice-text{
