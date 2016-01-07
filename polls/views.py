@@ -1900,9 +1900,9 @@ def embed_poll(request):
 			analysisNeeded = False
 		req = {}
 		poll = Question.objects.get(pk=pollId)
-		logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
-		logo_html = '<div><a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
-		widget_title = '<p id="askbypoll-widget-title"> YOUR OPINION MATTERS </p></div>'
+		#logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
+		logo_html = '<div class="askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---'+str(pollId)+'"><a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---'+str(pollId)+'"  href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="http://www.askbypoll.com/static/widgetLogo.png"></a>'
+		widget_title = '<p class="askbypoll-widget-title" id="askbypoll-widget-title---'+pollId+'"> YOUR OPINION MATTERS </p></div>'
 		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
 		choices = Choice.objects.filter(question_id=pollId)
 		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
