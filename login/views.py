@@ -496,8 +496,10 @@ class AdminDashboard(BaseViewDetail):
 			for que in polls:
 				pole_dict = {}
 				pole_dict['poll'] = que
-				pole_dict['votes'] = Voted.objects.filter(question_id=que.id).count()
-				pole_dict['allvotes'] = pole_dict['votes'] + VoteApi.objects.filter(question=que).count()
+				voted_list = Voted.objects.filter(question_id=que.id)
+				pole_dict['votes'] = len(voted_list)
+				email_already_considered = [x.user.email for x in voted_list]
+				pole_dict['allvotes'] = pole_dict['votes'] + VoteApi.objects.filter(question=que).exclude(email__in=email_already_considered).count()
 				pole_dict['votes'] += VoteApi.objects.filter(question=que).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
 				total_views += que.numViews
 				polls_vote_list.append(pole_dict)

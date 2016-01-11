@@ -274,8 +274,22 @@ class VoteText(models.Model):
 	question = models.ForeignKey(Question)
 	answer_text = models.CharField(max_length=255)
 	created_at = models.DateTimeField(auto_now_add=True,null=True)
+	user_data = models.TextField()
 	def __str__(self):
 		return self.answer_text
+	def save(self, *args, **kwargs):
+		user_data = {}
+		if not self.user_data:
+			for field in self.user.extendeduser._meta.get_fields():
+				# print(dir(field))
+				if not field.is_relation and field.name != "imageUrl":
+					if field.name == "birthDay":
+						age = self.user.extendeduser.calculate_age()
+						user_data[field.name] = age
+					else:
+						user_data[field.name] = getattr(self.user.extendeduser, field.name)
+			self.user_data = str(user_data)
+		super(VoteText, self).save(*args, **kwargs)
 
 class Vote(models.Model):
 	vote_pk = models.CharField(max_length=255)
@@ -284,14 +298,32 @@ class Vote(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True,null=True)
 	betCredit = models.IntegerField(default=0)
 	earnCredit = models.IntegerField(default=0)
+	user_data = models.TextField()
 	def __str__(self):
 		return self.choice.choice_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
-		digestmod = hashlib.sha1
-		msg = ("%s %s %s"%(self.choice.choice_text,self.user.username,datetime.datetime.now())).encode('utf-8')
-		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
-		self.vote_pk = sig
-		super(Vote, self).save(*args, **kwargs)
+		try:
+			digestmod = hashlib.sha1
+			msg = ("%s %s %s"%(self.choice.choice_text,self.user.username,datetime.datetime.now())).encode('utf-8')
+			sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+			self.vote_pk = sig
+			user_data = {}
+			if not self.user_data:
+				for field in self.user.extendeduser._meta.get_fields():
+					# print(dir(field))
+					if not field.is_relation and field.name != "imageUrl":
+						if field.name == "birthDay":
+							age = self.user.extendeduser.calculate_age()
+							user_data[field.name] = age
+						else:
+							user_data[field.name] = getattr(self.user.extendeduser, field.name)
+				self.user_data = str(user_data)
+			# print("-------------",self.user_data)		
+			super(Vote, self).save(*args, **kwargs)
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
 
 class Subscriber(models.Model):
 	subscriber_pk = models.CharField(max_length=255)
@@ -357,4 +389,6 @@ class VoteApi(models.Model):
 	country = models.CharField(max_length=512,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
 	email = models.EmailField(max_length=70,blank=True, null= True)
+	session = models.CharField(max_length=512,blank=True,null=True)
+	src = models.CharField(max_length=512,blank=True,null=True)
 	

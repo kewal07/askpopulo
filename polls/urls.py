@@ -54,4 +54,5 @@ urlpatterns = patterns('',
 	url(r'^foodtechstartups', TemplateView.as_view(template_name='foodstartups.html'), name='foodstartups'),
 	url(r'^missionbellandur', TemplateView.as_view(template_name='bellandur.html'), name='missionbellandur'),
 	#url(r'^servemailpollresponse', views.responseOnEmail, name='responseOnEmail'),
+	# url(r'^getwidgettemplate/(?P<pk>\d+)', views.WebsiteWidgetTemplateView.as_view(),name="getwidgettemplate"),
 )

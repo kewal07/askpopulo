@@ -22,6 +22,7 @@ a.askbypoll-embed-poll-icon{
     /* width: 15%; */
     margin-right: 0.5rem;
     vertical-align: top;
+    padding: 0.5rem 0 0.5rem 0.5rem !important;
 }
 
 .askbypoll-embed-poll-question-description{
@@ -44,7 +45,9 @@ a.askbypoll-embed-poll-icon{
 .askbypoll-embed-poll-question-choices {
     /* margin-left: 1.5rem; */
     margin: 0 auto;
-    width: 90%;
+    width: 100%;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
 }
 
 .askbypoll-widget-title{
@@ -83,9 +86,6 @@ img.askbypoll-embed-poll-logo{
 a.askbypoll-embed-poll-askbypoll-url{
 	text-decoration: none;
 	color:orange;
-}
-.askbypoll-embed-poll-question-choices{
-	margin-left:1.5rem;
 }
 img.askbypoll-embed-poll-question-choice-img{
 	width: 194px;
@@ -129,7 +129,7 @@ img.askbypoll-embed-poll-question-choice-img{
 }*/
 
 .askbypoll-embed-progress-bar{
-	width: 80%;
+	width: 72%;
     display: inline-block !important;
     position: absolute;
     cursor: pointer;
@@ -205,7 +205,7 @@ select{
     box-sizing: border-box;
 }
 .askbypoll-embed-poll-question{
-    border-bottom: 1px solid;
+    /*border-bottom: 1px solid;*/
     display: inline-block !important;
     /*text-align: justify;*/
     /* float: right; */
@@ -252,7 +252,7 @@ select{
 .askbypoll-embed-poll-powered-by{
     position: relative;
     height: 20px;
-    margin-top: 1rem;
+    /*margin-top: 1rem;*/
 }
 p.askbypoll-embed-poll-powered-by-p{
     color:black !important;
@@ -291,9 +291,9 @@ a.askbypoll-embed-poll-askbypoll-url{
 span.askbypoll-poll-result{
     position: absolute;
     right: 5px;
-    top: 8px;
+    top: 13px;
     z-index: 1000;
-    color:#ffffff;
+    color:black;
     font-size: 1.3rem;
 }
 .askbypoll-embed-overlay{
@@ -352,6 +352,8 @@ span.askbypoll-poll-result{
 }
 .askbypoll-button{
     /*float: left;*/
+    background-color: #2ECC71;
+    color: white;
 }
 .askbypoll-close-button{
     /*float: right;*/
@@ -442,4 +444,17 @@ span.askbypoll-poll-result{
 }
 .askbypoll-embed-poll-header{
     width: 100% !important;
+    border-bottom: 1px solid black !important;
+}
+.askbypoll-embed-show-demographics{
+    display: none;
+    cursor: pointer;
+    font-style: italic;
+    color: orange;
+    position: absolute;
+    bottom: 0px;
+}
+.askbypoll-widget-error{
+    color: red;
+    text-align: center;
 }

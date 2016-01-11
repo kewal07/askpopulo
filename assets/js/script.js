@@ -661,6 +661,8 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	$("#advanced-ana-bar-graph-1---"+pollId).show();
         	$("#advanced-ana-bar-graph-2---"+pollId).show();
+        	$("#advanced-ana-bar-graph-1---"+pollId).html("Results With All Responses : "+advanced_analyse_dic['total_votes_extra']);
+        	$("#advanced-ana-bar-graph-2---"+pollId).html("Results Which Have Demographic Data : "+advanced_analyse_dic['total_votes']);
         	var chartExtra = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra'));
 	        chartExtra.draw(dataExtra, options);
 	        google.visualization.events.addListener(chartExtra, 'animationfinish', displayAnnotation);

@@ -45,6 +45,8 @@ from django.shortcuts import redirect
 from django.template import loader
 import requests
 import operator
+from django.template.loader import render_to_string
+import ast
 
 # Create your views here.
 shakey=(settings.SHAKEY).encode('utf-8')
@@ -1183,16 +1185,19 @@ class AccessDBView(BaseViewList):
 				vote_list = []
 				email_list_voted = []
 				if choiceId == "nochoice":
-					vote_list = Voted.objects.filter(question_id=pollId)
+					vote_list = Vote.objects.filter(choice_id__in=Choice.objects.filter(question_id=pollId).values("id"))
 					vote_api_list = VoteApi.objects.filter(question_id=pollId)
 				else:
 					vote_list = Vote.objects.filter(choice_id=choiceId)
 					vote_api_list = VoteApi.objects.filter(choice_id=choiceId)
 				for vote in vote_list:
-					user_extendeduser = vote.user.extendeduser
+					user_data = ast.literal_eval(vote.user_data)
+					# user_extendeduser = vote.user.extendeduser
 					email_list_voted.append(vote.user.email)
-					gender_dic[user_extendeduser.gender] += 1
-					user_age = user_extendeduser.calculate_age()
+					# gender_dic[user_extendeduser.gender] += 1
+					# user_age = user_extendeduser.calculate_age()
+					gender_dic[user_data['gender']] += 1
+					user_age = user_data['birthDay']
 					if user_age > 50:
 						age_dic['over_50'] += 1
 					elif user_age > 35:
@@ -1205,12 +1210,15 @@ class AccessDBView(BaseViewList):
 						age_dic['bet_20_25'] += 1
 					elif user_age > 0:
 						age_dic['under_19'] += 1
-					prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
-					country = user_extendeduser.country
+					# prof_dic[user_extendeduser.profession] = prof_dic.get(user_extendeduser.profession,0) + 1
+					# country = user_extendeduser.country
+					prof_dic[user_data["profession"]] = prof_dic.get(user_data["profession"],0) + 1
+					country = user_data["country"]
 					if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 						country = 'United Kingdom'
 					country_dic[country] = country_dic.get(country,0) + 1
-					state = user_extendeduser.state
+					# state = user_extendeduser.state
+					state = user_data["state"]
 					if country == stateContry:
 						if country == 'United Kingdom':
 							if state in englandDict:
@@ -1224,6 +1232,8 @@ class AccessDBView(BaseViewList):
 						else:
 							state_dic[state] = state_dic.get(state,0) + 1
 				for vote in vote_api_list:
+					if vote.email and vote.email in email_list_voted:
+						continue
 					if vote.age and vote.profession and vote.gender:
 						gender_dic[vote.gender] += 1
 						user_age = vote.age
@@ -1308,12 +1318,21 @@ class AccessDBView(BaseViewList):
 					choice_dic["key"] = choice_text
 					choice_dic["val"] = 0
 					choice_dic["extra_val"] = 0
+					email_list_voted = []
 					for vote in Vote.objects.filter(choice_id=choice.id):
-						user_age = vote.user.extendeduser.calculate_age()
-						user_gender = vote.user.extendeduser.gender.lower()
-						user_prof = vote.user.extendeduser.profession.lower()
-						user_country = vote.user.extendeduser.country.lower()
-						user_state = vote.user.extendeduser.state.lower()
+						# print(vote.user_data,type(vote.user_data),dir(ast))
+						user_data = ast.literal_eval(vote.user_data)
+						# user_age = vote.user.extendeduser.calculate_age()
+						# user_gender = vote.user.extendeduser.gender.lower()
+						# user_prof = vote.user.extendeduser.profession.lower()
+						# user_country = vote.user.extendeduser.country.lower()
+						# user_state = vote.user.extendeduser.state.lower()
+						user_age = user_data["birthDay"]
+						user_gender = user_data["gender"]
+						user_prof = user_data["profession"]
+						user_country = user_data["country"]
+						user_state = user_data["state"]
+						email_list_voted.append(vote.user.email)
 						add_cnt = True
 						# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
 						if not (user_age >= min_age and user_age <= max_age):
@@ -1332,28 +1351,31 @@ class AccessDBView(BaseViewList):
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
 					for vote in VoteApi.objects.filter(choice_id=choice.id):
-						if vote.age and vote.profession and vote.gender:
-							user_age = vote.age
-							user_gender = vote.gender.lower()
-							user_prof = vote.profession.lower()
-							user_country = vote.country.lower()
-							user_state = vote.state.lower()
-							add_cnt = True
-							if not (user_age >= min_age and user_age <= max_age):
-								add_cnt = False
-							if gender and user_gender != gender:
-								add_cnt = False
-							if profession and user_prof != profession:
-								add_cnt = False
-							if state and user_state != state:
-								add_cnt = False
-							if country and user_country != country:
-								add_cnt = False
-							if add_cnt:
-								choice_dic["val"] += 1
-								total_votes += 1
-						choice_dic["extra_val"] += 1
-						total_votes_extra += 1
+						if vote.email and vote.email in email_list_voted:
+							pass
+						else:
+							if vote.age and vote.profession and vote.gender:
+								user_age = vote.age
+								user_gender = vote.gender.lower()
+								user_prof = vote.profession.lower()
+								user_country = vote.country.lower()
+								user_state = vote.state.lower()
+								add_cnt = True
+								if not (user_age >= min_age and user_age <= max_age):
+									add_cnt = False
+								if gender and user_gender != gender:
+									add_cnt = False
+								if profession and user_prof != profession:
+									add_cnt = False
+								if state and user_state != state:
+									add_cnt = False
+								if country and user_country != country:
+									add_cnt = False
+								if add_cnt:
+									choice_dic["val"] += 1
+									total_votes += 1
+							choice_dic["extra_val"] += 1
+							total_votes_extra += 1
 					choices.append(choice_dic)
 				response_dic['choices'] = choices
 				response_dic['total_votes'] = total_votes
@@ -1890,9 +1912,35 @@ def survey_mail(request):
 		line = linecache.getline(filename, lineno, f.f_globals)
 		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
+# class WebsiteWidgetTemplateView(generic.DetailView):
+# 	model = Question
+# 	def get_template_names(self):
+# 		template_name = 'polls/basic_widget_template.html'
+# 		return [template_name]
+# 	def get_context_data(self, **kwargs):
+# 		context = super(WebsiteWidgetTemplateView, self).get_context_data(**kwargs)
+# 		return context
+
+def get_widget_html(poll,widgetType="basic", extra_context_data = {}):
+	try:
+		template_name = ""
+		if widgetType:
+			template_name = 'polls/'+widgetType+'_widget_template.html'
+		context = {"poll" : poll}
+		for key in extra_context_data:
+			context[key] = extra_context_data[key]
+		html = render_to_string(template_name, context)
+		# print(html)
+		return html
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print(exc_type, fname, exc_tb.tb_lineno)
+
 def embed_poll(request):
 	try:
 		print("embed_poll")
+		print(request.session.session_key)
 		pollId = int(request.GET.get('pollId'))
 		callback = request.GET.get('callback', '')
 		analysisNeeded = True
@@ -1900,62 +1948,10 @@ def embed_poll(request):
 			analysisNeeded = False
 		req = {}
 		poll = Question.objects.get(pk=pollId)
-		#logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
-		logo_html = '<div class="a-clearfix askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---'+str(pollId)+'"><a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---'+str(pollId)+'"  href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/widgetLogo.png"></a>'
-		widget_title = '<p class="askbypoll-widget-title" id="askbypoll-widget-title---'+str(pollId)+'"> YOUR OPINION MATTERS </p>'#</div>'
-		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
-		choices = Choice.objects.filter(question_id=pollId)
-		choice_html = '<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'">'
-		for choice in choices:
-			if choice.choice_image :
-				choice_html += '<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---'+str(choice.id)+'">'
-				choice_html += '<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---'+str(choice.id)+'" src="https://www.askbypoll.com/media/choices/'+choice.get_file_name()+'">'
-				choice_html += '<div class="askbypoll-progress-bar-Img-div" style="position:relative;" >'
-				choice_html += '<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---'+str(choice.id)+'"></div>'
-				choice_html += '<span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'"></span>'
-				choice_html += '<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-'+str(choice.id)+'">'
-				choice_html += choice.choice_text
-				choice_html += '</p>'
-				choice_html += '</div></div>'
-			else:
-				choice_html += '<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---'+str(choice.id)+'">'
-				choice_html += '<p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---'+str(choice.id)+'">'
-				choice_html += choice.choice_text
-				choice_html += '</p>'
-				choice_html += '<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'">'
-				choice_html += '<span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'"></span></div>'
-				choice_html += '</div>'
-		choice_html += '</div>'
-		question_html = '<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'">'
-		question_html += widget_title
-		question_html += '<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'
-		question_html += poll.question_text
-		question_html += '</p>'
-
-		if poll.description:
-			question_html += '<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---'+str(pollId)+'">'
-			#question_html += 'Description:'
-			question_html += 'Description: '+poll.description
-			question_html += '</p>'
-
-		question_html += '</div>'
-
-		html = '<div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'
-		if analysisNeeded:
-			html += '<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---'+str(pollId)+'"><span class="askbypoll-enter-details">Enter Details To Analyse Results</span>'
-			html += '<select class="askbypoll-ageField askbypoll-enter" id="askbypoll-age---'+str(pollId)+'" name="age"><option value="notSelected">What\'s your Age Group?</option><option value="16"><19</option><option value="22">20-25</option><option value="28">26-30</option><option value="33">31-35</option><option value="43">36-50</option><option value="55">>50</option></select>'
-			html += '<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---'+str(pollId)+'" name="gender"><option value="notSelected">What\'s your Gender</option><option value="Female">Female</option><option value="Male">Male</option><option value="D">Rather Not Say</option></select>'
-			html += '<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---'+str(pollId)+'" name="profession"><option value="notSelected">What\'s your Profession</option><option value="Student">Student</option><option value="Politics">Politics</option><option value="Education">Education</option><option value="Information Technology">Information Technology</option><option value="Public Sector">Public Sector</option><option value="Social Services">Social Services</option><option value="Medical">Medical</option><option value="Finance">Finance</option><option value="Manager">Manager</option><option value="Others">Others</option></select><input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---'+str(pollId)+'" placeholder="What\'s your Email. We hate spam as much as you do." name="email"> <div class="askbypoll-embed-button"><button id="askbypoll-closeButton---'+str(pollId)+'" class="askbypoll-close-button"> Close </button><button id="askbypoll-nextButton---'+str(pollId)+'" class="askbypoll-button"> Show me </button></div>'
-			html += '</div>'
-		html += logo_html
-		#html += question_html
-		#html += widget_title
-		html += question_html
-		html += '</div>'
-		#html += question_html
-		html += choice_html
-		html += site_link_html
-		html += '</div>'
+		extra_context_data = {}
+		extra_context_data['analysisNeeded'] = analysisNeeded
+		extra_context_data['domain_url'] = settings.DOMAIN_URL
+		html = get_widget_html(poll,extra_context_data=extra_context_data)
 		req ['html'] = html
 		if poll.protectResult == 1:
 			req['protect'] = 1
@@ -1976,8 +1972,15 @@ def vote_embed_poll(request):
 		pollId = int(request.GET.get('pollId'))
 		poll = Question.objects.get(pk=pollId)
 		alreadyVoted = request.GET.get('alreadyVoted','false')
+		src = request.GET.get('src','')
 		ipAddress = getIpAddress(request)
 		# ipAddress = '139.130.4.22'
+		# sessionKey = request.session.session_key
+		# print(sessionKey)
+		if not request.session.exists(request.session.session_key):
+			request.session.create()	
+		sessionKey = request.session.session_key
+		print(sessionKey)
 
 		question = Question.objects.get(pk=pollId)
 		req = {}
@@ -1992,52 +1995,49 @@ def vote_embed_poll(request):
 			dbIpResponse = requests.get(url)
 			locationData = dbIpResponse.json()
 			votedChoice = Choice.objects.get(pk=choiceId)
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src)
 			votedChoiceFromApi.save()
-			totalVotes = VoteApi.objects.filter(question=question).count()
+			alreadyVoted = "true"
+			req['votedChoice'] = votedChoice.id
+			# req ['result'] = result
+			# response = json.dumps(req)
+			# response = callback + '(' + response + ');'
+		if alreadyVoted == 'true':
+			# totalVotes = VoteApi.objects.filter(question=question).count()
 			email_list_voted = []
 			choice_dic = {}
+			totalVotes = 0
 			for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
 				email_list_voted.append(voteUser.user.email)
 				totalVotes += 1
 				choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
 			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
+			print(totalVotes,choices,email_list_voted)
+			choice_count_dic = {}
 			for i in choices:
+				choice_count_dic[i.get('choice')] = i.get('choiceCount')
+				totalVotes += i.get('choiceCount')
+			print(totalVotes,choices)
+			for choice in question.choice_set.all():
+				result[choice.id] = {}
+				choice_vote_count = choice_count_dic.get(choice.id,0) + choice_dic.get(choice.id,0)
+				percent = 0
+				width = 0
 				if totalVotes > 0:
-					i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
-					result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount')+choice_dic.get(i.get('choice'),0))+'---'+str(totalVotes)
-				else:
-					result[i.get('choice')] = "0---0---0"
-			
-			print(votedChoice)
-			req['votedChoice'] = votedChoice.id
+					percent = round(choice_vote_count/totalVotes * 100)
+					width = round(percent/1.39)
+					if percent == 0:
+						width = 15 
+				result[choice.id]["percent"] = percent
+				result[choice.id]["width"] = width
+			print(result)
 			req ['result'] = result
-			response = json.dumps(req)
-			response = callback + '(' + response + ');'
 		else:
-			if alreadyVoted == 'true':
-				totalVotes = VoteApi.objects.filter(question=question).count()
-				email_list_voted = []
-				choice_dic = {}
-				for voteUser in Vote.objects.filter(choice__in=question.choice_set.all()):
-					email_list_voted.append(voteUser.user.email)
-					totalVotes += 1
-					choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
-				choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
-				result = {}
-				for i in choices:
-					if totalVotes > 0:
-						i['percent'] = round(((i.get('choiceCount')+choice_dic.get(i.get('choice'),0))/totalVotes)*100)
-						result[i.get('choice')] = str(i.get('percent'))+'---'+str(i.get('choiceCount')+choice_dic.get(i.get('choice'),0))+'---'+str(totalVotes)
-					else:
-						result[i.get('choice')] = "0---0---0"
-				req ['result'] = result
-			else:
-				req = {}
-			response = json.dumps(req)
-			response = callback + '(' + response + ');'
-
+			req = {}
+		req['sessionKey'] = sessionKey
+		response = json.dumps(req)
+		response = callback + '(' + response + ');'
 		return HttpResponse(response,content_type="application/json")
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -2046,39 +2046,63 @@ def vote_embed_poll(request):
 
 def results_embed_poll(request):
 	try:
+		# for abc in Vote.objects.all():
+		# 	# print(abc)
+		# 	try:
+		# 		abc.save()
+		# 	except:
+		# 		print("+++++++++++++++++++",abc)
+		# 		pass
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		dataStored = request.GET.get('dataStored','false')
 		callback = request.GET.get('callback', '')
 		pollId = int(request.GET.get('pollId'))
 		poll = Question.objects.get(pk=pollId)
 		choices = Choice.objects.filter(question_id=pollId)
-
+		# if not request.session.exists(request.session.session_key):
+		# 	request.session.create()	
+		# sessionKey = request.session.session_key
+		sessionKey = request.GET.get('votedSession', '')
+		src = request.GET.get('src', '')
 		user_age = 0
 		gender = 'D'
 		email = ''
 		profession = ''
-		print(alreadyVoted, dataStored)
+		user_data = {}
+		print(alreadyVoted, dataStored,sessionKey)
+		votedChoice = -1
+		error = ""
 		if alreadyVoted == 'false' and dataStored == 'false':
 			if request.GET.get('age'):
 				user_age = int(request.GET.get('age',18))
 			if request.GET.get('gender',"D") != "notSelected":
 				gender = request.GET.get('gender',"D")[0]
-			if request.GET.get('profession',"D") != "notSelected":
+			if request.GET.get('profession',"Others") != "notSelected":
 				profession = request.GET.get('profession','Others')
 			email = request.GET.get('email','')
 			ipAddress = getIpAddress(request)
 			# ipAddress = '139.130.4.22'
-			existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress).order_by('-created_at')
+			# sessionKey = " cfp14kjtdgw078auvs59z8kto1p48kyu"
+			existingVote = VoteApi.objects.filter(question_id=pollId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
 			existingVote = existingVote[0]
 			existingVote.age = user_age
 			existingVote.gender = gender
 			existingVote.profession = profession
 			existingVote.email = email
+			votedChoice = existingVote.choice_id
 			existingVote.save()
+			user_data["birthDay"] = user_age
+			user_data["gender"] = gender
+			user_data["profession"] = profession
+			user_data["country"] = existingVote.country
+			user_data["state"] = existingVote.state
+			user_data["city"] = existingVote.city
 			if email and not User.objects.filter(email=email):
-				new_user = User(first_name="User",email=email,username=email,password=email)
+				new_user = User(first_name="User",email=email,username=email)
+				password = 'welcome'+email.split('@')[0]
+				new_user.set_password(password)
 				new_user.save()
-				new_extended_user = ExtendedUser(user=new_user, categories='1')
+				new_extended_user = ExtendedUser(user=new_user)
 				new_extended_user.save()
 				if user_age > 0:
 					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
@@ -2090,14 +2114,40 @@ def results_embed_poll(request):
 				new_extended_user.city = existingVote.city
 				#print(type(datetime.date.today().year - user_age), type(new_extended_user.gender),type(gender),type(new_extended_user.country), type(existingVote.country), type(new_extended_user.state), type(existingVote.state), type(new_extended_user.city), type(existingVote.city),type(email))
 				new_extended_user.save()
+				newUserMailStatus = EmailAddress(email=email, verified=1, primary=1, user=new_user)
+				newUserMailStatus.save()
+				new_user.backend = 'django.contrib.auth.backends.ModelBackend'
+				login(request, new_user)
+
+				# Sending registration details to new users
+				msg = EmailMessage(subject="Thank you mail", from_email="support@askbypoll.com",to=[email])
+				msg.template_name = "emailwidgetregisterationmail"
+				msg.global_merge_vars = {
+		    	"questionText" : poll.question_text,
+		    	"userName" : email,
+		    	"password" : password
+				}
+				msg.send()
 				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
-				vote, created = Vote.objects.get_or_create(user=new_user, choice=existingVote.choice)
+				if created == True:
+					vote, created = Vote.objects.get_or_create(user=new_user, choice=existingVote.choice)
+				else:
+					votedChoice = Vote.objects.filter(user=new_user,choice__in=choices)[0].choice_id
+					existingVote.delete()
+					error = "Already voted using this email"
 			elif email:
 				old_user = User.objects.filter(email=email)[0]
+				old_user.backend = 'django.contrib.auth.backends.ModelBackend'
+				login(request, old_user)
 				subscribed, created = Subscriber.objects.get_or_create(user=old_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=old_user, question=poll)
-				vote, created = Vote.objects.get_or_create(user=old_user, choice=existingVote.choice)
+				if created == True:
+					vote, created = Vote.objects.get_or_create(user=old_user, choice=existingVote.choice, user_data=user_data)
+				else:
+					votedChoice = Vote.objects.filter(user=old_user,choice__in=choices)[0].choice_id
+					existingVote.delete()
+					error = "Already voted using this email"
 		choice_data = {}
 		percent = {}
 		totalVotes = 0
@@ -2129,10 +2179,15 @@ def results_embed_poll(request):
 			totalVotes += 1
 			percent[choice_data[voteUser.choice_id]] = percent.get(choice_data[voteUser.choice_id],0) + 1
 			voteApi = voteUser.user.extendeduser
-			gender = voteApi.gender
-			user_age = voteApi.calculate_age()
-			profession = voteApi.profession
-			country = voteApi.country
+			# gender = voteApi.gender
+			# user_age = voteApi.calculate_age()
+			# profession = voteApi.profession
+			# country = voteApi.country
+			user_data = ast.literal_eval(voteUser.user_data)
+			gender = user_data["gender"]
+			user_age = user_data["birthDay"]
+			profession = user_data["profession"]
+			country = user_data["country"]
 			if not gender:
 				gender = 'D'
 			#print(gender)
@@ -2154,7 +2209,7 @@ def results_embed_poll(request):
 				country = 'United Kingdom'
 			country_dic[country] = country_dic.get(country,0) + 1
 		for voteApi in VoteApi.objects.filter(question_id=pollId):
-			if email and email in email_list_voted:
+			if voteApi.email and voteApi.email in email_list_voted:
 				pass
 			else:
 				totalVotes += 1
@@ -2181,46 +2236,35 @@ def results_embed_poll(request):
 					# if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 					# 	country = 'United Kingdom'
 					country_dic[country] = country_dic.get(country,0) + 1	
-		# logo_html = ''#'<a href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/newLogo.png"></a>'
-		logo_html = '<div class="a-clearfix askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---'+str(pollId)+'"><a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---'+str(pollId)+'"  href="https://www.askbypoll.com" target="new"><img class="askbypoll-embed-poll-logo" src="https://www.askbypoll.com/static/widgetLogo.png"></a>'
-		widget_title = '<p class="askbypoll-widget-title" id="askbypoll-widget-title---'+str(pollId)+'"> YOUR OPINION MATTERS </p>'#</div>'
-		site_link_html = '<div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</span></p></div>'
-		html = '<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---1---'+str(pollId)+'" type="radio" name="tabs" checked> <label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---1---'+str(pollId)+'">Results</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---2---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---2---'+str(pollId)+'">Age</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---3---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---3---'+str(pollId)+'">Gender</label><input class="askbypoll-embed-tab-radio" id="askbypoll-tab---4---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---4---'+str(pollId)+'">Profession</label>'#<input class="askbypoll-embed-tab-radio" id="askbypoll-tab---5---'+str(pollId)+'" type="radio" name="tabs"><label class="askbypoll-embed-tab-radio-label" for="askbypoll-tab---5---'+str(pollId)+'">Location</label>'
-
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---1---'+str(pollId)+'"><div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---'+str(pollId)+'">'+logo_html+'<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---'+str(pollId)+'">'
-		html += widget_title
-		html += '<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---'+str(pollId)+'">'+poll.question_text+'</p>'
-		if poll.description:
-			html += '<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---'+str(pollId)+'">'
-			html += 'Description: '+poll.description
-			html += '</p>'
-
-		html += '</div><div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---'+str(pollId)+'" >'
-
+		choice_details_list =[]
 		for index,choice in enumerate(choices):
 			choice_text = "Option "+str(index)
 			# print(percent[choice_data[choice.id]])
 			# print(percent[choice_data[choice.id]]/totalVotes)
-			choice_percent = int((percent[choice_data[choice.id]]/totalVotes) * 100)
+			choice_percent = (percent[choice_data[choice.id]]/totalVotes) * 100
 			if choice.choice_text:
 				choice_text = choice.choice_text
-			if choice.choice_image:
-				html += '<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---'+str(choice.id)+'"><img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---'+str(choice.id)+'" src="https://www.askbypoll.com/media/choices/'+choice.get_file_name()+'"><div class="askbypoll-progress-bar-Img-div" style="position:relative;"><p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-'+str(choice.id)+'">'+choice_text+'</p><div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'" style="display: inline-block; width:'+str(choice_percent)+'%;"></div><span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'">'+str(choice_percent)+'%</span></div></div>'
-			else:
-				html += '<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---'+str(choice.id)+'"><p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---'+str(choice.id)+'">'+choice_text+'</p><div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---'+str(choice.id)+'" style="display: inline-block; width: '+str(choice_percent)+'%;"><span class="askbypoll-poll-result" id="askbypoll-result-choice---'+str(choice.id)+'">'+str(choice_percent)+'%</span></div></div>'
-		html += '</div><div class="askbypoll-embed-poll-powered-by"><p class="askbypoll-embed-poll-powered-by-p">Powered By <a class="askbypoll-embed-poll-askbypoll-url" href="https://www.askbypoll.com" target="new">AskByPoll</a></p></div></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---2---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-agechart---'+str(pollId)+'" ></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---3---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-genderchart---'+str(pollId)+'" ></div></section>'
-		html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---4---'+str(pollId)+'"><div style="display: block;" class="askbypoll-embed-content-div" id="askbypoll-professionchart---'+str(pollId)+'" ></div></section>'
-		#html += '<section class="askbypoll-embed-content askbypoll-embed-content'+str(pollId)+'" id="askbypoll-content---5---'+str(pollId)+'"><div style="margin: 0px auto !important;"" class="askbypoll-embed-content-div" id="askbypoll-regions_div---'+str(pollId)+'" ></div></section>'
-
+			choice_details = {}
+			choice_details["choice"] = choice
+			choice_details["text"] = choice_text
+			choice_details["percent"] = round(choice_percent)
+			width = choice_percent/1.39
+			if width == 0:
+				width = 15
+			choice_details["width"] = round(width)
+			choice_details_list.append(choice_details)
 		req = {}
 		if poll.protectResult == 1:
 			req['protect'] = 1
 		elif poll.protectResult == 0:
 			req['protect'] = 0
-
+		extra_context_data = {}
+		extra_context_data['domain_url'] = settings.DOMAIN_URL
+		extra_context_data["choice_details"] = choice_details_list
+		html = get_widget_html(poll,widgetType="demographic_result",extra_context_data=extra_context_data)
 		req ['html'] = html
+		req['votedChoice'] = votedChoice
+		req["error"] = error
 		req["gender_dic"] = gender_dic
 		req['age_dic'] = age_dic
 		req['prof_dic'] = prof_dic
@@ -2669,13 +2713,18 @@ class PDFPollView(generic.DetailView):
 				total_choice_vote += 1
 				choice_vote_count_all["choice"+str(index+1)] = choice_vote_count_all.get("choice"+str(index+1),0) + 1
 				total_choice_vote_all += 1
-				age = vote.user.extendeduser.calculate_age()
+				user_data = ast.literal_eval(voteUser.user_data)
+				gender = user_data["gender"]
+				age = user_data["birthDay"]
+				profession = user_data["profession"]
+				country = user_data["country"]
+				# age = vote.user.extendeduser.calculate_age()
 				if age > 25 and age < 31:
 					choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count_filter.get("choice"+str(index+1),0) + 1
 					total_choice_vote_filter += 1
-				gender = vote.user.extendeduser.gender
-				profession = vote.user.extendeduser.profession
-				country = vote.user.extendeduser.country
+				# gender = vote.user.extendeduser.gender
+				# profession = vote.user.extendeduser.profession
+				# country = vote.user.extendeduser.country
 				age_dict = get_age_data(age,age_dict)
 				gender_dict[gender] = gender_dict.get(gender,0) + 1
 				prof_dict[profession] = prof_dict.get(profession,0) + 1

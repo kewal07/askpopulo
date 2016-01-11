@@ -9,6 +9,7 @@ import hmac
 import hashlib
 from stream_django.activity import Activity
 from django.contrib.auth.models import Group
+from categories.models import Category
 # from stream_django.feed_manager import feed_manager
 # from django.db.models.signals import post_delete, post_save
 #from django.contrib.auth.models import User
@@ -148,7 +149,11 @@ class ExtendedUser(models.Model):
 	bio = models.CharField(max_length=1024,blank=True,null=True)
 	profession = models.CharField(max_length=512,blank=True,null=True)
 	user_slug = models.SlugField(null=True,blank=True)
-	categories = models.CharField(max_length=100,default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26',blank=True,null=True)
+	all_cat_list = ""
+	for cat in Category.objects.all():
+		all_cat_list += str(cat.id) + ","
+	all_cat_list = all_cat_list[:-1]
+	categories = models.CharField(max_length=100,default=all_cat_list,blank=True,null=True)
 	mailSubscriptionFlag = models.BooleanField(default=0)
 	credits = models.IntegerField(default=100)
 	company = models.ForeignKey(Company,default=get_company_default)
@@ -217,18 +222,23 @@ class ExtendedUser(models.Model):
 		return default_pic_url	
 
 	def calculate_age(self):
-		today = date.today()
-		born = self.birthDay
-		try: 
-			birthday = born.replace(year=today.year)
-		except ValueError: # raised when birth date is February 29 and the current year is not a leap year
-			birthday = born.replace(year=today.year, month=born.month+1, day=1)
-		if birthday > today:
-			# print(today.year - born.year - 1)
-			return today.year - born.year - 1
-		else:
-			# print(today.year - born.year)
-			return today.year - born.year
+		try:
+			today = date.today()
+			born = self.birthDay
+			try: 
+				birthday = born.replace(year=today.year)
+			except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+				birthday = born.replace(year=today.year, month=born.month+1, day=1)
+			if birthday > today:
+				# print(today.year - born.year - 1)
+				return today.year - born.year - 1
+			else:
+				# print(today.year - born.year)
+				return today.year - born.year
+		except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
 
 
 class RedemptionScheme(models.Model):
