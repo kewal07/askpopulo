@@ -2276,6 +2276,13 @@ def results_embed_poll(request):
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 		print(exc_type, fname, exc_tb.tb_lineno)
+		exc_type, exc_obj, tb = sys.exc_info()
+		f = tb.tb_frame
+		lineno = tb.tb_lineno
+		filename = f.f_code.co_filename
+		linecache.checkcache(filename)
+		line = linecache.getline(filename, lineno, f.f_globals)
+		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
 def getIpAddress(request):
 	""" use requestobject to fetch client machine's IP Address """
