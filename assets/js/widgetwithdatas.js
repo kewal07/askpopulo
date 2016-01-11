@@ -186,7 +186,7 @@ function main() {
 				});
 			}
 		});
-		$(".askbypoll-embed-poll").on( "click", ".askbypoll-embed-poll-question-choice-text,.askbypoll-embed-progress-bar", function(event) {
+		$(".askbypoll-embed-poll").on( "click", ".askbypoll-embed-poll-question-choice-text,.askbypoll-embed-progress-bar-text", function(event) {
 			var pollId = $(this).parent().parent().attr("id").split('---')[1];
 			var divId = $(this).parent().parent().parent().parent().attr("id");
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
@@ -202,7 +202,7 @@ function main() {
 				document.cookie = 'ASKBYPOLL_VOTED_CHOICE_'+pollId+'='+choiceId+'; expires='+a.toGMTString()+';path='+location.href;  
 				poll_choices[pollId] = choiceId;
 				var jsonp_url = "https://www.askbypoll.com/vote-embed-poll?pollId="+pollId+"&choiceId="+choiceId+"&src="+location.href+"&callback=?";
-				$(".askbypoll-embed-progress-bar").css("width", 0);
+				// $(".askbypoll-embed-progress-bar").css("width", 0);
 				$.getJSON(jsonp_url, function(data) {
 					var result = data.result;
 					var votedChoice = data.votedChoice;
