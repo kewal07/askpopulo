@@ -1943,9 +1943,9 @@ def embed_poll(request):
 		print(request.session.session_key)
 		pollId = int(request.GET.get('pollId'))
 		callback = request.GET.get('callback', '')
-		analysisNeeded = True
-		if request.GET.get('analysisNeeded'):
-			analysisNeeded = False
+		analysisNeeded = False
+		if request.GET.get('analysisNeeded',"") == "true":
+			analysisNeeded = True
 		req = {}
 		poll = Question.objects.get(pk=pollId)
 		extra_context_data = {}

@@ -106,14 +106,16 @@ function main() {
 				return true;
 			}
 			added_polls.push(pollId);
-			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&callback=?";
 			var that = $(this);
 			var alreadyVoted = getAskByPollCookie('ASKBYPOLL_VOTED_'+pollId);
 			var votedChoiceCookie = getAskByPollCookie('ASKBYPOLL_VOTED_CHOICE_'+pollId);
 			var dataGiven = undefined;
+			var analysisNeeded = "";
 			if(divId.startsWith('askbypoll-data')){
-				var dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
+				dataGiven = getAskByPollCookie('ASKBYPOLL_DATA_GIVEN_'+pollId);
+				analysisNeeded = "true"
 			}
+			var jsonp_url = "https://www.askbypoll.com/embed-poll?pollId="+pollId+"&analysisNeeded="+analysisNeeded+"&callback=?";
 			if(alreadyVoted == 'true' && dataGiven == 'true'){
 				var votedSession = getAskByPollCookie('ASKBYPOLL_VOTED_SESSION_'+pollId);
 				var askbypollAge = '19';
