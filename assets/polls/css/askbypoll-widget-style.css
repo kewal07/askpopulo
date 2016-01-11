@@ -447,6 +447,7 @@ span.askbypoll-poll-result{
     border-bottom: 1px solid black !important;
 }
 .askbypoll-embed-show-demographics{
+    z-index: 1;
     display: none;
     cursor: pointer;
     font-style: italic;
@@ -458,3 +459,4 @@ span.askbypoll-poll-result{
     color: red;
     text-align: center;
 }
+
