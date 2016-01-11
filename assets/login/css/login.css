@@ -1,11 +1,7 @@
-.askbypoll-embed-poll-question-choices {
-    margin-left: 6.5rem !important;
+.slider{
+	display:none;
 }
-img.askbypoll-embed-poll-question-choice-img {
-    width: 100px !important;
-    height: 100px !important;
-    display: block !important;
-}
+
 #wrapper{
 	max-width:1400px;
 }
@@ -53,6 +49,7 @@ img.askbypoll-embed-poll-question-choice-img {
 	width: 50%;
 }
 iframe.video{
+	 margin-top:30%;
 	width: 100%;
     height: 329px;
     margin: 0 auto;
@@ -70,7 +67,7 @@ form.loginContentForm{
 	border-top: 2px dashed #666;
     padding-top: 3rem;
     margin-left: 3rem;
-    margin-top: 5.9rem;
+   /* margin-top: 5.9rem;*/
 }
 form.loginContentForm label{
 	display: inline-block;
@@ -132,6 +129,8 @@ form.loginContentForm input{
 }
 .social_providers{
 	margin-left: 5rem;
+	padding-bottom:2rem;
+	margin-top:5rem;
 }
 .socialaccount_ballot{
 	/*-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
