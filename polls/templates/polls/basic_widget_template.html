@@ -1,0 +1,92 @@
+<div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---{{ poll.id }}">
+{% if analysisNeeded %}
+	<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---{{ poll.id }}">
+		<span class="askbypoll-enter-details">Enter Details To Analyse Results</span>
+		<select class="askbypoll-ageField askbypoll-enter" id="askbypoll-age---{{ poll.id }}" name="age">
+			<option value="notSelected">What's your Age Group?</option>
+			<option value="16"><19</option>
+			<option value="22">20-25</option>
+			<option value="28">26-30</option>
+			<option value="33">31-35</option>
+			<option value="43">36-50</option>
+			<option value="55">>50</option>
+		</select>
+		<select class="askbypoll-genderField askbypoll-enter" id="askbypoll-gender---{{ poll.id }}" name="gender">
+			<option value="notSelected">What's your Gender</option>
+			<option value="Female">Female</option>
+			<option value="Male">Male</option>
+			<option value="D">Rather Not Say</option>
+		</select>
+		<select class="askbypoll-professionField askbypoll-enter" id="askbypoll-profession---{{ poll.id }}" name="profession">
+			<option value="notSelected">What's your Profession</option>
+			<option value="Student">Student</option>
+			<option value="Politics">Politics</option>
+			<option value="Education">Education</option>
+			<option value="Information Technology">Information Technology</option>
+			<option value="Public Sector">Public Sector</option>
+			<option value="Social Services">Social Services</option>
+			<option value="Medical">Medical</option>
+			<option value="Finance">Finance</option>
+			<option value="Manager">Manager</option><option value="Others">Others</option>
+		</select>
+		<input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---{{ poll.id }}" placeholder="What's your Email. We hate spam as much as you do." name="email">
+		<div class="askbypoll-embed-button">
+			<button id="askbypoll-closeButton---{{ poll.id }}" class="askbypoll-close-button"> Close </button>
+			<button id="askbypoll-nextButton---{{ poll.id }}" class="askbypoll-button"> Show me </button>
+		</div>
+	</div>
+{% endif %}
+	<div class="a-clearfix askbypoll-embed-poll-header" id="askbypoll-embed-poll-header---{{ poll.id }}">
+		<a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---{{ poll.id }}"  href="{{ domain_url }}" target="new">
+			<img class="askbypoll-embed-poll-logo" src="{{ domain_url }}/static/widgetLogo.png">
+		</a>
+		<div class="askbypoll-embed-poll-question" id="askbypoll-embed-poll-question---{{ poll.id }}">
+			<p class="askbypoll-widget-title" id="askbypoll-widget-title---{{ poll.id }}"> 
+				YOUR OPINION MATTERS 
+			</p>
+			<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---{{ poll.id }}">
+				{{ poll.question_text }}
+			</p>
+			{% if poll.description %}
+				<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---{{ poll.id }}">
+					Description: {{ poll.description }}
+				</p>
+			{% endif %}
+		</div>
+	</div>
+	<div class="askbypoll-embed-poll-question-choices" id="askbypoll-embed-poll-question-choices---{{ poll.id }}">
+		{% for choice in poll.choice_set.all %}
+			{% if choice.choice_image %}
+				<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---{{ choice.id }}">
+					<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}">
+					<div class="askbypoll-progress-bar-Img-div" style="position:relative;">
+						<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice.id }}"></div>
+						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
+						<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-{{ choice.id }}">
+							{{ choice.choice_text }}
+						</p>
+					</div>
+				</div>
+			{% else %}
+				<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---{{ choice.id }}">
+					<p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---{{ choice.id }}">
+						{{ choice.choice_text }}
+					</p>
+					<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---{{ choice.id }}">
+						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	{% if analysisNeeded and not poll.protectResult %}
+		<div class="askbypoll-embed-show-demographics" id="askbypoll-embed-show-demographics---{{ poll.id }}">
+			Show Demographics
+		</div>
+	{% endif %}
+	<div class="askbypoll-embed-poll-powered-by">
+		<p class="askbypoll-embed-poll-powered-by-p"  id="askbypoll-embed-poll-powered-by-p---{{ poll.id }}">Powered By 
+			<a class="askbypoll-embed-poll-askbypoll-url" href="{{ domain_url }}" target="new">AskByPoll</a>
+		</p>
+	</div>
+</div>
