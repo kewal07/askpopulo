@@ -263,6 +263,8 @@ function main() {
 					var result = data.result;
 					var votedChoice = data.votedChoice;
 					protectResult = data.protect;
+					var votedSession = data.sessionKey;
+					document.cookie = 'ASKBYPOLL_VOTED_SESSION_'+pollId+'='+votedSession+'; expires='+a.toGMTString()+';path='+location.href;
 					
 					if(protectResult == 0){
 						for (var choice in result) {
