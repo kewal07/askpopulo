@@ -7,6 +7,8 @@
 }*/
 .askbypoll-embed-poll{
     position: relative;
+    margin:1rem 0 !important;
+    border:1px solid !important;
 }
 .a-clearfix:after {
      visibility: hidden;
@@ -69,11 +71,6 @@ a.askbypoll-embed-poll-icon{
 }
 
 .askbypoll-embed-content{
-    border:1px solid;
-}
-
-.askbypoll-embed-poll{
-    margin:1rem 0;
     border:1px solid;
 }
 
