@@ -5,6 +5,9 @@
     -moz-box-sizing: border-box;
     /*box-sizing: border-box;*
 }*/
+.askbypoll-embed-poll{
+    position: relative;
+}
 .a-clearfix:after {
      visibility: hidden;
      display: block;
@@ -88,7 +91,7 @@ a.askbypoll-embed-poll-askbypoll-url{
 	color:orange;
 }
 img.askbypoll-embed-poll-question-choice-img{
-	width: 194px;
+	width: 150px;
     height: 150px;
     display: block;
 }
@@ -141,6 +144,9 @@ img.askbypoll-embed-poll-question-choice-img{
     /*border-radius: 2.5rem;*/
     -webkit-animation: mymove 5s 1; /*/ Chrome, Safari, Opera /*/
     animation: mymove 1s 1;
+}
+.askbypoll-embed-progress-bar-img{
+    opacity: 0.5 !important;
 }
 @-webkit-keyframes mymove {
     from {width: 0%;}
@@ -211,7 +217,7 @@ select{
     /* float: right; */
      width: 83%; 
     /* line-height: 0.1rem; */
-    /* margin-top: -3rem; */
+     margin-top: 1rem; 
      /*margin-left: -2rem; */
 }
 .askbypoll-embed-poll-question-text{
@@ -291,7 +297,7 @@ a.askbypoll-embed-poll-askbypoll-url{
 span.askbypoll-poll-result{
     position: absolute;
     right: 5px;
-    top: 13px;
+    top: 8px;
     z-index: 1000;
     color:black;
     font-size: 1.3rem;

@@ -37,9 +37,9 @@
 								{{ choice_det.text }}
 							</p>
 							{% if choice_det.percent == 0 %}
-								<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%; background:none;"></div>
+								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%; background:none;"></div>
 							{% else %}
-								<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%;"></div>
+								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%;"></div>
 							{% endif %}
 							<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">
 								{{ choice_det.percent }}%

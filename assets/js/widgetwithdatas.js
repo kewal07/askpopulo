@@ -87,7 +87,7 @@ function main() {
 				$("#askbypoll-widget-title---"+pollId).attr("style","line-height: 1 ! important; padding-bottom: 0.2rem ! important;");
 				// .css("line-height","1 !important");
 				// $("#askbypoll-widget-title---"+pollId).css("padding-bottom","0.2rem !important");
-				$("#askbypoll-embed-poll-question-text---"+pollId).attr("style","margin-bottom:1rem ! important");
+				$("#askbypoll-embed-poll-question-text---"+pollId).attr("style","margin-bottom: 1rem ! important; font-size: 1rem ! important;");
 				// css("margin-bottom","1rem !important");
 				$("#askbypoll-embed-poll-question-description---"+pollId).attr("style","display: none ! important");
 				// if(typeof hide == 'undefined')
