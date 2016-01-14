@@ -34,11 +34,25 @@ html{
 	font-size: 1.1rem !important;
 }
 @media only screen and (max-width: 480px){
-        .userBrief {
-                margin-left:2rem;
-        }
+    .userBrief {
+            margin-left:2rem;
+    }
 	form.optionsForm{
 		border-bottom:none;
+	}
+	.que_text{
+		font-size: 1rem !important;
+		margin-left: 0 !important;
+		padding-left: 0 !important;
+	}
+	.choice-text{
+		font-size: .95rem !important;
+	}
+	.question_description{
+		font-size: .95rem !important;
+	}
+	.surveySubmit{
+		margin-bottom: 1rem;
 	}
 }
 
