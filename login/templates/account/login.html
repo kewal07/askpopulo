@@ -16,10 +16,12 @@
 			<!-- <h1>{% trans "Sign In" %}</h1> -->
 
 			{% if socialaccount.providers  %}
-			{% if request.GET.next %}
-				<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
-			{% else %}
-				<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+			{% if request.GET.next != "/survey/30/a-study-mobile-internet-free-basic-by-facebook" %}
+				{% if request.GET.next %}
+					<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+				{% else %}
+					<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+				{% endif %}
 			{% endif %}
 
 			<div class="loginContentTable">
