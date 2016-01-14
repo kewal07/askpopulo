@@ -46,7 +46,7 @@
 					</div>
 				</div> 
 				<div class="mainPoll">
-					<p class="que_text">{{ survey.survey_name }}
+					<p class="que_text" id="survey-title">{{ survey.survey_name }}
 						{% if user.is_authenticated %}
 							{% if user == survey.user or user.is_superuser %}
 							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
@@ -261,11 +261,14 @@
 		}
 		$(document).ready(function()
 		{
-			if({{ survey.id }} == 30){
+			if({{ survey.id }} == 16){
 				{% if not user.is_authenticated %}
 					location.href = "{% url 'account_login' %}?next={{ request.path }}";
 				{% endif %}
 				$(".userInfo").hide();
+				$("#survey-title").css("text-align","center");
+				$("#survey-title").css("font-weight","bolder");
+				$("#wrapper").css("max-width","1220px");
 			}
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			// console.log($(".surveySubmit"));
