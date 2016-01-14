@@ -108,8 +108,10 @@
 							<li><a class="menuanchor" href="{% url 'polls:mypolls' user.id user.extendeduser.user_slug %}" data-intro="Type in your query and we will get you your results" data-position="bottom">MyPolls</a></li>
 						{% endif %}
 					{% else %}
-						{% if request.GET.urlencode %}
-							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}">Login</a></li>
+						{% if request.path == "/accounts/login/" %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}?{{ request.GET.urlencode }}">Login</a></li>
+						{% elif request.GET.urlencode %}
+							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}&&{{ request.GET.urlencode }}">Login</a></li>
 						{% else %}
 							<li><a class="menuanchor" href="{% url 'account_login' %}?next={{ request.path }}">Login</a></li>
 						{% endif %}

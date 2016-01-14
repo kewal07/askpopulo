@@ -1498,10 +1498,11 @@ class CreateSurveyView(BaseViewList):
 				if que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
 					print(choice_list)
+					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
 					if len(choice_list) < 2:
 						queError += "Atleast 2 choices are required"
-					elif len(choice_list) > 5:
-						queError += "Maximum 5 choices can be provided"
+					elif len(choice_list) > max_choice_cnt:
+						queError += "Maximum %s choices can be provided"%(max_choice_cnt)
 					for choice_count in choice_list:
 						choice_elem_id = 'questionDiv'+que_index+'choice'+str(choice_count)
 						choice_image_edit_elem_id = 'questionDiv'+que_index+'imagechoice'+str(choice_count)
