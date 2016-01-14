@@ -1,5 +1,5 @@
 html{
-	background:url('/static/polls/images/surveyDetail.jpg') no-repeat center center fixed !important;
+	background:url('/static/polls/images/surveyDetail.jpg') no-repeat center center fixed;
 	background-size:cover;
 	/*max-width: 1200px;*/
   	margin: 0 auto;
