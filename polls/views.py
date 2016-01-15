@@ -2360,19 +2360,16 @@ def excel_view(request):
 		# description sheet end
 		ws1.write(0,0,"Country",normal_style)
 		ws1.write(0,1,"State",normal_style)
-		ws1.write(0,2,"Gender",normal_style)
-		ws1.write(0,3,"Age Group",normal_style)
-		ws1.write(0,4,"Profession",normal_style)
+		ws1.write(0,2,"City",normal_style)
+		ws1.write(0,3,"Gender",normal_style)
+		ws1.write(0,4,"Age Group",normal_style)
+		ws1.write(0,5,"Profession",normal_style)
 		i = 1
 		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
 		for voted in voted_list:
-			j = 5
+			j = 6
 			vote_user = voted.user
-			ws1.write(i,0,vote_user.extendeduser.country,normal_style)
-			ws1.write(i,1,vote_user.extendeduser.state,normal_style)
-			ws1.write(i,2,gender_excel_dic.get(vote_user.extendeduser.gender),normal_style)
-			ws1.write(i,3,get_age_group_excel(vote_user.extendeduser.calculate_age()),normal_style)
-			ws1.write(i,4,prof_excel_dic.get(vote_user.extendeduser.profession),normal_style)
+			user_data = {}
 			for index,survey_question in enumerate(Survey_Question.objects.filter(survey_id = survey_id)):
 				question = survey_question.question
 				question_type = survey_question.question_type
@@ -2386,16 +2383,21 @@ def excel_view(request):
 					vote_text = VoteText.objects.filter(user_id=vote_user.id,question_id=question.id)
 					if vote_text:
 						answer_text = vote_text[0].answer_text
+						user_data = ast.literal_eval(vote_text[0].user_data)
 				elif question_type == "radio":
 					for c_index,choice in enumerate(choice_list):
-						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
+						if vote:
 							answer_text = str(c_index+1)
+							user_data = ast.literal_eval(vote[0].user_data)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
 						answer_text = 0
-						if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
+						if vote:
 							answer_text = 1
+							user_data = ast.literal_eval(vote[0].user_data)
 						ws1.write(0,j,excel_text,normal_style)
 						ws1.write(i,j,answer_text,normal_style)
 						j += 1
@@ -2403,6 +2405,15 @@ def excel_view(request):
 					ws1.write(0,j,excel_text,normal_style)
 					ws1.write(i,j,answer_text,normal_style)
 					j += 1
+			gender = user_data["gender"]
+			age = user_data["birthDay"]
+			profession = user_data["profession"]
+			ws1.write(i,0,user_data["country"],normal_style)
+			ws1.write(i,1,user_data["state"],normal_style)
+			ws1.write(i,2,user_data["city"],normal_style)
+			ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
+			ws1.write(i,4,get_age_group_excel(age),normal_style)
+			ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
 			i += 1
 		wb.save(response)
 		return response
@@ -2424,41 +2435,50 @@ def excel_view(request):
 		# description sheet end
 		ws1.write(0,0,"Country",normal_style)
 		ws1.write(0,1,"State",normal_style)
-		ws1.write(0,2,"Gender",normal_style)
-		ws1.write(0,3,"Age Group",normal_style)
-		ws1.write(0,4,"Profession",normal_style)
-		ws1.write(0,5,"Result",normal_style)
+		ws1.write(0,2,"City",normal_style)
+		ws1.write(0,3,"Gender",normal_style)
+		ws1.write(0,4,"Age Group",normal_style)
+		ws1.write(0,5,"Profession",normal_style)
+		ws1.write(0,6,"Result",normal_style)
 		i = 1
 		voted_list = Voted.objects.filter(question_id = question_id)
 		considered_email = []
 		choice_list = Choice.objects.filter(question_id=question.id)
 		for voted in voted_list:
-			j = 5
+			j = 6
 			vote_user = voted.user
 			considered_email.append(vote_user.email)
-			ws1.write(i,0,vote_user.extendeduser.country,normal_style)
-			ws1.write(i,1,vote_user.extendeduser.state,normal_style)
-			ws1.write(i,2,gender_excel_dic.get(vote_user.extendeduser.gender),normal_style)
-			ws1.write(i,3,get_age_group_excel(vote_user.extendeduser.calculate_age()),normal_style)
-			ws1.write(i,4,prof_excel_dic.get(vote_user.extendeduser.profession),normal_style)
+			user_data = {}
 			for c_index,choice in enumerate(choice_list):
-				if Vote.objects.filter(user_id=vote_user.id,choice=choice):
+				vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
+				if vote:
 					answer_text = c_index+1
 					ws1.write(i,j,answer_text,normal_style)
+					user_data = ast.literal_eval(vote[0].user_data)
 					j += 1
+			gender = user_data["gender"]
+			age = user_data["birthDay"]
+			profession = user_data["profession"]
+			ws1.write(i,0,user_data["country"],normal_style)
+			ws1.write(i,1,user_data["state"],normal_style)
+			ws1.write(i,2,user_data["city"],normal_style)
+			ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
+			ws1.write(i,4,get_age_group_excel(age),normal_style)
+			ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
 			i += 1
 		voted_list = VoteApi.objects.filter(question_id = question_id)
 		for voted in voted_list:
-			j = 5
+			j = 6
 			if voted.email and voted.email in considered_email:
 				continue
 			# vote_user = voted.user
 			if voted.gender and voted.age and voted.profession:
 				ws1.write(i,0,voted.country,normal_style)
 				ws1.write(i,1,voted.state,normal_style)
-				ws1.write(i,2,gender_excel_dic.get(voted.gender),normal_style)
-				ws1.write(i,3,get_age_group_excel(voted.age),normal_style)
-				ws1.write(i,4,prof_excel_dic.get(voted.profession),normal_style)
+				ws1.write(i,2,voted.city,normal_style)
+				ws1.write(i,3,gender_excel_dic.get(voted.gender),normal_style)
+				ws1.write(i,4,get_age_group_excel(voted.age),normal_style)
+				ws1.write(i,5,prof_excel_dic.get(voted.profession),normal_style)
 				for c_index,choice in enumerate(choice_list):
 					if voted.choice == choice:
 						answer_text = c_index+1
