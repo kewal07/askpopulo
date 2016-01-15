@@ -42,7 +42,7 @@ class MySignupForm(forms.Form):
 	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
-	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=False)
+	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=True)
 	categories =  forms.MultipleChoiceField(required=True,widget=forms.CheckboxSelectMultiple(attrs={'class':'category_checkbox'}), choices=[(i,i) for i in Category.objects.all()])
 	captcha = NoReCaptchaField(label="")
 	agreement = forms.BooleanField(required=True,label="")
@@ -120,6 +120,7 @@ class MySignupPartForm(forms.Form):
 	profession = forms.ChoiceField([(i,i) for i in professionList],required=True)
 	country = forms.ChoiceField([(i,i) for i in countryAndStateList.countryList],required=True)
 	state = forms.ChoiceField([(i,i) for i in countryAndStateList.stateList],required=True)
+	city = forms.CharField( max_length=512, widget=forms.TextInput(attrs={'placeholder': 'City'}),required=True)
 
 	def __init__(self,*args,**kwargs):
 		super(MySignupPartForm,self).__init__(*args,**kwargs)

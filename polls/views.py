@@ -243,8 +243,8 @@ class VoteView(BaseViewDetail):
 		user_already_voted = False
 		if user.is_authenticated():
 			createExtendedUser(user)
-			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
-				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
+				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city}
 				context['signup_part_form'] = MySignupPartForm(userFormData)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
@@ -448,8 +448,8 @@ class CreatePollView(BaseViewList):
 		createExtendedUser(self.request.user)
 		context = {}
 		user = self.request.user
-		if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
-			userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+		if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
+			userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city}
 			context['signup_part_form'] = MySignupPartForm(userFormData)
 		context['categories'] = Category.objects.all()
 		groups = [x.group.name for x in ExtendedGroup.objects.filter(user_id = user.id)]
@@ -1653,8 +1653,8 @@ class SurveyVoteView(BaseViewDetail):
 		user_already_voted = False
 		if user.is_authenticated():
 			createExtendedUser(user)
-			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
-				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state}
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
+				userFormData = {"gender":user.extendeduser.gender,"birthDay":user.extendeduser.birthDay,"profession":user.extendeduser.profession,"country":user.extendeduser.country,"state":user.extendeduser.state,"city":user.extendeduser.city}
 				context['signup_part_form'] = MySignupPartForm(userFormData)
 			profilepicUrl = user.extendeduser.get_profile_pic_url()
 			if not profilepicUrl.startswith('http'):
