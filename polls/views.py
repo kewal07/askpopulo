@@ -1723,7 +1723,7 @@ class SurveyVoteView(BaseViewDetail):
 			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
 			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
 			queSlug = question.que_slug
-			success_msg_text = "Wait for a second to see what others have to say!<br>Come back anytime to answer the rest of the questions!!"
+			success_msg_text = survey.thanks_msg+"<br>Come back anytime to answer the rest of the questions!!"
 			data={}
 			print(success_msg_text,user.is_authenticated())
 			if user.is_authenticated():
