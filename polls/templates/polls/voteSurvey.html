@@ -276,7 +276,7 @@
 			// console.log($(".surveySubmit"));
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
-			$('.surveySubmit').bind('click', function()
+			$('.surveySubmit').click(function()
 			{
 				question_covered = 0;
 				// console.log("sur sub");
@@ -285,10 +285,11 @@
 				var remove_disable = false;
 				var form_n = $('.optionsForm').length;
 				var ajax_calls = 0;
+				subButElem.attr("disabled","disabled");
 				$(".errorlist").remove();
+				setTimeout(function(){
 				{% if user.is_authenticated %}
 					// $("#vote"+{{ survey.id }}).attr("disabled","disabled");
-					subButElem.attr("disabled","disabled");
 					$('.optionsForm').each(function(){
 						var elemid = $(this)[0].id;
 						// console.log(elemid);
@@ -325,8 +326,9 @@
 										subButElem.removeAttr("disabled");
 										// subButElem.css("background","none");
 									}
-									if(question_covered == question_count && $(".errorlist").length == 0)
+									if(question_covered == question_count && $(".errorlist").length == 0){
 										saveVotes();
+									}
 								}
 							});
 						// 	return false;
@@ -339,6 +341,7 @@
 					// console.log(url);
 					$(location).attr('href',url);
 				{% endif %}
+			},50);
 			});
 			// if($(".surveySubmit").length == 0){
 			// 	confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
