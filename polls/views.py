@@ -1717,7 +1717,7 @@ class SurveyVoteView(BaseViewDetail):
 			question = Question.objects.get(pk=questionId)
 			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
 			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
-			survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
+			survey_voted = None
 			que_type = request.POST.get('questionType')
 			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
 			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
@@ -1727,6 +1727,8 @@ class SurveyVoteView(BaseViewDetail):
 			data={}
 			print(success_msg_text,user.is_authenticated())
 			if user.is_authenticated():
+				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
+				print(survey_voted,created)
 				choice_list = request.POST.getlist('choice'+str(questionId))
 				choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
 				# print(choice_list,choice_list_comment)

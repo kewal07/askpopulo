@@ -208,6 +208,7 @@
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				};
 		{% endif %}
+		var continue_loop = true;
 		function saveVotes(){
 			// console.log("save as no error and draw charts too");
 			var form_n = $('.optionsForm').length;
@@ -225,6 +226,7 @@
 					{
 						type: 'POST',
 						url:'',
+						async: false,
 						data:form_data,
 						success:function(response)
 						{
@@ -279,10 +281,14 @@
 				question_covered = 0;
 				// console.log("sur sub");
 				var subButElem = $(this);
+				// subButElem.css("background","red");
+				var remove_disable = false;
+				var form_n = $('.optionsForm').length;
+				var ajax_calls = 0;
 				$(".errorlist").remove();
 				{% if user.is_authenticated %}
-					subButElem.attr("disabled","disabled");
 					// $("#vote"+{{ survey.id }}).attr("disabled","disabled");
+					subButElem.attr("disabled","disabled");
 					$('.optionsForm').each(function(){
 						var elemid = $(this)[0].id;
 						// console.log(elemid);
@@ -297,9 +303,11 @@
 							{
 								type: 'POST',
 								url:'',
+								async: false,
 								data:form_data,
 								success:function(response)
 								{
+									ajax_calls += 1;
 									// $(".errorlist").remove();
 									question_covered += 1;
 									// console.log(response);
@@ -309,10 +317,14 @@
 											// console.log(key,response[key],$("#survey-question"+key));
 											$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
 											// $("#"+voteSubmitId).removeAttr("disabled");
-											subButElem.removeAttr("disabled");
+											remove_disable = true;
 										}
 									}
 									// console.log(question_covered,question_count,"error",$(".errorlist"),$(".errorlist").length);
+									if(ajax_calls == form_n && remove_disable){
+										subButElem.removeAttr("disabled");
+										// subButElem.css("background","none");
+									}
 									if(question_covered == question_count && $(".errorlist").length == 0)
 										saveVotes();
 								}
