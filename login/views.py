@@ -112,7 +112,7 @@ class EditProfileView(BaseViewList):
 		url = reverse('login:editprofile', kwargs={'pk':request.user.id,'user_slug':request.user.extendeduser.user_slug})
 		user = request.user
 		extendeduser = user.extendeduser
-		# print(request.POST)
+		print(request.POST)
 		# print(request.POST.get('name'))
 		if request.POST.get('first_name'):
 			user.first_name = request.POST.get('first_name')
@@ -146,7 +146,8 @@ class EditProfileView(BaseViewList):
 		extendeduser.save()
 		if request.is_ajax():
 			data={}
-			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+			print(request.GET)
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
 				data['form_errors'] = "Profile Incomplete"
 				return HttpResponse(json.dumps(data),
                             content_type='application/json')
