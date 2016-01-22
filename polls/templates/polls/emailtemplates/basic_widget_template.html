@@ -77,10 +77,13 @@
 			.askbypoll-email-common-footer{
 				position: relative;
 			}
-			.askbypoll-email-footer-powered-by {
-			    position: absolute;
-			    right: 1rem;
-			    bottom: 1rem;
+			.footer-powered-by {
+			    padding-left: 1rem;
+    			padding-bottom: 1rem;
+			}
+			.footer-p-font{
+				font-size: 0.8rem;
+    			padding: 0.2rem;
 			}
 		</style>
 	</head>
@@ -97,7 +100,7 @@
 				Dear User,
 			</p>
 			<p class="email-body1" id="email-body1---{{ poll.id }}">
-				{{ body1|safe}}
+				{{ body1 }}
 			</p>
 			<p class="poll-text">
 				{{ poll.question_text }}
@@ -127,7 +130,7 @@
 				</a>
 			{% endfor %}
 			</p>
-			<p class="email-body2" id="email-body2---{{ poll.id }}">{{ body2|safe }}</p>
+			<p class="email-body2" id="email-body2---{{ poll.id }}">{{ body2 }}</p>
 			<p class="email-salutation" id="email-salutation---{{ poll.id }}">{{ salutation }}</p>
 			<p><a href="{{ domain_url }}/{{ user.extendeduser.company.company_slug }}">{{ user.extendeduser.company.name }}</a></p>
 		</div>
@@ -143,10 +146,16 @@
 				<div class="askbypoll-email-common-footer-link">
 					<a href="{{ abp.company_url }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_website.png" /></a>
 				</div>
+				<p class="footer-p-font">
+					Copyright © OlliVander's Technologies Pvt. Ltd.
+				</p>
+				<p class="footer-p-font">
+					All rights reserved. For Details Contact : support@askbypoll.com
+				</p>
+				<p class="footer-p-font">
+					Powered By <a href="{{ abp.company_url }}">AskByPoll</a>
+				</p>
 			</div>
-			<p class="askbypoll-email-footer-powered-by">
-				Powered By <a href="{{ abp.company_url }}">AskByPoll</a>
-			</p>
 		</div>
 	</div>
 	</body>
