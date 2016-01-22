@@ -231,7 +231,7 @@
 							</div>
 							<div class="askbypoll-email-preview-form" id="askbypoll-email-preview-form---{{ question.poll.id }}">
 								<div class="askbypoll-email-preview-form-child askbypoll-email-form" id="askbypoll-email-form---{{ question.poll.id }}">
-									<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---{{ question.poll.id }}">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---{{ question.poll.id }}"></textarea></p>
+									<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---{{ question.poll.id }}">Subject : <p><textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---{{ question.poll.id }}"></textarea></p></p>
 								</div>
 								<div class="askbypoll-email-preview-form-child askbypoll-email-preview" id="askbypoll-email-preview---{{ question.poll.id }}">
 									<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---{{ question.poll.id }}"></p>
@@ -1829,8 +1829,8 @@
 								// console.log($("#askbypoll-email-preview---"+mailPollId));
 								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
 								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
-								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = "Subject : " + response.mail_subject;
-								$("#askbypoll-email-form---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---'+mailPollId+'">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---'+mailPollId+'"></textarea></p>';
+								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = 'Subject : <p class="askbypoll-email-preview-sub">' + response.mail_subject + "</p>";
+								$("#askbypoll-email-form---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---'+mailPollId+'">Subject : <p class="askbypoll-email-preview-sub"><textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---'+mailPollId+'"></textarea></p></p>';
 								$("#askbypoll-email-form---"+mailPollId).append(response.success_form);
 								$("#askbypoll-email-preview-sub-form-text---"+mailPollId)[0].innerHTML = response.mail_subject;
 							}
@@ -1865,10 +1865,7 @@
 								// console.log($("#askbypoll-email-preview---"+mailPollId));
 								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
 								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
-								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = "Subject : " + response.mail_subject;
-								$("#askbypoll-email-form---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---'+mailPollId+'">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---'+mailPollId+'"></textarea></p>';
-								$("#askbypoll-email-form---"+mailPollId).append(response.success_form);
-								$("#askbypoll-email-preview-sub-form-text---"+mailPollId)[0].innerHTML = response.mail_subject;
+								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = 'Subject : <p class="askbypoll-email-preview-sub">' + response.mail_subject + "</p>";
 							}
 						});
 					{% else %}
@@ -1949,7 +1946,7 @@
 					var mailPollId = $(this).attr('id').split('---')[1];
 					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
 					var templateName = $("#email-template-name---"+mailPollId).val();
-					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace("Subject : ","");
+					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace('Subject : <p class="askbypoll-email-preview-sub">',"").replace("</p>","");
 					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
 					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
 					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
@@ -1990,12 +1987,12 @@
 					var emailList = $("#mailPoll---"+mailPollId).val();
 					var emailListFromFile = uploaded_mails_from_csv[mailPollId];					
 					// console.log(uploaded_mails_from_csv);
-					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace("Subject : ","");
+					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace('Subject : <p class="askbypoll-email-preview-sub">',"").replace("</p>","");
 					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
 					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
 					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
 					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, savehtml: false, emailList: emailList, emailListFromFile: emailListFromFile, csrfmiddlewaretoken: "{{ csrf_token }}" };
-					// console.log(form_data);
+					console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -2021,37 +2018,6 @@
 					{% else %}
 						$(location).attr('href',"/");
 					{% endif %}
-				});
-
-				$('#polls-content').on("click",'.mailPollSubmit', function(event)
-				{
-					event.preventDefault();
-					var mailPollFormPollId = $(this).attr('id').split('---')[1];
-					var formId = "#sharePollForm---"+mailPollFormPollId;
-					var form_data = new FormData($(formId)[0]);
-					var shareElem = $(this);
-					shareElem.attr("disabled","disabled");
-					//if(validateMultipleEmailsCommaSeparated(emailIdList,';'))
-					//{
-						
-					{% if user.is_authenticated %}
-						$.ajax(
-						{
-							type: 'POST',
-							url:"/sharepoll",
-							data:form_data,
-							processData: false,
-							contentType: false,
-							success:function(response)
-							{
-								console.log(response)
-								shareElem.removeAttr("disabled");
-							}
-						});
-					{% else %}
-						$(location).attr('href',create_url);
-					{% endif %}
-					//}
 				});
 
 				$("#polls-content").on("change","select.askbypoll-group-filter-country",function(){

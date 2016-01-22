@@ -2885,7 +2885,7 @@ def sendPollMail(request):
 						extra_context_data["token"] = token
 						# html_message = "' "+html_message+" '"
 						html_message = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic", extra_context_data=extra_context_data)
-						send_mail(mail_subject,"",'support@askbypoll.com',[email],html_message=html_message)
+						send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
 						pollToken = PollTokens(token=token,email=email,question=question)
 						pollToken.save()
 			print("end")
@@ -2907,7 +2907,7 @@ def emailResponse(request):
 		tokenSentTime = responderDetails[0].timestamp
 		tokenExpiryTime = tokenSentTime + datetime.timedelta(days = 10)
 		tokenExpiryTime = tokenExpiryTime.replace(tzinfo=None)
-		currentTime = datetime.datetime.now().replace(tzinfo=None)
+		currentTime = timezone.now();
 		tokenExpired = False
 
 		if responderDetails:
@@ -2917,8 +2917,9 @@ def emailResponse(request):
 			question = Question.objects.get(pk=questionId)
 			choice = Choice.objects.get(pk=choiceId)
 			extra_args = {}
+			qExpiry = question.expiry
 
-			if question.expiry and currentTime > question.expiry:
+			if qExpiry and currentTime > qExpiry:
 				extra_args = {"question_expired":True}
 			else:
 				if user:

@@ -12,7 +12,7 @@
 				/*font-style: italic;
 				font-size: xx-large;*/
 			}
-			.emailPollBodyDiv a{
+			.askbypoll-email-common-footer a, .emailPollBodyDiv a{
 				color: blue;
 			}
 			.askbypoll-email-common{
@@ -61,12 +61,33 @@
 				list-style: initial;
     			margin-left: 4rem;
 			}
+			.email-choice-image{
+				width: 120px;
+				height: 120px;
+			}
+			.email-choice-image-div{
+				display: inline-block;
+			    position: relative;
+			    text-align: center;
+			    width: 120px;
+			}
+			.poll-choice-a{
+				display: inline-block;
+			}
+			.askbypoll-email-common-footer{
+				position: relative;
+			}
+			.askbypoll-email-footer-powered-by {
+			    position: absolute;
+			    right: 1rem;
+			    bottom: 1rem;
+			}
 		</style>
 	</head>
 	<body>
 	<div style='width: 100%; margin:0 auto;background-color: #63c196;'>
 		<div class="askbypoll-email-common" id="askbypoll-email-common---{{ poll.id }}">
-			<img style="margin-top: 1rem;" src="{{ domain_url }}{{ user.extendeduser.company.get_logo_url }}" />
+			<img style="margin-top: 1rem;width: 150px;" src="{{ domain_url }}{{ user.extendeduser.company.get_logo_url }}" />
 			<p>{{ user.extendeduser.company.description }}</p>
 			<img class="askbypoll-header-img" src="{{ domain_url }}/static/polls/images/email_common.png" />
 		</div>
@@ -82,7 +103,28 @@
 				{{ poll.question_text }}
 			</p>
 			{% for choice in poll.choice_set.all %}
-				<a class="poll-choice" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}">o {{ choice.choice_text }}</a>
+				{% if choice.choice_image %}
+					<a class="poll-choice poll-choice-a" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}">
+				{% else %}
+					<a class="poll-choice" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}">
+				{% endif %}
+					{% if choice.choice_image %}
+						<div class="email-choice-image-div">
+						<img class="email-choice-image" id="email-choice-image{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+						<!-- <p>{{ choice.choice_text }}</p> -->
+						<span class="email-choice-text">
+					{% else %}
+						o 
+					{% endif %}
+					{% if choice.choice_text %}
+						{{ choice.choice_text }}
+					{% else %}
+					 	Choice {{ forloop.counter }}
+					{% endif %}
+					{% if choice.choice_image %}
+						</span></div>
+					{% endif %}
+				</a>
 			{% endfor %}
 			</p>
 			<p class="email-body2" id="email-body2---{{ poll.id }}">{{ body2|safe }}</p>
@@ -93,15 +135,18 @@
 			<img class="email-footer-img" src="{{ domain_url }}/static/polls/images/email_footer_common.png" />
 			<div class="askbypoll-email-common-footer-links" id="askbypoll-email-common-footer-links---{{ poll.id }}">
 				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_facebook }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_fb.png" /></a></p>
+					<a href="{{ abp.company_facebook }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_fb.png" /></a>
 				</div>
 				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_twitter }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_twitter.png" /></a></p>
+					<a href="{{ abp.company_twitter }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_twitter.png" /></a>
 				</div>
 				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_url }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_website.png" /></a></p>
+					<a href="{{ abp.company_url }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_website.png" /></a>
 				</div>
 			</div>
+			<p class="askbypoll-email-footer-powered-by">
+				Powered By <a href="{{ abp.company_url }}">AskByPoll</a>
+			</p>
 		</div>
 	</div>
 	</body>

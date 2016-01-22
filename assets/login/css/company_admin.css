@@ -740,13 +740,13 @@ th.question-table-heading {
 	width:100%;
 	height: 2rem;
     border-radius: 10px;
-    box-shadow: 0 0 0 3px #000;
-    border: 5px solid transparent;
+    box-shadow: 0 0 0 1px #000;
+    border: 1px solid transparent;
 }
 .askbypoll-email-preview-sub-form-text{
 	height: 1rem !important;
-	width: 80% !important;
-	margin-left: 2rem;
+    width: 96% !important;
+    margin-left: 1rem;
 }
 .email-widget-template-div, .email-widget-email-list-div{
 	text-align: left;
