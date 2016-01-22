@@ -206,9 +206,9 @@
 							success:function(response)
 							{
 								var form_errors = response.form_errors;
-							
 								if(typeof form_errors === 'undefined'){
 									closeOverlay("#overlay-inAbox");
+									location.href = "{{ request.path }}";
 								}
 							}
 						});     
@@ -223,7 +223,7 @@
 				<div class="wrapper">
 					<p class="overlaytext">Please complete your profile. You need to do this only once.</p>
 					<p>Your data will be private & will never be misused.</p>
-					<form class="signupContentPartForm" id="part_signup_form" method="post" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
+					<form class="signupContentPartForm" id="part_signup_form" method="post" action="{% url 'login:edit_profile' %}?{{ request.GET.urlencode }}" enctype="multipart/form-data">
 					  {% csrf_token %}
 					  {{ signup_part_form.as_p }}
 					  {{ data.signup_part_form.as_p }}

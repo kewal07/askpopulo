@@ -685,6 +685,124 @@ th.question-table-heading {
 	font-weight: bold;
     margin-bottom: 0.5rem;
 }
+.askbypoll-group-filter{
+	margin: 4rem 1rem 1rem 1rem;
+    /* text-align: center; */
+    /* padding-bottom: 2rem; */
+    border-bottom: 1px black dashed;
+}
+.askbypoll-email-preview-form{
+	width: 97%;
+	margin: 0 auto;
+	position: relative;
+    margin-bottom: 1rem;
+    height: 1000px;
+}
+.askbypoll-email-preview-form-child{
+	width: 48%;
+	border: 2px solid;
+    border-radius: 10px;
+    display: inline-block;
+    height: 100%;
+    overflow: auto;
+}
+.askbypoll-email-preview{
+	position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;	
+}
+.askbypoll-email-preview-sub{
+	font-size: 1.2rem;
+	/*text-align: center;*/
+    margin: 1rem;
+}
+.askbypoll-email-form{
+	/*height: 99%;
+    position: absolute;
+    right: 0;
+    top: 0;*/
+}
+.askbypoll-group-filter-p{
+	font-size: 1.2rem;
+    margin-bottom: 2rem;
+    display: inline-block;
+}
+.mail-poll-widget-type-p{
+	margin: 0rem 0 1rem 0;
+	display: inline-block;
+}
+.mail-poll-widget-type{
+	display: block;
+	text-align: center;
+}
+.askbypoll-email-preview-form textarea{
+	width:100%;
+	height: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px #000;
+    border: 5px solid transparent;
+}
+.askbypoll-email-preview-sub-form-text{
+	height: 1rem !important;
+	width: 80% !important;
+	margin-left: 2rem;
+}
+.email-widget-template-div, .email-widget-email-list-div{
+	text-align: left;
+	margin-left: 1rem;
+}
+.email-widget-template-div label, .email-widget-email-list-div label{
+	display: inline-block;
+	width:12rem;
+}
+.email-widget-email-list-div p{
+	margin: 1rem 0 1rem 0;
+    position: relative;
+}
+.email-widget-email-list-div textarea{
+	height: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px #000;
+    border: 1px solid transparent;
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 50%;
+}
+.email-widget-email-list-div input[type="file"]{
+	font-size: 1.1rem;
+	border-radius: 5px;
+	background: white;
+	padding:0.5rem;
+}
+.email-widget-template-div select, .askbypoll-group-filter select{
+	font-size: 1.1rem;
+    margin: 0 1rem;
+    width: 12rem;
+    border-radius: 5px;
+    display: inline-block;
+}
+.email-widget-template-div button{
+	font-size: 1.1rem;
+    padding: 0.2rem;
+    border-radius: 5px;
+}
+.email-widget-template-div input[type="text"]{
+	font-size: 1.1rem;
+    border-radius: 5px;
+}
+.errorListEmailTemplate{
+	float: none;
+}
+.padding-bottom-border-p{
+	padding-bottom: 3rem;
+	border-bottom: 1px dashed;
+}
+.share-template-div{
+    width: 30%;
+    text-align: center;
+}
 @media only screen and (max-width: 960px){
 	#admin-dashboard{
 		display:none;

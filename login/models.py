@@ -121,6 +121,7 @@ class Company(BaseModel):
 		default_pic_url = "/static/pollsLogo.png"
 		if self.logo:
 			default_pic_url = self.get_pic_url(self.logo)
+		# print(default_pic_url)
 		return default_pic_url
 
 	def get_cover_url(self):

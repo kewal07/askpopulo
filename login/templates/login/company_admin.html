@@ -164,7 +164,78 @@
 								{{question.poll.question_text}}
 							</p>
 							<p class="pollsDesc">{{ question.poll.description }}</p>
-							<p class="check"><span id="embed-code---{{question.poll.id}}" class="see-more-details see-more-details-p embed-poll-code">Embed</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
+							<p class="check"><span id="mail-poll---{{question.poll.id}}" class="see-more-details see-more-details-p mail-poll">Email</span><span id="embed-code---{{question.poll.id}}" class="see-more-details see-more-details-p embed-poll-code">Embed</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
+							</div>
+						</div>
+						<div class="shareOnMail" id="mail-Poll---{{ question.poll.id }}Div">
+							<div class="askbypoll-group-filter" id="askbypoll-group-filter---{{ question.poll.id }}">
+								<p class="askbypoll-group-filter-p"> Select the users from ABP group below </p>
+								<select class="askbypoll-group-filter-age" id="askbypoll-group-filter-age---{{ question.poll.id }}" name="age">
+									<option value="notSelected">Age Group?</option>
+									<option value="<19"><19</option>
+									<option value="20-25">20-25</option>
+									<option value="26-30">26-30</option>
+									<option value="31-35">31-35</option>
+									<option value="36-50">36-50</option>
+									<option value=">50">>50</option>
+								</select>
+								<select class="askbypoll-group-filter-gender" id="askbypoll-group-filter-gender---{{ question.poll.id }}" name="gender">
+									<option value="notSelected">Gender</option>
+									<option value="Female">Female</option>
+									<option value="Male">Male</option>
+									<option value="D">Rather Not Say</option>
+								</select>
+								<!-- <select class="askbypoll-group-filter-profession" id="askbypoll-group-filter-profession---{{ question.poll.id }}" name="profession">
+									<option value="notSelected">Profession</option>
+								</select> -->
+								<select class="askbypoll-group-filter-country" id="askbypoll-group-filter-country---{{ question.poll.id }}" name="country">
+									<option value="notSelected">Country</option>
+								</select>
+								<select class="askbypoll-group-filter-state" id="askbypoll-group-filter-state---{{ question.poll.id }}" name="state">
+									<option value="notSelected">State</option>
+								</select>
+								<!-- <input name="city" type="text" id="askbypoll-group-filter-city---{{ question.poll.id }}" class="askbypoll-group-filter-city" placeholder="City" /> -->
+							</div>
+							<div class="email-widget-email-list-div" id="email-widget-email-list-div---{{ question.poll.id }}">
+								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<p class="padding-bottom-border-p">
+									<label class="mailPollLabel" for="mailPoll---{{ question.poll.id }}">Email List:</label><br>
+									<textarea class="mailPollTextArea" id="mailPoll---{{ question.poll.id }}" name="mailPollIds" placeholder="Provide emails separated by ';'"></textarea>
+								</p>
+								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<p class="padding-bottom-border-p">
+									<label for="csv-upload-email---{{ question.poll.id }}">Upload CSV</label>
+				        			<input type="file" class="csv-upload-email" name="File Upload" id="csv-upload-email---{{ question.poll.id }}" accept=".csv" />
+								</p>
+							</div>
+							<div class="email-widget-template-div" id="email-widget-template-div---{{ question.poll.id }}">
+								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<p></p>
+								<div class="preview-template-div mail-poll-widget-type-p">
+									<label class="mail-poll-widget-type-label" for="mail-poll-widget-type---{{ question.poll.id }}">Select email Template: </label>
+									<select class="mail-poll-widget-type" id="mail-poll-widget-type---{{ question.poll.id }}" name="widgettype">
+										<option value="basic_abp">Default</option>
+										{% for template in user.extendeduser.company.emailtemplates_set.all %}
+											<option value="{{ template.name }}">{{ template.get_display_name }}</option>
+										{% endfor %}
+									</select>
+									<button class="email-preview" id="email-preview---{{ question.poll.id }}">Preview</button>
+								</div>
+								<div class="share-template-div mail-poll-widget-type-p">
+									<button class="send-mail-using-widget" id="send-mail-using-widget---{{ question.poll.id }}">All Set to Go, Share!</button>
+								</div>
+								<div class="save-template-div mail-poll-widget-type-p">
+									<input type="text" name="email-template-name" id="email-template-name---{{ question.poll.id }}" placeholder="Template name"/>
+									<button class="email-save" id="email-save---{{ question.poll.id }}">Save</button>
+								</div>
+							</div>
+							<div class="askbypoll-email-preview-form" id="askbypoll-email-preview-form---{{ question.poll.id }}">
+								<div class="askbypoll-email-preview-form-child askbypoll-email-form" id="askbypoll-email-form---{{ question.poll.id }}">
+									<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---{{ question.poll.id }}">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---{{ question.poll.id }}"></textarea></p>
+								</div>
+								<div class="askbypoll-email-preview-form-child askbypoll-email-preview" id="askbypoll-email-preview---{{ question.poll.id }}">
+									<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---{{ question.poll.id }}"></p>
+								</div>
 							</div>
 						</div>
 						<div class="embedPollDiv" id="embed-code---{{ question.poll.id }}Div">
@@ -1462,6 +1533,7 @@
 			var protectedResultSurvey = false;
 			var mandatorySurvey = false;
 			var addCommentSurvey = false;
+			var uploaded_mails_from_csv = {};
 			function createSurvey(){
 				$(".create-survey").toggle("slow");
 			
@@ -1609,6 +1681,7 @@
 			}
 	
 			$(document).ready(function(){
+
 				$(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
 					$(this).addClass("selectedLi");
@@ -1669,6 +1742,16 @@
 										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---2");
 									{% endfor %}
 								}
+								if(elem_id == "polls-content"){
+					            	{% for question in polls %}
+							            for (i = 0; i < profList.length; ++i) {
+										    var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
+										    // console.log(tempOption);
+										    $("#askbypoll-group-filter-profession---{{ question.poll.id }}").append(tempOption);
+										}
+										populateCountry("#askbypoll-group-filter-country---{{ question.poll.id }}");
+									{% endfor %}
+								}
 								$(".share-with-group").click(function(){
 									var surveyId=$(this)[0].id.replace("share-with-group","");
 									$(this).parent().next().toggle("slow");
@@ -1724,6 +1807,260 @@
 					$('#'+embedCodeDiv).toggle('slow');
 				});
 
+				$('#polls-content').on("click",'.mail-poll', function(){
+					var mailPollId = $(this).attr('id').split('---')[1];
+					var mailPollDivId = "mail-Poll---"+mailPollId+"Div";
+					$('#'+mailPollDivId).toggle('slow');
+					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
+					form_data = { questionId: mailPollId, gethtml: true, widgetType: selectedWidgetType, csrfmiddlewaretoken: "{{ csrf_token }}" };
+					// console.log(form_data);
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							async: false,
+					        cache: false,
+					        timeout: 30000,
+							success:function(response)
+							{
+								// console.log(response);
+								// console.log($("#askbypoll-email-preview---"+mailPollId));
+								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
+								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
+								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = "Subject : " + response.mail_subject;
+								$("#askbypoll-email-form---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---'+mailPollId+'">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---'+mailPollId+'"></textarea></p>';
+								$("#askbypoll-email-form---"+mailPollId).append(response.success_form);
+								$("#askbypoll-email-preview-sub-form-text---"+mailPollId)[0].innerHTML = response.mail_subject;
+							}
+						});
+					{% else %}
+						$(location).attr('href',"/");
+					{% endif %}
+				});
+
+				$('#polls-content').on("click",'.email-preview', function(){
+					var mailPollId = $(this).attr('id').split('---')[1];
+					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
+					// console.log($("#askbypoll-email-preview-sub---"+mailPollId),$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML);
+					var subject = $("#askbypoll-email-preview-sub-form-text---"+mailPollId).val();
+					var body1 = $("#email-body1-textarea---"+mailPollId).val();
+					var body2 = $("#email-body2-textarea---"+mailPollId).val();
+					var salutation = $("#email-salutation-textarea---"+mailPollId).val();
+					form_data = { questionId: mailPollId, gethtml: true, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, csrfmiddlewaretoken: "{{ csrf_token }}" };
+					console.log(form_data);
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							async: false,
+					        cache: false,
+					        timeout: 30000,
+							success:function(response)
+							{
+								// console.log(response);
+								// console.log($("#askbypoll-email-preview---"+mailPollId));
+								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
+								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
+								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = "Subject : " + response.mail_subject;
+								$("#askbypoll-email-form---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub-form---'+mailPollId+'">Subject :<textarea class="askbypoll-email-preview-sub-form-text" id="askbypoll-email-preview-sub-form-text---'+mailPollId+'"></textarea></p>';
+								$("#askbypoll-email-form---"+mailPollId).append(response.success_form);
+								$("#askbypoll-email-preview-sub-form-text---"+mailPollId)[0].innerHTML = response.mail_subject;
+							}
+						});
+					{% else %}
+						$(location).attr('href',"/");
+					{% endif %}
+				});
+
+				$('#polls-content').on("change",".csv-upload-email", function(evt){
+					if (!browserSupportFileUpload()) {
+				        alert('The File APIs are not fully supported in this browser!');
+				        } else {
+				        	var mailPollId = $(this).attr('id').split('---')[1];
+				        	uploaded_mails_from_csv[mailPollId] = "";
+				        	// console.log(mailPollId);
+				        	var fileelem = $(this);
+				        	$(".upload-msg").remove();
+				        	var data = null;
+				            var file = evt.target.files[0];
+				            if(file){
+				            	fileelem.parent().append('<span class="upload-msg">Please Wait while we are processing the file</span>');
+				            	var reader = new FileReader();
+					            reader.readAsText(file);
+					            reader.onload = function(event) {
+					            	// console.log(mailPollId,"loaded");
+					                var csvData = event.target.result;
+					                data = $.csv.toArrays(csvData);
+					                $(".upload-msg").remove();
+					                fileelem.parent().append('<span class="upload-msg">'+data.length+' Records loaded</span>');
+					                var tempEmail = "";
+					                // console.log(uploaded_mails_from_csv);
+					                if (data && data.length > 0) {
+					                	data.forEach(function(entry) {
+										   tempEmail += entry+";";
+										});
+					                }
+					                uploaded_mails_from_csv[mailPollId] = tempEmail;
+					            };
+					            reader.onerror = function() {
+					                alert('Unable to read ' + file.fileName);
+					            };
+					        }
+				        }
+
+				});
+
+				$('#polls-content').on("change",'.mail-poll-widget-type', function(){
+					var saveElem = $(this);
+					var mailPollId = $(this).attr('id').split('---')[1];
+					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
+					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, savehtml: false, gettemplate: true, csrfmiddlewaretoken: "{{ csrf_token }}" };
+					// console.log(form_data);
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							async: false,
+					        cache: false,
+					        timeout: 30000,
+							success:function(response)
+							{
+								// console.log(response);
+								$("#askbypoll-email-preview-sub-form-text---"+mailPollId).val(response.mail_subject);
+								$("#email-body1-textarea---"+mailPollId).val(response.body1);
+								$("#email-body2-textarea---"+mailPollId).val(response.body2);
+								$("#email-salutation-textarea---"+mailPollId).val(response.salutation);
+							}
+						});
+					{% else %}
+						$(location).attr('href',"/");
+					{% endif %}
+				});
+
+				$('#polls-content').on("click",'.email-save', function(){
+					var saveElem = $(this);
+					saveElem.attr("disabled","disabled");
+					var mailPollId = $(this).attr('id').split('---')[1];
+					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
+					var templateName = $("#email-template-name---"+mailPollId).val();
+					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace("Subject : ","");
+					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
+					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
+					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
+					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, templateName: templateName, savehtml: true, csrfmiddlewaretoken: "{{ csrf_token }}" };
+					$(".errorlist").remove();
+					console.log(form_data);
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							async: false,
+					        cache: false,
+					        timeout: 30000,
+							success:function(response)
+							{
+								console.log(response);
+								if("error" in response){
+									saveElem.parent().append('<span class="errorlist">'+response.error+'</span>');
+								}else{
+									$("#mail-poll-widget-type---"+mailPollId).append('<option value="'+response.name+'" selected>'+response.display_name+'</option>');
+								}
+								saveElem.removeAttr("disabled");
+							}
+						});
+					{% else %}
+						$(location).attr('href',"/");
+					{% endif %}
+				});
+
+				$('#polls-content').on("click",'.send-mail-using-widget', function(){
+					var saveElem = $(this);
+					saveElem.attr("disabled","disabled");
+					$(".errorlist").remove();
+					var mailPollId = $(this).attr('id').split('---')[1];
+					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
+					var emailList = $("#mailPoll---"+mailPollId).val();
+					var emailListFromFile = uploaded_mails_from_csv[mailPollId];					
+					// console.log(uploaded_mails_from_csv);
+					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace("Subject : ","");
+					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
+					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
+					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
+					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, savehtml: false, emailList: emailList, emailListFromFile: emailListFromFile, csrfmiddlewaretoken: "{{ csrf_token }}" };
+					// console.log(form_data);
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							async: true,
+					        cache: false,
+					        timeout: 30000,
+							success:function(response)
+							{
+								console.log(response);
+								if("error" in response){
+									saveElem.parent().append('<span class="errorlist errorListEmailTemplate">'+response.error+'</span>');
+								}else{
+									uploaded_mails_from_csv[mailPollId] = "";
+									 $(".upload-msg").remove();
+									// $("#mail-poll-widget-type---"+mailPollId).append('<option value="'+response.name+'" selected>'+response.display_name+'</option>');
+								}
+								saveElem.removeAttr("disabled");
+							}
+						});
+					{% else %}
+						$(location).attr('href',"/");
+					{% endif %}
+				});
+
+				$('#polls-content').on("click",'.mailPollSubmit', function(event)
+				{
+					event.preventDefault();
+					var mailPollFormPollId = $(this).attr('id').split('---')[1];
+					var formId = "#sharePollForm---"+mailPollFormPollId;
+					var form_data = new FormData($(formId)[0]);
+					var shareElem = $(this);
+					shareElem.attr("disabled","disabled");
+					//if(validateMultipleEmailsCommaSeparated(emailIdList,';'))
+					//{
+						
+					{% if user.is_authenticated %}
+						$.ajax(
+						{
+							type: 'POST',
+							url:"/sharepoll",
+							data:form_data,
+							processData: false,
+							contentType: false,
+							success:function(response)
+							{
+								console.log(response)
+								shareElem.removeAttr("disabled");
+							}
+						});
+					{% else %}
+						$(location).attr('href',create_url);
+					{% endif %}
+					//}
+				});
+
+				$("#polls-content").on("change","select.askbypoll-group-filter-country",function(){
+			    	var elemId = $(this)[0].id;
+					var pollId = elemId.split("---")[1];
+					var common_elem_id_str = "#askbypoll-group-filter-country---"+pollId;
+					var selectedChoice_country= $(common_elem_id_str).val();
+					populateState("#askbypoll-group-filter-state---"+pollId,selectedChoice_country);
+				});
 
 				$('#polls-content,#advanced-content,#surveys-content').on("click","p.analyse_question_text",function(){
 					var elemId = $(this)[0].id;

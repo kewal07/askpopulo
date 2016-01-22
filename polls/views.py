@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -47,6 +47,8 @@ import requests
 import operator
 from django.template.loader import render_to_string
 import ast
+import re
+EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 
 # Create your views here.
 shakey=(settings.SHAKEY).encode('utf-8')
@@ -295,7 +297,6 @@ class VoteView(BaseViewDetail):
 		question = Question.objects.get(pk=questionId)
 		queSlug = question.que_slug
 		queBet = request.POST.get('betAmountHidden')
-		points = 0
 		if queBet:
 			queBet = int(queBet)
 		# print(request.is_ajax())
@@ -320,17 +321,7 @@ class VoteView(BaseViewDetail):
 				if not voted_questions:
 					if question.isBet and queBet:
 						vote = Vote(user=user, choice=choice, betCredit=queBet)
-						user.extendeduser.credits -= queBet
-						user.extendeduser.credits += 20
-						points = 20
-						user.extendeduser.save()
 					else:
-						if question.privatePoll:
-							user.extendeduser.credits += 20
-							points = 20
-						else:
-							user.extendeduser.credits += 10 #for voting on normal question
-							points = 10
 						vote = Vote(user=user, choice=choice)
 					voted = Voted(user=user, question=question)
 					# subscribed = Subscriber(user=user, question=question)
@@ -355,35 +346,7 @@ class VoteView(BaseViewDetail):
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
-		visible_public = True
-		if question.privatePoll:
-			visible_public = False
-		
-		activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug,"visible_public":visible_public}
-		if question.isBet and queBet:
-			activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet, "action":"voteBet","visible_public":visible_public}
-			feed = client.feed('notification', user.id)
-			feed.add_activity(activity)
-			activity = {'actor': user.username, 'verb': 'votedBet', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet,"visible_public":visible_public}
-		following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
-		while user.id in following_id_list:
-			following_id_list.remove(user.id)
-		if user.id != question.user_id:
-			feed = client.feed('notification', question.user_id)
-			feed.add_activity(activity)
-		for following_id in following_id_list:
-			feed = client.feed('notification', following_id)
-			feed.add_activity(activity)
-		feed = client.feed('user', question.user_id)
-		feed.add_activity(activity)
-		feed = client.feed('user', user.id)
-		feed.add_activity(activity)
-		feed = client.feed('flat', user.id)
-		feed.add_activity(activity)
-		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote","visible_public":visible_public}
-		feed = client.feed('notification', user.id)
-		feed.add_activity(activity)
-		user.extendeduser.save()
+		after_poll_vote_credits_activity(question,user,queBet)
 		return HttpResponseRedirect(url)
 		
 class EditView(BaseViewDetail):
@@ -1924,12 +1887,13 @@ def survey_mail(request):
 # 		context = super(WebsiteWidgetTemplateView, self).get_context_data(**kwargs)
 # 		return context
 
-def get_widget_html(poll,widgetType="basic", extra_context_data = {}):
+def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra_context_data = {}):
 	try:
 		template_name = ""
 		if widgetType:
-			template_name = 'polls/'+widgetType+'_widget_template.html'
+			template_name = 'polls/'+widgetFolder+'/'+widgetType+'_widget_template.html'
 		context = {"poll" : poll}
+		extra_context_data['domain_url'] = settings.DOMAIN_URL
 		for key in extra_context_data:
 			context[key] = extra_context_data[key]
 		html = render_to_string(template_name, context)
@@ -1953,7 +1917,6 @@ def embed_poll(request):
 		poll = Question.objects.get(pk=pollId)
 		extra_context_data = {}
 		extra_context_data['analysisNeeded'] = analysisNeeded
-		extra_context_data['domain_url'] = settings.DOMAIN_URL
 		html = get_widget_html(poll,extra_context_data=extra_context_data)
 		req ['html'] = html
 		if poll.protectResult == 1:
@@ -2101,12 +2064,8 @@ def results_embed_poll(request):
 			user_data["state"] = existingVote.state
 			user_data["city"] = existingVote.city
 			if email and not User.objects.filter(email=email):
-				new_user = User(first_name="User",email=email,username=email)
-				password = 'welcome'+email.split('@')[0]
-				new_user.set_password(password)
-				new_user.save()
-				new_extended_user = ExtendedUser(user=new_user)
-				new_extended_user.save()
+				new_user = create_new_user_mail_login(request,mailId,question)
+				new_extended_user = new_user.extendeduser
 				if user_age > 0:
 					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
 				if profession:
@@ -2117,20 +2076,6 @@ def results_embed_poll(request):
 				new_extended_user.city = existingVote.city
 				#print(type(datetime.date.today().year - user_age), type(new_extended_user.gender),type(gender),type(new_extended_user.country), type(existingVote.country), type(new_extended_user.state), type(existingVote.state), type(new_extended_user.city), type(existingVote.city),type(email))
 				new_extended_user.save()
-				newUserMailStatus = EmailAddress(email=email, verified=1, primary=1, user=new_user)
-				newUserMailStatus.save()
-				new_user.backend = 'django.contrib.auth.backends.ModelBackend'
-				login(request, new_user)
-
-				# Sending registration details to new users
-				msg = EmailMessage(subject="Thank you mail", from_email="support@askbypoll.com",to=[email])
-				msg.template_name = "emailwidgetregisterationmail"
-				msg.global_merge_vars = {
-		    	"questionText" : poll.question_text,
-		    	"userName" : email,
-		    	"password" : password
-				}
-				msg.send()
 				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
 				if created == True:
@@ -2262,7 +2207,6 @@ def results_embed_poll(request):
 		elif poll.protectResult == 0:
 			req['protect'] = 0
 		extra_context_data = {}
-		extra_context_data['domain_url'] = settings.DOMAIN_URL
 		extra_context_data["choice_details"] = choice_details_list
 		html = get_widget_html(poll,widgetType="demographic_result",extra_context_data=extra_context_data)
 		req ['html'] = html
@@ -2844,3 +2788,255 @@ def get_age_data(user_age,age_dic):
 	elif user_age > 0:
 		age_dic['under_19'] = age_dic.get('under_19',0) + 1
 	return age_dic
+
+def sendPollMail(request):
+	# print(request.POST)
+	try:
+		emailList = request.POST.get('emailList',"").split(';')
+		emailListFromFile = request.POST.get('emailListFromFile',"").split(';')
+		emailList.extend(emailListFromFile)
+		questionId = request.POST.get('questionId')
+		gethtml = request.POST.get('gethtml',"false").lower().replace("false","")
+		savehtml = request.POST.get('savehtml',"false").lower().replace("false","")
+		gettemplate = request.POST.get('gettemplate',"false").lower().replace("false","")
+		emailtemplatename = request.POST.get('widgetType')
+		# print(emailList,emailListFromFile)
+		sender = request.user
+		response = {}
+		digestmod = hashlib.sha1
+		emailtemplate = EmailTemplates.objects.filter(name=emailtemplatename)
+		defaultTemplate = EmailTemplates.objects.filter(name="basic_abp")[0]
+		emailList = filter(bool, emailList)
+		emailList = list(set(emailList))
+		if emailtemplate:
+			emailtemplate = emailtemplate[0]
+		else:
+			emailtemplate = EmailTemplates.objects.get(pk=1)
+		# print(emailList)
+		if not emailList and not gethtml and not savehtml and not gettemplate:
+			response['error'] = "You have not provided any mail Id's"
+			return HttpResponse(json.dumps(response),content_type='application/json')
+		else:
+			question = Question.objects.get(pk=questionId)
+			questionChoices = question.choice_set.all()
+			extra_context_data = {}
+			body_file_path = defaultTemplate.get_file_path()
+			if request.POST.get("subject","undefined") != "undefined":
+				mail_subject = request.POST.get("subject","").strip()
+			else:
+				mail_subject = emailtemplate.subject
+			if request.POST.get("body1","undefined") != "undefined":
+				body1 = request.POST.get("body1","").strip()
+			else:
+				body1 = emailtemplate.body1
+			if request.POST.get("body2","undefined") != "undefined":
+				body2 = request.POST.get("body2","").strip()
+			else:
+				body2 = emailtemplate.body2
+			if request.POST.get("salutation","undefined") != "undefined":
+				salutation = request.POST.get("salutation","").strip()
+			else:
+				salutation = emailtemplate.salutation
+			if savehtml:
+				templateName = request.POST.get("templateName","").strip()
+				companytemplatename = templateName + "---" + request.user.extendeduser.company.company_slug
+				if not templateName:
+					response["error"] = "Template name required!"
+				elif EmailTemplates.objects.filter(name=companytemplatename):
+					response["error"] = "Template already exists!"
+				if not response:
+					emailtemplate = EmailTemplates(company=request.user.extendeduser.company, name=companytemplatename.strip(),body_image=defaultTemplate.body_image, subject=mail_subject.strip(), body1=body1.strip(), body2=body2.strip(), salutation=salutation.strip() )
+					emailtemplate.save()
+					response["display_name"] = templateName
+					response["name"] = companytemplatename
+				return HttpResponse(json.dumps(response),content_type='application/json')
+			extra_context_data["body1"] = body1
+			extra_context_data["body2"] = body2
+			extra_context_data["salutation"] = salutation
+			extra_context_data["user"] = request.user
+			extra_context_data["body_file_path"] = body_file_path
+			extra_context_data["abp"] = Company.objects.get(pk=2)
+			html_message = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic", extra_context_data=extra_context_data)
+			html_message_form = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic_form", extra_context_data=extra_context_data)
+			if gethtml:
+				response["success"] = html_message
+				response["success_form"] = html_message_form
+				response["mail_subject"] = mail_subject
+				return HttpResponse(json.dumps(response),content_type='application/json')
+			if gettemplate:
+				response["body1"] = body1
+				response["body2"] = body2
+				response["salutation"] = salutation
+				response["mail_subject"] = mail_subject
+				return HttpResponse(json.dumps(response),content_type='application/json')
+
+			invalidEmailList = []
+			print("starting")
+			for email in emailList:
+				if email.strip():
+					email = email.strip().replace(" ","")
+					print(email)
+					if not validateEmail(email):
+						invalidEmailList.append(email)
+					else:
+						# generating unique token for every mail
+						msg = ("%s %s"%(email, str(time.time()))).encode('utf-8')
+						token = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+						extra_context_data["token"] = token
+						# html_message = "' "+html_message+" '"
+						html_message = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic", extra_context_data=extra_context_data)
+						send_mail(mail_subject,"",'support@askbypoll.com',[email],html_message=html_message)
+						pollToken = PollTokens(token=token,email=email,question=question)
+						pollToken.save()
+			print("end")
+			if invalidEmailList:
+				print(invalidEmailList)
+				response['fail'] = "%s invalid emails were provided"%(len(invalidEmailList))
+			response['success'] = "Mail sent successfully to %s recipients"%((len(emailList)-len(invalidEmailList)))
+			return HttpResponse(json.dumps(response),content_type='application/json')
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
+
+def emailResponse(request):
+	try:
+		response = {}
+		responderKey = request.GET.get('responder')
+		choiceId = request.GET.get('choice')
+		responderDetails = PollTokens.objects.filter(token=responderKey)
+		tokenSentTime = responderDetails[0].timestamp
+		tokenExpiryTime = tokenSentTime + datetime.timedelta(days = 10)
+		tokenExpiryTime = tokenExpiryTime.replace(tzinfo=None)
+		currentTime = datetime.datetime.now().replace(tzinfo=None)
+		tokenExpired = False
+
+		if responderDetails:
+			mailId = responderDetails[0].email
+			questionId = responderDetails[0].question.id
+			user = User.objects.filter(email=mailId)
+			question = Question.objects.get(pk=questionId)
+			choice = Choice.objects.get(pk=choiceId)
+			extra_args = {}
+
+			if question.expiry and currentTime > question.expiry:
+				extra_args = {"question_expired":True}
+			else:
+				if user:
+					#if user is already registered on the askbypoll portal 
+					user = user[0]
+					user.backend = 'django.contrib.auth.backends.ModelBackend'
+					login(request, user)
+				else:
+					user = create_new_user_mail_login(request,mailId,question)
+				# if all demographics are not present redirect and take note of choice
+				if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
+					extra_args = {"choice":choice.id,"question":question.id}
+				else:
+					save_poll_vote(user,question,choice)
+			url = reverse('polls:polls_vote', kwargs={'pk':question.id,'que_slug':question.que_slug})
+			if extra_args:
+				url += "?"
+				for a in extra_args:
+					url += a + "=" + str(extra_args[a]) + "&"
+				url = url[:-1]
+		else:
+			pass
+			#question not found show question deleted page with redirect to home
+		return HttpResponseRedirect(url)
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
+
+def save_poll_vote(user,question,choice,queBet=None):
+	print("save_poll_vote")
+	try:
+		questionId = int(question)
+		question = Question.objects.get(pk=questionId)
+	except:
+		pass
+	try:
+		choiceId = int(choice)
+		choice = Choice.objects.get(pk=choiceId)
+	except:
+		pass
+	# if type(question) == int:
+	# 	question = Question.objects.get(pk=question)
+	# if type(choice) == int:
+	# 	choice = Choice.objects.get(pk=choice)
+	userVoteOnQuestion, created = Voted.objects.get_or_create(user=user,question=question)
+	if created:
+		userVote,created = Vote.objects.get_or_create(user=user, choice=choice)
+		subscriber,created = Subscriber.objects.get_or_create(user=user,question=question)
+		after_poll_vote_credits_activity(question,user,queBet)
+
+def after_poll_vote_credits_activity(question,user,queBet=None):
+	points = 0
+	visible_public = True
+	if question.privatePoll:
+		visible_public = False
+	
+	activity = {'actor': user.username, 'verb': 'voted', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug,"visible_public":visible_public}
+	if question.isBet and queBet:
+		user.extendeduser.credits -= queBet
+		user.extendeduser.credits += 20
+		points = 20
+		activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet, "action":"voteBet","visible_public":visible_public}
+		feed = client.feed('notification', user.id)
+		feed.add_activity(activity)
+		activity = {'actor': user.username, 'verb': 'votedBet', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":queBet,"visible_public":visible_public}
+	else:
+		if question.privatePoll:
+			user.extendeduser.credits += 20
+			points = 20
+		else:
+			user.extendeduser.credits += 10 #for voting on normal question
+			points = 10
+	following_id_list = [x.user_id for x in Subscriber.objects.filter(question_id=question.id) if x.user_id != question.user_id]
+	while user.id in following_id_list:
+		following_id_list.remove(user.id)
+	if user.id != question.user_id:
+		feed = client.feed('notification', question.user_id)
+		feed.add_activity(activity)
+	for following_id in following_id_list:
+		feed = client.feed('notification', following_id)
+		feed.add_activity(activity)
+	feed = client.feed('user', question.user_id)
+	feed.add_activity(activity)
+	feed = client.feed('user', user.id)
+	feed.add_activity(activity)
+	feed = client.feed('flat', user.id)
+	feed.add_activity(activity)
+	activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":points, "action":"vote","visible_public":visible_public}
+	feed = client.feed('notification', user.id)
+	feed.add_activity(activity)
+	user.extendeduser.save()
+
+def create_new_user_mail_login(request,mailId,question):
+	password = 'welcome'+mailId.split('@')[0]
+	newUser = User(first_name="User",email=mailId,username=mailId)
+	newUser.set_password(password)#no need to manually encrypt password using this
+	newUser.save()
+	new_extended_user = ExtendedUser(user=newUser)
+	new_extended_user.save()
+	newUserMailStatus = EmailAddress(email=mailId, verified=1, primary=1, user=newUser)
+	newUserMailStatus.save()
+	newUser.backend = 'django.contrib.auth.backends.ModelBackend'
+	login(request, newUser)
+	# Sending registration details to new users
+	msg = EmailMessage(subject="Thank you mail", from_email="support@askbypoll.com",to=[mailId])
+	msg.template_name = "emailwidgetregisterationmail"
+	msg.global_merge_vars = {
+		"questionText" : question.question_text,
+		"userName" : mailId,
+		"password" : password
+	}
+	msg.send()
+	return newUser
+
+def validateEmail(email):
+	if not EMAIL_REGEX.match(email):
+		return False
+	return True
+
+
+

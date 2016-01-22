@@ -37,6 +37,7 @@ from django.contrib.auth.models import Group, User
 from django.core.mail import EmailMessage
 from django.contrib.sessions.models import Session
 from django.utils import timezone
+import polls
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -152,6 +153,10 @@ class EditProfileView(BaseViewList):
 				return HttpResponse(json.dumps(data),
                             content_type='application/json')
 			else:
+				question = request.GET.get("question")
+				choice = request.GET.get("choice")
+				if question and choice:
+					polls.views.save_poll_vote(user,question,choice,queBet=None)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 		return HttpResponseRedirect(url)
 
@@ -452,11 +457,16 @@ class AdminDashboard(BaseViewDetail):
 		# 	template_name = ''
 		return [template_name]
 	
-	def get_context_data(self, **kwargs):
+	def get(self, request, *args, **kwargs):
 		try:
-			data = super(AdminDashboard, self).get_context_data(**kwargs)
+			self.object = self.get_object()
+			data = super(AdminDashboard, self).get_context_data(object=self.object)
 			choice_id_text_data = {}
 			user = self.request.user
+			if self.object != user:
+				user_slug = user.extendeduser.user_slug
+				url = reverse('login:loggedIn', kwargs={'pk':user.id,'user_slug':user_slug})
+				return HttpResponseRedirect(url)
 			polls_vote_list = []
 			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
@@ -627,7 +637,8 @@ class AdminDashboard(BaseViewDetail):
 			data['categories'] = Category.objects.all()
 			data['choice_id_text_data'] = choice_id_text_data
 			# print(data)
-			return data
+			# return data
+			return self.render_to_response(data)
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]

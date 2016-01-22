@@ -5,7 +5,7 @@ from django.conf import settings
 import os,sys,linecache
 from categories.models import Category
 from django.template.defaultfilters import slugify
-from login.models import ExtendedUser
+from login.models import ExtendedUser,Company
 from PIL import Image
 import hashlib
 import hmac
@@ -28,6 +28,13 @@ def get_file_path_featured(instance, filename):
 	filename = "featured%s.%s" % (instance.id,ext)
 	folder_day = date.today()
 	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'featuredimages'+os.sep+str(folder_day)))
+	return os.path.join(profilePath,filename)
+
+def get_file_path_email(instance, filename):
+	ext = filename.split('.')[-1]
+	filename = "email%s.%s" % (instance.id,ext)
+	folder_day = date.today()
+	profilePath = (os.path.join(settings.BASE_DIR,'media'+os.sep+'emailimages'+os.sep+str(folder_day)))
 	return os.path.join(profilePath,filename)
 
 class Question(models.Model):
@@ -392,3 +399,47 @@ class VoteApi(models.Model):
 	session = models.CharField(max_length=512,blank=True,null=True)
 	src = models.CharField(max_length=512,blank=True,null=True)
 	
+
+class PollTokens(models.Model):
+	token = models.CharField(max_length=512,blank=True,null=True)
+	email = models.EmailField(max_length=254,blank=True, null= True)
+	question = models.ForeignKey(Question, blank=True, null=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+class EmailTemplates(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	name = models.CharField(max_length=254)
+	subject = models.CharField(max_length=512, default="Let us know what you think")
+	body1 = models.CharField(max_length=512,blank=True, null= True)
+	body2 = models.CharField(max_length=512,blank=True, null= True)
+	salutation = models.CharField(max_length=512, default="Thanks & Regards")
+	company = models.ForeignKey(Company)
+	body_image = models.ImageField(upload_to=get_file_path_email,blank=True,null=True)
+	def __str__(self):
+		return self.name
+	def get_display_name(self):
+		display_name = self.name
+		company_append_length = len(self.company.company_slug) + 3
+		name_length = len(display_name)
+		if name_length > company_append_length:
+			company_append_string = "---" + self.company.company_slug
+			if display_name[-company_append_length:] == company_append_string:
+				display_name = display_name[:-company_append_length]
+		return display_name
+	def get_folder_day(self):
+		folder_day = ""
+		pathlist = self.body_image.path.split(os.sep)
+		prepend_path = "media/emailimages/"
+		try:
+			day = pathlist[-2]
+			# print(day.split("-"))
+			# print(day,int(day.split("-")[0]),int(day.split("-")[2]),int(day.split("-")[3]))
+			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
+		except:
+			pass
+		return prepend_path+folder_day
+	def get_file_path(self):
+		if self.body_image:
+			return self.get_folder_day()+"/"+self.body_image.path.split(os.sep)[-1]
+		else:
+			return "static/polls/images/email_body.jpg"
