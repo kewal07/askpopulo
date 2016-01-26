@@ -3043,21 +3043,21 @@ def get_user_referral_id(user_id=None,referral=""):
 	import math
 	refer_list = ['M','P','J','S','G','V','D','Y','A','K']
 	if user_id:
-	    user_referral = ""
+		user_referral = ""
 		ref_user = user_id
-	    while ref_user > 0:
-	        char_int = ref_user % 10
-	        ref_user = int(ref_user / 10)
-	        user_referral += refer_list[char_int]
-		user_referral += "_ABP"
+		while ref_user > 0:
+			char_int = ref_user % 10
+			ref_user = int(ref_user / 10)
+			user_referral += refer_list[char_int]
+			user_referral += "_ABP"
 		return user_referral
 	if referral:
-	    user_id = 0
-	    user_referral = referral
+		user_id = 0
+		user_referral = referral
 		user_referral = referral[:-4]
-	    for index,char_char in enumerate(user_referral):
-	        char_int = refer_list.index(char_char)
-	        user_id = int((math.pow(10,index) * char_int) + user_id)
+		for index,char_char in enumerate(user_referral):
+			char_int = refer_list.index(char_char)
+			user_id = int((math.pow(10,index) * char_int) + user_id)
 		return user_id
 
 
