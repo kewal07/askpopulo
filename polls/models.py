@@ -443,3 +443,27 @@ class EmailTemplates(models.Model):
 			return self.get_folder_day()+"/"+self.body_image.path.split(os.sep)[-1]
 		else:
 			return "static/polls/images/email_body.jpg"
+
+class UsersReferred(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="referral_user")
+	referred_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="referred_user")
+	def __str__(self):
+		return self.user.username
+
+class PollsReferred(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	referred_question = models.ForeignKey(Question)
+	referred_question_count = models.IntegerField(blank=True, null= True, default=0)
+	def __str__(self):
+		return self.user.username
+
+class SurveysReferred(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	referred_survey = models.ForeignKey(Survey)
+	referred_survey_count = models.IntegerField(blank=True, null= True, default=0)
+	def __str__(self):
+		return self.user.username
+	
