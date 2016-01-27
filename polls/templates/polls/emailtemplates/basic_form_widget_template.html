@@ -116,7 +116,7 @@
 				{% endif %}
 					{% if choice.choice_image %}
 						<div class="email-choice-image-div">
-						<img class="email-choice-image" id="email-choice-image{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+						<img class="email-choice-image" id="email-choice-image{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}" />
 						<!-- <p>{{ choice.choice_text }}</p> -->
 						<span class="email-choice-text">
 					{% else %}
