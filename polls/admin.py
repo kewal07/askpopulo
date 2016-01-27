@@ -1,5 +1,5 @@
 from django.contrib import admin
-from polls.models import Choice, Question,Vote,Subscriber,QuestionWithCategory,Survey,Survey_Question,SurveyVoted,VoteText,EmailTemplates
+from polls.models import Choice, Question,Vote,Subscriber,QuestionWithCategory,Survey,Survey_Question,SurveyVoted,VoteText,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred
 from django.conf import settings
 from categories.models import Category
 
@@ -27,3 +27,6 @@ admin.site.register(Survey_Question)
 admin.site.register(SurveyVoted)
 admin.site.register(VoteText)
 admin.site.register(EmailTemplates)
+admin.site.register(PollsReferred)
+admin.site.register(SurveysReferred)
+admin.site.register(UsersReferred)
