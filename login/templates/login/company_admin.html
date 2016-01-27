@@ -169,7 +169,7 @@
 						</div>
 						<div class="shareOnMail" id="mail-Poll---{{ question.poll.id }}Div">
 							<div class="askbypoll-group-filter" id="askbypoll-group-filter---{{ question.poll.id }}">
-								<p class="askbypoll-group-filter-p"> Select the users from ABP group below </p>
+								<p class="askbypoll-group-filter-p"> Select your demographics </p>
 								<select class="askbypoll-group-filter-age" id="askbypoll-group-filter-age---{{ question.poll.id }}" name="age">
 									<option value="notSelected">Age Group?</option>
 									<option value="<19"><19</option>
@@ -197,19 +197,19 @@
 								<!-- <input name="city" type="text" id="askbypoll-group-filter-city---{{ question.poll.id }}" class="askbypoll-group-filter-city" placeholder="City" /> -->
 							</div>
 							<div class="email-widget-email-list-div" id="email-widget-email-list-div---{{ question.poll.id }}">
-								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<!-- <p class="askbypoll-group-filter-p"> Enter recipient email id's </p> -->
 								<p class="padding-bottom-border-p">
 									<label class="mailPollLabel" for="mailPoll---{{ question.poll.id }}">Email List:</label><br>
 									<textarea class="mailPollTextArea" id="mailPoll---{{ question.poll.id }}" name="mailPollIds" placeholder="Provide emails separated by ';'"></textarea>
 								</p>
-								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<!-- <p class="askbypoll-group-filter-p"> Enter recipient email id's </p> -->
 								<p class="padding-bottom-border-p">
-									<label for="csv-upload-email---{{ question.poll.id }}">Upload CSV</label>
+									<label for="csv-upload-email---{{ question.poll.id }}" style="width: 16rem;">Upload Email List (.csv format)</label>
 				        			<input type="file" class="csv-upload-email" name="File Upload" id="csv-upload-email---{{ question.poll.id }}" accept=".csv" />
 								</p>
 							</div>
 							<div class="email-widget-template-div" id="email-widget-template-div---{{ question.poll.id }}">
-								<p class="askbypoll-group-filter-p"> Enter recipient email id's </p>
+								<!-- <p class="askbypoll-group-filter-p"> Enter recipient email id's </p> -->
 								<p></p>
 								<div class="preview-template-div mail-poll-widget-type-p">
 									<label class="mail-poll-widget-type-label" for="mail-poll-widget-type---{{ question.poll.id }}">Select email Template: </label>
