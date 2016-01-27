@@ -3052,7 +3052,7 @@ def get_user_referral_id(user_id=None,referral=""):
 			char_int = ref_user % 10
 			ref_user = int(ref_user / 10)
 			user_referral += refer_list[char_int]
-			user_referral += "_ABP"
+		user_referral += "_ABP"
 		return user_referral
 	if referral:
 		user_id = 0

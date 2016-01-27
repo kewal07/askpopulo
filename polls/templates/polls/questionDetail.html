@@ -117,9 +117,15 @@
 							<input class="submit detailSubmit" type="submit" value="Analyse" />
 							{% endif %}
 							<ul class="share-buttons">
+								{% if user.is_authenticated %}
+								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}"></div></li>
+								{% else %}
 								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
+								{% endif %}
 							</ul>
 						</div>
 					</div>

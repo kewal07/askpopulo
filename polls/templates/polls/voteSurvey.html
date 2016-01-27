@@ -181,9 +181,15 @@
 							</script>
 						</li>
 						<ul class="pollInfoUl clearfix share-buttons">
+							{% if user.is_authenticated %}
+							<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}"></div></li>
+							{% else %}
 							<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
 							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}"></div></li>
+							{% endif %}
 						</ul>							
 					</ul>
 				</div>
