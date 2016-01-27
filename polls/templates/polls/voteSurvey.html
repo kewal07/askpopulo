@@ -220,6 +220,8 @@
 				var form_data = $(this).serialize();
 				// console.log(form_data);
 				form_data += '&' + 'saveRequired=True';
+				var referral = getQueryParameterByName("referral")
+				form_data += '&' + 'referral_id='+referral;
 				// console.log(form_data);
 				var queid = elemid.replace("optionsForm","");
 					$.ajax(
@@ -337,7 +339,7 @@
 					// $(this).removeAttr("disabled");
 					// $("#vote"+{{ survey.id }}).removeAttr("disabled");
 				{% else %}
-					url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}'
+					url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}?{{ request.GET.urlencode }}'
 					// console.log(url);
 					$(location).attr('href',url);
 				{% endif %}

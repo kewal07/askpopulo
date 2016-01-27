@@ -92,7 +92,7 @@
 										<a class="que_desc_cat_span catOnIndex" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
 									{% endfor %}
 								</p>
-								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" method="POST" id="optionsForm{{ question.question.id }}" >
+								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >
 									{% csrf_token %}
 									<input type="hidden" name="question" value="{{ question.question.id }}" />
 									<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
@@ -317,13 +317,14 @@
 				var betValue = 0;
 				// console.log(quebet === "True");
 				var elemid = "#optionsForm"+queid;//$(this)[0].id
+				var vote_url = $(elemid).attr("action");
 				$(elemid).bind('submit', function()
 				{
 					$("#"+voteSubmitId).attr("disabled","disabled");
 					$.ajax(
 					{
 						type: 'POST',
-						url:'/polls/'+queid+"/"+queslug,
+						url:vote_url,
 						data:$(elemid).serialize(),
 						success:function(response)
 						{

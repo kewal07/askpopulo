@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates
+from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -328,6 +328,7 @@ class VoteView(BaseViewDetail):
 					subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 					vote.save()
 					voted.save()
+					save_references(referral_user=request.GET.get("referral",""), poll=question)
 					# subscribed.save()
 			else:
 				# error to show no choice selected
@@ -339,7 +340,7 @@ class VoteView(BaseViewDetail):
 				if request.is_ajax():
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
-				extra_params = '?next=%s'%next_url
+				extra_params = '?next=%s?referral=%s'%(next_url,request.GET.get("referral",""))
 				url = reverse('account_login')
 				full_url = '%s%s'%(url,extra_params)
 				if request.is_ajax():
@@ -1723,6 +1724,8 @@ class SurveyVoteView(BaseViewDetail):
 						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
 						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
 						survey_voted.save()
+						referral_user = request.POST.get("referral_id")
+						save_references(referral_user,survey=survey)
 				else:
 					if mandatory and not already_voted:
 						# print("mandatory for",questionId,type(mandatory))
@@ -3059,5 +3062,23 @@ def get_user_referral_id(user_id=None,referral=""):
 			char_int = refer_list.index(char_char)
 			user_id = int((math.pow(10,index) * char_int) + user_id)
 		return user_id
+
+def save_references(referral_user, poll = None, survey = None, referred_user = None):
+	try:
+		if referral_user:
+			referral_user_id = get_user_referral_id(referral = referral_user)
+			if poll:
+				poll_refer, created = PollsReferred.objects.get_or_create(user_id=referral_user_id, referred_question=poll)
+				poll_refer.referred_question_count += 1
+				poll_refer.save()
+			if survey:
+				survey_refer, created = SurveysReferred.objects.get_or_create(user_id=referral_user_id, referred_survey=survey)
+				survey_refer.referred_survey_count += 1
+				survey_refer.save()
+			if referred_user:
+				user_refer, created = UsersReferred.objects.get_or_create(user_id=referral_user_id, referred_user=referred_user)
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 

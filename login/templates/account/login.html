@@ -38,7 +38,7 @@
 						{% include "socialaccount/snippets/provider_list.html" with process="login" %}
 					  <!-- </ul> -->
 					 </div>
-				  <form class="loginContentForm" method="POST" action="{% url 'account_login' %}">
+				  <form class="loginContentForm" method="POST" action="{% url 'account_login' %}?{{ request.GET.urlencode }}">
 					  {% csrf_token %}
 					  {{ form.as_p }}
 					  {% if redirect_field_value %}
