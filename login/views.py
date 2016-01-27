@@ -72,6 +72,8 @@ class BaseViewList(generic.ListView):
 					notify.append(activity)
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
+			user_referral_code = polls.views.get_user_referral_id(user_id=self.request.user.id)
+			context['referral_code'] = user_referral_code
 		return context
 
 class BaseViewDetail(generic.DetailView):
@@ -105,6 +107,8 @@ class BaseViewDetail(generic.DetailView):
 					notify.append(activity)
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
+			user_referral_code = polls.views.get_user_referral_id(user_id=self.request.user.id)
+			context['referral_code'] = user_referral_code
 		return context
 
 class EditProfileView(BaseViewList):
