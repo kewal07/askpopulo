@@ -208,7 +208,7 @@
 								var form_errors = response.form_errors;
 								if(typeof form_errors === 'undefined'){
 									closeOverlay("#overlay-inAbox");
-									location.href = "{{ request.path }}";
+									location.href = "{{ request.path }}?{{ request.GET.urlencode }}";
 								}
 							}
 						});     
