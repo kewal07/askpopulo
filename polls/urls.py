@@ -55,7 +55,8 @@ urlpatterns = patterns('',
 	url(r'^missionbellandur', TemplateView.as_view(template_name='bellandur.html'), name='missionbellandur'),
 	url(r'^sharepoll', views.sendPollMail, name='sharepoll'),
 	url(r'^emailresponse', views.emailResponse, name='emailresponse'),
-	url(r'^tokenexpiredview', TemplateView.as_view(template_name='tokenexpired.html'), name='tokenexpiredview')
+	url(r'^tokenexpiredview', TemplateView.as_view(template_name='tokenexpired.html'), name='tokenexpiredview'),
+	url(r'^mobilewallets', TemplateView.as_view(template_name='mobilewallets.html'), name='mobilewallets'),
 	#url(r'^servemailpollresponse', views.responseOnEmail, name='responseOnEmail'),
 	# url(r'^getwidgettemplate/(?P<pk>\d+)', views.WebsiteWidgetTemplateView.as_view(),name="getwidgettemplate"),
 )
