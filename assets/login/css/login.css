@@ -130,7 +130,7 @@ form.loginContentForm input{
 .social_providers{
 	margin-left: 5rem;
 	padding-bottom:2rem;
-	margin-top:5rem;
+	/*margin-top:5rem;*/
 }
 .socialaccount_ballot{
 	/*-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */

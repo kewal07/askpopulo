@@ -18,14 +18,24 @@
 			{% if socialaccount.providers  %}
 			{% if request.GET.next != "/survey/30/a-study-mobile-internet-free-basic-by-facebook" %}
 				{% if request.GET.next %}
-					<p><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+					<p style="padding: 0.5rem 0;"><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
 				{% else %}
-					<p><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
+					<p style="padding: 0.5rem 0;"><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
 				{% endif %}
 			{% endif %}
 
 			<div class="loginContentTable">
 				<div class="information-video">
+					<div class="slider" style="display:block;padding-bottom: 0.8rem;font-size: 1.4rem;">
+						<a href="https://www.askbypoll.com/survey/30/a-study-mobile-internet-free-basic-by-facebook?referral=JSA_ABP">
+						<div style="color: darkblue;">
+							<p>A Study - Mobile Internet & Free Basics by Facebook</p>
+							<!-- <div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div> -->
+							<img class="slider-img" style="height: 285px;width: 100%;margin: 0.5rem 0rem;" src="/static/freebasic.jpg">
+							<p>Login to Let us know your opinion</p>
+						</div>
+						</a>
+					</div>
 					<div class="slider">
 						<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div>
 						<!-- <img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg"> -->
@@ -34,6 +44,7 @@
 				</div>
 				<div class="socialaccount_ballot">
 					<div class="social_providers">
+						<p style="color: darkblue;margin-bottom: 3.2rem;"> Lets Get You Started! </p>
 					  <!-- <ul class="socialaccount_providers"> -->
 						{% include "socialaccount/snippets/provider_list.html" with process="login" %}
 					  <!-- </ul> -->

@@ -103,7 +103,7 @@
 				Dear User,
 			</p>
 			<p>
-				<textarea class="email-body1-textarea" id="email-body1-textarea---{{ poll.id }}">{{ body1|safe}}</textarea>
+				<textarea class="email-body1-textarea" id="email-body1-textarea---{{ poll.id }}">{{ body1 }}</textarea>
 			</p>
 			<p class="poll-text">
 				{{ poll.question_text }}
@@ -133,7 +133,7 @@
 				</a>
 			{% endfor %}
 			</p>
-			<p><textarea class="email-body2-textarea" id="email-body2-textarea---{{ poll.id }}">{{ body2|safe }}</textarea></p>
+			<p><textarea class="email-body2-textarea" id="email-body2-textarea---{{ poll.id }}">{{ body2 }}</textarea></p>
 			<p><textarea class="email-salutation-textarea" id="email-salutation-textarea---{{ poll.id }}">{{ salutation }}</textarea></p>
 			<p><a href="{{ domain_url }}/{{ user.extendeduser.company.company_slug }}">{{ user.extendeduser.company.name }}</a></p>
 		</div>
