@@ -273,7 +273,7 @@
 		{
 			if({{ survey.id }} == 30){
 				{% if not user.is_authenticated %}
-					location.href = "{% url 'account_login' %}?next={{ request.path }}";
+					location.href = "{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}";
 				{% endif %}
 				$(".userInfo").hide();
 				$("#survey-title").css("text-align","center");

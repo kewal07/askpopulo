@@ -99,9 +99,9 @@
 			<p>
 				Dear User,
 			</p>
-			<p class="email-body1" id="email-body1---{{ poll.id }}">
-				{{ body1 }}
-			</p>
+			<div class="email-body1" id="email-body1---{{ poll.id }}">
+				{{ body1|linebreaks }}
+			</div>
 			<p class="poll-text">
 				{{ poll.question_text }}
 			</p>
@@ -130,7 +130,7 @@
 				</a>
 			{% endfor %}
 			</p>
-			<p class="email-body2" id="email-body2---{{ poll.id }}">{{ body2 }}</p>
+			<div class="email-body2" id="email-body2---{{ poll.id }}">{{ body2|linebreaks }}</div>
 			<p class="email-salutation" id="email-salutation---{{ poll.id }}">{{ salutation }}</p>
 			<p><a href="{{ domain_url }}/{{ user.extendeduser.company.company_slug }}">{{ user.extendeduser.company.name }}</a></p>
 		</div>

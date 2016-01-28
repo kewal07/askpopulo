@@ -1849,7 +1849,7 @@
 					var body2 = $("#email-body2-textarea---"+mailPollId).val();
 					var salutation = $("#email-salutation-textarea---"+mailPollId).val();
 					form_data = { questionId: mailPollId, gethtml: true, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, csrfmiddlewaretoken: "{{ csrf_token }}" };
-					console.log(form_data);
+					// console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -1949,10 +1949,16 @@
 					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace('Subject : <p class="askbypoll-email-preview-sub">',"").replace("</p>","");
 					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
 					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
+					body1 = body1.replace(/<\/?p?>/g,"\n");
+					body1 = body1.replace(/<p?>/g,"\n");
+					body1 = body1.replace(/<br?>/g,"\n");
+					body2 = body2.replace(/<\/?p?>/g,"\n");
+					body2 = body2.replace(/<p?>/g,"\n");
+					body2 = body2.replace(/<br?>/g,"\n");
 					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
 					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, templateName: templateName, savehtml: true, csrfmiddlewaretoken: "{{ csrf_token }}" };
 					$(".errorlist").remove();
-					console.log(form_data);
+					// console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -1992,7 +1998,7 @@
 					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
 					var salutation = $("#email-salutation---"+mailPollId)[0].innerHTML;
 					form_data = { questionId: mailPollId, gethtml: false, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, savehtml: false, emailList: emailList, emailListFromFile: emailListFromFile, csrfmiddlewaretoken: "{{ csrf_token }}" };
-					console.log(form_data);
+					// console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
