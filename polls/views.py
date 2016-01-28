@@ -1724,8 +1724,6 @@ class SurveyVoteView(BaseViewDetail):
 						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
 						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
 						survey_voted.save()
-						referral_user = request.POST.get("referral_id")
-						save_references(referral_user,survey=survey)
 				else:
 					if mandatory and not already_voted:
 						# print("mandatory for",questionId,type(mandatory))
@@ -1738,6 +1736,9 @@ class SurveyVoteView(BaseViewDetail):
 					survey_voted.delete()
 				if data == {}:
 					data["success"]=success_msg_text
+					if saveRequired and survey_voted.user_answer_count == 1:
+						referral_user = request.POST.get("referral_id")
+						save_references(referral_user,survey=survey)
 				print(success_msg_text)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
