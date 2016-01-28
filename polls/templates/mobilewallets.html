@@ -7,9 +7,18 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'foodstartup.css' %}" />
 	<style>
+		html{
+			background:url('/static/walletBackground.jpg') no-repeat center center fixed !important;
+		}
+		.questions{
+			opacity:1 !important;
+		}
 		td {
     		height:25px;
 		}	 
+		#figBox1{
+			border: 0px !important;
+		}
 		.askbypoll-embed-show-demographics{
 			font-size: 1rem !important;
 			bottom: 1rem !important;
@@ -19,8 +28,9 @@
 {% block content %}
 <section id="content">
 	<div class="questions">
-			<center><H1><font style="font-size: x-large;font-weight: 700;">Mobile Wallets - The Modern Day Payment Machines</font></H1></center><HR><br>
-			<center><font style="font-size: x-large;font-weight: 100;">Read Time: 7 Mins</font></center><br><br>
+			<center><H1 style="background-color: turquoise; padding: 1rem;"><font style="font-size: x-large;font-weight: 700;">Mobile Wallets - The Modern Day Payment Machines</font></H1></center><HR><br>
+			<font style="font-size:large;font-weight: 100;">Created by: <a style="color:red;" href="https://in.linkedin.com/in/sandeepsingh2328"><i> Sandeep Singh      </i></a> 29th January, 2016</font>
+			<span style="right: 5rem; position: absolute;"> <font style="font-size: large;font-weight: 100;">Read Time: 7 Mins</font> </span> <br><br>
 			<H2><font style="font-size: x-large;font-weight: 700;">An Introduction to Mobile Wallets</font><br><br>
 
 				<P align="justify" style="line-height:150%">Mobile Wallets is a relatively new concept which is being embraced with open arms in India. Simply put, a mobile wallet is a mobile-based virtual wallet, where you preload a certain amount in your account created with the mobile wallet service provider, and spend it at online and offline merchants listed with the mobile wallet service provider.
@@ -48,9 +58,11 @@
 				 <P align="justify" style="line-height:150%">Open Wallets are those that allow redemption as well as cash withdrawals (from automated teller machines / business correspondents) in addition to the other features offered by Semi-Closed ones. A perfect example is the Vodafone powered M-pesa wallet.
                                 </P><br>
 				
+				 <div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3498"></div>
+                                <br><br>
 				 <H2><font style="font-size: x-large;font-weight: 700;">Catalysts driving mobile wallet adoption</font><br><br>
-				<div class="imageAndInfo" style="display:inline;">
-				<div class="infoBox" id="infoBox1" style="width:50%; margin: 0; display: inline-block;border: 1px solid;padding: 1rem;">
+				<div class="imageAndInfo" style="display:flex;">
+				<div class="infoBox" id="infoBox1" style="width:50%; margin: 0; display: inline-block;padding: 1rem;">
 					<P align="justify" style="line-height:150%">The growth in the digital payment landscape can be broken down into a few pivotal factors that came in together at the same time to fuel the burgeoning growth:
                                 	</P><br>
 					<P align="justify" style="line-height:150%">•	Government and Telcos introducing 3G & 4G Services across more geographies at affordable prices giving a tangible boost to e-commerce and digital payments. 
@@ -59,11 +71,12 @@
                                         </P><br>
 					<P align="justify" style="line-height:150%">•	With online banking gaining momentum and online transaction security picking up confidence more and more transactions started happening online with a gradual shift towards more affordable and feature loaded digital wallets.  
                                         </P><br>
-                                </div>
+                                
 				</div>
 				<div class="figBox" id="figBox1" style="width: 46%; display: inline-block;">
                                                 <img style="width:100%; height:400px;" src="/static/futureOfMoney.jpg">
                                 </div>
+				</div>
 				<P align="justify" style="line-height:150%">With the ecosystem becoming mature and more and more players, suppliers and vendors entering the market, the day is not far when payments even at Kirana stores might be done using a Digital wallet. As said by Paytm -  
 				</P><br>
 				<P align="justify" style="line-height:150%">“We wish to tie-up with organised retail partners, your local kirana shops and create app-cash points, so these merchants will accept Paytm payments, but also give you top-ups and in some cases do the eKYC as well. The idea is to drive up our offline merchant payment points as well. We plan to have 50,000 of these by the end of the year,”
@@ -72,18 +85,11 @@
                                 </P><br>
 				<P align="justify" style="line-height:150%">We have fingers crossed but for now, let’s order food at half the price, enjoy free movie tickets, hail cheap cabs and get cashbacks on utility bills.
                                 </P><br>
-				<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3045"></div>
-				<br><br>
 				
-				 <P align="justify" style="line-height:150%">
-					Clearly, looks like Freshmenu is doing good across age groups and professions whereas, EatFresh has to do some time to capture the younger age group and Swiggy has to do something to capture the salaried group of 26 – 30.
-                                <br>
-                                </P>
-				<div class="askbypoll-embed-poll" id="askbypoll-embed-poll---3332"></div>
 				<ul id="foodStartUpsShare" class="share-buttons">
-					<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/foodtechstartups" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>
-					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}/foodtechstartups" data-hashtags="AskByPoll" style="margin-left:1rem;">Tweet</a></li>
-					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/foodtechstartups" style="margin-left:1rem;"></div></li>
+					<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/mobilewallets" data-image='https://askbypoll.com/static/mobileWallet.png'  data-layout="button_count"></div></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}/mobilewallets" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}/mobilewallets"" data-hashtags="AskByPoll" style="margin-left:1rem;">Tweet</a></li>
+					<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/mobilewallets" style="margin-left:1rem;"></div></li>
 				</ul>
 
 				<div id="disqus_thread">
