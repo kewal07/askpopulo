@@ -1,5 +1,12 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% block meta_data_extra %}
+	<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/futureOfMoney.jpg"/>
+	<meta property="og:image:width" content="300" /> 
+	<meta property="og:image:height" content="300" />
+	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<meta property="og:title" content="Mobile Wallets - The Modern Day Payment Machines"/>
+{% endblock %}
 {% block extra_js %}
 	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
 {% endblock %}
@@ -9,6 +16,7 @@
 	<style>
 		html{
 			background:url('/static/walletBackground.jpg') no-repeat center center fixed !important;
+			background-size: cover !important;
 		}
 		.questions{
 			opacity:1 !important;
@@ -23,14 +31,21 @@
 			font-size: 1rem !important;
 			bottom: 1rem !important;
 		}
+		.bullet-span{
+			font-size: 2rem;
+			vertical-align: middle;
+		}
+		.sources-a{
+			color: darkblue;
+		}
 </style>
 {% endblock %}
 {% block content %}
 <section id="content">
 	<div class="questions">
 			<center><H1 style="background-color: turquoise; padding: 1rem;"><font style="font-size: x-large;font-weight: 700;">Mobile Wallets - The Modern Day Payment Machines</font></H1></center><HR><br>
-			<font style="font-size:large;font-weight: 100;">Created by: <a style="color:red;" href="https://in.linkedin.com/in/sandeepsingh2328"><i> Sandeep Singh      </i></a> 29th January, 2016</font>
-			<span style="right: 5rem; position: absolute;"> <font style="font-size: large;font-weight: 100;">Read Time: 7 Mins</font> </span> <br><br>
+			<font style="font-size:large;font-weight: 100;">Created by: <a target="_blank" style="color:red;" href="https://in.linkedin.com/in/sandeepsingh2328"><i> Sandeep Singh      </i></a> 29th January, 2016</font>
+			<span style="right: 5rem; position: absolute;"> <font style="font-size: large;font-weight: 100;">Read Time: 4 Mins</font> </span> <br><br>
 			<H2><font style="font-size: x-large;font-weight: 700;">An Introduction to Mobile Wallets</font><br><br>
 
 				<P align="justify" style="line-height:150%">Mobile Wallets is a relatively new concept which is being embraced with open arms in India. Simply put, a mobile wallet is a mobile-based virtual wallet, where you preload a certain amount in your account created with the mobile wallet service provider, and spend it at online and offline merchants listed with the mobile wallet service provider.
@@ -40,10 +55,10 @@
 					<div class="figBox" id="figBox1"> 
 						<img style="width:100%; height:400px;" src="/static/mobileWallet.png">
 					</div><br>
-					<P align="justify" style="line-height:150%">Right from recharging their phones to refilling the taxi money to online bill payments - the advantages are many. A few people have even started using these to buy a drink at Cafe Coffee Day and refuelling at gas stations. The numbers speak for themselves:<br><br>
-					•	Paytm today has about 20 million active users which is higher than the cumulative number of credit cards in India .<br>
-•	According to a study by research firm RNCOS, the current Indian market size for mobile wallet (m-wallet) stands at about Rs 350 CRORES and is estimated to rise to Rs 1,210 CRORES by 2019.<br>
-•	Tracxn, a market intelligence platform, has laid down the momentum in this sector as - Over 250 financial-tech start-ups were founded in 2013 and 2014, and the last 1.5 years have seen them raise $1.5 billion in funding .<br>
+					<P align="justify" style="line-height:150%">Right from recharging mobile phones to refilling the taxi money to online bill payments - the advantages of mobile wallets are many. A few people have even started using these to buy a drink at Cafe Coffee Day and refuelling at gas stations. The numbers speak for themselves:<br><br>
+					<span class="bullet-span">•</span>	Leading mobile commerce platform Paytm crossed 100 million Paytm Wallet users in August of 2015, in line with its vision of transforming India into a ‘cash-free’ economy <br>
+<span class="bullet-span">•</span>	According to a study by research firm RNCOS, the current Indian market size for mobile wallet (m-wallet) stands at about Rs 350 CRORES and is estimated to rise to Rs 1,210 CRORES by 2019.<br>
+<span class="bullet-span">•</span>	Tracxn, a market intelligence platform, has laid down the momentum in this sector as - Over 250 financial-tech start-ups were founded in 2013 and 2014, and the last 1.5 years have seen them raise $1.5 billion in funding .<br>
                                 	</P><br><br>
 				</div>
 				
@@ -65,11 +80,11 @@
 				<div class="infoBox" id="infoBox1" style="width:50%; margin: 0; display: inline-block;padding: 1rem;">
 					<P align="justify" style="line-height:150%">The growth in the digital payment landscape can be broken down into a few pivotal factors that came in together at the same time to fuel the burgeoning growth:
                                 	</P><br>
-					<P align="justify" style="line-height:150%">•	Government and Telcos introducing 3G & 4G Services across more geographies at affordable prices giving a tangible boost to e-commerce and digital payments. 
+					<P align="justify" style="line-height:150%"><span class="bullet-span">•</span>	Government and Telcos introducing 3G & 4G Services across more geographies at affordable prices giving a tangible boost to e-commerce and digital payments. 
 					</P><br>
-					<P align="justify" style="line-height:150%">•	Nearly 50 per cent of Indian Smartphone users belong to the 18-30 years demographic, who are the early adopters in these digital segments. 
+					<P align="justify" style="line-height:150%"><span class="bullet-span">•</span>	Nearly 50 per cent of Indian Smartphone users belong to the 18-30 years demographic, who are the early adopters in these digital segments. 
                                         </P><br>
-					<P align="justify" style="line-height:150%">•	With online banking gaining momentum and online transaction security picking up confidence more and more transactions started happening online with a gradual shift towards more affordable and feature loaded digital wallets.  
+					<P style="line-height:150%"><span class="bullet-span">•</span>	With online banking gaining momentum and online transaction security picking up confidence more and more transactions started happening online with a gradual shift towards more affordable and feature loaded digital wallets.  
                                         </P><br>
                                 
 				</div>
@@ -85,6 +100,14 @@
                                 </P><br>
 				<P align="justify" style="line-height:150%">We have fingers crossed but for now, let’s order food at half the price, enjoy free movie tickets, hail cheap cabs and get cashbacks on utility bills.
                                 </P><br>
+				<p class="sources-p">
+					<span class="sources-span" style="color:grey">Sources: </span> 
+					<a target="_blank" class="sources-a" href="http://www.thehindu.com/business/Economy/paytm-crosses-100-million-wallet-userbase/article7531373.ece">Hindu</a>
+					<a target="_blank" class="sources-a" href="http://gadgets.ndtv.com/apps/features/seven-mobile-wallets-every-indian-should-know-about-754812">NDTV Gadgets</a>
+					<a target="_blank" class="sources-a" href="http://www.ampercent.com/best-5-mobile-wallets-for-online-payments-in-india/16425/">Ampercent</a>
+					<a target="_blank" class="sources-a" href="http://yourstory.com/2015/10/mobile-wallet-future/">YourStory</a>
+					<a target="_blank" class="sources-a" href="https://www.techinasia.com/talk/mobile-wallet-wars-india">Techinasia</a>
+				</p>
 				
 				<ul id="foodStartUpsShare" class="share-buttons">
 					<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/mobilewallets" data-image='https://askbypoll.com/static/mobileWallet.png'  data-layout="button_count"></div></li>

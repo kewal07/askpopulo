@@ -33,17 +33,22 @@
 					<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---{{ choice_det.choice.id }}">
 						<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---{{ choice_det.choice.id }}" src="{{ domain_url }}/media/choices/{{ choice_det.choice.get_file_name }}">
 						<div class="askbypoll-progress-bar-Img-div" style="position:relative;">
-							<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-{{ choice_det.choice.id }}">
+							<div class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-{{ choice_det.choice.id }}">
 								{{ choice_det.text }}
-							</p>
+							</div>
 							{% if choice_det.percent == 0 %}
-								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%; background:none;"></div>
+								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%; background:none;">
+									<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">
+										{{ choice_det.percent }}%
+									</span>
+								</div>
 							{% else %}
-								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%;"></div>
+								<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%;">
+									<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">
+										{{ choice_det.percent }}%
+									</span>
+								</div>
 							{% endif %}
-							<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">
-								{{ choice_det.percent }}%
-							</span>
 						</div>
 					</div>
 				{% else %}
@@ -53,7 +58,7 @@
 						</p>
 						{% if choice_det.percent == 0 %}
 							<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%; background:none;">
-							<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}" style="position: relative; top: 17px; right: 1px;">
+							<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">
 						{% else %}
 							<div class="askbypoll-embed-progress-bar" id="askbypoll-embed-progress-bar---{{ choice_det.choice.id }}" style="display: inline-block; width:{{ choice_det.width }}%;">
 							<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice_det.choice.id }}">

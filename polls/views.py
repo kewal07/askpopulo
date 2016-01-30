@@ -1996,9 +1996,11 @@ def vote_embed_poll(request):
 				width = 0
 				if totalVotes > 0:
 					percent = round(choice_vote_count/totalVotes * 100)
-					width = round(percent/1.39)
-					if percent == 0:
-						width = 15 
+					width = percent
+					if not choice.choice_image:
+						width = round(percent/1.39)
+						if percent == 0:
+							width = 15 
 				result[choice.id]["percent"] = percent
 				result[choice.id]["width"] = width
 			print(result)
@@ -2200,9 +2202,11 @@ def results_embed_poll(request):
 			choice_details["choice"] = choice
 			choice_details["text"] = choice_text
 			choice_details["percent"] = round(choice_percent)
-			width = choice_percent/1.39
-			if width == 0:
-				width = 15
+			width = choice_details["percent"]
+			if not choice.choice_image:
+				width = choice_percent/1.39
+				if width == 0:
+					width = 15
 			choice_details["width"] = round(width)
 			choice_details_list.append(choice_details)
 		req = {}
@@ -2876,6 +2880,7 @@ def sendPollMail(request):
 
 			invalidEmailList = []
 			print("starting")
+			failEmailList = []
 			for email in emailList:
 				if email.strip():
 					email = email.strip().replace(" ","")
@@ -2889,9 +2894,25 @@ def sendPollMail(request):
 						extra_context_data["token"] = token
 						# html_message = "' "+html_message+" '"
 						html_message = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic", extra_context_data=extra_context_data)
-						send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
-						pollToken = PollTokens(token=token,email=email,question=question)
-						pollToken.save()
+						try:
+							send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
+							pollToken = PollTokens(token=token,email=email,question=question)
+							pollToken.save()
+							#time.sleep(60)
+						except Exception as e:
+							exc_type, exc_obj, exc_tb = sys.exc_info()
+							print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
+							sendMailAgain = True
+							while sendMailAgain:
+								try:
+									print(email)
+									send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
+									pollToken = PollTokens(token=token,email=email,question=question)
+									pollToken.save()
+									sendMailAgain = False
+								except Exception as e:
+									exc_type, exc_obj, exc_tb = sys.exc_info()
+									print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 			print("end")
 			if invalidEmailList:
 				print(invalidEmailList)

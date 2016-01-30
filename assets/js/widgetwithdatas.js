@@ -131,7 +131,7 @@ function main() {
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;
 					askbypoll_country_data = data.country_dic;
-					$("#askbypoll-content---1---"+pollId).show();
+					$(".askbypoll-embed-content"+pollId).hide();
 					// $("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
 					if(protectResult == 1){
 						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
@@ -139,11 +139,12 @@ function main() {
 						var progressBarId = "askbypoll-embed-progress-bar---"+votedChoiceCookie;
 						$('#'+progressBarId).css('background','red');
 					}
-					google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
-					google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
-					google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
+					// google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
+					// google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
+					// google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
 					// google.setOnLoadCallback(drawRegionsMap(pollId, data.country_dic));
 					responsive_css(pollId);
+					$("#askbypoll-content---1---"+pollId).show();
 				});
 			} else {
 				$.getJSON(jsonp_url, function(data) {
@@ -166,7 +167,7 @@ function main() {
 										$('#askbypoll-result-choice---'+choice).text(percent+'%');
 										if(percent == 0){
 											var resspanid = "#askbypoll-result-choice---"+choice;
-											$(resspanid).attr("style", "position: relative; top: 17px; right: 1px;");
+											// $(resspanid).attr("style", "position: relative; top: 17px; right: 1px;");
 											// $(resspanid).css("top","17px");
 											// $(resspanid).css("position","relative");
 											$('#'+progressBarId).css('background','none');
@@ -223,7 +224,7 @@ function main() {
 								$('#askbypoll-result-choice---'+choice).text(percent+'%');
 								if(percent == 0){
 									var resspanid = "#askbypoll-result-choice---"+choice;
-									$(resspanid).attr("style", "position: relative; top: 17px; right: 1px;");
+									// $(resspanid).attr("style", "position: relative; top: 17px; right: 1px;");
 									// $(resspanid).css("position","relative");
 									$('#'+progressBarId).css('background','none');
 								}
@@ -278,8 +279,8 @@ function main() {
 								$('#'+progressBarId).css('width',width+'%');
 								if(percent == 0){
 									var resspanid = "#askbypoll-result-choice---"+choice;
-									$(resspanid).css("top","17px");
-									$(resspanid).css("position","relative");
+									// $(resspanid).css("top","17px");
+									// $(resspanid).css("position","relative");
 									$('#'+progressBarId).css('background','none');
 								}
 								if(votedChoice == choice)
@@ -348,6 +349,7 @@ function main() {
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;
 					askbypoll_country_data = data.country_dic;
+    					askByPollLoadGoogle();
 					google.setOnLoadCallback(drawAgeChart(pollId, data.age_dic));
 					google.setOnLoadCallback(drawGenderChart(pollId, data.gender_dic));
 					google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
@@ -388,6 +390,7 @@ function main() {
 			var pollId = elemId.split("---")[2];
 			var show_content = '#askbypoll-content---'+content_index+'---'+pollId;
 			$(".askbypoll-embed-content"+pollId).hide();
+    			askByPollLoadGoogle();
 			if(content_index == 2){
 				$(show_content).show();
 				google.setOnLoadCallback(drawAgeChart(pollId, askByPoll_age_data));
@@ -406,6 +409,7 @@ function main() {
 		});
 
 		function drawAgeChart(pollId, age_dic) {
+    			askByPollLoadGoogle();
 			var data = google.visualization.arrayToDataTable([
 			  ['Task', 'Hours per Day'],
 			  ['Upto 19',age_dic['under_19']],
@@ -430,6 +434,7 @@ function main() {
 			}
 	  	}
 	  	function drawGenderChart(pollId, gender_dic) {
+    			askByPollLoadGoogle();
 			var data = google.visualization.arrayToDataTable([
 			  ['Task', 'Hours per Day'],
 			  ['Male', gender_dic["M"]],
@@ -452,6 +457,7 @@ function main() {
 			}
 		}
 		function drawProfessionChart(pollId, prof_dic) {
+    			askByPollLoadGoogle();
 			var profData = [['Profession','Votes']];
 			for(prof in prof_dic)
 				profData.push([prof,prof_dic[prof]]);
@@ -472,6 +478,7 @@ function main() {
 			}
 		}
 		function drawRegionsMap(pollId, country_dic) {
+    			askByPollLoadGoogle();
 			var conData = [['Country', 'Votes']];
 			for(con in country_dic){
 				conData.push([con,country_dic[con]]);

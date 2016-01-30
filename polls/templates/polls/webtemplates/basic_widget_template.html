@@ -61,11 +61,12 @@
 				<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---{{ choice.id }}">
 					<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}">
 					<div class="askbypoll-progress-bar-Img-div" style="position:relative;">
-						<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice.id }}"></div>
-						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
 						<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-{{ choice.id }}">
 							{{ choice.choice_text }}
 						</p>
+						<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice.id }}">
+						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
+						</div>
 					</div>
 				</div>
 			{% else %}
