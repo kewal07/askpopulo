@@ -135,7 +135,6 @@ function main() {
 					askByPoll_gender_data = data.gender_dic;
 					askbypoll_prof_data = data.prof_dic;
 					askbypoll_country_data = data.country_dic;
-					$(".askbypoll-embed-content"+pollId).hide();
 					// $("#askbypoll-embed-poll-question-text---"+pollId).css("margin-left","2rem");
 					if(protectResult == 1){
 						$('#askbypoll-embed-poll-question-choices---'+pollId.toString()).html('<p id="askbypoll-thankyou-message"> Thank you for your vote!!!</p>');
@@ -148,6 +147,7 @@ function main() {
 					// google.setOnLoadCallback(drawProfessionChart(pollId, data.prof_dic));
 					// google.setOnLoadCallback(drawRegionsMap(pollId, data.country_dic));
 					responsive_css(pollId);
+					$(".askbypoll-embed-content"+pollId).hide();
 					$("#askbypoll-content---1---"+pollId).show();
 				});
 			} else {
