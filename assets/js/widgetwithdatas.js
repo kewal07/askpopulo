@@ -96,7 +96,7 @@ function main() {
 				$("#askbypoll-embed-show-demographics---"+pollId).css("bottom","0");
 				$("#askbypoll-embed-poll-powered-by-p---"+pollId).attr("style","position: relative ! important; font-size:0.9rem");
 				$(".askbypoll-embed-poll-question-choice-img---"+pollId).attr("style","width: 100px; height: 100px");
-				$("#askbypoll-embed-poll-question-choice-img-text---"+pollId).attr("style","width: 96px;");
+				$(".askbypoll-embed-poll-question-choice-img-text---"+pollId).attr("style","width: 96px;");
 			}
 		}
         /******* Load HTML *******/
