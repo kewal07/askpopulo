@@ -50,7 +50,7 @@ p{
 }
 .article-heading{
 	background-color: turquoise;
-	padding: 1rem;
+	padding: 1rem 0;
 	font-size: x-large;
 	font-weight: 700;
 	text-align: center;

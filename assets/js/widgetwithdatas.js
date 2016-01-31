@@ -334,6 +334,7 @@ function main() {
 					if(error != ""){
 						$("#askbypoll-embed-poll-wrapper---"+pollId).append('<div class="askbypoll-widget-error" id="askbypoll-widget-error---'+pollId+'">'+error+"</div>");
 					}
+					$(".askbypoll-embed-content"+pollId).hide();
 					$("#askbypoll-content---1---"+pollId).show();
 					if(protectResult == 1)
 					{
