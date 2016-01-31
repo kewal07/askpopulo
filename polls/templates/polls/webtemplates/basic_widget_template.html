@@ -59,7 +59,7 @@
 		{% for choice in poll.choice_set.all %}
 			{% if choice.choice_image %}
 				<div class="askbypoll-embed-poll-question-choice" id="askbypoll-embed-poll-question-choice---{{ choice.id }}">
-					<img class="askbypoll-embed-poll-question-choice-img" id="askbypoll-embed-poll-question-choice-img---{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}">
+					<img class="askbypoll-embed-poll-question-choice-img askbypoll-embed-poll-question-choice-img---{{ poll.id }}" id="askbypoll-embed-poll-question-choice-img---{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}">
 					<div class="askbypoll-progress-bar-Img-div" style="position:relative;">
 						<p class="askbypoll-embed-poll-question-choice-img-text" id="askbypoll-embed-poll-question-choice---text-{{ choice.id }}">
 							{{ choice.choice_text }}
