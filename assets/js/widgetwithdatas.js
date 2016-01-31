@@ -82,9 +82,10 @@ function main() {
 		function responsive_css(pollId){
 			console.log($("#askbypoll-embed-poll-wrapper---"+pollId).width());
 			if($("#askbypoll-embed-poll-wrapper---"+pollId).width() < 420){
+				$("#askbypoll-embed-poll-question---"+pollId).attr("style","width: 100%");
 				$("#askbypoll-embed-overlay---"+pollId).attr("style","width: 80% ! important");
 				$("#askbypoll-embed-poll-icon---"+pollId).attr("style","display: none ! important");
-				$("#askbypoll-widget-title---"+pollId).attr("style","line-height: 1 ! important; padding-bottom: 0.2rem ! important;");
+				$("#askbypoll-widget-title---"+pollId).attr("style","line-height: 1 ! important; padding-bottom: 0.2rem ! important; font-size:1.2rem !important; margin-bottom:0.5rem !important");
 				// .css("line-height","1 !important");
 				// $("#askbypoll-widget-title---"+pollId).css("padding-bottom","0.2rem !important");
 				$("#askbypoll-embed-poll-question-text---"+pollId).attr("style","margin-bottom: 1rem ! important; font-size: 1rem ! important;");
@@ -92,7 +93,10 @@ function main() {
 				$("#askbypoll-embed-poll-question-description---"+pollId).attr("style","display: none ! important");
 				// if(typeof hide == 'undefined')
 				$("#askbypoll-embed-show-demographics---"+pollId).css("position","relative");
-				$("#askbypoll-embed-poll-powered-by-p---"+pollId).attr("style","position: relative ! important");
+				$("#askbypoll-embed-show-demographics---"+pollId).css("bottom","0");
+				$("#askbypoll-embed-poll-powered-by-p---"+pollId).attr("style","position: relative ! important; font-size:0.9rem");
+				$("#askbypoll-embed-poll-question-choice-img---"+pollId).attr("style","width: 100px; height: 100px");
+				$("#askbypoll-embed-poll-question-choice-img-text---"+pollId).attr("style","width: 96px;");
 			}
 		}
         /******* Load HTML *******/

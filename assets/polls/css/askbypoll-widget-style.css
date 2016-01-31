@@ -463,7 +463,8 @@ span.askbypoll-poll-result{
     font-style: italic;
     color: orange;
     position: absolute;
-    bottom: 0px;
+    bottom: 1rem;
+    font-size: 1rem;
 }
 .askbypoll-widget-error{
     color: red;

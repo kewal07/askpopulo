@@ -9,15 +9,16 @@
 }
 
 .figBox{
-	margin-bottom: 1rem;
-	border:1px solid;
+	margin-bottom: 0.5rem;
+	/*border:1px solid;*/
 }
 #wrapper{
 	font-size: 20px !important;
 	max-width: 1600px !important;
 }
 .questions{
-	padding:5rem;
+	opacity:1 !important;
+	padding:2rem;
 }
 #foodStartUpsShare{
 	display: inline-flex;
@@ -25,4 +26,78 @@
 }
 .askbypoll-embed-poll-question-choice{
 	margin-right:5rem !important;
+}
+td {
+	height:25px;
+}	 
+#figBox1{
+	border: 0px !important;
+}
+.askbypoll-embed-show-demographics{
+	/*font-size: 1rem !important;
+	bottom: 1rem !important;*/
+}
+.bullet-span{
+	font-size: 2rem;
+	vertical-align: middle;
+}
+.sources-a{
+	color: darkblue;
+}
+p{
+	line-height: 140%;
+    font-size: 90%;
+}
+.article-heading{
+	background-color: turquoise;
+	padding: 1rem;
+	font-size: x-large;
+	font-weight: 700;
+	text-align: center;
+}
+.article-details{
+	font-size:80%;
+}
+.article-details-time{
+	float: right;
+	/*right: 5rem;*/
+	/*position: absolute;*/
+}
+.article-sub-headings{
+	font-weight: bold;
+}
+.imageAndInfo-together{
+	display: flex;
+}
+.article-images{
+	width: 100%;
+}
+.mobile-wallet-images{
+	height: 400px;
+}
+@media only screen and (max-width: 480px){
+	.article-details, .sources-p{
+		font-size:66%;
+	}
+	.article-details-time{
+		float: left;
+	}
+	p{
+	    font-size: 80%;
+	}
+	.askbypoll-embed-poll-question-choice{
+		margin-right:1rem !important;
+	}
+	.article-sub-headings{
+		font-size: 90%;
+	}
+	.article-heading{
+		font-size: 1.1rem;
+	}
+	.mobile-wallet-images{
+		height: 100%;
+	}
+	.imageAndInfo-together{
+		display: block;
+	}
 }
