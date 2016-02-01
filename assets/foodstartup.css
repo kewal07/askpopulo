@@ -168,4 +168,7 @@ p{
 	.imageAndInfo-together{
 		display: block;
 	}
+	.article-images-org-center, .article-images-org-center-border{
+		width: 100%;
+	}
 }
