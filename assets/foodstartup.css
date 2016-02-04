@@ -3,7 +3,6 @@
 	padding: 1rem;
 	margin-bottom: 1rem;
 }
-
 #infoBox1{
     width: 100%;
 }
@@ -144,6 +143,9 @@ p{
 	display: block;
 	border: 2px solid maroon;
 }
+#zipgo-image{
+	width:50%;
+}
 @media only screen and (max-width: 480px){
 	.article-details, .sources-p{
 		font-size:66%;
@@ -168,6 +170,9 @@ p{
 	}
 	.imageAndInfo-together{
 		display: block;
+	}
+	#zipgo-image{
+		width:100%;
 	}
 	.article-images-org-center, .article-images-org-center-border{
 		width: 100%;
