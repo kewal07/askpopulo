@@ -81,7 +81,14 @@ p{
 	height: 400px;
 }
 .figBox-ws{
-	width:40%;
+	/*width:40%;*/
+	margin:1rem;
+}
+.figBox-ws > img{
+	width: auto;
+    height: 100%;
+    border: 2px solid;
+    padding: 0.5rem;
 }
 .bold-underline{
 	font-weight: bold;
@@ -148,6 +155,11 @@ p{
 }
 #zipgo-stats{
 	height: 500px;
+}
+
+span.startup-options-name{
+	color: orange;
+    font-size: 1.5rem;
 }
 @media only screen and (max-width: 480px){
 	.questions{
