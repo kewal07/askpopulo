@@ -199,4 +199,12 @@ span.startup-options-name{
     	height: 350px;
     	margin-left: -7px;
 	}
+	.figBox-ws > img {
+		width: 94%;
+	    height: 200px;
+	    border: 2px solid;
+	    padding: 0.5rem;
+	    display: block;
+	    margin: 0 auto;
+	}
 }
