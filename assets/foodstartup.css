@@ -146,7 +146,13 @@ p{
 #zipgo-image{
 	width:50%;
 }
+#zipgo-stats{
+	height: 500px;
+}
 @media only screen and (max-width: 480px){
+	.questions{
+		padding: 1rem;
+	}
 	.article-details, .sources-p{
 		font-size:66%;
 	}
@@ -176,5 +182,9 @@ p{
 	}
 	.article-images-org-center, .article-images-org-center-border{
 		width: 100%;
+	}
+	#zipgo-stats{
+    	height: 350px;
+    	margin-left: -7px;
 	}
 }
