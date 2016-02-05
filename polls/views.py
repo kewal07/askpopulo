@@ -3114,4 +3114,20 @@ class ArticleView(BaseViewList):
 		context = {}
 		return context
 
+class AskByPollBusinessView(BaseViewList):
+	template_name = 'polls/askbypoll-for-business.html'
+	def get_queryset(self):
+		return {}
 
+class AskByPollBusinessCategoryView(BaseViewList):
+	template_name = 'polls/enterprise.html'
+	def get_queryset(self):
+		return {}
+	# def get_template_names(self, **kwargs):
+	# 	# print(self.request.path)
+	# 	template_name = self.request.path.replace("/askbypoll-for-business/","") + '.html'
+	# 	return [template_name]
+
+	# def get_queryset(self):
+	# 	context = {}
+	# 	return context
