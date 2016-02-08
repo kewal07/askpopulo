@@ -18,6 +18,7 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [ChoiceInline,CategoryInline]
 
+admin.site.register(Choice)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Vote)
 admin.site.register(Subscriber)

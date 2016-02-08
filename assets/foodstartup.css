@@ -172,6 +172,11 @@ img.article-images-ws{
 #safemate-img{
 	margin-right: 1rem;
 }
+.valentines-info{
+	/*width:100%;*/
+	display: block;
+	margin: 0 auto;
+}
 @media only screen and (max-width: 480px){
 	.questions{
 		padding: 1rem;
@@ -217,5 +222,27 @@ img.article-images-ws{
 	    padding: 0.5rem;
 	    display: block;
 	    margin: 0 auto;
+	}
+	.valentines-info{
+		margin: 0;
+    	width: 100%;
+    	margin-bottom:1rem;
+	}
+}
+@media only screen and (min-width: 481px) and (max-width: 768px){
+	.imageAndInfo-together{
+		display: block;
+	}
+	img.article-images-vd{
+		float:none;
+		height: 300px;
+		width:75%;
+		display: block;
+    	margin: 0 auto;
+	}
+	.valentines-info{
+		margin: 0;
+    	width: 100%;
+    	margin-bottom:1rem;
 	}
 }
