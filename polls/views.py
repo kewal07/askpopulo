@@ -3120,14 +3120,14 @@ class AskByPollBusinessView(BaseViewList):
 		return {}
 
 class AskByPollBusinessCategoryView(BaseViewList):
-	template_name = 'polls/enterprise.html'
-	def get_queryset(self):
-		return {}
-	# def get_template_names(self, **kwargs):
-	# 	# print(self.request.path)
-	# 	template_name = self.request.path.replace("/askbypoll-for-business/","") + '.html'
-	# 	return [template_name]
-
+	# template_name = 'polls/enterprise.html'
 	# def get_queryset(self):
-	# 	context = {}
-	# 	return context
+	# 	return {}
+	def get_template_names(self, **kwargs):
+		# print(self.request.path)
+		template_name = "polls/"+self.request.path.replace("/askbypoll-for-business/","") + '.html'
+		return [template_name]
+
+	def get_queryset(self):
+		context = {}
+		return context

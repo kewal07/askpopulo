@@ -1,5 +1,5 @@
 html{
-    background: url('/static/polls/images/surveyDetail.jpg') no-repeat center center fixed;
+    background: url('/static/polls/images/home-bg.png') no-repeat center center fixed;
     background-size: cover;
 }
 #content{
@@ -68,6 +68,9 @@ li.features{
     box-shadow: none;
 }
 @media screen and (max-width: 480px) {
+    #content{
+        margin-bottom:10rem;
+    }
     .left, .right {
         float: none;
         width: auto;
