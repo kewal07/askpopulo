@@ -657,7 +657,9 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         	chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
         	chart.draw(data, options);
         }
-        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation); 
+        google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);
+        $("#polls-votes-count---"+pollId).innerHTML =  advanced_analyse_dic['total_votes'];
+        $("#advanced-polls-votes-count---"+pollId).innerHTML =  advanced_analyse_dic['total_votes'];
         if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	$("#advanced-ana-bar-graph-1---"+pollId).show();
         	$("#advanced-ana-bar-graph-2---"+pollId).show();

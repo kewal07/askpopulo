@@ -164,7 +164,7 @@
 								{{question.poll.question_text}}
 							</p>
 							<p class="pollsDesc">{{ question.poll.description }}</p>
-							<p class="check"><span id="mail-poll---{{question.poll.id}}" class="see-more-details see-more-details-p mail-poll">Email</span><span id="embed-code---{{question.poll.id}}" class="see-more-details see-more-details-p embed-poll-code">Embed</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
+							<p class="check"><span id="mail-poll---{{question.poll.id}}" class="see-more-details see-more-details-p mail-poll">Email</span><span id="embed-code---{{question.poll.id}}" class="see-more-details see-more-details-p embed-poll-code">Embed</span><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p" id="polls-votes-count---{{question.poll.id}}">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
 							</div>
 						</div>
 						<div class="shareOnMail" id="mail-Poll---{{ question.poll.id }}Div">
@@ -1093,7 +1093,7 @@
 								{{question.poll.question_text}}
 							</p>
 							<p class="pollsDesc">{{ question.poll.description }}</p>
-							<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
+							<p class="check"><span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:polls_vote' question.poll.id question.poll.que_slug %}">Go To Question</a></span><span class="see-more-details see-more-details-p" id="advanced-polls-votes-count---{{question.poll.id}}">{{ question.votes }} Vote{{ question.votes|pluralize }}</span></p>
 							</div>
 						</div>
 						<div class="analysis" id="advanced-analyse---{{ question.poll.id }}Div">
