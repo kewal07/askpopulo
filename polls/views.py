@@ -106,11 +106,11 @@ class IndexView(BaseViewList):
 			if latest_questions:
 				latest_questions = list(OrderedDict.fromkeys(latest_questions))
 				if request.GET.get('tab') == 'mostvoted':
-					latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=True)
+					latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=True)
 				elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 					latest_questions = latest_questions
 				elif request.GET.get('tab') == 'leastvoted':
-					latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=False)
+					latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=False)
 				elif request.GET.get('tab') == 'withexpiry':
 					toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
 					expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
@@ -150,11 +150,11 @@ class IndexView(BaseViewList):
 			latest_questions = [que_cat.question for que_cat in QuestionWithCategory.objects.filter(category = category) if que_cat.question.privatePoll == 0 and que_cat.question.home_visible == 1]
 			latest_questions = latest_questions[::-1]
 			if request.GET.get('tab') == 'mostvoted':
-				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=True)
+				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=True)
 			elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 				latest_questions = latest_questions
 			elif request.GET.get('tab') == 'leastvoted':
-				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=False)
+				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=False)
 			elif request.GET.get('tab') == 'withexpiry':
 				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
 				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
@@ -169,11 +169,11 @@ class IndexView(BaseViewList):
 			latest_questions = Question.objects.filter(privatePoll=0,home_visible=1).order_by('-pub_date')
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
 			if request.GET.get('tab') == 'mostvoted':
-				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=True)
+				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=True)
 			elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 				latest_questions = latest_questions
 			elif request.GET.get('tab') == 'leastvoted':
-				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=False)
+				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=False)
 			elif request.GET.get('tab') == 'withexpiry':
 				toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
 				expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
@@ -201,7 +201,10 @@ class IndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
-			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
+			considered_email = []
+			for voted in Voted.objects.filter(question=mainquestion):
+				considered_email.append(voted.user.email)
+			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
@@ -287,7 +290,10 @@ class VoteView(BaseViewDetail):
 		if context['question'].expiry and context['question'].expiry < timezone.now():
 			context['expired'] = True
 		context['votes'] = context['question'].voted_set.count()
-		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
+		considered_email = []
+		for voted in Voted.objects.filter(question=context['question']):
+			considered_email.append(voted.user.email)
+		context['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
 		context['editable'] = context['question'].iseditable(user)
 		return context
 
@@ -1051,11 +1057,11 @@ class CompanyIndexView(BaseViewList):
 		latest_questions = [item for item in latest_questions if item not in s_polls]
 		latest_questions = list(OrderedDict.fromkeys(latest_questions))
 		if request.GET.get('tab') == 'mostvoted':
-			latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=True)
+			latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=True)
 		elif request.GET.get('tab') == 'latest' or request.GET.get('tab','NoneGiven') == 'NoneGiven':
 			latest_questions = latest_questions
 		elif request.GET.get('tab') == 'leastvoted':
-			latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count(), reverse=False)
+			latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=False)
 		elif request.GET.get('tab') == 'withexpiry':
 			toexpire_polls = [x for x in latest_questions if x.expiry and x.expiry > curtime]
 			expired_polls = [x for x in latest_questions if x.expiry and x.expiry <= curtime]
@@ -1085,7 +1091,10 @@ class CompanyIndexView(BaseViewList):
 			data ['question'] = mainquestion
 			subscribers = mainquestion.subscriber_set.count()
 			data['votes'] = mainquestion.voted_set.count()
-			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True,gender__isnull=True,profession__isnull=True).count()
+			considered_email = []
+			for voted in Voted.objects.filter(question=mainquestion):
+				considered_email.append(voted.user.email)
+			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
 			data['subscribers'] = subscribers
 			data['subscribed'] = sub_que
 			data['expired'] = False
