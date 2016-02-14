@@ -293,7 +293,7 @@ class VoteView(BaseViewDetail):
 		considered_email = []
 		for voted in Voted.objects.filter(question=context['question']):
 			considered_email.append(voted.user.email)
-		context['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
+		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
 		context['editable'] = context['question'].iseditable(user)
 		return context
 
