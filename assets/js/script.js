@@ -658,8 +658,10 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         	chart.draw(data, options);
         }
         google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);
-        $("#polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
-        $("#advanced-polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
+        if(document.getElementById("#polls-votes-count---"+pollId) != null)
+        	$("#polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
+        if(document.getElementById("#advanced-polls-votes-count---"+pollId) != null)
+        	$("#advanced-polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
         if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	$("#advanced-ana-bar-graph-1---"+pollId).show();
         	$("#advanced-ana-bar-graph-2---"+pollId).show();
