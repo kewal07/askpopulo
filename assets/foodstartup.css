@@ -77,6 +77,12 @@ p{
 .article-images{
 	width: 100%;
 }
+.article-images-startup{
+	width: 50%;
+    display: block;
+    /*height: 400px;*/
+    margin: 0 auto;
+}
 .mobile-wallet-images{
 	height: 400px;
 }
@@ -233,6 +239,10 @@ img.article-images-ws{
     	width: 100%;
     	margin-bottom:1rem;
 	}
+	.article-images-startup{
+		width: 100%;
+	    height: auto;
+	}
 }
 @media only screen and (min-width: 481px) and (max-width: 768px){
 	.imageAndInfo-together{
@@ -249,5 +259,8 @@ img.article-images-ws{
 		margin: 0;
     	width: 100%;
     	margin-bottom:1rem;
+	}
+	.article-images-startup{
+		width: 100%;
 	}
 }
