@@ -406,9 +406,7 @@ span.page-links{
     text-align: center;
 }
 #overlay-shade {
-    display: none;
-}
-#overlay-shade {
+	display: none;
     position: fixed;
     left: 0;
     top: 0;
