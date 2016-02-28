@@ -2,56 +2,32 @@
 	left:25%;
 	display:none;
 }
-@font-face {
-  font-family: "custom-font-icons";
-  src: url("custom-font-icons.eot");
-  src: url("custom-font-icons.eot?#iefix") format("embedded-opentype"),
-       url("custom-font-icons.woff") format("woff"),
-       url("custom-font-icons.ttf") format("truetype"),
-       url("custom-font-icons.svg#custom-font-icons") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "custom-font-icons";
-    src: url("custom-font-icons.svg#custom-font-icons") format("svg");
-  }
-}
-html{
-	background:url("/static/Spot-Light.jpg") no-repeat center center fixed;
-	background-size:cover;
-	/*background: #F0FFFF;*/
-}
 #content{
-	margin: 7rem 3rem 5rem 3rem;
-  	background: white;
-  	border: 2px solid black;
-    border-radius: 25px;
-    padding: 1rem;
-    opacity:0.9;
-    font-family: 'Arvo', serif;
+	background: white;
+}
+#footer{
+	margin-top: 5rem;
 }
 .profileHeader{
 	width:90%;
 	margin:0 auto;
 	border-bottom: 2px dashed black;
-	padding:1rem;
+	padding:3rem 1rem 0 1rem;
 	position: relative;
 }
-.profilePicDiv{
-	float:left;
-	width:25%;
+.profilePicDiv,.profileBrief{
+	display: inline-block;
 }
 .profilePic{
 	height:175px;
 	width:175px;
 }
 .profileBrief{
-	width:75%;
-	float:left;
-	margin-top:4rem;
+	position: absolute;
+    top: 50%;
+    left: 28%;
+    transform: translate(-50%,-50%);
+    height: 150px;
 }
 .detailHeader{
     position: absolute;
@@ -61,6 +37,7 @@ html{
 }
 .detailHeader h1{
 	text-align: center;
+	text-transform: capitalize;
 }
 ul.profileBriefUl li{
 	float:left;
@@ -169,30 +146,18 @@ img.follow{
 ul.followers p{
 	margin-bottom:1rem;
 }
-@media only screen and (max-width: 960px){
-	#content{
-		margin:0 0 11rem 0;
-	}
-	.profilePicDiv{
-		float:none;
-		width:initial;
-	}
-	.profilePic{
-		display: block;
-	    margin: 0 auto;
-	    border-radius: 50%;
+@media only screen and (max-width: 980px){
+		img.profilePic{
+		width:120px;
+		height: 120px;
 	}
 	.profileBrief{
-		width:initial;
-		float:none;
-		margin-top:1rem;
-	}
-	.profileBriefUl{
-		font-size:1rem;
+		position: initial;
+		width:225px;
+		transform:none;
 	}
 	.detailHeader{
-		position: initial;
-    	margin-top: 1rem;
+		bottom:-1rem;
 	}
 	.profileBody{
 		margin:0;

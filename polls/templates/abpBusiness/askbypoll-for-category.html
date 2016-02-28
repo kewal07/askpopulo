@@ -1,0 +1,91 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-products.css' %}" />
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="clearfix"></div>
+		<div class="group">
+		    <div class="left">
+		        <h1 class="product-heading">{{ abp_solution.category|capfirst }} Solutions</h1>
+		        <p class="abp-brief">{{ abp_solution.brief }}</p>
+		        <ul class="product-feature">
+		        	{% for line in abp_solution.details %}
+		        		<li class="features">{{ line }}</li>
+		        	{% endfor %}
+		        </ul>
+		    </div>
+		</div>
+		<div class="cta-div">
+			<a href="mailto:shradha@askbypoll.com?Subject=Hello" target="_top" class="btn">Schedule Free Demo</a>
+		</div>
+		<div class="product-constants">
+			<div class="abpb-col light-blue">
+				<h2>Product Features</h2>
+				<ul class="product-feature">
+					<li class="features">Polls & Surveys for Data Gathering</li>
+					<li class="features">Microsites,Dedicated Page & Social Presence on AskByPoll</li>
+					<li class="features">AskByPoll Audience, Email & Web Embedded Polls & Surveys</li>
+					<li class="features">Aggregated Analytics for Decision Making Through Dedicated Dashboards</li>
+					<li class="features">Real Time Interactive Charts and Graphs as well as Raw Data & PDF Reports</li>
+				</ul>
+			</div>
+			<div class="abpb-col yellow">
+				<h2>Quantitative Intelligence</h2>
+				<ul class="product-feature">
+					<li class="features">No-Nonsense Simple Meaningful Insights</li>
+					<li class="features">Macro & Micro view of activites to Reduce Data Crowd & See Only What Matters to You</li>
+					<li class="features">Advanced Analytics Dashboards can be used for Graphical Multi-Parameter analysis</li>
+					<li class="features">Flexibility to Define Multiple Parameters of your interest</li>
+					<li class="features">Easy to Use Comparitive Analytics</li>
+
+				</ul>
+			</div>
+			<div class="abpb-col dark-blue">
+				<h2>Qualitative Intelligence</h2>
+				<ul class="product-feature">
+					<li class="features">First of its kind, Cloud Based Qualitative Engine</li>
+					<li class="features">Value added Qualitative Information through Comments provided by respondents on top of the quantitative data</li>
+					<li class="features">Dashboards can be used for Qualitative analysis</li>
+					<li class="features">In-Person Moderated Discussions & Interviews</li>
+					<li class="features">Easy to Use Sentiment Analysis</li>
+
+				</ul>
+			</div>
+			<div class="abpb-col red">
+				<h2>Data & Security</h2>
+				<ul class="product-feature">
+					<li class="features">Export RAW Data as Excel or Download Customised PDF reports</li>
+					<li class="features">SSL Enabled Always Available Cloud Infrastructure</li>
+					<li class="features">Globally Visible or Private Visibility levels</li>
+					<li class="features">Closed User Group or Protected Visibility or Completely Anonymous Visibility</li>
+					<li class="features">Combination of different security levels </li>
+				</ul>
+			</div>
+			<div class="abpb-col green">
+				<h2>Distribution & Collection</h2>
+				<ul class="product-feature">
+					<li class="features">AskByPoll User Community with flexibity to categorize them Demographicaly </li>
+					<li class="features">Responsive Website Widgets with 1 line of code</li>
+					<li class="features">Responsive Email Widgets</li>
+					<li class="features">Single Sign On Mechanisms, LDAP Integrations, Custom Groups with built-in Tracking</li>
+					<li class="features">Offline Survey Data Collection & Interviews</li>
+				</ul>
+			</div>
+			<div class="abpb-col light-blue">
+				<h2>AskByPoll Services</h2>
+				<ul class="product-feature">
+					<li class="features">End-to-End Research from Problem Definition to Instrument Design to Data Collection to Anaysis and Recommendations</li>
+					<li class="features">Analytical Services to help you derive information from your data & provide Recommendations</li>
+					<li class="features">Campaign Services</li>
+					<li class="features">Data Collection Services through Multiple Sources </li>
+					<li class="features">In-house Research Experts</li>
+				</ul>
+			</div>
+		</div>
+		<div class="cta-div">
+			<a href="mailto:shradha@askbypoll.com?Subject=Hello" target="_top" class="btn">Schedule Free Demo</a>
+		</div>
+	</section>
+{% endblock %}

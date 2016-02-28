@@ -47,6 +47,7 @@ class BaseViewList(generic.ListView):
 		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
 		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
+		context['DOMAIN_URL'] = settings.DOMAIN_URL
 		print(str(self.request.session.get('referrer')))
 		if self.request.user.is_authenticated():
 			if not UserReferrer.objects.filter(user_id=self.request.user.id) and self.request.session.get('referrer'): 
@@ -58,18 +59,21 @@ class BaseViewList(generic.ListView):
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
 			activities = []
-			activities = feed.get(limit=25)['results']
-			# notifications = enricher.enrich_activities(activities)
-			notifications = activities
-			notify = []
 			notification_count = 0
-			for notification in notifications:
-				if not notification['is_seen']:
-					notification_count += 1
-					activity = notification['activities'][0]
-					if notification['activity_count'] - 1 > 0:
-						activity['activity_count'] = notification['activity_count'] - 1
-					notify.append(activity)
+			notify = []
+			try:
+				activities = feed.get(limit=25)['results']
+				# notifications = enricher.enrich_activities(activities)
+				notifications = activities
+				for notification in notifications:
+					if not notification['is_seen']:
+						notification_count += 1
+						activity = notification['activities'][0]
+						if notification['activity_count'] - 1 > 0:
+							activity['activity_count'] = notification['activity_count'] - 1
+						notify.append(activity)
+			except:
+				pass
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
 			user_referral_code = polls.views.get_user_referral_id(user_id=self.request.user.id)
@@ -84,6 +88,7 @@ class BaseViewDetail(generic.DetailView):
 		context['STREAM_API_SECRET'] = settings.STREAM_API_SECRET
 		context['DISQUS_API_KEY'] = settings.DISQUS_API_KEY
 		context['DISQUS_WEBSITE_SHORTNAME'] = settings.DISQUS_WEBSITE_SHORTNAME
+		context['DOMAIN_URL'] = settings.DOMAIN_URL
 		if self.request.user.is_authenticated():
 			if not UserReferrer.objects.filter(user_id=self.request.user.id) and self.request.session.get('referrer'): 
 				UserReferrer.objects.apply_referrer(self.request.user, self.request)
@@ -93,18 +98,21 @@ class BaseViewDetail(generic.DetailView):
 			feed = feed_manager.get_notification_feed(self.request.user.id)
 			readonly_token = feed.get_readonly_token()
 			context['readonly_token'] = readonly_token
-			activities = feed.get(limit=25)['results']
-			# notifications = enricher.enrich_activities(activities)
-			notifications = activities
-			notify = []
 			notification_count = 0
-			for notification in notifications:
-				if not notification['is_seen']:
-					notification_count += 1
-					activity = notification['activities'][0]
-					if notification['activity_count'] - 1 > 0:
-						activity['activity_count'] = notification['activity_count'] - 1
-					notify.append(activity)
+			notify = []
+			try:
+				activities = feed.get(limit=25)['results']
+				# notifications = enricher.enrich_activities(activities)
+				notifications = activities
+				for notification in notifications:
+					if not notification['is_seen']:
+						notification_count += 1
+						activity = notification['activities'][0]
+						if notification['activity_count'] - 1 > 0:
+							activity['activity_count'] = notification['activity_count'] - 1
+						notify.append(activity)
+			except:
+				pass
 			context['notification_count'] = notification_count
 			context['notifications'] = notify
 			user_referral_code = polls.views.get_user_referral_id(user_id=self.request.user.id)

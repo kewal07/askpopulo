@@ -12,12 +12,11 @@ body{
 	display: none;
 }
 #admin-dashboard{
-	margin: 7rem 5rem 5rem 5rem;
-	padding-bottom: 3rem;
+	margin: 0rem 5rem 5rem 5rem;
 	background-color: white;
 	border: 2px solid;
 	border-radius: 25px;
-	padding: 2rem;
+	padding: 5rem;
 	opacity: 0.95;
 }
 #dashboard-menu{

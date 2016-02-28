@@ -11,7 +11,8 @@
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
 	{% endif %}
 	{% endwith %}
-	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<!-- <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/> -->
+	<meta property="og:url" content="{{ DOMAIN_URL }}/public-url{{ request.path }}"/>
 	<meta property="og:title" content="{{ question.question_text  }}"/>
 	<meta property="og:description" content="{{ question.description  }}" />
 {% endblock %}
@@ -20,7 +21,8 @@
 {% set_disqus_url object.get_absolute_url %} 
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
 {% endblock %}
 {% block extra_js %}
@@ -30,7 +32,7 @@
 	<section id="content">
 			<div class="questions">
 				<div class="questionContent">
-					<div class="userInfo">
+					<div class="userInfo clearfix">
 						<div class="userImage">
 
 							<a href="{{ question.get_user_details.user_url }}">
@@ -57,74 +59,108 @@
 					</div> 
 					<div class="mainPoll">
 						<p class="que_text">{{ question.question_text }}
-						{% if user.is_authenticated %}
-						{% if user == question.user or user.is_superuser %}
-							{% if editable %}
-								<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+							{% if user.is_authenticated %}
+								{% if user == question.user or user.is_superuser %}
+									{% if data.editable %}
+										<a href="{% url 'polls:polls_edit' question.id question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+									{% endif %}
+									<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
+								{% endif %}
 							{% endif %}
-								<a href="{% url 'polls:polls_delete' question.id question.que_slug %}"><i class="fa fa-trash-o"></i></a>
-							{% endif %}
-						{% endif %}
 						</p>
 						{% if question.description or question.questionwithcategory_set.count > 0 %}
-						<p class="question_description_header">
-							<span class="question_description_header_span">Description</span>
-						</p>
-						<p class="question_description">
-							{{ question.description }}
-							{% if question.description and question.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
-							{% for cat in question.questionwithcategory_set.all %}
-								<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
-							{% endfor %}
-						</p>
+							<p class="question_description_header">
+								<span class="question_description_header_span">Description</span>
+							</p>
+							<p class="question_description">
+								{{ question.description }}
+								{% if question.description and question.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
+								{% for cat in question.questionwithcategory_set.all %}
+									<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
+								{% endfor %}
+							</p>
 						{% endif %}
-						<div class="upvoteDetailVote">
-							<i class="fa fa-thumbs-up fa-2x upvoted" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',1)"></i>
-							<span id="upvoteon{{ question.id }}"> {{ question.upvoteCount }} </span>
-							<i class="fa fa-thumbs-down fa-2x upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.id }},'{{ question.que_slug }}',0)"></i>
-							<div class="upvotemessage" id="upvotemessage{{ question.id }}"></div>
-						</div>
+						<div class="poll-info">
+							{% if data.user_already_voted %}
+								<a href="javascript:;" class="light-grey">Voted 
+							{% else %}
+								<a href="javascript:;" class="light-grey">Vote 
+							{% endif %}
+									<span class="q-det-num">{{ data.votes }}</span>
+								</a>
+							{% if data.subscribed %}
+								<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.id }}---{{ question.que_slug }}" title="Unfollow">Followed 
+							{% else %}
+								<a href="javascript:;" class="light-grey followButton" id="follow{{ question.id }}---{{ question.que_slug }}" title="Follow">Follow 
+							{% endif %}
+									<span class="q-det-num" id="sub_num{{ question.id }}">{{ data.subscribers }}</span>
+								</a>
+							{% if user in data.upvotedusers %}
+								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvoted 
+							{% else %}
+								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvote 
+							{% endif %}
+				    				<span class="q-det-num" id="upvotenum{{ question.id }}">{{ data.upvoteCount }}</span>
+				    			</a>
+				    		{% if user in data.downvotedusers %}
+								<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.id }}---{{ question.que_slug }}">Downvoted </a>
+							{% else %}
+								<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.id }}---{{ question.que_slug }}">Downvote </a>
+							{% endif %}
+				    		<a href="javascript:;" class="light-grey spam-question" id="ban{{ question.id }}---{{ question.que_slug }}">Spam</a>
+				    	</div>
 						<p>
-						<div class="choices clearfix">
-						{% for choice in question.choice_set.all %}
-						{% if choice.choice_image %}
-							<figure>
-								<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
-								<figcaption class="choiceFigCaption">
-									{% if choice.choice_text %}
-										Choice{{ forloop.counter }} : {{ choice.choice_text }}
+							<div class="choices-details clearfix">
+								{% for choice in question.choice_set.all %}
+									{% if choice.choice_image %}
+										<div class="choice-image-div">
+											<img class="choice-image-img" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+											<p class="choiceFigCaption">
+												{% if choice.choice_text %}
+													Choice{{ forloop.counter }} : {{ choice.choice_text }}
+												{% else %}
+													Choice{{ forloop.counter }}
+												{% endif %}
+											</p>
+										</div>
 									{% else %}
-										Choice{{ forloop.counter }}
+										Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+										<br/>
 									{% endif %}
-								</figcaption>
-							</figure>
-						{% else %}
-							Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
-							<br/>
-						{% endif %}
-						{% endfor %}
-						</div>
+								{% endfor %}
+							</div>
 						</p>
 						{% if question.protectResult and user != question.user %}
-						<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. Results have been protected.</p>
+							<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. Results have been protected.</p>
 						{% else %}
-						<div class="pollsChart" id="pollsChart---{{ question.id }}">
-						</div>
+							<div class="pollsChart" id="pollsChart---{{ question.id }}">
+							</div>
 						{% endif %}
 						<div class="analyzeAndShare">
-							{% if question.protectResult and user != question.user %}
-							{% else %}
-							<input class="submit detailSubmit" type="submit" value="Analyse" />
-							{% endif %}
 							<ul class="share-buttons">
 								{% if user.is_authenticated %}
-								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
-								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
-								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}?referral={{ referral_code }}"></div></li>
+									<li >
+										<div class="fb-share-button" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count">
+										</div>
+									</li>&nbsp&nbsp&nbsp
+									<li>
+										<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-via="askbypoll" data-count="horizontal" data-counturl="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-hashtags="AskByPoll">Tweet
+										</a>
+									</li>&nbsp&nbsp&nbsp
+									<li>
+										<div class="g-plus" data-action="share" data-annotation="bubble" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}">										
+										</div>
+									</li>
 								{% else %}
-								<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
-								<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
-								<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}/{% url 'polls:polls_vote' question.id question.que_slug %}"></div></li>
+									<li >
+										<div class="fb-share-button" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div>
+									</li>&nbsp&nbsp&nbsp
+									<li>
+										<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-count="horizontal" data-counturl="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a>
+									</li>&nbsp&nbsp&nbsp
+									<li>
+										<div class="g-plus" data-action="share" data-annotation="bubble" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}"></div>
+									</li>
 								{% endif %}
 							</ul>
 						</div>
@@ -197,48 +233,16 @@
 				}];
 			};
 
-			function upvoted(questionId,qslug,action){
-				{% if user.is_authenticated %}
-					$.ajax({
-						type: 'POST',
-						url:'/upvoted/?qId='+questionId+'&vote='+action.toString(),
-						data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
-						error:function(response){
-							console.log('error occured');
-						},
-						success:function(response)
-						{
-								count = response.count;
-								message = response.message;
-								if(typeof count === 'undefined'){
-									var id = "#upvotemessage"+questionId.toString();
-									$(id).append("<p>"+message+"</p>");
-									setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-								} else {
-									console.log(response);
-									spanId = '#upvoteon'+questionId.toString();
-									$(spanId).text(response.count.toString());
-								}
-						}
-					});
-				{% else %}
-					var id = "#upvotemessage"+questionId.toString();
-					$(id).append("<p> Login to upvote </p>");
-					setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-					url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
-					// console.log(url);
-					$(location).attr('href',url);
-				{% endif %}
-			}
-
-			function clearUpvoteMessageDiv(id){
-				$(id).empty();
-			}
-
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			$(document).ready(function(){
 			 
 			  drawPollsChart("{{ csrf_token }}","",{{ question.id }});
+			  if($('.analysis').is(':visible')){
+				drawGenderChart("{{ csrf_token }}","",{{ question.id }});
+				drawAgeChart("{{ csrf_token }}","",{{ question.id }});
+				drawOthersChart("{{ csrf_token }}","",{{ question.id }});
+				drawLocationChart("{{ csrf_token }}","",{{ question.id }});
+			  }
 			  window.addEventListener("resize", resizeEventHandler);
 
 			  function resizeEventHandler() {
@@ -250,22 +254,6 @@
 			      drawLocationChart("{{ csrf_token }}","",{{ question.id }});
 				 }
 			  }
-			  
-			  $('.submit').click(function(){
-			      $('.analysis').toggle("slow");
-				  $('#mapBackButton').removeClass("back");
-				  $("#mapBackButton").css("display", "inline-block");
-			      var delay=1000; //1 seconds
-			      setTimeout(function(){
-			      //your code to be executed after 1 seconds
-			        if($('.analysis').is(':visible')){
-			          drawGenderChart("{{ csrf_token }}","",{{ question.id }});
-			          drawAgeChart("{{ csrf_token }}","",{{ question.id }});
-			          drawOthersChart("{{ csrf_token }}","",{{ question.id }});
-			          drawLocationChart("{{ csrf_token }}","",{{ question.id }});
-			        }
-			      }, delay); 
-			    });    
 			});
 
 		</script>

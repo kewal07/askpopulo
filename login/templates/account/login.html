@@ -4,106 +4,532 @@
 {% load url from future %}
 {% load i18n %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'login/css/login.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/jquery.pagepiling.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/animations.css' %}" />
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'login/css/login.css' %}" /> -->
+	<style>
+		html{
+			background: white;
+		}
+		#wrapper{
+			min-height: 100%;
+			position: relative;
+			margin: 0 auto;
+			max-width: 100%;
+		}
+		.errorlist{
+			float: none;
+			text-align: center;
+		}
+		#footer{
+			display: none;
+			position: absolute;
+		}
+		#login{
+			margin-top:3rem;
+		}
+		.section{
+			height: 100vh;
+			padding-top:3rem;
+			box-sizing:border-box;
+		}
+		#section1{
+			background:url('/static/login/images/about-us-bg.svg') no-repeat center center fixed;
+			background-size:cover; 
+		}
+		#section2{
+			background: #63c196;
+		}
+		#section3{
+			background:url('/static/login/images/about-us-bg.svg') no-repeat center center fixed;
+			background-size:cover;
+		}
+		.section-wrapper{
+			font-size: 0;
+			margin: 0 auto;
+			display: block;
+			text-align: center;
+			max-width:1400px;
+		}
+		.section-div{
+		    vertical-align: middle;
+		    width: 50%;
+		    display: inline-block;
+		}
+		.slideRight,.slideLeft{
+			animation-duration: 2s;	
+			-webkit-animation-duration: 2s;
+		}
+		/* Section 1 */
+		.section1-div1{
+			width:60%;
+		}
+		.section1-div2{
+			width:40%;
+		}
+		figure.section1-div1-figure{
+			visibility: hidden;
+			display: inline-block;
+			padding: 0;
+			margin: 0.5rem;
+		}
+		figure.section1-div1-figure img{
+			height: 250px;
+			width:250px;
+		}
+		figcaption{
+			font-size: 1.25rem;
+			color: white;
+			font-weight: bold;
+		}
+		.form-div{
+			width:90%;
+			background: url("/static/login/images/circle.png") bottom -3% left -3% no-repeat #fff;
+	    	border-radius: 5px;
+	    	margin: 0 auto;
+	    	padding:0.5rem 1rem;
+		}
+		a.signup-a{
+			display: block;
+			line-height: 32px;
+			margin: 0 auto;
+			margin-bottom: 15px;
+			padding: 10px 0;
+			width:90%;
+			height: 32px;
+			font-size: 1.5rem;
+			color: #fff;
+			text-align: center;
+			text-decoration: none;
+		}
+		.google{
+			background: #ee5e4f;
+		}
+		.facebook{
+			background: #496498;
+		}
+		.twitter{
+			background: #149cde;
+		}
+		.linkedin{
+			background: #2DCC70;
+		}
+		.login-form input, .form-control{
+			display: block;
+			width: 80%;
+			margin:0 auto;
+			height: 34px;
+			padding: 6px 12px;
+			font-size: 14px;
+			line-height: 1.42857143;
+			color: #555;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+			box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+			text-align: center;
+			margin-bottom:1rem;
+		}
+		.login-form input[id="id_remember"]{
+			display: none;
+		}
+		a.forgotPass{
+			font-size: 1rem;
+			text-align: center;
+			display: block;
+		}
+		.bar-graphs{
+			height: 5rem;
+			background: url(/static/login/images/bars.png) repeat-x;
+			position: fixed;
+			bottom: -1rem;
+			left: 0;
+			width: 100%;
+		}
+		.arrow {
+		  z-index:5;
+		  position: fixed;
+		  top:96vh;
+		  left: 50%;
+		  margin-left:-20px;
+		  cursor:pointer;
+		}
+		
+		/* End Section1 */
+		/* Section 2 */
+		ul.bb-ul{
+			display: inline-block;
+		}
+		.section2-div1{
+			width:40%;
+			margin:0;
+			margin-left:1rem;
+		}
+		.section2-div2{
+			width:58%;
+			margin:0;
+		}
+		p.happy{
+			display: block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5rem;
+			visibility: hidden;
+		}
+		figure.section2-div1-figure{
+			padding:0;
+			margin:0 1rem;
+		}
+		figure.section2-div1-figure img{
+			width:300px;
+			height: 250px;
+		}
+		#cta-form{
+			margin-left:1rem;
+			padding: 2rem 1rem 7rem 1rem;
+		}
+		p.responsive-message{
+			display: none;
+		}
+		.bsn-cs{
+			color: #DC513B;
+			font-size: 2.5rem;
+		}
+		/* End Section2 */
+		/* Section3 */
+		.section3-div{
+			width:47%;
+		}
+		.video{
+			margin: 0 auto;
+			text-align: center;
+		}
+		iframe.iframe-video{
+			height: 350px;
+			width: 450px
+		}
+		.contact-ip{
+			width:75%;
+		}
+		#pp-nav ul li:first-child{
+			visibility: hidden;
+		}
+		/* End Section3 */
+		.extra-image{
+			display: none;
+		}
+		@media only screen and (max-width: 980px){
+			#login{
+				margin-top:0rem;
+			}
+			#ui-faces-div{
+				display: none;
+			}
+			.section1-div{
+				margin:0rem;
+			}
+			.section1-div1{
+				display: none;
+			}
+			.section1-div2{
+				width:90%;
+				margin-top: 2rem;
+			}
+			.bar-graphs{
+				height: 3rem;
+			}
+			p.heading{
+				margin:0;
+				font-size: 1.25rem;
+				/*margin-bottom:0.5rem;*/
+			}
+			p.main-heading{
+				font-size: 1.25rem;
+    			margin-top: 2rem;	
+    			/*margin-bottom:1rem;*/
+			}
+			.form-div{
+				padding:1rem;
+			}
+			a.signup-a {
+			    line-height: 17px;
+			    margin-bottom: 8px;
+			    padding: 10px 0;
+			    width: 80%;
+			    height: 16px;
+			    font-size: 1rem;
+			}
+			.login-form input, .form-control{
+				width:70%;
+				height:20px;
+				padding:0;
+			}
+			.section2-div1{
+				display: none;
+			}
+			.section2-div2{
+				width:100% !important;
+			}
+			#cta-form{
+				width:90%;
+				margin:0 auto;
+				padding-bottom:4rem;
+			}
+			#cta-form p{
+				margin-bottom:1rem;
+			}
+			#cta-form a{
+				margin: 0 auto;
+				margin-top: 1rem;
+				width: 90%;
+			}
+			.section3-div:first-child{
+				display: none;
+			}
+			.section3-div{
+				width:100%;
+			}
+			form.contact-form textarea {
+			    height: 60px;
+			}
+			.arrow{
+				top:94vh;
+			}
+			#footer{
+				margin-top:87vh;
+			}
+		}
+	</style>
 {% endblock %}
 {% block extra_js %}
 	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
+	<script type="text/javascript" src="{% static 'login/js/jquery.pagepiling.min.js' %}"></script>
 {% endblock %}
 {% block content %}
 <section id="login">
-	<div class="login">
-		<div class="loginContent">
-			<!-- <h1>{% trans "Sign In" %}</h1> -->
-
-			{% if socialaccount.providers  %}
-			{% if request.GET.next != "/survey/30/a-study-mobile-internet-free-basic-by-facebook" %}
-				{% if request.GET.next %}
-					<p style="padding: 0.5rem 0;"><a href="{% url 'account_signup' %}?next={{ request.GET.next }}&&ref={{ request.GET.ref }}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
-				{% else %}
-					<p style="padding: 0.5rem 0;"><a href="{% url 'account_signup' %}"><span class="anchorSpan">Sign up</span></a> for a free account or <span class="anchorSpan">Sign in</span> below</p>
-				{% endif %}
-			{% endif %}
-
-			<div class="loginContentTable">
-				<div class="information-video">
-					<div class="slider" style="display:block;padding-bottom: 0.8rem;font-size: 1.4rem;">
-						<a href="https://www.askbypoll.com/survey/30/a-study-mobile-internet-free-basic-by-facebook?referral=JSA_ABP">
-						<div style="color: darkblue;">
-							<p>A Study - Mobile Internet & Free Basics by Facebook</p>
-							<!-- <div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div> -->
-							<img class="slider-img" style="height: 285px;width: 100%;margin: 0.5rem 0rem;" src="/static/freebasic.jpg">
-							<p>Login to Let us know your opinion</p>
-						</div>
-						</a>
+	<div id="pagepiling">
+		<div class="section"></div>
+	    <div class="section" id="section1">
+	    	<p class="heading main-heading">Questions, Answers, Analytics, Insights, Freebies</p>
+	    	<div class="section-wrapper" id="section1-wrapper">
+		    	<div class="section-div section1-div1">
+		    		<div class="image-row1">
+			    		<figure class="section1-div1-figure" id="user-confused-div">
+							<img src="/static/login/images/user-confused.png">
+							<figcaption>Important Decision To Make?</figcaption>
+						</figure>
+						<figure class="section1-div1-figure" id="user-grp-div">
+							<img src="/static/login/images/user-grp.png">
+							<figcaption>Tap into Wisdom of Crowd</figcaption>
+						</figure>
 					</div>
-					<div class="slider">
-						<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div>
-						<!-- <img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg"> -->
+					<div class="image-row2">
+						<figure class="section1-div1-figure" id="user-happy-div">
+							<img src="/static/login/images/user-happy.png">
+							<figcaption>Quick Data Backed Decisions</figcaption>
+						</figure>
+						<figure class="section1-div1-figure" id="rewards-div">
+							<img src="/static/login/images/reward.png">
+							<figcaption>Win Awesome Prizes</figcaption>
+						</figure>
 					</div>
-					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
-				</div>
-				<div class="socialaccount_ballot">
-					<div class="social_providers">
-						<p style="color: darkblue;margin-bottom: 3.2rem;"> Lets Get You Started! </p>
-					  <!-- <ul class="socialaccount_providers"> -->
-						{% include "socialaccount/snippets/provider_list.html" with process="login" %}
-					  <!-- </ul> -->
-					 </div>
-				  <form class="loginContentForm" method="POST" action="{% url 'account_login' %}?{{ request.GET.urlencode }}">
-					  {% csrf_token %}
-					  {{ form.as_p }}
-					  {% if redirect_field_value %}
-					  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-					  {% endif %}
-					  <p>
-					  <a class="forgotPass" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-					  <button class="submit loginSubmit" type="submit">{% trans "Sign In" %}</button>
-					  </p>
-					</form>
-				</div>
-				<!-- <div class="login_or"> OR </div> -->
-
-				  <!-- <div class="login-or">{% trans 'or' %}</div> -->
-
-				<!-- <div class="login-or">{% trans 'or' %}</div> -->
-				{% include "socialaccount/snippets/login_extra.html" %}
-				
-
-				{% else %}
-				<p>{{ socialaccount.providers }}If you have not created an account yet, then please
-				<a href="{% url 'account_signup' %}"><span class="anchorSpan">sign up</a> first.</p>
-				<div class="loginContentTable">
-				<div class="information-video">
-					<iframe class="video" src="https://www.youtube.com/embed/kxjXPV1a0h8" frameborder="0" allowfullscreen></iframe>
-					<div class="slider">
-						<img class="slider-img" src="http://i.imgur.com/Hph8nid.jpg">
-						<div class="askbypoll-embed-poll" id="askbypoll-data-embed-poll---3456"></div>
+			    </div>
+		    	<div class="section-div section1-div2">
+		    		<div class="form-div" id="signup-form">
+		    			<p class="heading h-black">Login or Signup for a free account</p>
+		    			{% include "socialaccount/snippets/provider_list.html" with process="login" %}
+						<p class="heading h-black">OR</p>
+						<form class="login-form" method="POST" action="{% url 'account_login' %}">
+							{% csrf_token %}
+							{{ form.as_p }}
+							{% if redirect_field_value %}
+							<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+							{% endif %}
+							<p>
+							<a class="forgotPass" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+							<button class="submit btn" type="submit">{% trans "Sign In" %}</button>
+							</p>
+						</form>
 					</div>
-				</div>
-				<div class="socialaccount_ballot">
-					<div class="social_providers">
-					  <!-- <ul class="socialaccount_providers"> -->
-						{% include "socialaccount/snippets/provider_list.html" with process="login" %}
-					  <!-- </ul> -->
-					 </div>
-				  <form class="loginContentForm" method="POST" action="{% url 'account_login' %}">
-					  {% csrf_token %}
-					  {{ form.as_p }}
-					  {% if redirect_field_value %}
-					  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-					  {% endif %}
-					  <p>
-					  <a class="forgotPass" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-					  <button class="submit loginSubmit" type="submit">{% trans "Sign In" %}</button>
-					  </p>
-					</form>
-				</div>
-				{% endif %}
-
-				
+		    	</div>
+		    	<div class="extra-image">
+		    		<figure class="section1-div1-figure" id="rewards-div">
+						<img src="/static/login/images/reward.png">
+						<figcaption>Win Awesome Prizes</figcaption>
+					</figure>
+		    	</div>
+	    	</div>
+			<div class="bar-graphs clearfix">
 			</div>
-		</div>
+	    </div>
+	    <div class="section" id="section2">
+	    	<div class="section-wrapper">
+	    		<p class="heading main-heading">AskByPoll enables Smarter Decision Making for Businesses</p>
+	    		<div class="section-div section1-div2">
+	    			<div class="form-div" id="cta-form">
+	    				<p class="heading h-black">Partner with AskByPoll</p>
+			    		<a href="{% url 'polls:abp_business' %}" class="signup-a light-blue">Business Solutions</a>
+			    		<a href="{% url 'polls:abp_case_study' %}" class="signup-a yellow">Case Studies</a>
+			    		<a href="mailto:shradha@askbypoll.com" target="_top" class="signup-a dark-blue">Request Demo</a>
+			    		<a href="mailto:shradha@askbypoll.com" target="_top" class="signup-a green">Free Trial</a>
+			    		<a href="{% url 'polls:abp_about_us' %}" class="signup-a red">About Us</a>
+			    	</div>
+		    	</div>
+	    		<div class="section-div section1-div1">
+		    		<div class="image-row1">
+			    		<figure class="section1-div1-figure" id="user-confused-div2">
+							<img src="/static/login/images/business-benefit1.png">
+							<figcaption>Easy & Unique Tools</figcaption>
+						</figure>
+						<figure class="section1-div1-figure" id="user-grp-div2">
+							<img src="/static/login/images/business-benefit2.png">
+							<figcaption>Real Time Interactive Analysis</figcaption>
+						</figure>
+					</div>
+					<div class="image-row2">
+						<figure class="section1-div1-figure" id="user-happy-div2">
+							<img src="/static/login/images/business-benefit3.png">
+							<figcaption>Faster Decision Making Cycles</figcaption>
+						</figure>
+						<figure class="section1-div1-figure" id="rewards-div2">
+							<img src="/static/login/images/business-benefit4.png">
+							<figcaption>Learn Consumer Insights</figcaption>
+						</figure>
+					</div>
+			    </div>	
+		    	<div class="extra-image">
+		    		<figure class="section1-div1-figure" id="user-grp-div">
+						<img src="/static/login/images/user-grp.png">
+						<figcaption>Tap into Wisdom of Crowd</figcaption>
+					</figure>
+		    	</div> 	
+	    	</div>
+	    	<div class="bar-graphs clearfix">
+			</div>
+	    </div>
+	    <div class="section" id="section3">
+	    	<p class="heading main-heading">Contact Us</p>
+			<div class="section-wrapper">
+		    	<div class="section-div section3-div">
+		    		<div class="video">
+				  		<iframe class="iframe-video" src="https://www.youtube.com/embed/kxjXPV1a0h8"></iframe>
+				  	</div>
+				</div>
+				<div class="section-div section3-div">
+			  		<form class="contact-form">
+						<input type="text" class="form-control contact-ip" placeholder="Name">
+						<input type="email" class="form-control contact-ip" placeholder="Email">
+						<input type="phone" class="form-control contact-ip" placeholder="Phone">
+						<textarea class="form-control contact-ip" rows="7"
+						placeholder="Feel free to say anything. We would be very happy even if it is a small 'hi there'"></textarea>
+						<button id="contact-btn" type="submit" class="btn">Submit</button>
+					</form>
+				</div>
+	    	</div>
+	    </div>
+	</div>
+	<div class="arrow animated bounce floating">
+  		<img width="40" height="40" alt="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iNTEycHgiIGhlaWdodD0iNTEycHgiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0yOTMuNzUxLDQ1NS44NjhjLTIwLjE4MSwyMC4xNzktNTMuMTY1LDE5LjkxMy03My42NzMtMC41OTVsMCwwYy0yMC41MDgtMjAuNTA4LTIwLjc3My01My40OTMtMC41OTQtNzMuNjcyDQoJbDE4OS45OTktMTkwYzIwLjE3OC0yMC4xNzgsNTMuMTY0LTE5LjkxMyw3My42NzIsMC41OTVsMCwwYzIwLjUwOCwyMC41MDksMjAuNzcyLDUzLjQ5MiwwLjU5NSw3My42NzFMMjkzLjc1MSw0NTUuODY4eiIvPg0KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTIyMC4yNDksNDU1Ljg2OGMyMC4xOCwyMC4xNzksNTMuMTY0LDE5LjkxMyw3My42NzItMC41OTVsMCwwYzIwLjUwOS0yMC41MDgsMjAuNzc0LTUzLjQ5MywwLjU5Ni03My42NzINCglsLTE5MC0xOTBjLTIwLjE3OC0yMC4xNzgtNTMuMTY0LTE5LjkxMy03My42NzEsMC41OTVsMCwwYy0yMC41MDgsMjAuNTA5LTIwLjc3Miw1My40OTItMC41OTUsNzMuNjcxTDIyMC4yNDksNDU1Ljg2OHoiLz4NCjwvc3ZnPg0K" />
 	</div>
 </section>
+<script type="text/javascript">
+	$(document).ready(function() {
+		if($(window).height() >= 630){
+			$("#user-confused-div").addClass("slideRight");
+			setTimeout(function(){
+			  $("#user-grp-div").addClass("slideDown");
+			}, 1500); 
+			setTimeout(function(){
+			  $("#user-happy-div").addClass("slideUp");
+			}, 2500);
+			setTimeout(function(){
+			  $("#rewards-div").addClass("slideLeft");
+			}, 3500); 
+		    $('#pagepiling').pagepiling({
+		        menu: null,
+		        direction: 'vertical',
+		        verticalCentered: true,
+		        scrollingSpeed: 700,
+		        easing: 'swing',
+		        loopBottom: false,
+		        loopTop: false,
+		        css3: true,
+		        navigation: {
+		            'textColor': '#fff',
+		            'bulletsColor': '#000',
+		            'position': 'right',
+		            'tooltips': ['', 'Login', 'For Business', 'Contact Us']
+		        },
+		        normalScrollElements: null,
+		        normalScrollElementTouchThreshold: 5,
+		        touchSensitivity: 5,
+		        keyboardScrolling: true,
+		        sectionSelector: '.section',
+		        animateAnchor: false,
+		        //events
+		        onLeave: function(index, nextIndex, direction){
+		        	if(nextIndex != 4){
+						$("#footer").css("display","none");
+						$(".bar-graphs").css("display","block");
+					}
+					if(nextIndex == 4){
+						$(".bar-graphs").css("display","none");
+					}
+		        },
+		        afterLoad: function(anchorLink, index){
+		        	if($(window).height() <= 768){
+						$(".bar-graphs").css("display","none");
+						// $(".section").css("padding-top","0rem");
+					}
+					if(index == 1){
+						$.fn.pagepiling.moveSectionDown();
+					}
+		        	if(index == 3){
+						$("#user-confused-div2").addClass("slideDown");
+						setTimeout(function(){
+						  $("#user-grp-div2").addClass("slideDown");
+						}, 1500); 
+						setTimeout(function(){
+						  $("#user-happy-div2").addClass("slideUp");
+						}, 2500);
+						setTimeout(function(){
+						  $("#rewards-div2").addClass("slideUp");
+						}, 3500); 
+					}
+					if(index == 4){
+						$(".arrow").css("display","none");
+						$("#footer").css("display","block");
+					}
+					else{
+						$(".arrow").css("display","block");
+					}
+		        },
+		        afterRender: function(index){},
+		    });
+			$(".arrow").click(function(){
+	    		$.fn.pagepiling.moveSectionDown();
+	    	});
+	    	$.fn.pagepiling.moveSectionDown();
+		}
+		else{
+			$("html").css("overflow","initial");
+			$("#section1").css("padding-bottom","36rem");
+			$(".bar-graphs").css("display","none");
+			$(".arrow").css("display","none");
+			$("#footer").css("display","block");
+			$("#footer").css("margin-top","-6rem");
+		}
+		if($(window).height() <= 768){
+			$(".bar-graphs").css("display","none");
+			// $(".section").css("padding-top","0rem");
+		}
+		if($(window).height() >= 850 && $(window).width() > 480 && $(window).width() < 980){
+			$(".extra-image").css("display","block");
+			$(".section1-div1-figure").css("visibility","visible");
+		}
+	   
+});
+</script>
 
 {% endblock %}

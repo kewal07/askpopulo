@@ -1,38 +1,52 @@
-#trivia{
-	margin: 7rem 5rem 5rem 5rem;
-    padding-bottom: 3rem;
+ #content{
+    max-width:95%;
+    margin:0 auto;
+    /*padding-top:7rem;*/
 }
+#trivia{
+    margin: 0 auto;
+    padding-bottom: 3rem;
+    padding-top: 5rem;
+}
+html{
+    background:url('/static/images/defaultBG.jpg') no-repeat center center fixed;
+    background-size:cover;
+}
+
 /** From http://w3bits.com/css-masonry/ */
 .masonry {
-    margin: 1.5em 0;
+    margin: 2.5rem 0;
     padding: 0;
-    -moz-column-gap: 1.5em;
-    -webkit-column-gap: 1.5em;
-    column-gap: 1.5em;
-    font-size: .85em;
+    -moz-column-gap: 5.5rem;
+    -webkit-column-gap: 5.5rem;
+    column-gap: 5.5rem;
+    font-size: .85rem;
 }
 
 .item {
     display: inline-block;
-    background: #fff;
-    padding: 1em;
-    margin: 0 0 1.5em;
+    background: white;
+    padding: 1rem;
+    margin: 1rem 0;
     width: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    box-shadow: 2px 2px 4px 0 #ccc;
-    opacity: 0.95;
+    box-shadow: 2px 2px 4px 2px #ccc;
+    opacity: 1;
 }
 .trivia-title{
 	border-bottom: 2px solid #666;
     padding-bottom: 0.5rem;
     font-size: 1rem;
     cursor: pointer;
-    color:orange;
 }
 .trivia-title a{
-	color:orange;
+    color:black;
+    font-weight: bold;
+}
+.trivia-title:first-letter{
+    text-transform: capitalize;
 }
 .trivia-per-stamp{
     position: relative;
@@ -66,40 +80,118 @@
 	padding-top:1rem;
 	font-size:1rem;
 }
-@media only screen and (min-width: 400px) {
+.q-det-num{
+    padding-left: 0.2rem;
+    border-left: 1px solid;
+}
+img.choices{
+    width: 100%;
+    height: 250px;
+    display: block;
+    margin: 0 auto;
+}
+input.choices{
+    display: none;
+}
+form.optionsForm p{
+    display: inline-block;
+    background: #fafbfc;
+    padding: 1rem;
+    color: black;
+    font-weight: bolder;
+    border: 2px solid;
+    margin:0 0.5rem 0.5rem 0.5rem;
+    text-align: initial;
+}
+form.optionsForm label{
+    width: 100%;
+    display: inline-block;
+}
+form.optionsForm p.last-p{
+    display: block;
+    padding:0.5rem 0 0 0;
+    border: none;
+    margin: 0;
+    margin-top:1rem;
+    position: relative;
+    border-top: 2px solid;
+    background: transparent;
+    width:100%;
+}
+.btn{
+    margin:0;
+    line-height: 1;
+}
+.voteResultSubmit{
+    position: absolute;
+    right:0;
+}
+div.poll-info{
+    margin-top:1rem;
+}
+div.poll-info a{
+    padding:0.5rem;
+    font-size:12px;
+    color:black;
+    margin-bottom: 2px;
+    display: inline-block;
+    font-weight: normal;
+}
+@media only screen and (max-width: 480px) {
+    #content{
+        width:99%;
+        margin:0 auto;
+    }
     .masonry {
-        -moz-column-count: 2;
-        -webkit-column-count: 2;
-        column-count: 2;
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+        column-count: 1;
+    }
+    form.optionsForm p{
+        display: block;
+        margin: 0.5rem 0;
+    }
+    img.choices {
+        width: 100%;
     }
 }
 
-@media only screen and (min-width: 700px) {
+@media only screen and (min-width:481px) and (max-width: 960px) {
+    .masonry {
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+        column-count: 1;
+    }
+    form.optionsForm p{
+        width:40%;
+    }
+}
+
+@media only screen and (min-width: 961px) and (max-width: 1280px){
     .masonry {
         -moz-column-count: 3;
         -webkit-column-count: 3;
         column-count: 3;
     }
+    form.optionsForm p{
+        display:block;
+    }
 }
-
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 1281px) and (max-width: 2149px){
     .masonry {
         -moz-column-count: 3;
         -webkit-column-count: 3;
         column-count: 3;
     }
-}
-
-@media only screen and (min-width: 1100px) {
-    .masonry {
-        -moz-column-count: 3;
-        -webkit-column-count: 3;
-        column-count: 3;
+     form.optionsForm p{
+        width:40%;
+        padding:0.5rem;
     }
 }
-
-@media only screen and (min-width: 1280px) {
-    .wrapper {
-        width: 1260px;
+@media only screen and (min-width: 2150px){
+    .masonry {
+        -moz-column-count: 4;
+        -webkit-column-count: 4;
+        column-count: 4;
     }
 }

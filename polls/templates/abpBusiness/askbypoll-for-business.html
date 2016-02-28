@@ -1,0 +1,46 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-for-business.css' %}" />
+	<link href='http://fonts.googleapis.com/css?family=Raleway:400,800,500,600' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+		.abp-business-heading{
+			margin-top: 3rem;
+			color: white;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="clearfix"></div>
+		<div class="abp-list">
+			<ul class="ch-grid">
+			{% for category_dict in abp_solutions.solution_caption %}
+	    		{% for category,cap_det in category_dict.items %}
+				<li>
+					<style>
+						.ch-img-{{ forloop.parentloop.counter }}-2{
+							background:url("/static/polls/images/abp_business/{{ category }}.svg") bottom -3% left -3% no-repeat #fff;
+						}
+					</style>
+					<div class="ch-item">				
+						<div class="ch-info-wrap">
+							<div class="ch-info">
+								<div class="ch-info-front ch-img-{{ forloop.parentloop.counter }}-2"></div>
+								<div class="ch-info-back">
+									<h3>{{ category|capfirst }}</h3>
+									<p class="abp-caption">{{ cap_det.caption|safe }}</p>
+									<p><a href="{% url 'polls:abp_business_category' category %}">Know More</a></p>
+								</div>	
+							</div>
+						</div>
+					</div>
+					<h3 class="abp-business-heading">{{ category|capfirst }}</h3>
+					
+				</li>
+	    		{% endfor %}
+    		{% endfor %}
+    		</ul>
+		</div>
+	</section>
+{% endblock %}

@@ -396,42 +396,16 @@
 				</div>
 			</div>
 			<script type="text/javascript">
-			// Create a new Firebase reference, and a new instance of the Login client
-				var chatRef = new Firebase('https://fiery-inferno-807.firebaseio.com/');//https://fiery-inferno-807.firebaseio.com/#-Jvmemt7s4zjFOgequh3|11ccd772537b9d4bb9f2edeac254a174
-				var AUTH_TOKEN = "{{ token }}";
-				console.log(AUTH_TOKEN);
-				function login() {
-				  chatRef.authWithCustomToken(AUTH_TOKEN, function(error, authData) {
-				  	 if (error) {
-					    console.log("Login Failed!", error);
-					  } else {
-					    console.log("Login Succeeded!", authData);
-					    initChat(authData);
-					  }
-					});
-				}
-				function initChat(authData) {
-				  var chat = new FirechatUI(chatRef, document.getElementById('firechat-wrapper'));
-				  chat.setUser(authData.uid, 'kewal');
-				}
-				var headerText = {'notifications':"Notifications", "myActivity":"Recent Activity", "newsFeed":"News Feed", "myBets":"Stake Polls","myCredits":"Credits", "myCategories":"My Categories", "myComments":"Commented Polls", "myVotes": "Voted Polls", "myPolls":"Asked Polls", "myConnections":"Connections", "myABPInbox":"Inbox"};
 				$(document).ready(function(){
-
 					// alert(getCookie("public_profile"));
 					var divElemLi = getCookie("public_profile");
 					if(typeof divElemLi === "undefined" || divElemLi === ""){
-						$("#myActivity").click();
+						$("li#myActivity").click();
 					}
 					else{
 						$("#"+divElemLi).click();
 						document.cookie = "public_profile=; path=/";
 					}
-
-						
-					// $(".myABPInboxDiv").html('<object data="http://localhost:8000/messages/inbox/" style="height:25rem; width:30rem;"/>');
-					// $(".overlaySendMessage").html('<object data="http://localhost:8000/messages/write/" style="height:25rem; width:30rem;"/>');
-
-
 					var disqusPublicKey = "{{ DISQUS_API_KEY }}";
 					var disqusShortname = "{{ DISQUS_WEBSITE_SHORTNAME }}";
 					$.ajax({

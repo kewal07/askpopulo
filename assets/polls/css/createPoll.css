@@ -1,104 +1,62 @@
-html{
-	background:url('/static/polls/images/question.jpg') no-repeat center center fixed;
-	background-size:cover;
-  font-family: 'Arvo', serif;
-}
-#createPoll{
-	margin: 7rem 5rem 5rem 5rem;
-}
-.createPoll{
-	border: 3px solid #000;
-	border-radius: 25px;
-	background-color: white;
-	opacity: 0.9;
-	/* padding: 1rem 1rem;
-	margin-bottom: 2rem; */
-	/* width: 75%; */
+.create-poll{
+  background: white;
+  border:none;
 	margin: 0 auto;
-}
-.createPoll p{
-	margin-bottom:2rem;
-}
-.createPollContent{
-	margin: 0 auto;
+  margin-top:2rem;
+  padding-bottom:2rem;
 }
 form.createPollContentForm{
-	/* width:60%; */
 	padding: 4rem 4rem 0 4rem;
 	margin:0 auto;
-	/* margin-left:21rem; */
 }
 form.createPollContentForm label{
 	display: inline-block;
 	width:20%;
 	color: #666;
+  font-weight: bold;
 }
 .createPollContentForm input[type="text"]{
 		height: 2rem;
-		border-radius: 10px;
-		border: 1px solid #4c4c4c;
+		border-radius: 4px;
+		border: 1px solid #f96a0e;
 		background: transparent;
 		overflow:hidden;
+    margin-right:0.5rem;
+    padding: 0 4px;
+    font-size: 1.25rem;
+}
+select{
+  border: 1px solid #f96a0e;
+  padding:0.2rem;
 }
 #groups{
   border:none;
 }
-.createPollText{
-	margin-right: 1rem;
-}
-.createPollContentForm textarea{
-	vertical-align: top;
-	border-radius: 10px;
-    border: 1px solid #666;
-    background: transparent;
-    overflow: hidden;
-	margin-top: -2rem;
+#qText,#qDesc{
 	width:75%;
-	/*width: 45rem;*/
-	/*margin-left:11rem;*/
 }
-#qText{
-	margin-bottom:2rem;
-}
-.createPollContentForm input[type="date"]{
-	border-radius: 10px;
-    border: 2px solid #666;
-    background: transparent;
+form.createPollContentForm .btn{
+  margin:0;
 }
 .createPollContentForm p{
 	width:90%;
 	margin:0 auto;
 	margin-bottom:2rem;
 }
-.createPollContentForm input[type="file"] {
-   /*  margin-left: 2rem;
-	width:25%;
-	background: #3e9cbf; */ /*the colour of the button*/
-	/* border:1px solid #3e9cbf; /*required or the default border for the browser will appear*/ */
-	/* cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/ */
-	/* -moz-border-radius: 25px;
-	-webkit-border-radius: 25px;
-	border-radius: 25px;
-	font-size: 1rem;
-	visibility:hidden;
-	background:url('question.jpg') no-repeat center center fixed; */
-}
-/***SET THE BUTTON'S HOVER AND FOCUS STATES***/
-/*.createPollContentForm input[type="submit"]*
 /*gundla https://github.com/gundla/jquery-autocomplete-multiselect*/
 #categories {
     border:none;
 }
-
 .ui-autocomplete-multiselect.ui-state-default {
     display: inline-block;
     background: #fff;
-    border: 1px solid #000;
+    border: 1px solid #f96a0e;
     padding: 3px 3px;
     padding-bottom: 0px;
     overflow: hidden;
     cursor: text;
     width:75% !important;
+
 }
 
 .ui-autocomplete-multiselect .ui-autocomplete-multiselect-item .ui-icon {
@@ -146,6 +104,7 @@ form.createPollContentForm label{
   background-image: url('/static/polls/images/ui-icons_ef8c08_256x240.png') !important;
 }
 /*end*/
+
 .admin-checkbox,.user-checkbox{
   text-align: center;
   margin-bottom: 2rem;
@@ -163,20 +122,22 @@ form.createPollContentForm label{
 	width:30px;
 	height:30px;
 }
-.anonymous label{
+form.createPollContentForm .anonymous label{
 	vertical-align: super;
 	width:initial !important;
+  color:#f96a0e ;
 }
 .ac-results{
-  background: #faebd7;
+  /*background: #faebd7;*/
   opacity: 1;
-  width: 73%;
+  width: 71%;
   margin: 0 auto;
   padding: 1rem 1rem;
-  border-radius: 25px;
-  margin-left: 20%;
-  margin-bottom: 7%;
-  margin-top: -4%;
+  border-radius: 4px;
+  margin-left: 21%;
+  /*margin-bottom: 7%;*/
+  /*margin-top: -4%;*/
+  color: white;
 }
 .choice_image{
 	width: 200px;
@@ -201,7 +162,12 @@ form.createPollContentForm label{
 .add-choice{
   cursor: pointer;
 }
-@media only screen and (max-width:960px){
+.submit{
+  text-align: center;
+  display: block;
+  margin:0 auto !important;
+}
+@media only screen and (max-width:980px){
   #createPoll{
     margin:0;
     margin-bottom:11rem;
@@ -218,32 +184,39 @@ form.createPollContentForm label{
     width:100%;
     margin-bottom: 0.5rem;
   }
-  #qText{
+  #qText,#qDesc{
+    width:100%;
     margin-bottom: 0.5rem;
   }
   form.createPollContentForm p{
     margin-bottom:1rem;
   }
-  form.createPollContentForm textarea {
-    margin: 0;
-    width: 100%;
-    margin-bottom:0.5rem;
-  }
-  .createPollContentForm input[type="date"] {
-    width:100%;
+  .newDateForm{
+    margin: 0 auto;
+    display: block;
     text-align: center;
   }
   .createPollContentForm input[type="text"]{
     display: block;
     width:100%;
   }
-  .fileLabel{
-    /*width: 50%;*/
+  form.createPollContentForm .btn{
+    width: 50%;
     margin-right: auto;
     margin-left: auto;
     display: block;
   }
+  form.createPollContentForm .add-choice{
+    width: 75%;
+  }
   .ui-autocomplete-multiselect.ui-state-default{
     width:100% !important;
+  }
+  .admin-checkbox label, .user-checkbox label{
+    display: inline-block !important;
+  }
+  .user-checkbox p{
+    display: block;
+    width: 100%;
   }
 }

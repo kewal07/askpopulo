@@ -11,7 +11,7 @@
 		{% endblock %}
 		{% block content %}
 		{% if context_user %}
-		<section id="profile">
+		<section id="content">
 				<div class="profilePic">
 					<img src="{{ context_user.extendeduser.get_profile_pic_url }}" alt="User {{ context_user.first_name }}"	>
 				</div>
@@ -25,7 +25,9 @@
 									<form class="profileForm" method="POST" action="{% url 'login:edit_profile' %}" enctype="multipart/form-data">
 										{% csrf_token %}
 										{{ loggedInForm.as_p }}
-										<input class="submit" id="submit" type="submit" value="Save Changes" />
+										<div class="cta">
+											<input class="submit btn" id="submit" type="submit" value="Save Changes" />
+										</div>
 									</form>
 								</div>
 							</li>
@@ -38,7 +40,9 @@
 												<form action="{% url 'account_login' %}" method="get" class="password_change" id="password_change_form">
 										    		{% csrf_token %}
 										    		{{ form.as_p }}
-										    		<button class="submit" type="submit" name="action">Change Password</button>
+										    		<div class="cta">
+										    			<button class="submit btn" type="submit" name="action">Change Password</button>
+										    		</div>
 										    		<!-- <input type="submit" value="Submit" /> -->
 												</form>
 									</div>

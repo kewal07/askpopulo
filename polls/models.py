@@ -140,6 +140,8 @@ class Question(models.Model):
 		return folder_day
 	def get_file_name(self):
 		return self.get_folder_day()+"/"+self.featured_image.path.split(os.sep)[-1]
+	def get_featured_image_url(self):
+		return "/media/featuredimages/"+self.get_file_name()
 
 class Survey(models.Model):
 	survey_pk = models.CharField(max_length=255)
