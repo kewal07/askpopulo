@@ -521,6 +521,72 @@ $(document).ready(function(){
 			});     
 	});
 	// Report Spam end
+
+	// contact us call
+	$("#contact-btn").bind('click',function(e){
+		var elemid = "#contact-us-form";//$(this)[0].id
+		var contact_url = $(elemid).attr("action");
+		$(elemid).bind('submit', function()
+		{
+			$(".errorlistwhite").remove();
+			$.ajax(
+			{
+				type: 'POST',
+				url:contact_url,
+				data:$(elemid).serialize(),
+				success:function(response)
+				{
+					var form_errors = response.msg;					
+					if(typeof form_errors === 'undefined'){
+						$(elemid)[0].reset();
+						$('#overlay-inAbox').children().children().first().text("Thanks for getting in touch. We will reach out to you shortly.");
+						openOverlay("#overlay-inAbox");
+					}else{
+						$(elemid).prepend('<span class="errorlistwhite">'+form_errors+'</span>');
+					}
+					$("#contact-btn").unbind();
+				}
+			});     
+			return false;
+		});
+	});
+	// contact us end
+
+	// contact us overlay
+	$(".open-contact-overlay").click(function(){
+		openOverlay("#overlay-inAbox7");
+		$("#contact-btn-overlay").bind('click',function(e){
+			var elemid = "#contact-us-form-overlay";//$(this)[0].id
+			var contact_url = $(elemid).attr("action");
+			$(elemid).bind('submit', function()
+			{
+				$(".errorlistwhite").remove();
+				$.ajax(
+				{
+					type: 'POST',
+					url:contact_url,
+					data:$(elemid).serialize(),
+					success:function(response)
+					{
+						var form_errors = response.msg;					
+						if(typeof form_errors === 'undefined'){
+							$(elemid)[0].reset();
+							closeOverlay();
+							setTimeout(function(){
+								$('#overlay-inAbox').children().children().first().text("Thanks for getting in touch. We will reach out to you shortly.");
+								openOverlay("#overlay-inAbox");
+							},3000);
+						}else{
+							$(elemid).prepend('<span class="errorlistwhite">'+form_errors+'</span>');
+						}
+						$("#contact-btn-overlay").unbind();
+					}
+				});     
+				return false;
+			});
+		});
+	});
+	// contact us overlay end
 });
 
 function getCookie(cname) {

@@ -114,7 +114,7 @@
 		.linkedin{
 			background: #2DCC70;
 		}
-		.login-form input, .form-control{
+		.login-form input{
 			display: block;
 			width: 80%;
 			margin:0 auto;
@@ -260,7 +260,7 @@
 			    height: 16px;
 			    font-size: 1rem;
 			}
-			.login-form input, .form-control{
+			.login-form input{
 				width:70%;
 				height:20px;
 				padding:0;
@@ -371,8 +371,8 @@
 	    				<p class="heading h-black">Partner with AskByPoll</p>
 			    		<a href="{% url 'polls:abp_business' %}" class="signup-a light-blue">Business Solutions</a>
 			    		<a href="{% url 'polls:abp_case_study' %}" class="signup-a yellow">Case Studies</a>
-			    		<a href="mailto:shradha@askbypoll.com" target="_top" class="signup-a dark-blue">Request Demo</a>
-			    		<a href="mailto:shradha@askbypoll.com" target="_top" class="signup-a green">Free Trial</a>
+			    		<a href="javascript:;" target="_top" class="signup-a dark-blue scroll-contact">Request Demo</a>
+			    		<a href="javascript:;" target="_top" class="signup-a green scroll-contact">Free Trial</a>
 			    		<a href="{% url 'polls:abp_about_us' %}" class="signup-a red">About Us</a>
 			    	</div>
 		    	</div>
@@ -417,11 +417,12 @@
 				  	</div>
 				</div>
 				<div class="section-div section3-div">
-			  		<form class="contact-form">
-						<input type="text" class="form-control contact-ip" placeholder="Name">
-						<input type="email" class="form-control contact-ip" placeholder="Email">
-						<input type="phone" class="form-control contact-ip" placeholder="Phone">
-						<textarea class="form-control contact-ip" rows="7"
+			  		<form class="contact-form" id="contact-us-form" action="/contact?request=demo">
+			  			{% csrf_token %}
+						<input type="text" name="name" class="form-control contact-ip" placeholder="Name">
+						<input type="email" name="email" class="form-control contact-ip" placeholder="Email">
+						<input type="number" name="phone" class="form-control contact-ip" placeholder="Phone">
+						<textarea class="form-control contact-ip" name="message" rows="7"
 						placeholder="Feel free to say anything. We would be very happy even if it is a small 'hi there'"></textarea>
 						<button id="contact-btn" type="submit" class="btn">Submit</button>
 					</form>
@@ -510,6 +511,9 @@
 			$(".arrow").click(function(){
 	    		$.fn.pagepiling.moveSectionDown();
 	    	});
+	    	$(".scroll-contact").click(function() {
+		        $.fn.pagepiling.moveSectionDown();
+		    });
 	    	$.fn.pagepiling.moveSectionDown();
 		}
 		else{

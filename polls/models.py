@@ -106,6 +106,13 @@ class Question(models.Model):
 				if choice.choice_image:
 					image_list.append("/media/choices/"+choice.get_file_name())
 		return image_list
+	def has_choice_image(self):
+		has_choice_image = False
+		for choice in self.choice_set.all():
+			if choice.choice_image:
+				has_choice_image = True
+				break
+		return has_choice_image
 	def get_user_details(self):
 		if self.isAnonymous:
 			pic_url = "/static/login/images/defaultAvatar.png"

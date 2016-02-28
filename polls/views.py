@@ -3166,3 +3166,30 @@ def get_index_question_detail(mainquestion,user,sub_que,curtime):
 	# print(mainquestion,user_already_voted,user)
 	data['user_already_voted'] = user_already_voted
 	return data
+
+class SendMails(BaseViewList):
+
+	def post(self,request,*args,**kwargs):
+		subject = ""
+		message = ""
+		error = {}
+		err_msg = ""
+		if request.GET.get("request","demo") or request.GET.get("request","free-trial"):
+			subject = "Get Demo/Trial"
+			name = request.POST.get("name","").strip()
+			email = request.POST.get("email","").strip()
+			phone = request.POST.get("phone","").strip()
+			msg = request.POST.get("message","Hi there!!").strip()
+			if not name:
+				err_msg += "Name is required<br>"
+			if not email:
+				err_msg += "Email is required<br>"
+			if err_msg:
+				error["msg"] = err_msg
+				return HttpResponse(json.dumps(error),content_type='application/json')
+			message = " Name : "+name+"\n Email : "+email+"\n Phone : "+phone+"\n\n "+msg
+		send_mail(subject, message, 'support@askbypoll.com',['shradha@askbypoll.com'], fail_silently=False)
+		data = {}
+		return HttpResponse(json.dumps(data),content_type='application/json')
+
+

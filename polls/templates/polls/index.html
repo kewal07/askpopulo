@@ -47,8 +47,10 @@
 						    		<a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
 						    	</div>
 							</div>
-							{% if question.question.featured_image %}
-								<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
+							{% if not question.question.has_choice_image %}	
+								{% if question.question.featured_image %}
+									<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
+								{% endif %}
 							{% endif %}
 							<div class="trivia-description">
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >

@@ -121,6 +121,12 @@ background: #2DCC70;
 	color:red;
 	list-style: none;
 }
+.errorlistwhite{
+	display: block;
+	font-size:1rem;
+	color: white;
+	list-style: none;
+}
 #header-wrapper{
 	height: 70px;
 	background: #fafbfc;
@@ -239,6 +245,9 @@ span.page-links{
 	text-align: center;
     background: white;
 }
+span.page-links a{
+	text-transform: capitalize;
+}
 #footer{
     margin: 0;
     /*position: absolute;*/
@@ -298,6 +307,23 @@ span.page-links{
 }
 #upImgText{
   padding:1.3rem;
+}
+.form-control{
+	display: block;
+	width: 80%;
+	margin:0 auto;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	text-align: center;
+	margin-bottom:1rem;
 }
 @media only screen and (max-width: 980px){
 	.navbar-header{
@@ -373,6 +399,11 @@ span.page-links{
 	.dropDownLoc{
 		width:90%;
 	}
+	.form-control{
+		width:70%;
+		height:20px;
+		padding:0;
+	}
 }
 @media only screen and (min-width: 981px) and (max-width: 1280px){
 	.logged-in-header{
@@ -433,7 +464,7 @@ span.page-links{
     padding: 15px 30px 30px;
 	text-align: center;
 }
-#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox5, #overlay-inAbox6{
+#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox5, #overlay-inAbox6, #overlay-inAbox7{
 	display:none;
 	margin-left: 25%;
 }
@@ -442,6 +473,9 @@ span.page-links{
 	position: relative;
 	margin: 0 auto;
 	width: 90%;
+}
+#overlay-inAbox7{
+	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
 }
 .overlaytext{
 	font-size: 1rem;

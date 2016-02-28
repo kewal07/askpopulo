@@ -90,6 +90,9 @@
 									</ul>
 								</div>
 							</li>
+							<li><a href="{% url 'polls:abp_business' %}">Business Solutions</a></li>
+			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
+			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
 							{% if not user.is_authenticated %}
 								{% if request.path == "/accounts/login/" %}
 									<li><a href="{% url 'account_login' %}?{{ request.GET.urlencode }}">Login</a></li>
@@ -182,6 +185,29 @@
 				<button id = "okay_redirect" class="btn">Okay</button>
 			</div>
 		</div>
+		<div id="overlay-inAbox7" class="overlay">
+			<div class="wrapper">
+				<!-- <p class="overlaytext">Contact Us</p> -->
+				<form class="contact-form" id="contact-us-form-overlay" action="/contact?request=demo">
+		  			{% csrf_token %}
+		  			<p>
+						<input type="text" name="name" class="form-control contact-ip" placeholder="Name">
+					</p>
+					<p>
+						<input type="email" name="email" class="form-control contact-ip" placeholder="Email">
+					</p>
+					<p>
+						<input type="number" name="phone" class="form-control contact-ip" placeholder="Phone">
+					</p>
+					<p>
+						<textarea class="form-control contact-ip" name="message" rows="7" placeholder="Feel free to say anything. We would be very happy even if it is a small 'hi there'"></textarea>
+					</p>
+					<p>
+						<button id="contact-btn-overlay" type="submit" class="btn">Submit</button>
+					</p>
+				</form>
+			</div>
+		</div>
 		{% if signup_part_form or data.signup_part_form %}
 			<script type="text/javascript">
 				$(document).ready(function(){
@@ -232,13 +258,14 @@
 				<div class="menuF">
 					<ul class="menuF-nav">
 						<li><a href="{% url 'polls:index' %}">Home</a></li>
-						<li><a href="{% url 'polls:polls_create' %}">Ask</a></l1>
-						<li><a href="{% url 'polls:featured' %}">Featured</a></li>
+						<li><a href="{% url 'polls:abp_business' %}">Business Solutions</a></li>
+			    		<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
+			    		<li><a href="javascript:;" target="_top" class="open-contact-overlay">Request Demo</a></li>
 						<li><a href="/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a>
 						<li><a href="/privacypolicy" target="_blank">Privacy</a></li>
 						<li><a href="{% url 'faq' %}" target="_blank">FAQ</a></li>
-						<li><a href="mailto:support@askbypoll.com?Subject=Hello" target="_top">Write To Us</a></li>
-						<li><a href="{% url 'polls:aboutus' %}" target="_top">About Us</a></li>
+						<li><a href="javascript:;" target="_top" class="open-contact-overlay">Write To Us</a></li>
+						<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
 					</ul>
 				</div>
 			</div> 
