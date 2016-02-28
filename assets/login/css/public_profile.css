@@ -163,7 +163,8 @@ ul.followers p{
 		padding:0;
 	}
 	.detailHeader{
-		bottom:-39px;
+		top: 10rem;
+    	bottom: 0;
 	}
 	.profileBody{
 		margin:0;
