@@ -60,7 +60,7 @@ class TeamView(BaseViewList):
 
 class IndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 50
+	paginate_by = 20
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(IndexView, self).render_to_response(context, **response_kwargs)
@@ -192,37 +192,8 @@ class IndexView(BaseViewList):
 			sub_que.append(sub.question.id)
 		if country_list:
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
-		for mainquestion in latest_questions:
-			data = {}
-			followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
-			following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
-			data['connection'] = len(followers) + len(following)
-			# print(data['connection'])
-			data ['question'] = mainquestion
-			subscribers = mainquestion.subscriber_set.count()
-			data['votes'] = mainquestion.voted_set.count()
-			considered_email = []
-			for voted in Voted.objects.filter(question=mainquestion):
-				considered_email.append(voted.user.email)
-			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
-			data['subscribers'] = subscribers
-			data['subscribed'] = sub_que
-			data['expired'] = False
-			data['upvoteCount'] = mainquestion.upvoteCount
-			data['editable'] = mainquestion.iseditable(user)
-			if mainquestion.id == 3051:
-				data['votes'] += 100
-				data['subscribers'] += 150
-			if mainquestion.expiry and mainquestion.expiry < curtime:
-				data['expired'] = True
-			user_already_voted = False
-			if user.is_authenticated():
-				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
-				if question_user_vote:
-					user_already_voted = True
-			# print(mainquestion,user_already_voted,user)
-			data['user_already_voted'] = user_already_voted
-			mainData.append(data)
+		for mainquestion in latest_questions:			
+			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
 		context['data'] = mainData
 		return mainData
 
@@ -230,25 +201,31 @@ class VoteView(BaseViewDetail):
 	model = Question
 	
 	def get_template_names(self):
+		print(self.request.path)
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
 		question.numViews +=1
 		question.save()
 		user = self.request.user
-		if user.is_authenticated():
+		if self.request.path.startswith("/public-url"):
+			template_name = 'publictemplates/question_share.html'
+		elif user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
 			subscribed = Subscriber.objects.filter(user=user, question=question)
 			# print(subscribed)
 			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ) or (self.request.path.endswith('result') and subscribed):
 				template_name = 'polls/questionDetail.html'
+		print(template_name)
 		return [template_name]
 	
 	def get_context_data(self, **kwargs):
 
 		context = super(VoteView, self).get_context_data(**kwargs)
+		curtime = timezone.now()
 		user = self.request.user
 		subscribed_questions = []
 		user_already_voted = False
+		sub_que = []
 		if user.is_authenticated():
 			createExtendedUser(user)
 			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
@@ -278,27 +255,13 @@ class VoteView(BaseViewDetail):
 				pub_key=settings.DISQUS_API_KEY,
 			)
 			context['ssoData'] = ssoData
-			question_user_vote = Voted.objects.filter(user=user,question=context['question'])
-			if question_user_vote:
-				user_already_voted = True
-			context['user_already_voted'] = user_already_voted
-		sub_que = []
-		for sub in subscribed_questions:
-			sub_que.append(sub.question.id)
-		context['subscribed'] = sub_que
-		context['expired'] = False
-		followers = [ x.user for x in Follow.objects.filter(target_id=context['question'].user.id,deleted_at__isnull=True) ]
-		following = [ x.target for x in Follow.objects.filter(user_id=context['question'].user.id,deleted_at__isnull=True) ]
-		context['connection'] = len(followers) + len(following)
-		if context['question'].expiry and context['question'].expiry < timezone.now():
-			context['expired'] = True
-		context['votes'] = context['question'].voted_set.count()
-		considered_email = []
-		for voted in Voted.objects.filter(question=context['question']):
-			considered_email.append(voted.user.email)
-		context['votes'] += VoteApi.objects.filter(question=context['question']).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
-		context['editable'] = context['question'].iseditable(user)
-		context['subscribers'] =  context['question'].subscriber_set.count()
+			subscribed_questions = []
+			if user.is_authenticated():
+				subscribed_questions = Subscriber.objects.filter(user=user)
+			for sub in subscribed_questions:
+				sub_que.append(sub.question.id)
+				question_user_vote = Voted.objects.filter(user=user,question=context['question'])
+		context["data"] = get_index_question_detail(context['question'],user,sub_que,curtime)
 		if context['question'].id == 3051:
 				context['votes'] += 100
 				context['subscribers'] += 150
@@ -823,9 +786,11 @@ class ReportAbuse(BaseViewList):
 
 	def get(self,request,*args,**kwargs):
 		qIdBan = request.GET.get('qIdBan')
+		qSlug = request.GET.get('qSlug')
+		poll_url = reverse('polls:polls_vote', kwargs={'pk':qIdBan,'que_slug':qSlug})
 		user = request.user
 		subject = "Report Abuse"
-		message = str(user)+" reported abuse on the question "+qIdBan
+		message = str(user)+" reported abuse on the question "+settings.DOMAIN_URL+poll_url
 		send_mail(subject, message, 'support@askbypoll.com',['support@askbypoll.com','kewal07@gmail.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
@@ -1001,8 +966,15 @@ class QuestionUpvoteView(BaseViewList):
 				activity = {'actor': user.username, 'verb': 'credits', 'object': question.id, 'question_text':question.question_text, 'question_desc':question.description, 'question_url':'/polls/'+str(question.id)+'/'+question.que_slug, 'actor_user_name':user.username,'actor_user_pic':user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(user.id)+"/"+user.extendeduser.user_slug, "points":diff * 2, "action":"downvote"}
 			questionVoted.save()
 			questionVoted.user.extendeduser.save()
-			feed = client.feed('notification', questionVoted.user.id)
-			feed.add_activity(activity)	
+			try:
+				feed = client.feed('notification', questionVoted.user.id)
+				feed.add_activity(activity)
+			except Exception as e:
+				import os,sys
+				exc_type, exc_obj, exc_tb = sys.exc_info()
+				fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+				print(exc_type, fname, exc_tb.tb_lineno)
+				print(e)
 			countVotes = questionVoted.upvoteCount
 			upVote.vote = vote
 			upVote.save()
@@ -1019,21 +991,15 @@ class QuestionUpvoteView(BaseViewList):
 
 class CompanyIndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 50
+	paginate_by = 20
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(CompanyIndexView, self).render_to_response(context, **response_kwargs)
-		# # print(self.request.COOKIES.get("location"))
-		# if not self.request.COOKIES.get("location"):
-		# 	# print("setting location cookie")
-		# 	response.set_cookie("location","global")
 		return response
 
 	def get_template_names(self):
 		request = self.request
 		template_name = 'polls/company.html'
-		# if request.path.endswith('category') and not request.GET.get('category'):
-		# 	template_name = 'polls/categories.html'
 		return [template_name]
 	
 	def get_queryset(self):
@@ -1050,7 +1016,10 @@ class CompanyIndexView(BaseViewList):
 		if company_obj:
 			company_obj = company_obj[0]
 		else:
-			return HttpResponseRedirect("/") #this should be a 404 page
+			# print("zzdswds sf df sdfdf cds ")
+			base_url = reverse("polls:index")
+			# print(base_url)
+			return HttpResponseRedirect(reverse("polls:index")) #this should be a 404 page
 		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
 		company_user_list = [x.user_id for x in company_user_list]
 		company_admin_list = User.objects.filter(id__in = company_user_list)
@@ -1094,34 +1063,10 @@ class CompanyIndexView(BaseViewList):
 		data['companyAdmins'] = str(';'.join(company_admin_list))
 		mainData.append(data)
 		for mainquestion in latest_questions:
-			data = {}
-			data ['question'] = mainquestion
-			subscribers = mainquestion.subscriber_set.count()
-			data['votes'] = mainquestion.voted_set.count()
-			considered_email = []
-			for voted in Voted.objects.filter(question=mainquestion):
-				considered_email.append(voted.user.email)
-			data['votes'] += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
-			data['subscribers'] = subscribers
-			data['subscribed'] = sub_que
-			data['expired'] = False
-			data['upvoteCount'] = mainquestion.upvoteCount
-			data['editable'] = mainquestion.iseditable(user)
-			if mainquestion.expiry and mainquestion.expiry < curtime:
-				data['expired'] = True
-			user_already_voted = False
-			if user.is_authenticated():
-				question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
-				if question_user_vote:
-					user_already_voted = True
-			# print(mainquestion,user_already_voted,user)
-			data['user_already_voted'] = user_already_voted
-			if mainquestion.id == 3051:
-				data['votes'] += 100
-				data['subscribers'] += 150
-			mainData.append(data)
+			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
 		context['data'] = mainData
-		#print(context)
+		# dir(context)
+		# print (mainData)
 		return mainData
 
 englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire","Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire","Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
@@ -3144,19 +3089,80 @@ class ArticleView(BaseViewList):
 		return context
 
 class AskByPollBusinessView(BaseViewList):
-	template_name = 'polls/askbypoll-for-business.html'
+	template_name = 'abpBusiness/askbypoll-for-business.html'
+	context_object_name = "abp_solutions"
+	def get_queryset(self):
+		import polls.abp_business_constants as abp_business_constants
+		context = {}
+		context["solution_caption"] = abp_business_constants.solution_caption
+		return context
+
+class AskByPollBusinessCategoryView(BaseViewList):
+	template_name = 'abpBusiness/askbypoll-for-category.html'
+	context_object_name = "abp_solution"
+	def get_queryset(self):
+		category_name = self.request.path.replace("/askbypoll-for-business/","")
+		context = {}
+		import polls.abp_business_constants as abp_business_constants
+		for category_dict in abp_business_constants.solution_caption:
+			for key, val in category_dict.items():
+				print(category_name,key,key == category_name)
+				if key == category_name:
+					context["details"] = val["details"]
+					context["brief"] = val["brief"]
+			if context:
+				break
+		context["category"] = category_name
+		return context
+
+class AskByPollCaseStudyView(BaseViewList):
+	template_name = 'abpBusiness/askbypoll-case-study.html'
 	def get_queryset(self):
 		return {}
 
-class AskByPollBusinessCategoryView(BaseViewList):
-	# template_name = 'polls/enterprise.html'
-	# def get_queryset(self):
-	# 	return {}
-	def get_template_names(self, **kwargs):
-		# print(self.request.path)
-		template_name = "polls/"+self.request.path.replace("/askbypoll-for-business/","") + '.html'
-		return [template_name]
-
+class AskByPollAboutUsView(BaseViewList):
+	template_name = 'askbypoll-about-us.html'
 	def get_queryset(self):
-		context = {}
-		return context
+		return {}
+
+def get_number_votes(mainquestion):
+	numVotes = mainquestion.voted_set.count()
+	considered_email = []
+	for voted in Voted.objects.filter(question=mainquestion):
+		considered_email.append(voted.user.email)
+	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
+	return numVotes
+
+def get_index_question_detail(mainquestion,user,sub_que,curtime):
+	data = {}
+	followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
+	following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
+	data['connection'] = len(followers) + len(following)
+	# print(data['connection'])
+	data ['question'] = mainquestion
+	subscribers = mainquestion.subscriber_set.count()
+	data['votes'] = get_number_votes(mainquestion)
+	data['subscribers'] = subscribers
+	subscribed = False
+	if mainquestion.id in sub_que:
+		subscribed = True
+	data['subscribed'] = subscribed
+	data['expired'] = False
+	data['upvoteCount'] = mainquestion.upvoteCount
+	upvotes = QuestionUpvotes.objects.filter(question=mainquestion)
+	data['upvotedusers'] = [ x.user for x in upvotes if x.vote==1 ]
+	data['downvotedusers'] = [ x.user for x in upvotes if x.vote==0 ]
+	data['editable'] = mainquestion.iseditable(user)
+	if mainquestion.id == 3051:
+		data['votes'] += 100
+		data['subscribers'] += 150
+	if mainquestion.expiry and mainquestion.expiry < curtime:
+		data['expired'] = True
+	user_already_voted = False
+	if user.is_authenticated():
+		question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
+		if question_user_vote:
+			user_already_voted = True
+	# print(mainquestion,user_already_voted,user)
+	data['user_already_voted'] = user_already_voted
+	return data

@@ -1,5 +1,22 @@
+var user_authenticated;
+var csrfmiddlewaretoken;
+var acnt_login_url;
+var user_credits;
 $(document).ready(function(){
 
+	user_authenticated = $("#if_user_authenticated").val() === "True";
+	csrfmiddlewaretoken = $("#mycsrfmiddlewaretoken").val();
+	acnt_login_url = $("#acnt_login_url").val();
+	user_credits = parseInt($("#userCoins").val());
+
+	$(".navbar-toggle").click(function(){
+		$(".logged-in-header").hide();
+		$(".navbar-top").toggle("slow");
+	});
+	$(".user-btn").click(function(){
+		$(".navbar-top").hide();
+		$(".logged-in-header").toggle("slow");
+	});
 	$("#id_categories").addClass("clearfix");
 	
 	if($(window).width() <= 960){
@@ -21,7 +38,7 @@ $(document).ready(function(){
 	
 	/*For file browse */
 	var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-	var label = $('<div class="fileLabel"><img class="upImg" ><span id="upImgText">Upload Image</span></div>');
+	var label = $('<div class="fileLabel btn"><img class="upImg" ><span id="upImgText">Upload Image</span></div>');
 	// var upImg = $('<img id="upImg" width=>')
 	var fileInput = $(":file").after(label).wrap(invisible);
 	$(".upImg").hide();
@@ -56,20 +73,16 @@ $(document).ready(function(){
 	});
 	/* End of file browse*/
 
-	/* For changing border color of the selected radio image */
+	/* highlight selected choice */
 	$(".choices").click(function(){
-		// console.log($(".choices.choice_image#"+$(this)[0].id)[0]);
-		$(".choice_image").css({"border-color":"#666"});
-		($(".choice_image#"+$(this)[0].id)[0]).style.borderColor="#00FF00";
+		$(this).parent().parent().children().css({"background":"#fafbfc"});
+		$(this).parent().parent().children().each(function(){
+			$(this).children("label").css({"background":"#fafbfc"});
+		})
+		$(this).parent().css({"background":"#f96a0e"});
 	});
-	/* End of changing image border color */
+	/* End of highlight selected choice */
 
-	/* Dropdownbox on click of user image in nav */
-	// $('.userInNav').click(function(){
-	// 	$('.dropDownLoc').hide();
-	// 	// $('.dropDownNot').hide();
-	// 	$('.dropDownBox').slideToggle("slow");
-	// });
 	$('.menuResponsive').click(function(){
 		$('.dropDownLoc').hide();
 		// $('.dropDownNot').hide();
@@ -178,14 +191,6 @@ $(document).ready(function(){
   		$("#makeFeatured_tooltip").toggle();
   	});
 
-	/*help*/
-	$(".helpChardin").click(function(e){
-		e.preventDefault();
-		$('html, body').animate({ scrollTop: 0 }, 'slow');
-		$('body').chardinJs('start');
-	});
-	/*end*/
-	
 	/* agreement in sign up page */
 	var agreement_label = '<label class="agreement_label" for="id_agreement">I have read and agree with the <a class="agreement_anchor" href="/static/AskByPollTermsofUse.docx" target="_blank">Terms of Use</a> and <a class="agreement_anchor" href="/static/ASKBYPOLLPrivacyPolicies.docx" target="_blank">Privacy</a></label>'
 	$("#id_agreement").parent().append(agreement_label);
@@ -221,7 +226,7 @@ $(document).ready(function(){
 		// var divElemId = "." + elemId + "Div";
 		var divElemId = elemId + "Div";
 		$(".profileDetail").hide();
-		$(".detailHeader h1").text(headerText[elemId]);
+		$(".detailHeader h1").text(elemId);
 		// $(divElemId).slideToggle("slow");
 		if(divElemId === "myABPInboxDiv"){
 			console.log("nbox Loaded for user");
@@ -330,6 +335,192 @@ $(document).ready(function(){
 		console.log("open message block");
 		openOverlay("#overlay-inAbox4");
 	});
+
+	// Vote Start
+	$('.voteSubmit').bind('click', function()
+	{
+		var voteSubmitId = $(this)[0].id;
+		var queid = $(this)[0].id.replace('vote','').split("---")[0];
+		var queslug = $(this)[0].id.replace('vote','').split("---")[1];
+		var quebet = $(this)[0].id.replace('vote','').split("---")[2];
+		var betValue = 0;
+		// console.log(quebet === "True");
+		var elemid = "#optionsForm"+queid;//$(this)[0].id
+		var vote_url = $(elemid).attr("action");
+		$(elemid).bind('submit', function()
+		{
+			$("#"+voteSubmitId).attr("disabled","disabled");
+			$.ajax(
+			{
+				type: 'POST',
+				url:vote_url,
+				data:$(elemid).serialize(),
+				success:function(response)
+				{
+					var form_errors = response.form_errors;
+					// console.log(response);
+					// console.log(form_errors);
+					
+					if(typeof form_errors === 'undefined'){
+						if (user_credits > 10){
+							if(quebet === "True"){
+								openOverlay("#overlay-inAbox5");
+								$("#betAmount")[0].value = "";
+								/* close overlay call */
+								$("#cancel4").click(function(){
+									closeOverlay();
+									$("#"+voteSubmitId).removeAttr("disabled");
+								});
+								$("#okay4").click(function(){
+									betValue = $("#betAmount")[0].value;
+									console.log(betValue);
+									$(".errorlist").remove();
+									if(betValue === "" || (betValue > 9 && betValue <= user_credits)){
+										$("#betAmountHidden")[0].value = betValue;
+										closeOverlay();
+										$("#"+voteSubmitId).removeAttr("disabled");
+										$(elemid).unbind('submit').submit();
+									}
+									else{
+										$(this).parent().append('<span class="errorlist">Please enter a value between 10 and '+user_credits+'</span>');
+									}
+								});
+								/* close overlay call end */
+							}
+							else{
+								$("#"+voteSubmitId).removeAttr("disabled");
+								$(elemid).unbind('submit').submit();
+							}
+						}else{
+						 	$(elemid).unbind('submit').submit();
+						}
+					}else{
+						openOverlay("#overlay-inAbox");
+						$("#"+voteSubmitId).removeAttr("disabled");
+					}
+				}
+			});     
+			return false;
+		});
+	});
+	// Vote end
+
+	// Follow start
+	$('.followButton').bind('click', function(e){
+		$button = $("#"+$(this)[0].id);
+		var qid = $(this)[0].id.split("---")[0].replace("follow","");
+		var qslug = $(this)[0].id.split("---")[1];
+		var old_inner = $button[0].innerHTML;
+		if (user_authenticated){
+			if($button.hasClass('following')){
+				//$.ajax(); Do Unfollow
+				var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': csrfmiddlewaretoken};
+				$.ajax(
+				{
+					type: 'POST',
+					url: '/follow/'+qid+'/'+qslug,
+					data:data,
+					success:function(response)
+					{
+						$button[0].innerHTML = old_inner.replace("Followed","Follow");
+						$button.removeClass('following');
+						$button.attr('title',"Follow");
+						$("#sub_num"+qid).text(response.sub_count);
+					}
+				});
+			} else {				
+				// $.ajax(); Do Follow
+				var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': csrfmiddlewaretoken}
+				$.ajax(
+				{
+					type: 'POST',
+					url: '/follow/'+qid+'/'+qslug,
+					data:data,
+					success:function(response)
+					{
+						$button[0].innerHTML = old_inner.replace("Follow","Followed");
+						$button.addClass('following');
+						$button.attr('title',"Unfollow");
+						$("#sub_num"+qid).text(response.sub_count);
+					}
+				});				
+			}
+		}else{
+			url = acnt_login_url+'?next=/polls/'+qid+'/'+qslug;
+			$(location).attr('href',url);
+		}
+		return false;
+	});
+	// Follow end
+
+	// Upvote Downvote start
+	$(".updownvote").bind('click',function(e){
+		$button = $(this);
+		var elemId = $button[0].id;
+		var qid = elemId.split("---")[1];
+		var qslug = elemId.split("---")[2];
+		var upvote_url = "";
+		var upvote = true;
+		if(elemId.match("^upvote")){
+			upvote_url = "/upvoted/?qId="+qid+"&vote=1";
+		}
+		if(elemId.match("^downvote")){
+			upvote = false;
+			upvote_url = "/upvoted/?qId="+qid+"&vote=0";
+		}
+		var $upvoteelem = $("#upvote---"+qid+"---"+qslug);
+		var $downvoteelem = $("#downvote---"+qid+"---"+qslug);
+		if(user_authenticated){
+			$.ajax({
+				type: 'POST',
+				url:upvote_url,
+				data:{'csrfmiddlewaretoken': csrfmiddlewaretoken},
+				error:function(response){
+					console.log('error occured');
+				},
+				success:function(response)
+				{
+						count = response.count;
+						message = response.message;
+						if(typeof count != 'undefined'){
+							if(upvote){
+								// upvote so change upvote to upvoted and if downvoted then to downvote remove class from upvote add to downvote
+								$upvoteelem[0].innerHTML = $upvoteelem[0].innerHTML.replace("Upvote","Upvoted");
+								$downvoteelem[0].innerHTML = $downvoteelem[0].innerHTML.replace("Downvoted","Downvote");
+							}else{
+								// downvote so change if upvoted then to upvote and downvote to downvoted remove class from downvote add to upvote
+								$upvoteelem[0].innerHTML = $upvoteelem[0].innerHTML.replace("Upvoted","Upvote");
+								$downvoteelem[0].innerHTML = $downvoteelem[0].innerHTML.replace("Downvote","Downvoted");
+							}						
+							$("#upvotenum"+qid).text(count);
+						}
+				}
+			});
+		}else{
+			url = acnt_login_url+'?next=/polls/'+qid+'/'+qslug;
+			$(location).attr('href',url);
+		}
+	});
+	// Upvote Downvote end
+
+	// Report Spam start
+	$('.spam-question').bind('click',function(e)
+	{
+		var queid = $(this)[0].id.replace('ban','').split("---")[0];
+		var queslug = $(this)[0].id.replace('ban','').split("---")[1];
+		$.ajax(
+			{
+				type: 'GET',
+				url:'/abuse?qIdBan='+queid+'&qSlug='+queslug,
+				success:function(response)
+				{
+						$('#overlay-inAbox').children().children().first().text("AskByPoll has been informed. We are looking into it. For any more details please write to us @ support@askbypoll.com ");
+						openOverlay("#overlay-inAbox");
+						$(this).css({"color":"red"});
+				}
+			});     
+	});
+	// Report Spam end
 });
 
 function getCookie(cname) {
@@ -342,71 +533,6 @@ function getCookie(cname) {
     }
     return "";
 }
-
-// function ajaxindicatorstart(text)
-// {
-// 	if(jQuery('body').find('#resultLoading').attr('id') != 'resultLoading'){
-// 	jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-// 	}
-
-// 	jQuery('#resultLoading').css({
-// 		'width':'100%',
-// 		'height':'100%',
-// 		'position':'fixed',
-// 		'z-index':'10000000',
-// 		'top':'0',
-// 		'left':'0',
-// 		'right':'0',
-// 		'bottom':'0',
-// 		'margin':'auto'
-// 	});
-
-// 	jQuery('#resultLoading .bg').css({
-// 		'background':'#000000',
-// 		'opacity':'0.7',
-// 		'width':'100%',
-// 		'height':'100%',
-// 		'position':'absolute',
-// 		'top':'0'
-// 	});
-
-// 	jQuery('#resultLoading>div:first').css({
-// 		'width': '250px',
-// 		'height':'75px',
-// 		'text-align': 'center',
-// 		'position': 'fixed',
-// 		'top':'0',
-// 		'left':'0',
-// 		'right':'0',
-// 		'bottom':'0',
-// 		'margin':'auto',
-// 		'font-size':'16px',
-// 		'z-index':'10',
-// 		'color':'#ffffff'
-
-// 	});
-
-//     jQuery('#resultLoading .bg').height('100%');
-//        jQuery('#resultLoading').fadeIn(300);
-//     jQuery('body').css('cursor', 'wait');
-// }
-
-// function ajaxindicatorstop()
-// {
-//     jQuery('#resultLoading .bg').height('100%');
-//        jQuery('#resultLoading').fadeOut(300);
-//     jQuery('body').css('cursor', 'default');
-// }
-
-// jQuery(document).ajaxStart(function () {
-//  		//show ajax indicator
-// ajaxindicatorstart('Please give us a moment while we Make Sense of Millions of Bits for You !');
-// }).ajaxStop(function () {
-// //hide ajax indicator
-// ajaxindicatorstop();
-// });
-
-
 function activateMenuLink () {
 	$( ".menuanchor" ).each(function( ) {
 		elemHref = $(this)[0].href;
@@ -425,11 +551,6 @@ function openOverlay(olEl) {
 	if ($('#overlay-shade').length == 0)
 		$('body').prepend('<div id="overlay-shade"></div>');
 	$('#overlay-shade').fadeTo(300, 0.6, function() {
-		// var props = {
-			// //oLayWidth       : $oLay.width(),
-			// scrTop          : $(window).scrollTop(),
-			// viewPortWidth   : $(window).width()
-		// };
 	$oLay.css({
 			display : 'block',
 			opacity : 0,
@@ -440,7 +561,6 @@ function openOverlay(olEl) {
 			}, 600);
 	});
 }
-
 function closeOverlay() {
 	$('.overlay').animate({
 		top : '-=300',
@@ -451,7 +571,6 @@ function closeOverlay() {
 	});
 }
 /* End Overlay */
-
 function yesnoconfirm(url){
 	$("#yes").click(function(){
 		closeOverlay();
@@ -462,7 +581,6 @@ function yesnoconfirm(url){
 		return false;
 	});
 }
-
 function confirm_redirect(olEl,val,url){
 	$oLay = $(olEl);
 	console.log(url);
@@ -478,11 +596,8 @@ function confirm_redirect(olEl,val,url){
 	openOverlay(olEl);
 	return yesnoconfirm(url);
 }
-
 function confirm_redirect_only(olEl,val,url){
 	$oLay = $(olEl);
-	console.log(url);
-	// console.log(val);
 	$oLay.children().children().first()[0].innerHTML = val;
 	openOverlay(olEl);
 	$("#okay_redirect").click(function(){

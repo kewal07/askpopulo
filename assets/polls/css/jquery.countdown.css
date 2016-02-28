@@ -2,6 +2,11 @@
 .is-countdown {
 	border: 1px solid #ccc;
 	background-color: #eee;
+	margin-top: 1rem;
+	font-size: 1.5rem;
+	display: inline-block;
+	border-radius: 4px;
+	float: right;
 }
 .countdown-rtl {
 	direction: rtl;
@@ -43,7 +48,7 @@
 	text-align: center;
 }
 .countdown-amount {
-    font-size: 200%;
+    /*font-size: 200%;*/
 }
 .countdown-period {
     display: block;

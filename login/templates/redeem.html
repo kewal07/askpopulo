@@ -1,12 +1,10 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/redeem.css' %}" />
 {% endblock %}
 {% block content %}
-<section id="myCategories" style="width:1100px;margin:0 auto;">
-    
+<section id="content">
 	<div class="categoriesList clearfix">
 		<div id="coinCreditDetails">
 				<!-- <p>
@@ -41,7 +39,9 @@
 				</div>
 			{% endfor %}
 			<br><br>
-			<input value="Redeem" class="submit" id="submit" type="submit" style="margin-left:39%;"/>
+			<div class="cta">
+				<input value="Redeem" class="submit btn" id="submit" type="submit"/>
+			</div>
 		</form>
 		<script>
 			$(document).ready(function()

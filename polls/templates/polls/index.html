@@ -1,455 +1,138 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
 {% endblock %}
 {% block content %}
-	<div class="win-prizes" style="display:none">
-				<a href="{% url 'account_login' %}" target="new"><img src="/static/polls/images/win.png"  alt="Signup and win movie tickets" title="Signup and win Movie Tickets"></a>
-	</div>
-	<div class="feedback" style="display:none">
-				<a href="https://qasiatrial.asia.qualtrics.com/SE/?SID=SV_dn8FIW14ZPPiDlz" target="new"><img src="/static/polls/images/feedback.png"  alt="Feedback" title="Feedback"></a>
-	</div>
 	<section id="content">
-			{% if user.is_authenticated %}
-				{% url 'polls:mypolls' user.id user.extendeduser.user_slug as mypolls_url %}
-			{% endif %}
-			{% if user.is_authenticated and request.path == mypolls_url %}
-				<div class="mypolltab">
-					<a href="{{ request.path }}" class="mypollstabs">Asked</a>
-					<a href="{{ request.path }}?tab=voted" class="mypollstabs">Voted</a>
-					<a href="{{ request.path }}?tab=followed" class="mypollstabs">Followed</a>
-					<a href="{{ request.path }}?tab=mycategories" class="mypollstabs">Category Polls</a>
-				</div>
-			{% else %}
-				<div class="mypolltab">
-					{% if "category" in request.GET %}
-						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=mostvoted" class="mypollstabs">Most Voted</a>
-						<a href="{{ request.path }}?category={{ request.GET.category }}" class="mypollstabs">Latest</a>
-						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=leastvoted" class="mypollstabs">Least Voted</a>
-						<a href="{{ request.path }}?category={{ request.GET.category }}&tab=withexpiry" class="mypollstabs">Timed Polls</a>
-						{% else %}
-						<a href="{{ request.path }}?tab=mostvoted" class="mypollstabs">Most Voted</a>
-						<a href="{{ request.path }}" class="mypollstabs">Latest</a>
-						<a href="{{ request.path }}?tab=leastvoted" class="mypollstabs">Least Voted</a>
-						<a href="{{ request.path }}?tab=withexpiry" class="mypollstabs">Timed Polls</a>
-					{% endif %}
-				</div>
-			{% endif %}
-			{% if data %}
-					{% for question in data %}
+		{% if data %}
+			<div class="masonry">
+				{% for question in data %}
 					{% if question.question.user.extendeduser.company.id > 1 %}
-					<div class="questions compQuestions">
-					{% else %}
-					<div class="questions">
-					{% endif %}
-						<div class="questionContent">
-							<div class="userInfo">
-								<div class="userImage">
-									{% if question.question.user.extendeduser %}
-										<a class ="userIndexA" href="{{ question.question.get_user_details.user_url }}">
-											<img class ="userIndexImage" src="{{ question.question.get_user_details.pic_url }}"  alt="{{ question.question.get_user_details.user_alt }}">
-										</a>
+			   			<div class="item featured">
+			   		{% else %}
+			   			<div class="item">
+			   		{% endif %}
+				   			<div class="trivia-title">
+								<a id="question---{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" >{{question.question.question_text}}</a>
+								<div class="poll-info">
+									{% if question.user_already_voted %}
+										<a href="javascript:;" class="light-grey">Voted 
 									{% else %}
-										<a class ="userIndexA" href="{% url 'login:loggedIn' question.question.user.id question.question.user.extendeduser.user_slug %}">
-											<img class ="userIndexImage" src="/static/login/images/defaultAvatar.png"  alt="User {{ question.question.user.first_name }}">
+										<a href="javascript:;" class="light-grey">Vote 
+									{% endif %}
+											<span class="q-det-num">{{ question.votes }}</span>
 										</a>
+									{% if question.subscribed %}
+										<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Unfollow">Followed 
+									{% else %}
+										<a href="javascript:;" class="light-grey followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Follow">Follow 
 									{% endif %}
-								</div>
-								<div class="userBrief">
-									<p>
-										<a href="{{ question.question.get_user_details.user_url }}">
-											{{ question.question.get_user_details.user_name }}
+											<span class="q-det-num" id="sub_num{{ question.question.id }}">{{ question.subscribers }}</span>
 										</a>
-									</p>
-									{% if not question.question.isAnonymous %}
-										<div class="usr-creds-msg">
-											<span class="usr-det">pCoins : {{ question.question.user.extendeduser.credits}}<i class="fa fa-coins"></i></span> <br/>
-											<span class="usr-det connections">Connection{{ question.connection|pluralize }} : {{ question.connection }} <i class="fa fa-users"></i></span>
-										</div>
+									{% if user in question.upvotedusers %}
+										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvoted 
+									{% else %}
+										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvote 
 									{% endif %}
-									<p class="askedOnInfo">
-										Asked on:<br>
-										<span id="{{ question.question.id }}pubdate"></span><br>
-									</p>
-								</div>
-							</div> 
-							<div class="mainPoll">
-								<p class="firstP">
-									<a class="qTextDesc" id="qTextDesc{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" data-intro="Hover over the question or click on it for awesome details and in-depth analysis" data-position="left">{{question.question.question_text}}</a>
-									<a class="descIndex" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">{{ question.question.description }}</a>
-									{% if user.is_authenticated %}
-									{% if user == question.question.user or user.is_superuser %}
-									{% if question.editable %}
-									<a href="{% url 'polls:polls_edit' question.question.id question.question.que_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+						    				<span class="q-det-num" id="upvotenum{{ question.question.id }}">{{ question.upvoteCount }}</span>
+						    			</a>
+						    		{% if user in question.downvotedusers %}
+										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvoted </a>
+									{% else %}
+										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvote </a>
 									{% endif %}
-									<a class="delete-icon" href="{% url 'polls:polls_delete' question.question.id question.question.que_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_question','{% url 'polls:polls_delete' question.question.id question.question.que_slug %}')) return true; else return false;"></i></a>
-									{% endif %}
-									{% endif %}
-								</p>
-								<p class="catsP">
-									{% for cat in question.question.questionwithcategory_set.all %}
-										<a class="que_desc_cat_span catOnIndex" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
-									{% endfor %}
-								</p>
+						    		<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank" class="light-grey">Comment</a>
+						    		<a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
+						    	</div>
+							</div>
+							{% if question.question.featured_image %}
+								<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
+							{% endif %}
+							<div class="trivia-description">
 								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >
 									{% csrf_token %}
-									<input type="hidden" name="question" value="{{ question.question.id }}" />
-									<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
-									{% for choice in question.question.choice_set.all %}
-										<p>
-											<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-											<label for="choice{{ choice.id }}">
-												{% if choice.choice_image %}
-												<script>
-													$('.choice_image').css({"width":"120px","height":"120px"});
-													$("#choice{{ choice.id }}").hide();
-													var item = $("#choice{{ choice.id}}");
-													item.parent().css({"display":"inline-block"});
-													// console.log($this.parent().next().children().first().show());
-												</script>
-													<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-													<!-- <p>{{ choice.choice_text }}</p> -->
-												{% else %}
-													{{ choice.choice_text }}
-												{% endif %}
-											</label>
-										</p>
-									{% endfor %}
-									<p class="last-p">
-									{% if question.user_already_voted %}
-										<a class="resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
-									{% else %}
-										{% if question.expired %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+									<div class="cta">
+										<input type="hidden" name="question" value="{{ question.question.id }}" />
+										<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
+										{% for choice in question.question.choice_set.all %}
+											<p>
+												<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+												<label for="choice{{ choice.id }}">
+													{% if choice.choice_image %}
+														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+													{% else %}
+														{{ choice.choice_text }}
+													{% endif %}
+												</label>
+											</p>
+										{% endfor %}
+										<p class="last-p">
+										{% if question.user_already_voted %}
+											<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 										{% else %}
-											<input class="submit voteSubmit" data-intro="Vote or view results" data-position="right" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
-										{% endif %}
-										{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
-											{% if user.is_authenticated %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+											{% if question.expired %}
+												<input class="btn submit" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
 											{% else %}
-											<a class="submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												<input class="btn submit voteSubmit" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
 											{% endif %}
-										{% endif %}
-									{% endif %}
-									</p>
-								</form>
-								<!-- {{ question.question.questionwithcategory_set.all }} -->
-							</div>
-						</div>
-						<div class="pollInfo clearfix">
-							<div class="pollInfoData clearfix">
-									<ul class="pollInfoUl clearfix">
-										<li id="indexExpiryLi" class="expiry-li">
-											{% if question.question.expiry and not question.expired %}
-												<!-- Time Left:<br> -->
-												<div id="{{ question.question.id }}timer" class="timerClass countdownIndex"></div>
-											{% else %}
-												<div style="width:5rem;" class="timerClass countdownIndex"></div>
-											{% endif %}
-											<script>
-												var currentDate = new Date();
-												var offset = currentDate.getTimezoneOffset();
-												
-												var utcDate = new Date({{ question.question.pub_date.year }}, {{ question.question.pub_date.month }} - 1, {{ question.question.pub_date.day }}, {{ question.question.pub_date.hour }}, {{ question.question.pub_date.minute }}, {{ question.question.pub_date.second }});
-					
-												var publicationDate = new Date({{ question.question.pub_date.year }}, {{ question.question.pub_date.month }}, {{ question.question.pub_date.day }}, {{ question.question.pub_date.hour }}, {{ question.question.pub_date.minute }}-offset, {{ question.question.pub_date.second }});
-												var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
-												var pDate = new Date(publicationDate.getFullYear(),publicationDate.getMonth()-1,publicationDate.getDate(),publicationDate.getHours(),publicationDate.getMinutes());
-												document.getElementById('{{ question.question.id }}pubdate').innerHTML = pDate.toLocaleString(navigator.language, {year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'});
-
-												{% if question.question.expiry and not question.expired %}
-												var expiryDate = new Date({{ question.question.expiry.year }}, {{ question.question.expiry.month }}, {{ question.question.expiry.day }}, {{ question.question.expiry.hour }}, {{ question.question.expiry.minute }}-offset, {{ question.question.expiry.second }});
-												$("#{{ question.question.id }}timer").countdown({until: new Date({{ question.question.expiry.year }}, {{ question.question.expiry.month }} - 1, {{ question.question.expiry.day }}, {{ question.question.expiry.hour }}, {{ question.question.expiry.minute }}-offset, {{ question.question.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+											{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
+												{% if user.is_authenticated %}
+												<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												{% else %}
+												<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 												{% endif %}
-
-												function disableVoteButton(){
-													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').attr('disabled','disabled');
-													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').attr('id','{{ question.question.id }}---{{ question.question.que_slug }}');
-													$('#vote{{ question.question.id }}---{{ question.question.que_slug }}').removeAttr('vote{{ question.question.id }}---{{ question.question.que_slug }}');
-													$('#{{ question.question.id }}---{{ question.question.que_slug }}').attr('value','Expired');
-												}
-											</script>
-										</li>
-										<li id="opinionTextQueDiv"><span class="pollInfoNum">{{question.votes}} </span> <i title="opinions" class="fa fa-check-circle"></i> <span class="queDivInfoText"> Opinions </span> </li>
-										<li><span class="pollInfoNum" id="sub_num{{ question.question.id }}">{{question.subscribers}}</span> <i title="interested" class="fa fa-users"></i> <span class="queDivInfoText"> Followers </span> </li>
-										<li>{% if question.question.id in question.subscribed %}
-												<button class="btn followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}">Following</button>
-												<button class="btn btnMobile followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}"><i class="fa fa-rss"></i></button>
-											{% else %}
-												<button class="btn followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom">Follow</button>
-												<button class="btn btnMobile followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" data-intro="Follow awesome polls and get them on you personal polls page @ MyPolls" data-position="bottom"><i class="fa fa-rss"></i></button>
 											{% endif %}
-										</li>
-										<li>
-											<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank"> <i class="fa fa-comments"></i> <span class="queDivInfoText"> Comment </span></a>
-										</li>
-										<li><i id="ban{{ question.question.id }}" title="Report Spam" class="fa fa-ban" style=" cursor:pointer"></i><span class="queDivInfoText"> Spam </span> </li>
-									</ul>
-								</div>
+										{% endif %}
+										</p>
+									</div>
+								</form>
 							</div>
-							<div class="upvoteIndex">
-								<i class="fa fa-2x fa-thumbs-up upvoted" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',1)"></i>
-								<span id="upvoteon{{ question.question.id }}"> {{ question.question.upvoteCount }} </span>
-								<i class="fa fa-2x fa-thumbs-down upvoted fa-flip-horizontal fa-rotate-180" onclick="upvoted({{ question.question.id }},'{{ question.question.que_slug }}',0)"></i>
-								<div class="upvotemessage" id="upvotemessage{{ question.question.id }}"></div>
-							</div>
-					</div>
-					{% endfor %}
-					{% if is_paginated %}
-				        <div class="pagination">
-				            <span class="page-links">
-				                {% if page_obj.has_previous %}
-				                	{% if "tab" in request.GET %}
-				                		{% if "category" in request.GET %}
-				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-				                		{% else %}
-				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-				                		{% endif %}
-				                	{% else %}
-				                		{% if "category" in request.GET %}
-				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
-				                		{% else %}
-				                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
-				                    	{% endif %}
-				                    {% endif %}
-				                {% endif %}
-				                <span class="page-current">
-				                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-				                </span>
-				                {% if page_obj.has_next %}
-				                	{% if "tab" in request.GET %}
-				                		{% if "category" in request.GET %}
-				                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-				                		{% else %}
-				                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-				                		{% endif %}
-				                	{% else %}
-				                		{% if "category" in request.GET %}
-				                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
-				                		{% else %}
-				                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
-				                    	{% endif %}
-				                    {% endif %}
-				                {% endif %}
-				            </span>
-				        </div>
-				    {% endif %}
-			{% else %}
-					<p>No polls are available</p>
-			{% endif %}		
+			   			</div>
+			   	{% endfor %}
+			</div>
+		{% endif %}
+		{% if is_paginated %}
+	        <div class="pagination">
+	            <span class="page-links">
+	                {% if page_obj.has_previous %}
+	                	{% if "tab" in request.GET %}
+	                		{% if "category" in request.GET %}
+	                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+	                		{% else %}
+	                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+	                		{% endif %}
+	                	{% else %}
+	                		{% if "category" in request.GET %}
+	                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+	                		{% else %}
+	                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+	                    	{% endif %}
+	                    {% endif %}
+	                {% endif %}
+	                <span class="page-current">
+	                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+	                </span>
+	                {% if page_obj.has_next %}
+	                	{% if "tab" in request.GET %}
+	                		{% if "category" in request.GET %}
+	                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+	                		{% else %}
+	                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+	                		{% endif %}
+	                	{% else %}
+	                		{% if "category" in request.GET %}
+	                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+	                		{% else %}
+	                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
+	                    	{% endif %}
+	                    {% endif %}
+	                {% endif %}
+	            </span>
+	        </div>
+		{% else %}
+			<p>No polls are available</p>
+		{% endif %}		
 	</section>
-	<script type="text/javascript">
-
-		function upvoted(questionId,qslug,action){
-			{% if user.is_authenticated %}
-				$.ajax({
-					type: 'POST',
-					url:'/upvoted/?qId='+questionId+'&vote='+action.toString(),
-					data:{'csrfmiddlewaretoken': "{{ csrf_token }}"},
-					error:function(response){
-						console.log('error occured');
-					},
-					success:function(response)
-					{
-							count = response.count;
-							message = response.message;
-							if(typeof count === 'undefined'){
-								var id = "#upvotemessage"+questionId.toString();
-								$(id).append("<p>"+message+"</p>");
-								setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-							} else {
-								spanId = '#upvoteon'+questionId.toString();
-								$(spanId).text(response.count.toString());
-							}
-					}
-				});
-			{% else %}
-				var id = "#upvotemessage"+questionId.toString();
-				$(id).append("<p> Login to upvote </p>");
-				setTimeout(function(){clearUpvoteMessageDiv(id);}, 1500);
-				url = '{% url 'account_login' %}?next=/polls/'+questionId+'/'+qslug
-				// console.log(url);
-				$(location).attr('href',url);
-			{% endif %}
-		}
-
-		function clearUpvoteMessageDiv(id){
-			$(id).empty();
-		}
-
-		$(document).ready(function()
-		{
-			$('.choice_image').css({"width":"120px","height":"120px"});
-			$( ".mypollstabs" ).each(function( ) {
-				winLocation = window.location.href;
-				if(winLocation.indexOf("page=") != -1)
-					winLocation = winLocation.substr(0,winLocation.indexOf("page=")-1);
-				if($(this)[0].href == winLocation)
-					$(this).css({
-						"background-color":"white",
-						"color":"black"
-					});
-			});
-			$('.fa-ban').click(function()
-			{
-				var queid = $(this)[0].id.replace('ban','');
-				$.ajax(
-					{
-						type: 'GET',
-						url:'/abuse?qIdBan='+queid,
-						success:function(response)
-						{
-								$('#overlay-inAbox').children().children().first().text("AskByPoll has been informed. We are looking into it. For any more details please write to us @ support@askbypoll.com ");
-								openOverlay("#overlay-inAbox");
-								$(this).css({"color":"red"});
-						}
-					});     
-			});
-
-			$('.submit').bind('click', function()
-			{
-				var voteSubmitId = $(this)[0].id;
-				var queid = $(this)[0].id.replace('vote','').split("---")[0];
-				var queslug = $(this)[0].id.replace('vote','').split("---")[1];
-				var quebet = $(this)[0].id.replace('vote','').split("---")[2];
-				var betValue = 0;
-				// console.log(quebet === "True");
-				var elemid = "#optionsForm"+queid;//$(this)[0].id
-				var vote_url = $(elemid).attr("action");
-				$(elemid).bind('submit', function()
-				{
-					$("#"+voteSubmitId).attr("disabled","disabled");
-					$.ajax(
-					{
-						type: 'POST',
-						url:vote_url,
-						data:$(elemid).serialize(),
-						success:function(response)
-						{
-							var form_errors = response.form_errors;
-							// console.log(response);
-							// console.log(form_errors);
-							
-							if(typeof form_errors === 'undefined'){
-								{% if user.extendeduser.credits > 10 %}
-									if(quebet === "True"){
-										openOverlay("#overlay-inAbox5");
-										$("#betAmount")[0].value = "";
-										/* close overlay call */
-										$("#cancel4").click(function(){
-											closeOverlay();
-											$("#"+voteSubmitId).removeAttr("disabled");
-										});
-										$("#okay4").click(function(){
-											betValue = $("#betAmount")[0].value;
-											console.log(betValue);
-											if(betValue === "" || (betValue > 9 && betValue <= {{ user.extendeduser.credits }})){
-												$("#betAmountHidden")[0].value = betValue;
-												closeOverlay();
-												$("#"+voteSubmitId).removeAttr("disabled");
-												$(elemid).unbind('submit').submit();
-											}
-										});
-										/* close overlay call end */
-									}
-									else{
-										$("#"+voteSubmitId).removeAttr("disabled");
-										$(elemid).unbind('submit').submit();
-									}
-								{% else %}
-								 	$(elemid).unbind('submit').submit();
-								{% endif %}
-							}else{
-								openOverlay("#overlay-inAbox");
-								$("#"+voteSubmitId).removeAttr("disabled");
-							}
-						}
-					});     
-					return false;
-				});
-			});
-			$('.followButton').bind('click', function(e){
-				// e.preventDefault();
-				// console.log($(this)[0].id)
-				$button = $("#"+$(this)[0].id);
-				// console.log($button);
-				var qid = $(this)[0].id.split("---")[0].replace("follow","");
-				var qslug = $(this)[0].id.split("---")[1];
-				{% if user.is_authenticated %}
-					if($button.hasClass('following')){
-						
-						//$.ajax(); Do Unfollow
-						var data = {'follow' : false, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						// console.log(data);
-						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
-						$.ajax(
-						{
-							type: 'POST',
-							url: '/follow/'+qid+'/'+qslug,
-							data:data,
-							success:function(response)
-							{
-								$("#sub_num"+qid).text(response.sub_count);
-								// console.log($("#voteResultButtonLink"+qid).length);
-								// if($("#voteResultButtonLink"+qid).length == 0){
-								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
-								// 		'style', "display : none !important"
-								// 	);
-								// }
-							}
-						});  
-						
-						$button.removeClass('following');
-						$button.removeClass('unfollow');
-						$button.text('Follow');
-					} else {
-						
-						// $.ajax(); Do Follow
-						var data = {'follow' : true, 'question' : qid, 'csrfmiddlewaretoken': "{{ csrf_token }}"}
-						// console.log(data);
-						var follow_url = "http://{{ request.META.HTTP_HOST }}"+'/follow/'+qid+'/'+qslug
-						$.ajax(
-						{
-							type: 'POST',
-							url: '/follow/'+qid+'/'+qslug,
-							data:data,
-							success:function(response)
-							{
-								$("#sub_num"+qid).text(response.sub_count);
-								// console.log($("#voteResultButtonLink"+qid).length);
-								// if($("#voteResultButtonLink"+qid).length == 0){
-								// 	$("#voteResultButtonLinkonFollow"+qid).attr(
-								// 		'style', "display : block"
-								// 	);
-								// }
-							}
-						});  
-						
-						$button.addClass('following');
-						$button.text('Following');
-					}
-				{% else %}
-					url = '{% url 'account_login' %}?next=/polls/'+qid+'/'+qslug
-					console.log(url);
-					$(location).attr('href',url);
-				{% endif %}
-				return false;
-			});
-
-			$('.followButton').hover(function(){
-				$button = $("#"+$(this)[0].id);
-				if($button.hasClass('following')){
-					$button.addClass('unfollow');
-					$button.text('Unfollow');
-				}
-			}, function(){
-				if($button.hasClass('following')){
-					$button.removeClass('unfollow');
-					$button.text('Following');
-				}
-			});
-		});
-	</script>
 {% endblock %}

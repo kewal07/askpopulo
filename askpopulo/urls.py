@@ -6,6 +6,7 @@ from . import settings
 from django.http import HttpResponseRedirect
 from polls import views
 from django.contrib.auth.decorators import login_required
+import django.views.defaults
 
 urlpatterns = patterns('',
 	url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
@@ -20,6 +21,7 @@ urlpatterns = patterns('',
 	#url(r'^weblog/', include('zinnia.urls', namespace='zinnia')),
 	#url(r'^comments/', include('django_comments.urls')),
 	url(r'^trivia/',include('trivia.urls',namespace="trivia")),
+	url(r'^404/$',django.views.defaults.page_not_found, ),
 )
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

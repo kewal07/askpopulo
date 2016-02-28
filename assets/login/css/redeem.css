@@ -1,22 +1,25 @@
 /*Vertical css tabs taken from http://codepen.io/nik-savchenko/pen/xDIAe*/
-html{
-	background:url('/static/login/images/profile-m.jpg') no-repeat center center fixed;
-	background-size:cover;
-  font-family: 'Arvo', serif;
-}
-
 .categoriesList{
-	margin-top:10rem !important;
-	position: relative;
-  	border: 3px solid #000;
-  	border-radius: 25px;
-	background-color: white;
-  	opacity: 0.9;
-  	padding: 1rem;
-  	margin-bottom: 2rem;
-    text-align: center;
-    font-size: 1.5rem;
+  position: relative;
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top:2rem;
 }
+#content{
+  background: white;
+}
+/*temporary*/
+#footer{
+  position: fixed;
+  bottom:0;
+}
+.cta{
+  margin-bottom:3rem;
+}
+/*temporary*/
 .couponContainer{
   width:30%;
   margin:0;

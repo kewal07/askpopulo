@@ -1,24 +1,25 @@
 /*Vertical css tabs taken from http://codepen.io/nik-savchenko/pen/xDIAe*/
-html{
-	background:url('/static/login/images/profile-m.jpg') no-repeat center center fixed;
-	background-size:cover;
-  font-family: 'Arvo', serif;
-}
-
 .categoriesList{
-	margin-top:10rem !important;
-	position: relative;
-  	border: 3px solid #000;
-  	border-radius: 25px;
-	background-color: white;
-  	opacity: 0.9;
-  	padding: 1rem;
-  	margin-bottom: 2rem;
+  position: relative;
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top:2rem;
 }
-#profile{
-	margin: 7rem 5rem 5rem 5rem;
-  	margin-bottom: 80rem;
+#content{
+  padding-top:8rem;
 }
+/*temporary*/
+#footer{
+  position: fixed;
+  bottom:0;
+}
+.cta{
+  margin-bottom:3rem;
+}
+/*temporary*/
 .profilePic{
 	margin: 2% 2% 5% 16%;
 	width: 50%;
@@ -62,20 +63,18 @@ html{
 
 .tabs label.tabsLabel{
 	cursor: pointer;
-  	display: block;
-    padding: 10px 0px;
+  display: block;
+  padding: 10px 0px;
   margin-top: 10px;
-  	background: -webkit-linear-gradient(23deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: -o-linear-gradient(23deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    position: relative;
-    top: -10px;
-    -webkit-transition: all 200ms ease-in-out;
-    -moz-transition: all 200ms ease-in-out;
-    -o-transition: all 200ms ease-in-out;
-    transition: all 200ms ease-in-out;
-    text-align: center;
-    width:163px;
+  background: white;
+  position: relative;
+  top: -10px;
+  -webkit-transition: all 200ms ease-in-out;
+  -moz-transition: all 200ms ease-in-out;
+  -o-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  text-align: center;
+  width:163px;
 }
 .tabs label.tabsLabel:hover{
 	background: #b2b2b2;
@@ -88,14 +87,9 @@ html{
     position: absolute;
     top: 50px;
     left: 0; 
-    background: -webkit-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: -o-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: -ms-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: -moz-linear-gradient(337deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
-    background: linear-gradient(113deg, rgb(239, 240, 243) 0%, rgb(230, 232, 238) 98%);
+    background: white;
     margin: 0rem 0rem;
     padding: 3rem 0rem;
-    opacity: 0.9;
     border: 3px solid #000;
   	border-radius: 25px;
 }
@@ -130,7 +124,7 @@ form.profileForm .fileLabel{
   padding: 0.2rem;
   text-align: center;
   display: inline-block;
-  background: #fff;
+  background: white;
   border: 1px solid;
   cursor: pointer;
   font-size: 1.5rem;
@@ -156,7 +150,7 @@ form.profileForm .fileLabel{
 		height: 2rem;
 		border-radius: 10px;
 		border: 1px solid #4c4c4c;
-		background: transparent;
+		background: white;
 		font-size:1rem;
 		overflow:hidden;
     box-sizing: border-box;
@@ -164,17 +158,6 @@ form.profileForm .fileLabel{
 }
 .bioCss{
   margin-bottom:10rem;
-}
-.profileForm textarea{
-	border-radius: 10px;
-  border: 1px solid #666;
-  background: transparent;
-  font-size: 1.25rem;
-  overflow: hidden;
-	float:right;
-  width:75%;
-  padding-left:4px;
-  height:4rem;
 }
 label[for=id_bio]{
   margin-top:3rem;
@@ -194,7 +177,7 @@ ul.ul-easy-tabs-polls li{
 .profileForm input[type="date"]{
 	border-radius: 10px;
     border: 2px solid #666;
-    background: transparent;
+    background: white;
     font-size: 1rem;
 }
 .searchResults{
@@ -252,7 +235,7 @@ ul.ul-easy-tabs-polls li{
   color: white;
   /* line-height: 83px; */
   text-align: center;
-  background: #666;
+  background: white;
   display: inline-block;
   margin-top: 1rem;
 }
@@ -304,7 +287,7 @@ li.secondChildResponsive{
     width:3rem;
     height:2rem;
 }
-@media only screen and (max-width: 960px){
+@media only screen and (max-width: 980px){
   #profile{
     margin:0;
     width:100%;
