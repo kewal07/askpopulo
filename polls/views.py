@@ -60,7 +60,7 @@ class TeamView(BaseViewList):
 
 class IndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 20
+	paginate_by = 1
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(IndexView, self).render_to_response(context, **response_kwargs)
