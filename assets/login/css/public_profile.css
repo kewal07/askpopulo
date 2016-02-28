@@ -147,7 +147,10 @@ ul.followers p{
 	margin-bottom:1rem;
 }
 @media only screen and (max-width: 980px){
-		img.profilePic{
+	.profileHeader{
+		width:97%;
+	}
+	img.profilePic{
 		width:120px;
 		height: 120px;
 	}
@@ -155,6 +158,9 @@ ul.followers p{
 		position: initial;
 		width:225px;
 		transform:none;
+	}
+	.profileBriefUl{
+		padding:0;
 	}
 	.detailHeader{
 		bottom:-1rem;

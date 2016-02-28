@@ -296,8 +296,8 @@
 			.arrow{
 				top:94vh;
 			}
-			#footer{
-				margin-top:87vh;
+			#footer,#empty-section{
+				display: none;
 			}
 		}
 	</style>
@@ -309,7 +309,7 @@
 {% block content %}
 <section id="login">
 	<div id="pagepiling">
-		<div class="section"></div>
+		<div class="section" id="empty-section"></div>
 	    <div class="section" id="section1">
 	    	<p class="heading main-heading">Questions, Answers, Analytics, Insights, Freebies</p>
 	    	<div class="section-wrapper" id="section1-wrapper">
@@ -521,8 +521,8 @@
 			$("#section1").css("padding-bottom","36rem");
 			$(".bar-graphs").css("display","none");
 			$(".arrow").css("display","none");
-			$("#footer").css("display","block");
-			$("#footer").css("margin-top","-6rem");
+			// $("#footer").css("display","block");
+			// $("#footer").css("margin-top","-6rem");
 		}
 		if($(window).height() <= 768){
 			$(".bar-graphs").css("display","none");
