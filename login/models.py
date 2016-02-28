@@ -138,7 +138,7 @@ class Company(BaseModel):
 
 class ExtendedUser(models.Model):
 	tdate = date.today()
-	def_bday = tdate.replace(year = tdate.year - 14)
+	def_bday = tdate.replace(year = tdate.year - 16)
 	user = models.OneToOneField(settings.AUTH_USER_MODEL)
 	user_pk = models.CharField(max_length=255)
 	imageUrl = models.ImageField(upload_to=get_file_path,blank=True,null=True)
