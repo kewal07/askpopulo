@@ -991,7 +991,7 @@ class QuestionUpvoteView(BaseViewList):
 
 class CompanyIndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 20
+	paginate_by = 25
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(CompanyIndexView, self).render_to_response(context, **response_kwargs)
@@ -1060,10 +1060,11 @@ class CompanyIndexView(BaseViewList):
 		data['company_obj'] = company_obj
 		data['followed'] = followed
 		#print(company_user_list)
+		company_admin_list_str = str(';'.join(company_admin_list))
 		data['companyAdmins'] = str(';'.join(company_admin_list))
-		mainData.append(data)
+		# mainData.append(data)
 		for mainquestion in latest_questions:
-			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
+			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime,data))
 		context['data'] = mainData
 		# dir(context)
 		# print (mainData)
@@ -3133,7 +3134,7 @@ def get_number_votes(mainquestion):
 	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
 	return numVotes
 
-def get_index_question_detail(mainquestion,user,sub_que,curtime):
+def get_index_question_detail(mainquestion,user,sub_que,curtime,company_data={}):
 	data = {}
 	followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
 	following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
@@ -3165,6 +3166,7 @@ def get_index_question_detail(mainquestion,user,sub_que,curtime):
 			user_already_voted = True
 	# print(mainquestion,user_already_voted,user)
 	data['user_already_voted'] = user_already_voted
+	data["company_data"] = company_data
 	return data
 
 class SendMails(BaseViewList):

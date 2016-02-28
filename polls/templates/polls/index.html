@@ -94,45 +94,45 @@
 			   			</div>
 			   	{% endfor %}
 			</div>
-		{% endif %}
-		{% if is_paginated %}
-	        <div class="pagination">
-	            <span class="page-links">
-	                {% if page_obj.has_previous %}
-	                	{% if "tab" in request.GET %}
-	                		{% if "category" in request.GET %}
-	                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-	                		{% else %}
-	                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-	                		{% endif %}
-	                	{% else %}
-	                		{% if "category" in request.GET %}
-	                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
-	                		{% else %}
-	                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
-	                    	{% endif %}
-	                    {% endif %}
-	                {% endif %}
-	                <span class="page-current">
-	                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-	                </span>
-	                {% if page_obj.has_next %}
-	                	{% if "tab" in request.GET %}
-	                		{% if "category" in request.GET %}
-	                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-	                		{% else %}
-	                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-	                		{% endif %}
-	                	{% else %}
-	                		{% if "category" in request.GET %}
-	                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
-	                		{% else %}
-	                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
-	                    	{% endif %}
-	                    {% endif %}
-	                {% endif %}
-	            </span>
-	        </div>
+			{% if is_paginated %}
+		        <div class="pagination">
+		            <span class="page-links">
+		                {% if page_obj.has_previous %}
+		                	{% if "tab" in request.GET %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% else %}
+		                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% endif %}
+		                	{% else %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% else %}
+		                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+		                    	{% endif %}
+		                    {% endif %}
+		                {% endif %}
+		                <span class="page-current">
+		                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+		                </span>
+		                {% if page_obj.has_next %}
+		                	{% if "tab" in request.GET %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% else %}
+		                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% endif %}
+		                	{% else %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% else %}
+		                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
+		                    	{% endif %}
+		                    {% endif %}
+		                {% endif %}
+		            </span>
+		        </div>
+			{% endif %}
 		{% else %}
 			<p>No polls are available</p>
 		{% endif %}		

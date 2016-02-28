@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
 	<style type="text/css">
 		html{
-			background:url('{{ data.0.company_obj.get_background_url }}') no-repeat center center fixed;
+			background:url('{{ data.0.company_data.company_obj.get_background_url }}') no-repeat center center fixed;
 			background-size:cover;
 		}
 	</style>
@@ -15,160 +15,157 @@
 	<section id="content">
 		<div class="empty-div clearfix"></div>
 		{% if data %}
-			<div id="cover-image-mobile" style="background:url('{{ data.0.company_obj.get_cover_url }}') no-repeat;">
+			<div id="cover-image-mobile" style="background:url('{{ data.0.company_data.company_obj.get_cover_url }}') no-repeat;">
 				<div class="company-icons-mobile">
 					{% if user.is_authenticated %}
-						<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.company_slug %}" class="create-destroy" style="display:inline">
+						<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_data.company_obj.id data.0.company_data.company_obj.company_slug %}" class="create-destroy" style="display:inline">
 							{% csrf_token %}
 							<input name="company" type="hidden" value="1">
-							{% if data.0.followed %}
+							{% if data.0.company_data.followed %}
 								<input name="remove" type="hidden" value="1"><i class="fa fa-rss" style="color:green;cursor:pointer" title="Unfollow"></i>
 							{% else %}
 								<i class="fa fa-rss" style="cursor:pointer" title="Follow"></i>
 							{% endif %}
-							<input name="target" type="hidden" value="{{ data.0.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}">
+							<input name="target" type="hidden" value="{{ data.0.company_data.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}">
 						</form>
 					
 						<i class="fa fa-envelope" style="cursor:pointer"> </i>
 					{% endif %}
-					<a href="{{ data.0.company_obj.company_facebook }}" target="_blank"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>
-					<a href="{{ data.0.company_obj.company_twitter }}" target="_blank"><i class="fa fa-twitter" style="cursor:pointer"></i></a>
+					<a href="{{ data.0.company_data.company_obj.company_facebook }}" target="_blank"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>
+					<a href="{{ data.0.company_data.company_obj.company_twitter }}" target="_blank"><i class="fa fa-twitter" style="cursor:pointer"></i></a>
 					<i class="fa fa-bars" style="cursor:pointer"> </i>
-					<div class="company-desc-mobile"><p>{{ data.0.company_obj.description }}</p></div>
+					<div class="company-desc-mobile"><p>{{ data.0.company_data.company_obj.description }}</p></div>
 				</div>
 			</div>
-			{% if data|length > 1 %}
-				<div class="masonry">
+			<div class="masonry">
 				{% for question in data %}
-					{% if forloop.counter > 1 %}
-						<div class="item">
-							<div class="trivia-title">
-								<a id="question---{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" >{{question.question.question_text}}</a>
-								<div class="poll-info">
-									{% if question.user_already_voted %}
-										<a href="javascript:;" class="light-grey">Voted 
-									{% else %}
-										<a href="javascript:;" class="light-grey">Vote 
-									{% endif %}
-											<span class="q-det-num">{{ question.votes }}</span>
-										</a>
-									{% if question.subscribed %}
-										<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Unfollow">Followed 
-									{% else %}
-										<a href="javascript:;" class="light-grey followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Follow">Follow 
-									{% endif %}
-											<span class="q-det-num" id="sub_num{{ question.question.id }}">{{ question.subscribers }}</span>
-										</a>
-									{% if user in question.upvotedusers %}
-										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvoted 
-									{% else %}
-										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvote 
-									{% endif %}
-								    		<span class="q-det-num" id="upvotenum{{ question.question.id }}">{{ question.upvoteCount }}</span>
-								    	</a>
-								    {% if user in question.downvotedusers %}
-										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvoted </a>
-									{% else %}
-										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvote </a>
-									{% endif %}
-								    <a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank" class="light-grey">Comment</a>
-								    <a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
-								</div>
-							</div>
-							{% if not question.question.has_choice_image %}	
-								{% if question.question.featured_image %}
-									<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
+					<div class="item">
+						<div class="trivia-title">
+							<a id="question---{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" >{{question.question.question_text}}</a>
+							<div class="poll-info">
+								{% if question.user_already_voted %}
+									<a href="javascript:;" class="light-grey">Voted 
+								{% else %}
+									<a href="javascript:;" class="light-grey">Vote 
 								{% endif %}
+										<span class="q-det-num">{{ question.votes }}</span>
+									</a>
+								{% if question.subscribed %}
+									<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Unfollow">Followed 
+								{% else %}
+									<a href="javascript:;" class="light-grey followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Follow">Follow 
+								{% endif %}
+										<span class="q-det-num" id="sub_num{{ question.question.id }}">{{ question.subscribers }}</span>
+									</a>
+								{% if user in question.upvotedusers %}
+									<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvoted 
+								{% else %}
+									<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvote 
+								{% endif %}
+							    		<span class="q-det-num" id="upvotenum{{ question.question.id }}">{{ question.upvoteCount }}</span>
+							    	</a>
+							    {% if user in question.downvotedusers %}
+									<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvoted </a>
+								{% else %}
+									<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvote </a>
+								{% endif %}
+							    <a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank" class="light-grey">Comment</a>
+							    <a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
+							</div>
+						</div>
+						{% if not question.question.has_choice_image %}	
+							{% if question.question.featured_image %}
+								<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
 							{% endif %}
-							<div class="trivia-description">
-								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >
-									{% csrf_token %}
-									<div class="cta">
-										<input type="hidden" name="question" value="{{ question.question.id }}" />
-										<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
-										{% for choice in question.question.choice_set.all %}
-											<p>
-												<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-												<label for="choice{{ choice.id }}">
-													{% if choice.choice_image %}
-														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-													{% else %}
-														{{ choice.choice_text }}
-													{% endif %}
-												</label>
-											</p>
-										{% endfor %}
-										<p class="last-p">
-											{% if question.user_already_voted %}
-												<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
-											{% else %}
-												{% if question.expired %}
-													<input class="btn submit" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+						{% endif %}
+						<div class="trivia-description">
+							<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >
+								{% csrf_token %}
+								<div class="cta">
+									<input type="hidden" name="question" value="{{ question.question.id }}" />
+									<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
+									{% for choice in question.question.choice_set.all %}
+										<p>
+											<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+											<label for="choice{{ choice.id }}">
+												{% if choice.choice_image %}
+													<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
 												{% else %}
-													<input class="btn submit voteSubmit" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
+													{{ choice.choice_text }}
 												{% endif %}
-												{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
-													{% if user.is_authenticated %}
-														<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
-													{% else %}
-														<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
-													{% endif %}
+											</label>
+										</p>
+									{% endfor %}
+									<p class="last-p">
+										{% if question.user_already_voted %}
+											<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+										{% else %}
+											{% if question.expired %}
+												<input class="btn submit" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+											{% else %}
+												<input class="btn submit voteSubmit" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
+											{% endif %}
+											{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
+												{% if user.is_authenticated %}
+													<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												{% else %}
+													<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 												{% endif %}
 											{% endif %}
-										</p>
-									</div>
-								</form>
-							</div>
-					   	</div>
-					{% endif %}
+										{% endif %}
+									</p>
+								</div>
+							</form>
+						</div>
+					</div>
 				{% endfor %}
-			{% endif %}
-		{% endif %}
-		{% if is_paginated %}
-		    <div class="pagination">
-		        <span class="page-links">
-		            {% if page_obj.has_previous %}
-		            	{% if "tab" in request.GET %}
-		            		{% if "category" in request.GET %}
-		            		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-		            		{% else %}
-		            		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
-		            		{% endif %}
-		            	{% else %}
-		            		{% if "category" in request.GET %}
-		            		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
-		            		{% else %}
-		                	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
-		                	{% endif %}
-		                {% endif %}
-		            {% endif %}
-		            <span class="page-current">
-		                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-		            </span>
-		            {% if page_obj.has_next %}
-		            	{% if "tab" in request.GET %}
-		            		{% if "category" in request.GET %}
-		            		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-		            		{% else %}
-		            		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
-		            		{% endif %}
-		            	{% else %}
-		            		{% if "category" in request.GET %}
-		            		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
-		            		{% else %}
-		                	<a href="?page={{ page_obj.next_page_number }}">next</a>
-		                	{% endif %}
-		                {% endif %}
-		            {% endif %}
-		        </span>
-		    </div>
+			</div>
+			{% if is_paginated %}
+			    <div class="pagination">
+			        <span class="page-links">
+			            {% if page_obj.has_previous %}
+			            	{% if "tab" in request.GET %}
+			            		{% if "category" in request.GET %}
+			            		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+			            		{% else %}
+			            		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+			            		{% endif %}
+			            	{% else %}
+			            		{% if "category" in request.GET %}
+			            		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+			            		{% else %}
+			                	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+			                	{% endif %}
+			                {% endif %}
+			            {% endif %}
+			            <span class="page-current">
+			                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+			            </span>
+			            {% if page_obj.has_next %}
+			            	{% if "tab" in request.GET %}
+			            		{% if "category" in request.GET %}
+			            		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+			            		{% else %}
+			            		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+			            		{% endif %}
+			            	{% else %}
+			            		{% if "category" in request.GET %}
+			            		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+			            		{% else %}
+			                	<a href="?page={{ page_obj.next_page_number }}">next</a>
+			                	{% endif %}
+			                {% endif %}
+			            {% endif %}
+			        </span>
+			    </div>
+			{% endif %}	
 		{% else %}
 			<p>No polls are available</p>
 		{% endif %}		
 	</section>
 	<div id="overlay-inAbox4" class="sendMessageOverlay overlay">
 		<div class="wrapper">
-			<object id="sendMessageOverlay" data="/messages/write/?recipients={{ data.0.companyAdmins }}" style="height:25rem; width:50rem;"></object>
+			<object id="sendMessageOverlay" data="/messages/write/?recipients={{ data.0.company_data.companyAdmins }}" style="height:25rem; width:50rem;"></object>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -177,24 +174,24 @@
 		{
 			var cover_image = '<div id="cover-image" style="';
 			cover_image += "background:url('";
-			cover_image += "{{ data.0.company_obj.get_cover_url }}') no-repeat center;";
-			cover_image += '"><p id="company-name">{{ data.0.company_obj.name }}</p><div class="company-icons">';
-			cover_image += ' <a href="{{ data.0.company_obj.company_url }}"><img class="fa company-logo" style="cursor:pointer" src="{{  data.0.company_obj.get_logo_url}}"> </img></a>';
+			cover_image += "{{ data.0.company_data.company_obj.get_cover_url }}') no-repeat center;";
+			cover_image += '"><p id="company-name">{{ data.0.company_data.company_obj.name }}</p><div class="company-icons">';
+			cover_image += ' <a href="{{ data.0.company_data.company_obj.company_url }}"><img class="fa company-logo" style="cursor:pointer" src="{{  data.0.company_data.company_obj.get_logo_url}}"> </img></a>';
 			{% if user.is_authenticated %}
-				cover_image += '<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_obj.id data.0.company_obj.company_slug %}" class="create-destroy" style="display:inline"><input name="company" type="hidden" value="1">';
+				cover_image += '<form method="POST" id="follow_user_form" action="{% url "login:follow" data.0.company_data.company_obj.id data.0.company_data.company_obj.company_slug %}" class="create-destroy" style="display:inline"><input name="company" type="hidden" value="1">';
 				cover_image += "{% csrf_token %}";
-				{% if data.0.followed %}
+				{% if data.0.company_data.followed %}
 					cover_image += '<input name="remove" type="hidden" value="1"><i class="fa fa-rss" style="color:green;cursor:pointer" title="Unfollow"></i>'
 				{% else %}
 					cover_image += '<i class="fa fa-rss" style="cursor:pointer" title="Follow"></i>'
 				{% endif %}
-				cover_image += '<input name="target" type="hidden" value="{{ data.0.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}"></form>';
+				cover_image += '<input name="target" type="hidden" value="{{ data.0.company_data.company_obj.id }}"><input name="next" type="hidden" value="{{ request.path }}"></form>';
 				cover_image += ' <i class="fa fa-envelope" style="cursor:pointer"> </i>';
 			{% endif  %}
-			cover_image += ' <a href="{{ data.0.company_obj.company_facebook }}"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>';
-			cover_image += ' <a href="{{ data.0.company_obj.company_twitter }}"><i class="fa fa-twitter" style="cursor:pointer"></i></a>';
+			cover_image += ' <a href="{{ data.0.company_data.company_obj.company_facebook }}"><i class="fa fa-facebook" style="cursor:pointer"> </i></a>';
+			cover_image += ' <a href="{{ data.0.company_data.company_obj.company_twitter }}"><i class="fa fa-twitter" style="cursor:pointer"></i></a>';
 			cover_image += ' <i class="fa fa-bars" style="cursor:pointer"> </i>';
-			cover_image += ' <div class="company-desc"><p>{{ data.0.company_obj.description }}</p></div>';
+			cover_image += ' <div class="company-desc"><p>{{ data.0.company_data.company_obj.description }}</p></div>';
 			cover_image += ' </div></div>';
 			console.log(cover_image);
 			$(cover_image).insertBefore(".masonry");
