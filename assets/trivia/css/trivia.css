@@ -71,7 +71,7 @@ html{
     font-family: monospace;
 }
 .trivia-image{
-	max-width: 100%;
+	width: 100%;
     height: auto;
     display: block;
     padding:1rem 0;
