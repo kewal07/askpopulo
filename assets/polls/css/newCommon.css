@@ -470,9 +470,10 @@ span.page-links a{
 }
 #overlay-inAbox3 {
 	display: none;
-	position: relative;
-	margin: 0 auto;
-	width: 90%;
+	position: absolute;
+    margin: 0 auto;
+    left: 15%;
+    width: 70%;
 }
 #overlay-inAbox7{
 	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
