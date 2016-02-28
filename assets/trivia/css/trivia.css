@@ -88,8 +88,8 @@ html{
     border-left: 1px solid;
 }
 img.choices{
-    width: 150px;
-    height: 150px;
+    width: 100%;
+    height: 200px;
     display: block;
     margin: 0 auto;
 }
