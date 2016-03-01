@@ -1,8 +1,12 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/about-us.css' %}" />
 	<style>
+    #content{
+      background-color: white;
+      padding: 5rem 2rem;
+    }
 		p{
 			font-size: 1.1rem !important;
       text-align:justify;
@@ -11,8 +15,8 @@
 {% endblock %}
 {% block content %}
 <section id="content">
-<div class="questions" style="margin-top: 5rem;">
-<center><H1><font style="font-size: x-large;font-weight: 700;">Terms & Condition</font></H1></center><HR>
+  <div class="about">
+<center><h1><font style="font-size: x-large;font-weight: 700;">Terms & Condition</font></h1></center><hr>
 <font style="font-size: medium;font-weight: 500;">Last modified: March 3,2016</font>
 <p align="justify" style="line-height:150%">This website is owned and operated by Ollivander's Technologies Private Limited. These are the Terms of Use (“TOU”) under which you may use AskByPoll.com (the “Site”). By visiting and using the Site, and accessing the information, resources, services, products and tools that we provide, you indicate your agreement to these TOU, including the site’s Privacy Statement, each hereby incorporated by reference, and expressly agree to, and consent to be bound by, all of the terms and conditions contained therein. Please read this page carefully.</p>
 <p align="justify" style="line-height:150%">This Agreement shall have the same legal effect and force as a written and signed document. If you do not agree to or accept the TOU or any part thereof, do not access or use the Sites and exit the page.</p>
@@ -97,4 +101,5 @@
 <p>14.2. In the event that any provision of this Agreement is held to be invalid or unenforceable, pursuant to judicial decree or decision, the remainder of this Agreement shall remain valid and enforceable as-is according to its terms.</p>
 <p>14.3. You acknowledge that the owners and creators of AskByPoll will be irreparably harmed by any breach of this Agreement by you, if any or by your unauthorized use of the Materials or the website if any, and further, that monetary damages may not be a sufficient remedy for such harm. You agree that the owners and creators of AskByPoll shall be entitled, without waiving any other rights or remedies and without further demonstration of irreparable harm or the inadequacy of monetary damages, to obtain injunctive or other equitable relief in the event of any breach of this Agreement by you or by your unauthorized use of the Materials or the Site. </p>
 </div>
+</section>
 {% endblock %}
