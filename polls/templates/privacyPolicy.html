@@ -1,16 +1,21 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/about-us.css' %}" />
 	<style>
+		#content{
+			background-color: white;
+			padding: 5rem 2rem;
+		}
 		p{
 			font-size: 1.1rem !important;
+			text-align:justify;
 		}
 	</style>
 {% endblock %}
 {% block content %}
 <section id="content">
-<div class="questions" style="margin-top: 5rem;">
+<div class="about">
 <center><H1><font style="font-size: x-large;font-weight: 700;">Privacy Policy</font></H1></center><HR>
 <font style="font-size: medium;font-weight: 500;">Last modified: March 3,2016</font>
 <P align="justify" style="line-height:150%">Thank you for visiting AskByPoll.Com This Privacy Policy describes the information AskByPoll collects about you and from you, how we use and share that information and the privacy choices we offer. This Privacy Policy applies to information we collect when you use our website, whether via a laptop, desktop, tablet, mobile, or any other device that can be connected to the internet and other online products and services (collectively, the “Services”), or when you otherwise interact with us. We may change the provisions of this Privacy Policy from time to time. If we make changes, we will notify you, including by revising the date at the top of this policy. We encourage you to review the Privacy Policy whenever you use our Services to stay informed about our information practices and the ways you can help protect your privacy.</P><br>
@@ -68,6 +73,7 @@
 
 <u><font style="font-weight: 700;">WHAT IF YOU HAVE QUESTIONS?</font></u><br>
 <p align="justify" style="line-height:150%">Questions or comments regarding the Sites should be sent by e-mail to support@askbypoll.com
-</P>
+</p>
 </div>
+</section>
 {% endblock %}

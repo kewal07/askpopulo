@@ -1,16 +1,21 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/about-us.css' %}" />
 	<style>
+		#content{
+			background-color: white;
+			padding: 5rem 2rem;
+		}
 		p{
 			font-size: 1.1rem !important;
+			text-align:justify;
 		}
 	</style>
 {% endblock %}
 {% block content %}
 <section id="content">
-<div class="questions" style="margin-top: 5rem;">
+<div class="about">
 <center><H1><font style="font-size: x-large;font-weight: 700;">Disclaimer</font></H1></center><HR>
 <font style="font-size: medium;font-weight: 500;">Last modified: March 3,2016</font>
 <P align="justify" style="line-height:150%">The information provided on the AskByPoll.com through the polls, surveys, trivia or any other medium does not at any given point of time constitute professional, legal, medical, or any other kind of advice. The information that is contained in this website is for general information purposes only. The contained information is provided the users of AskByPoll as well as users who vote on questions through the website widget and email widget. While we at all times endeavor to keep the provided information up to date and correct, we make no representations or warranties of any kind, expressed or implied, about the accuracy, completeness, reliability, suitability or availability with respect to the website or the information, products, services, or related graphics contained on the website for any purpose. </P>
@@ -19,7 +24,7 @@
 <p align="justify" style="line-height:150%">The links contained herein to other 3rd party sites are for end user convenience only, and do not necessarily imply sponsorship, endorsement, or approval by AskByPoll, which has no responsibility for the content found on such linked sites. The AskByPoll website may contain content provided by 3rd parties and for which AskByPoll assumes no responsibility. </p>
 <p align="justify" style="line-height:150%">Your access to and use of the AskByPoll site is subject to your acceptance of this disclaimer, the Terms of Use and the Privacy Policy.</P>
 <p align="justify" style="line-height:150%">In particular, we will not be liable for loss of profits or of contracts, loss of data, damage to your computer hardware or software, loss of business, loss of goodwill or reputation, loss of revenue, loss of anticipated savings, loss of business opportunity, loss of use, and/or consequential loss arising out of or in connection with this website or the information or data contained in it.</p>
-
 <p align="justify" style="line-height:150%">Please contact us at <a href="mailto:support@askbypoll.com" target="_top">support@askbypoll.com</a> if you have any questions about any information on this website.</p>
 </div>
+</section>
 {% endblock %}
