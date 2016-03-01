@@ -60,7 +60,7 @@ class TeamView(BaseViewList):
 
 class IndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 25
+	paginate_by = 50
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(IndexView, self).render_to_response(context, **response_kwargs)
@@ -166,7 +166,7 @@ class IndexView(BaseViewList):
 				if expired_polls:
 					latest_questions.extend(expired_polls)
 		else:
-			latest_questions = Question.objects.filter(privatePoll=0,home_visible=1).order_by('-pub_date')
+			latest_questions = Question.objects.filter(privatePoll=0,home_visible=1).order_by('-pub_date')[:50]
 			latest_questions = list(OrderedDict.fromkeys(latest_questions))
 			if request.GET.get('tab') == 'mostvoted':
 				latest_questions.sort(key=lambda x: x.voted_set.count()+VoteApi.objects.filter(question=x).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).count(), reverse=True)
