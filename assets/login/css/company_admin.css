@@ -5,19 +5,14 @@ html{
 body{
 	max-width: initial;
 }
-#wrapper{
-	max-width: initial;
-}
 #mobile-dashboard{
 	display: none;
 }
-#admin-dashboard{
-	margin: 0rem 5rem 5rem 5rem;
+#content{
+	max-width: 1600px;
+	margin: 0 auto;
 	background-color: white;
-	border: 2px solid;
-	border-radius: 25px;
-	padding: 5rem;
-	opacity: 0.95;
+	padding: 5rem 2rem;
 }
 #dashboard-menu{
 	width:10%;
@@ -28,8 +23,11 @@ body{
 	float:right;
 	cursor:pointer;
 }
+ul.dashboard-menu-items{
+	padding:0;
+}
 ul.dashboard-menu-items li{
-	font-size:1.5rem;
+	font-size:1.2rem;
 	font-family:'Arvo', serif;
 	text-align: left;
 	margin:1rem 0;
@@ -37,8 +35,8 @@ ul.dashboard-menu-items li{
 }
 .selectedLi, .dashboard-menu-li:hover{
 	background-color: wheat;
-    padding: 1rem;
-    border-radius: 25px;
+    padding: 0.5rem;
+    border-radius: 4px;
 }
 .admin-dash-div{
 	width: 90%;
@@ -52,6 +50,9 @@ ul.dashboard-menu-items li{
 	font-size: 3rem;
     border-bottom: 5px solid black;
    	padding-left: 10px;
+}
+.dashboard-header p{
+	margin-bottom:0;
 }
 .dashboard-stats{
 	margin: 2rem 0;
@@ -78,7 +79,7 @@ ul.dashboard-stats-ul li{
 	background-color: rgb(99, 95, 152);
 }
 .see-more-details{
-       font-size: 0.8rem;
+    font-size: 0.8rem;
     position: absolute;
     bottom: 0;
     right: 2px;
@@ -86,6 +87,9 @@ ul.dashboard-stats-ul li{
     background-color: wheat;
     padding: 0.2rem;
     border: 1px solid black;
+}
+ul.dashboard-stats-ul .see-more-details{
+	display: none;
 }
 .graphs-cube{
 	height: 400px;
@@ -119,8 +123,8 @@ svg{
 	position:relative;
 	margin:auto;
 	margin-top:2rem;
-	height:400px;
-	width:400px;
+	height:300px;
+	width:300px;
 	-webkit-transform-style:preserve-3d;
 	-webkit-transform:rotateX(0deg) rotateY(20deg);
 	-webkit-animation:anim2 ease-in-out 60s infinite alternate;
@@ -213,7 +217,7 @@ li.followers{
 	width: 8rem;
     text-align: center;
     /*margin-top:0.2rem;*/
-    bottom: initial;
+    bottom: initial;	
 }
 .activity_url{
 	display: inline-block;
@@ -244,6 +248,7 @@ li.followers{
     padding-bottom: 1.5rem;
 }
 .analysis{
+	display: none;
 	margin-top: 0rem !important;
 }
 #advancedAna{
@@ -271,9 +276,13 @@ li.followers{
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
-.choices{
-	width: 50%;
-    margin: 0 auto;
+.choices figure{
+	display: inline-block;
+}
+.choices figure img{
+	width: 200px;
+	height: 200px;
+	display: inline-block;
 }
 span.cube-num{
 	padding-top: 3rem;
@@ -659,6 +668,11 @@ th.question-table-heading {
 	display: inline-block;
 	margin-top: 3rem;
 	vertical-align: top;
+}
+
+.gender, .age, .location, .others {
+	width:initial;
+	display: block;
 }
 .question_analyse_chart_cmp1, .question_analyse_chart_cmp2, .question_analyse_chart_loc_cmp1, .question_analyse_chart_loc_cmp2{
 	height: 400px;
