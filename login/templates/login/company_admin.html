@@ -27,7 +27,7 @@
 	<div id="mobile-dashboard">
 		<p>Dashboard is currently available only on Desktops and would be coming soon to mobiles as well. If you require special assistance please contact support.</p>
 	</div>
-	<section id="admin-dashboard" class="clearfix">
+	<section id="content" class="clearfix">
 		<div id="dashboard-menu" class="clearfix">
 			<ul class="dashboard-menu-items clearfix">
 				<li class="dashboard-menu-li selectedLi">Dashboard</li>
@@ -90,7 +90,7 @@
 					<div class="cube-admin">
 						<div id="cube">
 							<div class="face" id="f2"><span class="cube-num">{{ total_views }}</span><span class="cube-text">Views</span></div>
-							<div class="face" id="f3"><span class="cube-num">{{ activeUsers }}</span><span class="cube-text">Active Users</span></div>
+							<div class="face" id="f3"><span class="cube-num">23</span><span class="cube-text">Active Users</span></div>
 							<div class="face" id="f4"><span class="cube-num">{{ votes_count }}</span><span class="cube-text">Votes</span></div>
 							<div class="face" id="f5"><span class="cube-num">{{ following_count }}</span><span class="cube-text">Following</span></div>
 						</div>
@@ -256,23 +256,25 @@
 						</div>
 						<div class="analysis" id="analyse---{{ question.poll.id }}Div">
 							<div class="choices clearfix">
-							{% for choice in question.poll.choice_set.all %}
-							{% if choice.choice_image %}
-								<figure>
-									<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
-									<figcaption class="choiceFigCaption">
-										{% if choice.choice_text %}
-											Choice{{ forloop.counter }} : {{ choice.choice_text }}
-										{% else %}
-											Choice{{ forloop.counter }}
-										{% endif %}
-									</figcaption>
-								</figure>
-							{% else %}
-								Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
-								<br/>
-							{% endif %}
-							{% endfor %}
+								<div class="cta">
+									{% for choice in question.poll.choice_set.all %}
+									{% if choice.choice_image %}
+										<figure>
+											<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+											<figcaption class="choiceFigCaption">
+												{% if choice.choice_text %}
+													Choice{{ forloop.counter }} : {{ choice.choice_text }}
+												{% else %}
+													Choice{{ forloop.counter }}
+												{% endif %}
+											</figcaption>
+										</figure>
+									{% else %}
+										Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+										<br/>
+									{% endif %}
+									{% endfor %}
+								</div>
 							</div>
 							<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass">
 							</div>
@@ -602,7 +604,7 @@
 					<div class="survey-questions">
 					</div>
 					<i class="fa fa-plus-circle add-q"> Add Question</i>
-					<input class="submit surveySubmit" type="submit" value="Create" id="createSurveySubmit"/>
+					<input class="submit btn surveySubmit" type="submit" value="Create" id="createSurveySubmit"/>
 				</form>
 				<div class="tooltip" id="category_tooltip">
 					<span>Categories list:<br></span>
@@ -615,7 +617,7 @@
 				</div>
 			</div>
 			<div class="dashboard-stats clearfix">
-				<p id="create-new-survey" onclick="createSurvey()"> Create New </p>
+				<p id="create-new-survey" class="btn" onclick="createSurvey()"> Create New </p>
 				<ul class="dashboard-recent">
 					<li> Survey</li>
 					{% for survey_det in surveys %}
@@ -999,7 +1001,7 @@
 						<textarea id ="groupMembers" name="groupMembers" placeholder="Provide ; separated email id's"></textarea>
 						<span class="errorlist" id="groupMembersError"></span>
 					</p>
-					<p>
+					<p class="btn">
 				        <label for="csvUpload">Upload your CSV File</label>
 				        <input type="file" name="File Upload" id="csvUpload" accept=".csv" />
 					</p>
@@ -1098,23 +1100,25 @@
 						</div>
 						<div class="analysis" id="advanced-analyse---{{ question.poll.id }}Div">
 							<div class="choices clearfix">
-							{% for choice in question.poll.choice_set.all %}
-							{% if choice.choice_image %}
-								<figure>
-									<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
-									<figcaption class="choiceFigCaption">
-										{% if choice.choice_text %}
-											Choice{{ forloop.counter }} : {{ choice.choice_text }}
-										{% else %}
-											Choice{{ forloop.counter }}
-										{% endif %}
-									</figcaption>
-								</figure>
-							{% else %}
-								Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
-								<br/>
-							{% endif %}
-							{% endfor %}
+								<div class="cta">	
+									{% for choice in question.poll.choice_set.all %}
+									{% if choice.choice_image %}
+										<figure>
+											<img class="choiceImage choiceDetailImage" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}">
+											<figcaption class="choiceFigCaption">
+												{% if choice.choice_text %}
+													Choice{{ forloop.counter }} : {{ choice.choice_text }}
+												{% else %}
+													Choice{{ forloop.counter }}
+												{% endif %}
+											</figcaption>
+										</figure>
+									{% else %}
+										Choice{{ forloop.counter }} : "{{ choice.choice_text }}"
+										<br/>
+									{% endif %}
+									{% endfor %}
+								</div>
 							</div>
 							<p class="advanced-ana-bar-graph" style="margin-top:2rem" id ="advanced-ana-bar-graph-1---{{ question.poll.id }}">Results With All Responses : {{ question.allvotes }}</p>
 							<div id="advanced-pollsChart---{{ question.poll.id }}---extra" class="pollsChartClass">
@@ -1584,7 +1588,7 @@
 			  		featureImageWrapped = true;
 				  	/*For file browse */
 					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-					var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+					var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
 					// var upImg = $('<img id="upImg" width=>')
 					var fileInput = $("#shareImage").after(label).wrap(invisible);
 					// $("#"+choice_file_id).hide();
