@@ -1289,6 +1289,8 @@ class AccessDBView(BaseViewList):
 							total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
+					print("_____________------------------AccesDB")
+					print(total_votes)
 					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
@@ -1315,6 +1317,7 @@ class AccessDBView(BaseViewList):
 									total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
+					print(total_votes)
 					choices.append(choice_dic)
 				response_dic['choices'] = choices
 				response_dic['total_votes'] = total_votes
@@ -2026,7 +2029,7 @@ def results_embed_poll(request):
 				gender = request.GET.get('gender',"D")[0]
 			if request.GET.get('profession',"Others") != "notSelected":
 				profession = request.GET.get('profession','Others')
-			email = request.GET.get('email','')
+			email = request.GET.get('email','').strip()
 			ipAddress = getIpAddress(request)
 			# ipAddress = '139.130.4.22'
 			# sessionKey = " cfp14kjtdgw078auvs59z8kto1p48kyu"
@@ -2035,7 +2038,8 @@ def results_embed_poll(request):
 			existingVote.age = user_age
 			existingVote.gender = gender
 			existingVote.profession = profession
-			existingVote.email = email
+			if email:
+				existingVote.email = email
 			votedChoice = existingVote.choice_id
 			existingVote.save()
 			user_data["birthDay"] = user_age
@@ -3128,10 +3132,13 @@ class AskByPollAboutUsView(BaseViewList):
 
 def get_number_votes(mainquestion):
 	numVotes = mainquestion.voted_set.count()
+	print("_________________-------------------get_num")
+	print(numVotes)
 	considered_email = []
 	for voted in Voted.objects.filter(question=mainquestion):
 		considered_email.append(voted.user.email)
 	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
+	print(numVotes)
 	return numVotes
 
 def get_index_question_detail(mainquestion,user,sub_que,curtime,company_data={}):
