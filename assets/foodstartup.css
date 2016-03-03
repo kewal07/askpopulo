@@ -48,8 +48,9 @@ a{
 }
 p{
 	line-height: 140%;
-    font-size: 90%;
-    margin-bottom: 1rem;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        text-align:justify;
 }
 .article-heading{
 	background-color: turquoise;
@@ -59,7 +60,7 @@ p{
 	text-align: center;
 }
 .article-details{
-	font-size:80%;
+	font-size:110%;
 	margin-bottom: 2rem;
 }
 .article-details-time{
@@ -193,13 +194,14 @@ img.article-images-ws{
 		padding: 1rem;
 	}
 	.article-details, .sources-p{
-		font-size:66%;
+		font-size:90%;
 	}
 	.article-details-time{
 		float: left;
 	}
 	p{
-	    font-size: 80%;
+	    font-size: 90%;
+	    text-align: justify;
 	}
 	.askbypoll-embed-poll-question-choice{
 		margin-right:1rem !important;
