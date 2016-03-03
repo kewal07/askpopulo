@@ -1,0 +1,71 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'polls/css/jquery-ui.css' %}" />
+{% endblock %}
+{% block extra_js %}
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <section id="content">
+      <div class="create-poll" style="margin-top:5rem;">
+        <div class="createPollContent">
+				      <p style="text-align: center;padding: 1rem;background: #f96a06;color: white;"> Votes Populater  </p><br><br>
+              {% if user.is_staff %}
+                <div class="response-messages"></div>
+    				    <form class="createPollContentForm votepopulaterform" method="POST" action="{% url 'polls:voteqform' %}"  enctype="multipart/form-data">
+    					         {% csrf_token %}
+    					         <label class="required" for="questionId">Question</label>
+    					         <input id="questionId" name="questionId" type="text"><br><br>
+                       <label class="required" for="numberOfVotes">Number Of Votes</label>
+    					         <input id="numberOfVotes" name="numberOfVotes" type="text"><br><br>
+                       <label for="userList">User List</label>
+         							 <textarea id ="userList" name="userList" placeholder=""></textarea><br><br>
+                       <label class="required" for="voteDistribution">Vote Distribution</label>
+    					         <input id="voteDistribution" name="voteDistribution" type="text"><br><br>
+    					         <input value="Populate" class="submit btn" id="submit" type="submit"/>
+    				    </form>
+              {% else %}
+                <p style="text-align: center;">You do not have permission to access this page.</p>
+              {% endif %}
+			  </div>
+		  </div>
+    </section>
+
+    <script>
+    $(document).ready(function()
+    {
+      $('.submit').bind('click', function(event)
+      {
+        event.preventDefault();
+        var form_data = new FormData($(".votepopulaterform")[0]);
+        console.log(form_data);
+        $.ajax({
+          type: 'POST',
+          data:form_data,
+          processData: false,
+          contentType: false,
+          success:function(response)
+          {
+            console.log(response);
+            var resp = response;
+            var successMessage = response.success;
+            var errorMessage = response.error;
+            if(typeof errorMessage === 'undefined'){
+              $(".response-messages").text("");
+              $(".submit").unbind('click').submit();
+              $(".createPollContentForm").css("display", "none");
+              $(".response-messages").append('<span class="errorlist" style="position:relative; top:-3rem;"><br>'+successMessage+'</span>');
+            } else if(typeof successMessage === 'undefined'){
+              $(".response-messages").text("");
+              $(".response-messages").append('<span class="errorlist"><br>'+errorMessage+'</span>');
+            }
+          }
+        });
+      });
+    });
+    </script>
+{% endblock %}

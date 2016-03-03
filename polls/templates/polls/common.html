@@ -64,33 +64,11 @@
 						</a>
 					</div>
 					<div class="navbar-top clearfix">
+
 						<ul class="menu-ul">
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'trivia:trivia' %}">Trivia</a></li>
-							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
-							<li><a href="{% url 'polls:polls_category' %}">Category</a></li>
-							<li class="location_select"><a>{{ request.COOKIES.location|default:"global"|capfirst }}</a>
-								<div class="dropDownLoc">
-									<ul class="dropDownUL">
-										{% if request.GET.urlencode %}
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Global</a></li>
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Asia</a></li>
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Europe</a></li>
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Australia</a></li>
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">America</a></li>
-										<li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Africa</a></li>
-										{% else %}
-										<li><a href="{{ request.path }}" class="location_link">Global</a></li>
-										<li><a href="{{ request.path }}" class="location_link">Asia</a></li>
-										<li><a href="{{ request.path }}" class="location_link">Europe</a></li>
-										<li><a href="{{ request.path }}" class="location_link">Australia</a></li>
-										<li><a href="{{ request.path }}" class="location_link">America</a></li>
-										<li><a href="{{ request.path }}" class="location_link">Africa</a></li>
-										{% endif %}
-									</ul>
-								</div>
-							</li>
-							<li><a href="{% url 'polls:abp_business' %}">Business Solutions</a></li>
+							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>
 			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
 			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
 							{% if not user.is_authenticated %}
@@ -123,6 +101,29 @@
 					<li id="notification_credit_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-coins"></i>{{ user.extendeduser.credits }} pCoin{{ user.extendeduser.credits|pluralize }}</a></li>
 					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} Message{{ messageCount|pluralize }}
 					</a></li>
+          <li class="user_not_credit_message_li"><a href="{% url 'polls:polls_create' %}">Ask</a></li>
+          <li class="user_not_credit_message_li" ><a href="{% url 'polls:polls_category' %}">Category</a></li>
+          <li class="location_select user_not_credit_message_li"><a>{{ request.COOKIES.location|default:"global"|capfirst }}</a>
+            <div class="dropDownLoc">
+              <ul class="dropDownUL">
+                {% if request.GET.urlencode %}
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Global</a></li>
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Asia</a></li>
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Europe</a></li>
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Australia</a></li>
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">America</a></li>
+                <li><a href="{{ request.path }}?{{ request.GET.urlencode }}" class="location_link">Africa</a></li>
+                {% else %}
+                <li><a href="{{ request.path }}" class="location_link">Global</a></li>
+                <li><a href="{{ request.path }}" class="location_link">Asia</a></li>
+                <li><a href="{{ request.path }}" class="location_link">Europe</a></li>
+                <li><a href="{{ request.path }}" class="location_link">Australia</a></li>
+                <li><a href="{{ request.path }}" class="location_link">America</a></li>
+                <li><a href="{{ request.path }}" class="location_link">Africa</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
 					<li><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}">Profile</a></li>
 					<li class="user-in-li"><img src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}">
 					</li>

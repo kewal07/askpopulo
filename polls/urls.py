@@ -66,7 +66,6 @@ urlpatterns = patterns('',
 	url(r'^askbypoll-about-us$',views.AskByPollAboutUsView.as_view(),name='abp_about_us'),
 	url(r'^contact$',views.SendMails.as_view(),name='contact_us'),
 	url(r'^disclaimer$', TemplateView.as_view(template_name='disclaimer.html'), name='disclaimer'),
-	url(r'^termsandcondition$', TemplateView.as_view(template_name='termsandcondition.html'), name='termsandcondition')
-	#url(r'^servemailpollresponse', views.responseOnEmail, name='responseOnEmail'),
-	# url(r'^getwidgettemplate/(?P<pk>\d+)', views.WebsiteWidgetTemplateView.as_view(),name="getwidgettemplate"),
+	url(r'^termsandcondition$', TemplateView.as_view(template_name='termsandcondition.html'), name='termsandcondition'),
+	url(r'^voteqform$', login_required(views.AutoPopulateVotesView.as_view()), name='voteqform'),
 )
