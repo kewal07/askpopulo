@@ -3201,7 +3201,7 @@ class AutoPopulateVotesView(BaseViewList):
 						if user:
 							voters.append(user[0])
 						else:
-							messages['errorMessage'] = 'Some error occured'
+							messages['errorMessage'] = mail + ' is not a valid user'
 							return HttpResponse(json.dumps(messages), content_type='application/json')
 				question = Question.objects.get(pk=questionId)
 				questionChoiceList = Choice.objects.filter(question=question).order_by('id')
