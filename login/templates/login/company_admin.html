@@ -21,7 +21,7 @@
 	<script src="{% static 'js/jquery.autocomplete.multiselect.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/html2canvas.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
-	
+
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -70,7 +70,7 @@
 
 							        var options = {
 							          chart: {
-							            title: 'Polls, Views, and Votes: Last 3 months', 
+							            title: 'Polls, Views, and Votes: Last 3 months',
 							          },
 							          bars: 'horizontal', // Required for Material Bar Charts.
 							          hAxis: {format: 'decimal'},
@@ -103,26 +103,26 @@
 						<div class="liDetail">
 							{% if activity.verb == "question" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
-								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked 
+								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked
 								{% if user.id != context_user.id and not activity.visible_public %}
-								a private/anonymous poll 
+								a private/anonymous poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %}
 								<span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "voted" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
-								a private poll 
+								a private poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %} <span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "votedBet" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
-								a private poll 
+								a private poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %} putting {{ activity.points }} credits <span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "follow" or activity.verb == "followed" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
@@ -637,7 +637,7 @@
 										<span class="see-more-details see-more-details-p clone-u"><a href="{% url 'polls:survey_clone' survey_det.survey.id survey_det.survey.survey_slug %}">Clone Survey</a></span>
 										<span class="see-more-details see-more-details-p share-with-group" id="share-with-group{{ survey_det.survey.id }}">Share with Groups</span>
 										<span class="see-more-details see-more-details-p question-u"><a href="{% url 'polls:survey_vote' survey_det.survey.id survey_det.survey.survey_slug %}">Go To Survey</a></span>
-										<span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span>										
+										<span class="see-more-details see-more-details-p">{{ survey_det.votes }} Response{{ survey_det.votes|pluralize }}</span>
 									</p>
 									<form class="share-with-group-form" id="share-with-group-form{{ survey_det.survey.id }}">
 										<p class="share-g">
@@ -661,7 +661,7 @@
 									</p>
 									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 									{% if poll.q_type != "text" %}
-										
+
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
@@ -834,7 +834,7 @@
 													</div>
 												</div>
 											</div>
-										
+
 									{% else %}
 										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
 											{% for text in poll.comments %}
@@ -862,7 +862,7 @@
 													<td>{{ survey_det.incompleteResponses }}%</td>
 												</tr>
 											</tbody>
-										</table>		
+										</table>
 									</div>
 								</div>
 								<div class="table-container">
@@ -884,7 +884,7 @@
 														<td> {{ poll.q_type }} </td>
 														<td> {{ poll.totalResponses }} votes</td>
 														{% if poll.q_type != "text" %}
-															<td> 
+															<td>
 																{% for choice in poll.maxVotes %}
 																	{{ choice }}<br>
 																{% endfor %}
@@ -901,7 +901,7 @@
 													</tr>
 												{% endfor %}
 											</tbody>
-										</table>		
+										</table>
 									</div>
 								</div><!-- /container -->
 							</div>
@@ -917,7 +917,7 @@
 			<div class="dashboard-stats clearfix">
 				<ul class="dashboard-recent">
 					{% for act_user in followers %}
-						<li class="followers">	
+						<li class="followers">
 							<a href="{% url 'login:loggedIn' act_user.id act_user.extendeduser.user_slug %}">
 								<figure>
 									<img class="imgInFeed follow" src="{{ act_user.extendeduser.get_profile_pic_url }}">
@@ -950,7 +950,7 @@
 								<div class="groupMembers clearfix">
 									{% if group.groupMembers %}
 										{% for member in group.groupMembers %}
-											<a href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
+											<a class="group-member-links" href="{% url 'login:loggedIn' member.id member.extendeduser.user_slug %}">
 												<figure class="members-figure">
 												  <img class="groupsMemberProfilePic" src="{{ member.extendeduser.get_profile_pic_url }}" alt="{{ member.first_name }}">
 												  <figcaption class="members-figcaption">{{ member.first_name }} {{ member.last_name }}</figcaption>
@@ -984,7 +984,7 @@
 							</div>
 						</li>
 					{% endfor %}
-					
+
 				</ul>
 			</div>
 			<div class="create-group">
@@ -1027,31 +1027,31 @@
 							{% if activity.verb == "question" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked {% if user.id != context_user.id and not activity.visible_public %}
-								a private/anonymous poll 
+								a private/anonymous poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %}
 								<span id="activity{{ activity.id }}"> </span>
 							{% elif activity.verb == "questionBet" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>asked {% if user.id != context_user.id and not activity.visible_public %}
-								a private/anonymous poll 
+								a private/anonymous poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %} putting {{ activity.points }} credits <span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "voted" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>{{ activity.verb}} {% if user.id != context_user.id and not activity.visible_public %}
-								a private/anonymous poll 
+								a private/anonymous poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %}<span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "votedBet" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
 								<div><p class="main"><span class="activity_text"><a href="{{ activity.actor_user_url }}"><span class="activity_url">{{ user.username|getName:activity.actor_user_name }}</span> </a>voted on {% if user.id != context_user.id and not activity.visible_public %}
-								a private/anonymous poll 
+								a private/anonymous poll
 								{% else %}
-								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a> 
+								<a href="{{ activity.question_url }}"><span class="activity_url">{{ activity.question_text }}</span></a>
 								{% endif %} putting {{ activity.points }} credits<span id="activity{{ activity.id }}"> </span></span>
 							{% elif activity.verb == "follow" or activity.verb == "followed" %}
 								<a href="{{ activity.actor_user_url }}"><img class="imgInFeed" src="{{ activity.actor_user_pic }}"> </a>
@@ -1100,7 +1100,7 @@
 						</div>
 						<div class="analysis" id="advanced-analyse---{{ question.poll.id }}Div">
 							<div class="choices clearfix">
-								<div class="cta">	
+								<div class="cta">
 									{% for choice in question.poll.choice_set.all %}
 									{% if choice.choice_image %}
 										<figure>
@@ -1416,7 +1416,7 @@
 				choice_display["{{ key }}"] = "{{ val }}";
 			{% endfor %}
 			// console.log(choice_display);
-			
+
 			function validateEmail(field) {
     			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     			return (regex.test(field)) ? true : false;
@@ -1461,7 +1461,7 @@
 					$(currentActiveEditForm).html('');
 				}
 				editGroupFlag = false;
-				
+
 				// Method that reads and processes the selected file
 				$("#csvUpload").change(function(evt){
 					if (!browserSupportFileUpload()) {
@@ -1490,7 +1490,7 @@
 				        }
 
 				});
-			
+
 				$('.groupSubmit').bind('click', function(event)
 				{
 					event.preventDefault();
@@ -1540,7 +1540,7 @@
 			var uploaded_mails_from_csv = {};
 			function createSurvey(){
 				$(".create-survey").toggle("slow");
-			
+
 				$( "#categories" ).autocomplete({
 					source: availableTags,
 					multiselect: true,
@@ -1601,7 +1601,7 @@
 				    	var fileName = fileVal.substr(fileNameIndex);
 				    	if (this.files && this.files[0]) {
 				            var reader = new FileReader();
-				            
+
 				            reader.onload = function (e) {
 				                imgSrc = e.target.result;
 								console.log($this.parent().children().first());
@@ -1610,7 +1610,7 @@
 								// $(".upImg").show();
 								$this.parent().next().children().first().show();
 				            }
-				            
+
 				            reader.readAsDataURL(this.files[0]);
 				        }
 						// $("#upImgText").text(fileName);
@@ -1648,7 +1648,7 @@
 					$("#"+choice_elem_div).append(choice_elem);
 				}
 				choice_count[question_count_select]+=1;
-				
+
 				/*For file browse */
 					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
 					var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
@@ -1664,7 +1664,7 @@
 				    	var fileName = fileVal.substr(fileNameIndex);
 				    	if (this.files && this.files[0]) {
 				            var reader = new FileReader();
-				            
+
 				            reader.onload = function (e) {
 				                imgSrc = e.target.result;
 								console.log($this.parent().children().first());
@@ -1673,7 +1673,7 @@
 								// $(".upImg").show();
 								$this.parent().next().children().first().show();
 				            }
-				            
+
 				            reader.readAsDataURL(this.files[0]);
 				        }
 						// $("#upImgText").text(fileName);
@@ -1683,7 +1683,7 @@
 				/* End of file browse*/
 			}
 			}
-	
+
 			$(document).ready(function(){
 
 				$(".dashboard-menu-li").click(function(){
@@ -1799,12 +1799,12 @@
 					        }
 					    });
 				});
-				
+
 				$('#surveys-content').on("click",'.fileLabel',function(){
 					$(this).prev().children().first().click();
 				});
 
-				
+
 				$('#polls-content').on("click",'.embed-poll-code',function(){
 					var embedCodePollId = $(this).attr('id').split('---')[1];
 					var embedCodeDiv = "embed-code---"+embedCodePollId+"Div";
@@ -1995,7 +1995,7 @@
 					var mailPollId = $(this).attr('id').split('---')[1];
 					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
 					var emailList = $("#mailPoll---"+mailPollId).val();
-					var emailListFromFile = uploaded_mails_from_csv[mailPollId];					
+					var emailListFromFile = uploaded_mails_from_csv[mailPollId];
 					// console.log(uploaded_mails_from_csv);
 					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace('Subject : <p class="askbypoll-email-preview-sub">',"").replace("</p>","");
 					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
@@ -2063,7 +2063,7 @@
 					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2"); 
+					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
 					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
 					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
 					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
@@ -2081,7 +2081,7 @@
 								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
 								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2"); 
+								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
 								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
 								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
 								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
@@ -2096,9 +2096,9 @@
 					else{
 						// $("#text-analyse---"+pollId+"Div").toggle("slow");
 					}
-					}, delay); 
-			    });  
-				
+					}, delay);
+			    });
+
 				$("#surveys-content").on("click",".main-survey",function(){
 					$(this).parent().parent().next().toggle("slow");
 				});
@@ -2148,7 +2148,7 @@
 						    }, 500);
 						  });
 						}
-						// }, delay); 
+						// }, delay);
 					}else{
 						$("."+choice_text_para).html("No Choice Filter");
 						if($(analysisDivId).is(':visible')){
@@ -2167,7 +2167,7 @@
 						  });
 						}
 					}
-				});  
+				});
 
 				$("#advanced-content,#surveys-content").on("change","select.advancedanalyseSelect",function(){
 			    	var elemId = $(this)[0].id;
@@ -2434,7 +2434,7 @@
 								// $(new_html).id = "pdf-html";
 					        	new_html.innerHTML = response;
 					        	$('body').append('<div id="pdf-body">'+response+'</div>');
-					        	
+
 					  			setTimeout(function(){
 					  				var pageLenth = $('.pdf-pages').length;
 					  				var pageRendered = 0;
@@ -2490,7 +2490,7 @@
 											            doc.addImage(dataimg, 'JPEG',20,20);
 											            // sleep(1000);
 											            console.log(pageLenth,pageRendered);
-														if(pageLenth == pageRendered){ 
+														if(pageLenth == pageRendered){
 												            console.log("saving");
 												  			doc.save(file_name);
 															$('body').find($("#pdf-body")).remove();
@@ -2511,7 +2511,7 @@
 						$("#export-content").click();
 					{% endif %}
 				});
-			});			
+			});
 		</script>
 
 	</section>
