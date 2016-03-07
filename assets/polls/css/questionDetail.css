@@ -211,7 +211,7 @@ ul.share-buttons li{
 	}
 	div.userBrief {
 		float:left; 
-		margin-left:1rem;
+		margin-left:0.5rem;
 	}
 	div.userBrief p{
 		padding:0;
