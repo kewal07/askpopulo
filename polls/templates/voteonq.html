@@ -53,7 +53,7 @@
             console.log(response);
             var resp = response;
             var successMessage = response.success;
-            var errorMessage = response.error;
+            var errorMessage = response.errorMessage;
             if(typeof errorMessage === 'undefined'){
               $(".response-messages").text("");
               $(".submit").unbind('click').submit();
