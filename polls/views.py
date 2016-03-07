@@ -263,6 +263,9 @@ class VoteView(BaseViewDetail):
 				sub_que.append(sub.question.id)
 				question_user_vote = Voted.objects.filter(user=user,question=context['question'])
 		context["data"] = get_index_question_detail(context['question'],user,sub_que,curtime)
+		followers = len([ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ])
+		following = len([ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ])
+		context['connection'] = followers + following
 		if context['question'].id == 3051:
 				context['votes'] += 100
 				context['subscribers'] += 150
