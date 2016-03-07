@@ -3217,7 +3217,7 @@ class AutoPopulateVotesView(BaseViewList):
 						numOfVotesChoice = 0
 					for i in range(numOfVotesChoice):
 						voteUser = voters[0]
-						if voteUser.birthDay and voteUser.gender and voteUser.city and voteUser.state and voteUser.country and voteUser.profession
+						if voteUser.extendeduser.birthDay and voteUser.extendeduser.gender and voteUser.extendeduser.city and voteUser.extendeduser.state and voteUser.extendeduser.country and voteUser.extendeduser.profession:
 							save_poll_vote(voteUser,question,currentChoice)
 						del voters[0]
 				messages['success'] = 'Votes populated successfully'
