@@ -1,6 +1,12 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% block extra_css %}
+	<style>
+		.cta{
+			margin-top:32rem !important;
+			margin-bottom:0rem !important;
+		}
+	</style>
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/redeem.css' %}" />
 {% endblock %}
 {% block content %}

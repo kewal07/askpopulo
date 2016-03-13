@@ -202,7 +202,7 @@ class VoteView(BaseViewDetail):
 	model = Question
 
 	def get_template_names(self):
-		print(self.request.path)
+		#print(self.request.path)
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
 		question.numViews +=1
@@ -216,7 +216,7 @@ class VoteView(BaseViewDetail):
 			# print(subscribed)
 			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ) or (self.request.path.endswith('result') and subscribed):
 				template_name = 'polls/questionDetail.html'
-		print(template_name)
+		#print(template_name)
 		return [template_name]
 
 	def get_context_data(self, **kwargs):
@@ -451,7 +451,7 @@ class CreatePollView(BaseViewList):
 				elif qeap.lower() == 'am' and qehr == 12:
 					qehr = 0
 				# qExpiry = request.POST.get('qExpiry')
-				print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+				#print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
 					curtime = datetime.datetime.now();
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
@@ -1293,8 +1293,8 @@ class AccessDBView(BaseViewList):
 							total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
-					print("_____________------------------AccesDB")
-					print(total_votes)
+					#print("_____________------------------AccesDB")
+					#print(total_votes)
 					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
@@ -1321,7 +1321,7 @@ class AccessDBView(BaseViewList):
 									total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
-					print(total_votes)
+					#print(total_votes)
 					choices.append(choice_dic)
 				response_dic['choices'] = choices
 				response_dic['total_votes'] = total_votes
@@ -1350,16 +1350,16 @@ class TriviaPView(BaseViewList):
 	def get_queryset(self):
 		context = {}
 		triviaList = Trivia.objects.order_by('-pub_date')
-		for trivia in triviaList:
-			print(trivia.trivia_body)
+		#for trivia in triviaList:
+			#print(trivia.trivia_body)
 		context['trivias'] = triviaList
 		return triviaList
 
 class CreateSurveyView(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		try:
-			print(request.POST)
-			print(request.GET)
+			#print(request.POST)
+			#print(request.GET)
 			edit = False
 			curtime = datetime.datetime.now();
 			survey_id = -1
@@ -1405,7 +1405,7 @@ class CreateSurveyView(BaseViewList):
 				surveyError += "Please Select a category<br>"
 			question_count = json.loads(post_data.get("question_count"))
 			polls_list = []
-			print(question_count)
+			#print(question_count)
 			if len(question_count) < 1:
 				surveyError += "Atleast 1 question is required<br>"
 			if surveyError:
@@ -1422,8 +1422,8 @@ class CreateSurveyView(BaseViewList):
 					# imagePathList.append(shareImage.path)
 			for que_index in question_count:
 				poll = {}
-				print(que_index)
-				print(post_data.get("qText"+str(que_index)))
+				#print(que_index)
+				#print(post_data.get("qText"+str(que_index)))
 				que_text = post_data.get("qText"+str(que_index)).strip()
 				que_desc = post_data.get("qDesc"+str(que_index)).strip()
 				que_type = post_data.get("qType"+str(que_index)).strip()
@@ -1443,7 +1443,7 @@ class CreateSurveyView(BaseViewList):
 					queError += "Question is required.<br>"
 				if que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
-					print(choice_list)
+					#print(choice_list)
 					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
 					if len(choice_list) < 2:
 						queError += "Atleast 2 choices are required"
@@ -1470,8 +1470,8 @@ class CreateSurveyView(BaseViewList):
 				poll['choice_texts'] = choices
 				poll['choice_images'] = images
 				polls_list.append(poll)
-			print(polls_list)
-			print(errors)
+			#print(polls_list)
+			#print(errors)
 			if errors:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
@@ -1542,9 +1542,9 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 	try:
 		if edit:
 			survey_polls = Survey_Question.objects.filter(survey=survey)
-			print(survey_polls)
+			#print(survey_polls)
 			for poll in survey_polls:
-				print(poll)
+				#print(poll)
 				question = poll.question
 				if poll.question_type != "text":
 					for choice in question.choice_set.all():
@@ -1627,10 +1627,10 @@ class SurveyVoteView(BaseViewDetail):
 			)
 			context['ssoData'] = ssoData
 			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
-			print(question_user_vote,"print(question_user_vote)")
+			#print(question_user_vote,"print(question_user_vote)")
 			if question_user_vote:
 				question_user_vote = question_user_vote[0]
-				print(question_user_vote)
+				#print(question_user_vote)
 				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
 					user_already_voted = True
 			context['user_already_voted'] = user_already_voted
@@ -1657,7 +1657,7 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
-			print(request.POST,request.path)
+			#print(request.POST,request.path)
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
@@ -1671,10 +1671,10 @@ class SurveyVoteView(BaseViewDetail):
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg+"<br>Come back anytime to answer the rest of the questions!!"
 			data={}
-			print(success_msg_text,user.is_authenticated())
+			#print(success_msg_text,user.is_authenticated())
 			if user.is_authenticated():
 				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
-				print(survey_voted,created)
+				#print(survey_voted,created)
 				choice_list = request.POST.getlist('choice'+str(questionId))
 				choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
 				# print(choice_list,choice_list_comment)
@@ -1721,10 +1721,10 @@ class SurveyVoteView(BaseViewDetail):
 					if saveRequired and survey_voted.user_answer_count == 1:
 						referral_user = request.POST.get("referral_id")
 						save_references(referral_user,survey=survey)
-				print(success_msg_text)
+				#print(success_msg_text)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
-				print(success_msg_text)
+				#print(success_msg_text)
 				if request.is_ajax():
 					return HttpResponse(json.dumps({}),content_type='application/json')
 				next_url = request.path
@@ -1831,7 +1831,7 @@ class SurveyDeleteView(BaseViewDetail):
 
 def survey_mail(request):
 	try:
-		print(request.POST)
+		#print(request.POST)
 		errors = {}
 		url = reverse('polls:survey_vote', kwargs={'pk':int(request.POST.get('shareSurveyId','')),'survey_slug':request.POST.get('shareSurveySlug','')})
 		selectedGnames = request.POST.get('shareselectedGroups','').split(",")
@@ -1892,8 +1892,8 @@ def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra
 
 def embed_poll(request):
 	try:
-		print("embed_poll")
-		print(request.session.session_key)
+		#print("embed_poll")
+		#print(request.session.session_key)
 		pollId = int(request.GET.get('pollId'))
 		callback = request.GET.get('callback', '')
 		analysisNeeded = False
@@ -1932,7 +1932,7 @@ def vote_embed_poll(request):
 		if not request.session.exists(request.session.session_key):
 			request.session.create()
 		sessionKey = request.session.session_key
-		print(sessionKey)
+		#print(sessionKey)
 
 		question = Question.objects.get(pk=pollId)
 		req = {}
@@ -1965,12 +1965,12 @@ def vote_embed_poll(request):
 				choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
 			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
-			print(totalVotes,choices,email_list_voted)
+			#print(totalVotes,choices,email_list_voted)
 			choice_count_dic = {}
 			for i in choices:
 				choice_count_dic[i.get('choice')] = i.get('choiceCount')
 				totalVotes += i.get('choiceCount')
-			print(totalVotes,choices)
+			#print(totalVotes,choices)
 			for choice in question.choice_set.all():
 				result[choice.id] = {}
 				choice_vote_count = choice_count_dic.get(choice.id,0) + choice_dic.get(choice.id,0)
@@ -1985,7 +1985,7 @@ def vote_embed_poll(request):
 							width = 15
 				result[choice.id]["percent"] = percent
 				result[choice.id]["width"] = width
-			print(result)
+			#print(result)
 			req ['result'] = result
 		else:
 			req = {}
@@ -2023,7 +2023,7 @@ def results_embed_poll(request):
 		email = ''
 		profession = ''
 		user_data = {}
-		print(alreadyVoted, dataStored,sessionKey)
+		#print(alreadyVoted, dataStored,sessionKey)
 		votedChoice = -1
 		error = ""
 		if alreadyVoted == 'false' and dataStored == 'false':
@@ -2862,12 +2862,12 @@ def sendPollMail(request):
 				return HttpResponse(json.dumps(response),content_type='application/json')
 
 			invalidEmailList = []
-			print("starting")
+			#print("starting")
 			failEmailList = []
 			for email in emailList:
 				if email.strip():
 					email = email.strip().replace(" ","")
-					print(email)
+					#print(email)
 					if not validateEmail(email):
 						invalidEmailList.append(email)
 					else:
@@ -2888,7 +2888,7 @@ def sendPollMail(request):
 							sendMailAgain = True
 							while sendMailAgain:
 								try:
-									print(email)
+									#print(email)
 									send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
 									pollToken = PollTokens(token=token,email=email,question=question)
 									pollToken.save()
@@ -2898,7 +2898,7 @@ def sendPollMail(request):
 									print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 			print("end")
 			if invalidEmailList:
-				print(invalidEmailList)
+				#print(invalidEmailList)
 				response['fail'] = "%s invalid emails were provided"%(len(invalidEmailList))
 			response['success'] = "Mail sent successfully to %s recipients"%((len(emailList)-len(invalidEmailList)))
 			return HttpResponse(json.dumps(response),content_type='application/json')
@@ -2957,7 +2957,7 @@ def emailResponse(request):
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 def save_poll_vote(user,question,choice,queBet=None):
-	print("save_poll_vote")
+	#print("save_poll_vote")
 	try:
 		questionId = int(question)
 		question = Question.objects.get(pk=questionId)

@@ -15,7 +15,7 @@
         <div class="createPollContent">
 				      <p style="text-align: center;padding: 1rem;background: #f96a06;color: white;"> Votes Populater  </p><br><br>
               {% if user.is_staff %}
-                <div class="response-messages"></div>
+                <div class="cta response-messages"></div>
     				    <form class="createPollContentForm votepopulaterform" method="POST" action="{% url 'polls:voteqform' %}"  enctype="multipart/form-data">
     					         {% csrf_token %}
     					         <label class="required" for="questionId">Question</label>
