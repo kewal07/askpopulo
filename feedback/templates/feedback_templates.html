@@ -1,0 +1,6 @@
+{{ data }}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
+{% for poll in data.polls %}
+	{% include "feedback.html" with poll=poll %}
+{% endfor %}

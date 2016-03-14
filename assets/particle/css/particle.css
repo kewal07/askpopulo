@@ -1,0 +1,117 @@
+/* Inspired by http://news.microsoft.com/stories/index.html */
+html{
+	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
+}
+#content{
+	max-width:1400px;
+	margin:0 auto;
+	color: #555f77;
+}
+#content p{
+	color:#555f77;
+	font-size: 16px;
+	line-height: 24px; 
+	letter-spacing: 1px;
+}
+#featured-partciles{
+	height: 768px;
+	position: relative;
+}
+.featured-col{
+	position: absolute;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.col1{
+	width:48%;
+	left:0%;
+}
+.featured-col-row{
+	height: 49%;
+    position: relative;
+    margin-bottom:1rem;
+}
+.particle-feature-detail{
+	position: absolute;
+	bottom:0;
+	background: rgba(15,15,15,0.78);
+	width:100%;
+	-webkit-animation: footerSlide 400ms 0.1s ease-out backwards;
+    animation: footerSlide 400ms 0.1s ease-out backwards;
+}
+.particle-feature-detail p{
+	text-align: center !important;
+	color:white !important;
+	font-weight: bold !important;
+	font-size:1.2rem !important;
+	text-transform: capitalize;
+	cursor: pointer;
+	font-family: 'Montserrat', sans-serif;
+}
+@-webkit-keyframes footerSlide{
+	0%{-webkit-transform:translate3d(0,300px,0)}
+	100%{-webkit-transform:translate3d(0,0,0)}}
+@keyframes footerSlide{
+	0%{-webkit-transform:translateY(300px);
+		transform:translateY(300px)
+	}
+	100%{-webkit-transform:translateY(0);
+		transform:translateY(0)
+	}
+}
+.col2{
+	left:50%;
+	width:24%;
+}
+.col3{
+	left:75%;
+	width:24%;
+}
+#trivia{
+	padding-top:0  ;
+}
+/* Particle Detail Page*/
+.particle-detail{
+	padding:1rem 2rem;
+	box-sizing:border-box;
+	background: white;
+}
+p.main-heading{
+	font-size:2rem !important;
+	font-weight: bold !important;
+	text-align: center !important;
+	margin-bottom:0;
+}
+img.user-particle{
+	width:50px;
+	height: 50px;
+	border-radius: 50%;
+	float:left;
+}
+p.particle-author,p.particle-time{
+	float:left;
+	margin-left:1rem;
+}
+p.particle-author{
+	padding-right:1rem;
+	border-right:2px solid;
+}
+img.featured-image{
+	display: block;
+	width:95%;
+	margin:0 auto;
+	height: auto;
+}
+.particle-body{
+	padding:1rem 3rem;
+	background: white;
+	text-align: justify;
+}
+blockquote p {
+  font-size: 1.25rem !important;
+}
+ul{
+	list-style: initial;
+}

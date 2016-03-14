@@ -1,0 +1,95 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'particle/css/particle.css' %}" />
+	<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+	<style>
+	.col1{
+		background: url('{{ particles.primer.get_img_url }}');
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		background-position: left top;
+	}
+	</style>
+{% endblock %}
+{% block extra_js %}
+{% endblock %}
+{% block content %}
+	<section id="content">
+		{% if particles %}
+			<div id="featured-partciles">
+				<a href="{% url 'particle:particle_detail' particles.primer.id particles.primer.particle_slug %}">
+					<div class="featured-col col1">
+						<div class="particle-feature-detail">
+							<p class="primer-title">
+								{{ particles.primer.particle_title }}
+							</p>
+							<p class="primer-details">
+								{{ particles.primer.user.first_name }} 
+							</p>
+							<p class="primer-details">
+								A {{ particles.primer.read_time }} read
+							</p>
+						</div>
+					</div>
+				</a>
+				<div class="featured-col col2">
+					{% for featured in particles.featuredParticles1 %}
+						<a href="{% url 'particle:particle_detail' featured.id featured.particle_slug %}">
+							<div class="featured-col-row" style="background: url('{{ featured.get_img_url }}');background-size: 100% 100%;background-repeat: no-repeat;background-position: left top;">
+								<div class="particle-feature-detail">
+									<p class="primer-title">
+										{{ featured.particle_title }}
+									</p>
+									<p class="primer-details">
+										{{ featured.user.first_name }} 
+									</p>
+									<p class="primer-details">
+										A {{ featured.read_time }} read
+									</p>
+								</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+				<div class="featured-col col3">
+					{% for featured in particles.featuredParticles2 %}
+						<a href="{% url 'particle:particle_detail' featured.id featured.particle_slug %}">
+							<div class="featured-col-row" style="background: url('{{ featured.get_img_url }}');background-size: 100% 100%;background-repeat: no-repeat;background-position: left top;">
+								<div class="particle-feature-detail">
+									<p class="primer-title">
+										{{ featured.particle_title }}
+									</p>
+									<p class="primer-details">
+										{{ featured.user.first_name }} 
+									</p>
+									<p class="primer-details">
+										A {{ featured.read_time }} read
+									</p>
+								</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+			<section id="trivia">
+				<div class="masonry">
+					{% for particle in particles.particles %}
+				   		<div class="item">
+				   			<div class="trivia-title">
+								<a href="{% url 'particle:particle_detail' particle.id particle.particle_slug %}">{{ particle.particle_title }}</a>
+							</div>
+							{% if particle.particle_featured_image %}
+								<img class="trivia-image" src="{{ particle.get_img_url }}">
+							{% endif %}
+							<div class="trivia-description">
+								{{ particle.particle_summary }}
+							</div>
+				   		</div>
+				   	{% endfor %}
+				</div>
+			</section>
+		{% endif %}
+	</section>
+{% endblock %}

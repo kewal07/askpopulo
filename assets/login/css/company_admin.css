@@ -12,7 +12,7 @@ body{
 	max-width: 1600px;
 	margin: 0 auto;
 	background-color: white;
-	padding: 5rem 2rem;
+	padding: 7rem 2rem;
 }
 #dashboard-menu{
 	width:10%;
@@ -815,6 +815,10 @@ th.question-table-heading {
 .share-template-div{
     width: 30%;
     text-align: center;
+}
+.feedback-half{
+	width: 65%;
+    margin: 0 auto;
 }
 @media only screen and (max-width: 960px){
 	#admin-dashboard{

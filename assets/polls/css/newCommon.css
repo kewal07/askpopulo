@@ -109,6 +109,26 @@ background: #2DCC70;
 	width: 50%;
 	color: white;
 }
+blockquote {
+  background: #ffffff;
+  border-left: 10px solid #c76c0c;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #c76c0c;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+  font-style: italic;
+  font-weight: 1.25rem !important;
+}
 #content{
 	padding: 5rem 0 3rem 0;
 	max-width: 1400px;

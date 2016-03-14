@@ -53,6 +53,11 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 # Create your views here.
 shakey=(settings.SHAKEY).encode('utf-8')
 
+class WebRtcView(BaseViewList):
+	template_name = 'polls/webrtc.html'
+	def get_queryset(self):
+		return {}
+
 class TeamView(BaseViewList):
 	template_name = 'polls/team.html'
 	def get_queryset(self):
@@ -1267,10 +1272,10 @@ class AccessDBView(BaseViewList):
 						# user_country = vote.user.extendeduser.country.lower()
 						# user_state = vote.user.extendeduser.state.lower()
 						user_age = user_data["birthDay"]
-						user_gender = user_data["gender"]
-						user_prof = user_data["profession"]
-						user_country = user_data["country"]
-						user_state = user_data["state"]
+						user_gender = user_data["gender"].lower()
+						user_prof = user_data["profession"].lower()
+						user_country = user_data["country"].lower()
+						user_state = user_data["state"].lower()
 						email_list_voted.append(vote.user.email)
 						add_cnt = True
 						# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
@@ -1289,8 +1294,6 @@ class AccessDBView(BaseViewList):
 							total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
-					print("_____________------------------AccesDB")
-					print(total_votes)
 					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
@@ -1317,7 +1320,6 @@ class AccessDBView(BaseViewList):
 									total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
-					print(total_votes)
 					choices.append(choice_dic)
 				response_dic['choices'] = choices
 				response_dic['total_votes'] = total_votes
@@ -1538,9 +1540,9 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 	try:
 		if edit:
 			survey_polls = Survey_Question.objects.filter(survey=survey)
-			print(survey_polls)
+			# print(survey_polls)
 			for poll in survey_polls:
-				print(poll)
+				# print(poll)
 				question = poll.question
 				if poll.question_type != "text":
 					for choice in question.choice_set.all():
@@ -1559,7 +1561,7 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			mandatory = 0
 			if poll['mandatory']:
 				mandatory = 1
-			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult)
+			question = Question(user=user, pub_date=curtime, created_at=curtime, expiry=qExpiry, home_visible=0, question_text=poll['text'], description=poll['desc'], protectResult=protectResult, is_survey=1)
 			question.save()
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])

@@ -12,9 +12,5 @@
 		{% endfor %}
 	{% endif %}
 		<a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"class="signup-a {{ provider.name|lower }}">SignIn with {{ provider.name }}</a>
-	<!-- <p>
-	  <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}" 
-	     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"><img src="/static/login/images/{{provider.name|lower}}.png"></a>
-	</p> -->
 {% endfor %}
 
