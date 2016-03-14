@@ -1,5 +1,5 @@
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
@@ -10,7 +10,7 @@ html{
   	position: relative;
   	height: 100%;
   	font-family: 'Arvo', serif;
-}	
+}
 body {
 	margin: 0 auto;
   	height:100%;
@@ -204,7 +204,7 @@ ul.menu-ul>li{
 }
 ul.menu-ul>li>a{
 	color:black;
-	font-size: 20px;
+	font-size: 17px;
 	font-weight: bold;
 }
 ul.menu-ul img{
@@ -244,15 +244,15 @@ ul.menu-ul img{
 }
 
 :-moz-placeholder { /* Firefox 18- */
-   text-align: center;  
+   text-align: center;
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;  
+   text-align: center;
 }
 
-:-ms-input-placeholder {  
-   text-align: center; 
+:-ms-input-placeholder {
+   text-align: center;
 }
 .overlay{
 	display: none;
@@ -276,7 +276,7 @@ span.page-links a{
     width: 100%;
     z-index:10;
     /*top: 97vh;*/
-    margin-top: 
+    margin-top:
 }
 #footerContent{
 	width:95%;
@@ -305,11 +305,11 @@ span.page-links a{
 .menuF-nav a{
 	color:white;
 }
-.clearfix:after { 
-   content: "."; 
-   visibility: hidden; 
-   display: block; 
-   height: 0; 
+.clearfix:after {
+   content: ".";
+   visibility: hidden;
+   display: block;
+   height: 0;
    clear: both;
 }
 #search-980{
@@ -377,7 +377,7 @@ span.page-links a{
 		/*background-color: rgba(0,0,0,0.8);*/
 	}
 	ul.menu-ul>li{
-		float: none; 
+		float: none;
 		text-align: center;
 		padding: 1rem 0;
 	}
@@ -437,7 +437,7 @@ span.page-links a{
 		padding-top: 7rem;
 		position: relative;
 		text-align: center;
-	}	
+	}
 	#search-980 .search{
 		display: block;
 	}
@@ -535,4 +535,11 @@ span.page-links a{
 }
 ul.dropDownUL{
 	padding:0 0.5rem;
+}
+textarea{
+	border:1px solid #f96a0e;
+	border-radius:4px;
+	font-size:1.25rem;
+	width: 30rem;
+  height: 20rem;
 }

@@ -127,9 +127,9 @@ p.pollsDesc{
 	border-bottom:2px dashed;
 }
 ul.followers li{
-	display: inline-block;
+    display: inline-block;
     position: relative;
-    width:5rem;
+    width:10rem;
     margin-bottom:1rem;
     vertical-align: top;
 }

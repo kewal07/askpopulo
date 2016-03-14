@@ -116,7 +116,7 @@ svg{
 	perspective:50% 110px;
 	margin-right: 3rem;
 	float:right;
-}				
+}
 
 #cube{
 	display:block;
@@ -217,7 +217,7 @@ li.followers{
 	width: 8rem;
     text-align: center;
     /*margin-top:0.2rem;*/
-    bottom: initial;	
+    bottom: initial;
 }
 .activity_url{
 	display: inline-block;
@@ -723,7 +723,7 @@ th.question-table-heading {
 	position: absolute;
     right: 0;
     top: 0;
-    bottom: 0;	
+    bottom: 0;
 }
 .askbypoll-email-preview-sub{
 	font-size: 1.2rem;
@@ -832,4 +832,8 @@ th.question-table-heading {
 	    margin: 1rem;
 	    margin-bottom: 10rem;
 	}
+}
+.group-member-links{
+	display:inline-block;
+	margin-bottom: 3rem;
 }
