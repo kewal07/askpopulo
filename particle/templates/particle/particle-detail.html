@@ -1,0 +1,32 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'particle/css/particle.css' %}" />
+	<style>
+		#content{
+			background: white;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="particle-detail clearfix">
+			<p class="main-heading">
+			{{ particle.particle_title }}
+			</p>
+			<img class="user-particle" src="{{ particle.user.extendeduser.get_profile_pic_url }}" alt="User {{ particle.user.first_name }}"> 
+			<p class="particle-author">{{ particle.user.first_name }}</p>
+			<p class="particle-time">A {{ particle.read_time }} Read</p>
+		</div>
+		<div class="cta">
+			<img class="featured-image" src="{{ particle.get_img_url }}">
+		</div>
+		<div class="particle-body">
+			{{ particle.particle_content|safe }}
+		</div>
+	</section>
+{% block extra_js %}
+	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
+{% endblock %}
+
+{% endblock %}

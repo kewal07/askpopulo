@@ -12,10 +12,10 @@ class CategoryInline(admin.TabularInline):
     extra = 5
 
 class QuestionAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('Add Question', {'fields': ['user','question_text','description','featuredPoll','privatePoll','que_slug','home_visible',]}),
-        ('Date information', {'fields': ['pub_date','expiry'], 'classes': ['collapse']}),
-    ]
+    # fieldsets = [
+    #     ('Add Question', {'fields': ['user','question_text','description','featuredPoll','privatePoll','que_slug','home_visible',]}),
+    #     ('Date information', {'fields': ['pub_date','expiry'], 'classes': ['collapse']}),
+    # ]
     inlines = [ChoiceInline,CategoryInline]
 
 admin.site.register(Choice)

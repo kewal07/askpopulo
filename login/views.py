@@ -481,11 +481,12 @@ class AdminDashboard(BaseViewDetail):
 				return HttpResponseRedirect(url)
 			polls_vote_list = []
 			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
-			polls = Question.objects.filter(user_id = user.id).order_by('-pub_date')
-			s_polls = []
-			for survey in survey_list:
-				s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
-			polls = [item for item in polls if item not in s_polls]
+			polls = Question.objects.filter(user_id = user.id, is_survey = 0, is_feedback = 0).order_by('-pub_date')
+			# s_polls = []
+			# s_polls = Question.objects.filter(user_id = user.id, is_survey = 1).order_by('-pub_date')
+			# for survey in survey_list:
+			# 	s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
+			# polls = [item for item in polls if item not in s_polls]
 			total_views = 0
 			dash_graph = []
 			cur_time = datetime.datetime.now()
@@ -514,7 +515,7 @@ class AdminDashboard(BaseViewDetail):
 				dash_dict['views'] = dash_views
 				dash_dict['votes'] = dash_votes
 				dash_graph.append(dash_dict)
-			print(dash_graph)
+			# print(dash_graph)
 			data['dash_graph'] = dash_graph
 			for que in polls:
 				pole_dict = {}
@@ -649,6 +650,7 @@ class AdminDashboard(BaseViewDetail):
 			data['total_views'] = total_views
 			data['categories'] = Category.objects.all()
 			data['choice_id_text_data'] = choice_id_text_data
+			data["feedback_polls"] = Question.objects.filter(user_id=4,is_feedback=1)
 			# print(data)
 			# return data
 			return self.render_to_response(data)

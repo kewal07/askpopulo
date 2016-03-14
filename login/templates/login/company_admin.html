@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/questionDetail.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
 {% endblock %}
 {% block extra_js %}
 	<!--Remove this and also chart.js<script src="{% static 'login/js/Chart.js' %}" ></script> -->
@@ -39,7 +40,7 @@
 				<li class="dashboard-menu-li">Advanced</li>
 				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
 				<li id="dashboard-export-tab" class="dashboard-menu-li">Export</li>
-				<li class="dashboard-menu-li">Billing</li>
+				<li class="dashboard-menu-li">Feedback</li>
 			</ul>
 		</div>
 		<div id="dashboard-content" class="admin-dash-div clearfix">
@@ -1322,11 +1323,22 @@
 				</ul>
 			</div>
 		</div>
-		<div id="billing-content" class="admin-dash-div clearfix">
+		<div id="feedback-content" class="admin-dash-div clearfix">
 			<div class="dashboard-header">
-				Coming Soon!
+				Feedback Widget
 			</div>
-			<p class="coming-soon">You can buy pCoins and use them to make your polls featured which would ensure greater attention and votes.Please contact support for accelerated development </p>
+			<div class="dashboard-stats clearfix">
+				{% for poll in feedback_polls %}
+					<div class="feedback-half">
+				
+				   		{% if poll.id == 3838 %}
+							{% include "feedback.html" with poll=poll %}
+						{% elif poll.id == 3839 %}
+							{% include "feedback2.html" with poll=poll %}
+						{% endif %}
+					</div>
+				{% endfor %}
+			</div>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
 		<script type="text/javascript" src="{% static 'js/jquery.stickyheader.js' %}"></script>
