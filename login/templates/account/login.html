@@ -1,6 +1,7 @@
 {% extends "polls/common.html" %}
 {% load static %}
 {% load i18n %}
+{% load socialaccount %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/jquery.pagepiling.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/animations.css' %}" />
@@ -336,8 +337,10 @@
 		    	<div class="section-div section1-div2">
 		    		<div class="form-div" id="signup-form">
 		    			<p class="heading h-black">Login or Signup for a free account</p>
-		    			{% include "socialaccount/snippets/provider_list.html" with process="login" %}
-						<p class="heading h-black">OR</p>
+		    			<a href="{% provider_login_url "facebook" method="oauth2" %}" class="signup-a facebook">SinIn with Facebook</a>
+		    			<a href="{% provider_login_url "google" %}" class="signup-a google">SinIn with Google</a>
+						<a href="{% provider_login_url "twitter" %}" class="signup-a twitter">SinIn with Twitter</a>
+		    			<p class="heading h-black">OR</p>
 						<form class="login-form" method="POST" action="{% url 'account_login' %}">
 							{% csrf_token %}
 							{{ form.as_p }}
