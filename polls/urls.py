@@ -69,4 +69,5 @@ urlpatterns = patterns('',
 	url(r'^disclaimer$', TemplateView.as_view(template_name='disclaimer.html'), name='disclaimer'),
 	url(r'^termsandcondition$', TemplateView.as_view(template_name='termsandcondition.html'), name='termsandcondition'),
 	url(r'^voteqform$', login_required(views.AutoPopulateVotesView.as_view()), name='voteqform'),
+	url(r'^productofferings$', TemplateView.as_view(template_name='abpBusiness/productfeatures.html'), name='productofferings')
 )

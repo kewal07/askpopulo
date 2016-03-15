@@ -1,0 +1,136 @@
+#footer{
+    position: initial;
+    margin-top: 8rem;
+}
+.feature-imge-div{
+  display:inline-block;
+  margin-bottom: 1rem;
+}
+a.internal-links{
+    color:black;
+}
+.group{
+    position: relative;
+}
+.group:after {
+    content:"";
+    display: table;
+    clear: both;
+}
+h1.product-heading{
+    margin-top: 5rem;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid;
+    padding-bottom: 0.5rem;
+}
+p.abp-brief{
+    color:white;
+    font-size:1.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+li.features{
+    color:white;
+    margin:1rem 0;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+.cta-div{
+    text-align: center;
+    margin-bottom:2rem;
+}
+.cs-div{
+    text-align: right;
+    position: absolute;
+    right: 0;
+    bottom: 1rem;
+}
+.product-constants{
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+.product-constants ul.product-feature{
+    padding-left:0;
+    list-style: none;
+}
+.abpb-col{
+    width: 30%;
+    display: inline-block;
+    padding: 1rem;
+    /*background: rgba(255,255,255,0.8);*/
+    border-radius: 10px;
+    margin-bottom:2rem;
+    box-sizing:border-box;
+    text-align: left;
+}
+.case-study{
+    width:100%;
+    position: relative;
+}
+p.case-study-p{
+    font-size:1.2rem;
+    color:white;
+}
+img.case-study-img{
+    width:100%;
+    border-radius:25px;
+    margin-right:1rem;
+    float:left;
+}
+/*.abpb-col ul.product-feature li.features{
+    color:black;
+}*/
+h2{
+    text-align: center;
+    border-bottom: 2px solid;
+    font-size: 1.25rem;
+}
+@media only screen and (max-width: 768px) {
+    #content{
+        margin-bottom:10rem;
+        padding:5rem 0rem 0rem 0rem;
+    }
+    .left{
+        float: none;
+        width: auto;
+    }
+    .abpb-col{
+        width:100%;
+    }
+    .case-study{
+        padding: 0;
+    }
+    p.case-study-p{
+        padding:0 1rem;
+    }
+    .case-study ul.product-feature{
+        padding:0 1rem;
+    }
+    .cs-div{
+        bottom:-10px;
+    }
+    .cs-div .btn{
+        padding:0;
+        margin:0;
+    }
+}
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+    .abpb-col{
+        width:44%;
+    }
+    .case-study{
+        width:100%;
+    }
+}
+@media only screen and (min-width: 1025px) and (max-width: 1300px) {
+    .abpb-col{
+        width:31%;
+    }
+    .case-study{
+        width:100%;
+    }
+}
