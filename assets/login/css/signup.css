@@ -30,6 +30,9 @@ form.signupContentForm label{
 	color: #666;
     font-size: 1rem;
 }
+label.agreement_label{
+	display:initial !important;
+}
 form.signupContentForm input{
 	margin-left: 0rem;
 }

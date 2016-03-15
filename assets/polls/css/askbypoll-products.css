@@ -12,24 +12,23 @@
 }
 h1.product-heading{
     margin-top: 5rem;
-    font-size: 2rem;
-    color: white;
+    font-size: 1.5rem;
     margin-bottom: 2rem;
     border-bottom: 2px solid;
     padding-bottom: 0.5rem;
+    font-weight: 100;
 }
 p.abp-brief{
-    color:white;
     font-size:1.2rem;
-    font-weight: bold;
     letter-spacing: 1px;
 }
 li.features{
-    color:white;
     margin:1rem 0;
     font-size: 1.2rem;
-    font-weight: bold;
     letter-spacing: 1px;
+}
+div.case-study li.features{
+    color:white;
 }
 .cta-div{
     text-align: center;
@@ -46,6 +45,7 @@ li.features{
     margin: 0 auto;
     display: block;
     text-align: center;
+    color:black;
 }
 .product-constants ul.product-feature{
     padding-left:0;

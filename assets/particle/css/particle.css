@@ -1,9 +1,11 @@
 /* Inspired by http://news.microsoft.com/stories/index.html */
 html{
-	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
+	/*background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;*/
+	background: #fafbfc;
 }
 #content{
 	max-width:1400px;
+	padding:9rem 0 3rem 0;
 	margin:0 auto;
 	color: #555f77;
 }
@@ -27,11 +29,13 @@ html{
 .col1{
 	width:48%;
 	left:0%;
+	border: 2px solid #f96a0e;
 }
 .featured-col-row{
 	height: 49%;
     position: relative;
     margin-bottom:1rem;
+    border: 2px solid #f96a0e;
 }
 .particle-feature-detail{
 	position: absolute;
@@ -114,4 +118,12 @@ blockquote p {
 }
 ul{
 	list-style: initial;
+}
+ul#foodStartUpsShare{
+	display: inline-flex;
+	padding:1rem 3rem;
+	list-style: none;
+}
+ul#foodStartUpsShare li{
+	display: inline-block;
 }

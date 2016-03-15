@@ -49,6 +49,7 @@ from django.template.loader import render_to_string
 import ast
 import re
 from random import shuffle
+from particle.models import Particle
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 
 # Create your views here.
@@ -66,7 +67,7 @@ class TeamView(BaseViewList):
 
 class IndexView(BaseViewList):
 	context_object_name = 'data'
-	paginate_by = 50
+	# paginate_by = 50
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(IndexView, self).render_to_response(context, **response_kwargs)
@@ -200,8 +201,22 @@ class IndexView(BaseViewList):
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
 			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
+		particleList = Particle.objects.order_by('-pub_date')
+		primer = Particle.objects.filter(is_prime=1).latest()
+		context['primer'] = primer
+		featuredParticles = []
+		for x in particleList:
+			if x.is_featured == 1 and x != primer:
+				featuredParticles.append(x)
+				if len(featuredParticles) == 4:
+					break
+		featuredParticles1 = featuredParticles[:2]
+		featuredParticles2 = featuredParticles[2:]
+		context['featuredParticles'] = featuredParticles
+		context['featuredParticles1'] = featuredParticles1
+		context['featuredParticles2'] = featuredParticles2
 		context['data'] = mainData
-		return mainData
+		return context
 
 class VoteView(BaseViewDetail):
 	model = Question

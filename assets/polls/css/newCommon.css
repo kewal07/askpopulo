@@ -5,11 +5,13 @@ footer, header, hgroup, menu, nav, section {
 }
 html{
     /*Add Browser specific*/
-    background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
+    /*background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;*/
+    background: #fafbfc;
   	margin: 0 auto;
   	position: relative;
   	height: 100%;
   	font-family: 'Arvo', serif;
+  	color:#555f77;
 }
 body {
 	margin: 0 auto;
@@ -129,6 +131,13 @@ blockquote p {
   font-style: italic;
   font-weight: 1.25rem !important;
 }
+.fb_iframe_widget{
+	display:block !important;
+}
+.fb-comments{
+	padding-left:3rem;
+	padding-right:3rem;
+}
 #content{
 	padding: 5rem 0 3rem 0;
 	max-width: 1400px;
@@ -179,6 +188,9 @@ button.navbar-toggle{
 a{
 	color: #f96a0e;
 	text-decoration: none;
+}
+a.redeem-in-header{
+	text-align: center;
 }
 .navbar-img{
 	float: left;

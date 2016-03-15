@@ -9,8 +9,8 @@
     padding-top: 5rem;
 }
 html{
-    background:url('/static/images/defaultBG.jpg') no-repeat center center fixed;
-    background-size:cover;
+    /*background:url('/static/images/defaultBG.jpg') no-repeat center center fixed;*/
+    /*background-size:cover;*/
 }
 
 /** From http://w3bits.com/css-masonry/ */
@@ -34,6 +34,7 @@ html{
     -webkit-box-sizing: border-box;
     box-shadow: 2px 2px 4px 2px #ccc;
     opacity: 1;
+    border: 2px solid #f96a0e;
 }
 .trivia-title{
 	border-bottom: 2px solid #666;
@@ -81,7 +82,7 @@ html{
 }
 .trivia-description{
 	padding-top:1rem;
-	font-size:1rem;
+	font-size:1.2rem;
 }
 .q-det-num{
     padding-left: 0.2rem;

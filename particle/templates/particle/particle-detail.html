@@ -1,8 +1,17 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% block meta_data_extra %}
+	<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}{{ particle.get_img_url }}" />
+	<meta property="og:image:width" content="300" /> 
+	<meta property="og:image:height" content="300" />
+	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<meta property="og:title" content="{{ particle.particle_title }}"/>
+	<meta property="og:description" content="{{ particle.particle_summary }}"/> 
+	<meta name="twitter:image:src" content="http://{{ request.META.HTTP_HOST }}{{ particle.get_img_url }}">
+{% endblock %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'particle/css/particle.css' %}" />
-	<style>
+	<style type="text/css">
 		#content{
 			background: white;
 		}
@@ -24,6 +33,22 @@
 		<div class="particle-body">
 			{{ particle.particle_content|safe }}
 		</div>
+		<ul id="foodStartUpsShare" class="share-buttons">
+			<li class="foodStartUpsSocialShare"><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST }}{{ request.path }}" data-layout="button_count"></div></li>
+			<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{{ request.path }}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{{ request.path }}" data-hashtags="AskByPoll" style="margin-left:1rem;">Tweet</a></li>
+			<li class="foodStartUpsSocialShare" style="margin-left:1rem;"><div class="g-plus" data-action="share" data-annotation="bubble" data-href="https://{{ request.META.HTTP_HOST }}{{ request.path }}" style="margin-left:1rem;"></div></li>
+		</ul>
+
+		<div class="fb-comments" data-href=""https://{{ request.META.HTTP_HOST }}{{ request.path }}"" data-numposts="50" data-width="100%"></div>
+
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.2&appId=1543103769284237";
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
 	</section>
 {% block extra_js %}
 	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>

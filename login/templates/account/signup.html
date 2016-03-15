@@ -1,7 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
 
-{% load url from future %}
 {% load i18n %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'login/css/signup.css' %}" />
@@ -10,7 +9,7 @@
 	<script src="https://www.google.com/recaptcha/api.js" ></script>     
 {% endblock %}
 {% block content %}
-<section id="signup">
+<section id="content">
 	<div class="signup">
 		<div class="signupContent">
 			<p class="headingSignup">{% blocktrans %}Already have an account ? Then please <a href="{{ login_url }}"><span class="anchorSpan">Sign in</span></a>.{% endblocktrans %}</p>
@@ -21,7 +20,7 @@
 			  {% if redirect_field_value %}
 			  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 			  {% endif %}
-			  <button type="submit" class="submit" id="signupButton">Sign Up</button>
+			  <button type="submit" class="submit btn cta" id="signupButton">Sign Up</button>
 			</form>
 		</div>
 	</div>

@@ -12,7 +12,7 @@ class ParticleView(BaseViewList):
 
 	def get_queryset(self):
 		context = {}
-		particleList = Particle.objects.order_by('-pub_date')
+		particleList = Particle.objects.filter(is_draft=0).order_by('-pub_date')
 		primer = Particle.objects.filter(is_prime=1).latest()
 		context['primer'] = primer
 		featuredParticles = []
