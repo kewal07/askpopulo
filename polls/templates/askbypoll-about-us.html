@@ -2,26 +2,29 @@
 {% load static %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/about-us.css' %}" />
+	<style>
+		p{
+			text-align:justify;
+		}
+	</style>
 {% endblock %}
 {% block content %}
 	<section id="content">
 		<!-- Desing Inspired by: https://www.apptopia.com/about -->
 		<div class="about">
 			<h2>Our Mission</h2>
-			<p class="mission text-center">To provide the most actionable consumer insights</p>
+			<p class="mission text-center">To Provide The Most Actionable Consumer Insights</p>
+		</div>
+		<div class="about">
+			<h2>Our Vision</h2>
+			<p class="mission text-center">To Become The One Stop Solution for Consumer Insights and Business Analytics </p>
 		</div>
 		<div class="about">
 			<h2>About</h2>
-			<p class="mission">In today’s Data Driven Business Ecosystem Consumer Insights & Public Opinion form the basis for decision making and policy formulations. Theability to ‘Ask’ the people a question and measure what the majority has to say - is a tool that isfirmly embedded in the fundamentals of Decision Making.</p>
-			<p class="mission">The Power of Internet and Social Communities can empower organizations with a strong tool for Business Decisions.AskByPoll has been created with the intent to make the Opinion Gathering from Consumers Fast, Easy and Cost Effective.</p>
-			<p class="mission">Organizations can easily gather Consumer Insights using the AskByPoll Platform, at the same time use AskByPoll as a parallel engagement channel. Organizations on AskByPoll can</p>
-			<ul class="mission">
-				<li>Poll & Survey on Areas of Need to gather insights from specific demographics</li>
-				<li>Get responses as a unique combination of Quantitative & Qualitative Intelligence</li>
-				<li>Distribute the Polls & Surveys on their websites, through Emails managed on the AskByPoll platform, Dedicated AskByPoll Pages and other Social Media Channels</li>
-				<li>Get a Real Time View of Consumer Sentimentsthrough interactive dashboards, dynamic charts & graphs</li>
-			</ul>
-			<p class="mission">Organizations can also conduct end to end Market Research with the AskByPoll team handling all the processes from Research Design to Data Collection, Analysis and Recommendations.</p>
+			<p class="mission">In today’s Data Driven Business Ecosystem, Consumer Insights & Public Opinion form the basis for decision making and policy formulations.</p>
+			<p class="mission">The ability to ‘Ask’ the people a question and measure what the majority has to say - is a tool that is firmly embedded in the fundamentals of Decision Making. The Power of Internet and Social Communities can empower organisations with a strong tool for Business Decisions.</p>
+			<p class="mission">AskByPoll has been created with the intent to make the Opinion Gathering from Consumers Fast, Easy and Cost Effective</p>
+			<img src="/static/askbypoll-aboutus-image.png">
 			<div class="cta">
 				<a href="{% url 'polls:abp_business' %}" class="signup-a light-blue">Business Solutions</a>
 	    		<a href="{% url 'polls:abp_case_study' %}" class="signup-a green">Case Studies</a>
@@ -29,10 +32,22 @@
 	    	</div>
 		</div>
 		<div class="about">
+			<h2>Value Proposition</h2>
+			<p class="mission bold">Simplified Research Design</p>
+			<p class="mission">AskByPoll helps organisations design context specific polls, surveys, interviews to conduct research studies</p>
+			<p class="mission bold">Gather Reliable Data</p>
+			<p class="mission">AskByPoll helps organisations gather high quality, relevant demographic data through online & offline channels, as well as qualitative interviews</p>
+			<p class="mission bold">Intuitive Advanced Analytics</p>
+			<p class="mission">AskByPoll helps organisations make sense of the research data by providing meaningful & actionable insights</p>
+			<p class="mission bold">Seamless Charting & Reporting</p>
+			<p class="mission">AskByPoll helps organisations prepare customised reports,charts, and infographics</p>
+		</div>
+
+		<div class="about">
 			<h2>Mentors</h2>
 			<div class="mentor-div">
 				<img src="/static/anjana.png"/>
-				<p class="mission bold">Founder,Director,VentureBean Consulting, Board Advisor AskByPoll</p>
+				<p class="mission bold">Anjana Vivek: Founder,Director,VentureBean Consulting</p>
 				<p class="mission">Fellow Chartered Accountant with BSc.Hons (Physics), Former faculty member in the
 					Finance & Control Area at IIM, Bangalore (IIMB). Key former positions held VP, Erns&Young, COO-NSR Centre for Entrepreneurial Learning at IIMB, VP- CTD/NVCF
 					Project of USAID. Has been Board/Committee Member of Institute of Chartered
@@ -42,7 +57,7 @@
 			</div>
 			<div class="mentor-div">
 				<img src="/static/abhishek.png"/>
-				<p class="mission bold">Independent Research Consultant, Advisor AskByPoll</p>
+				<p class="mission bold">Abhishek Ghosh: Independent Research Consultant</p>
 				<p class="mission">Abhishek has 7 Years of Experience in Market Research and 2 Years in Brand Consulting. He has worked with Hansa Research in Qualitative Research for 2.5 Years.He has also worked with Nielsen and TNS in the past and has worked across categories and brands including Facebook, Renault, Wipro, Unilever, Nokia etc
 				</p>
 			</div>
@@ -51,13 +66,13 @@
 			<h2>Team</h2>
 			<div class="mentor-div">
 				<img src="/static/sandeep.png"/>
-				<p class="mission bold">Co-Founder, CEO, AskByPoll - Ollivander's Technologies Private Limited</p>
+				<p class="mission bold">Co-Founder, CEO, AskByPoll</p>
 				<p class="mission">Sandeep has more than 3 Years of Experience in Sales and Marketing and 2 Years in Engineering. He has worked with Akamai Technologies in Sales and Account Management for 3 Years.He has also awarded the Sales Titan for the Year 2013. Sandeep has done his MBA from IIM, Bangalore and is an engineering graduate from BIT, Mesra. He has also been an NTSE Scholar and has also won the WIPRO Earthian award for his B-Plan presentation. His passion for analytics and research led to the inception of AskByPoll.
 				</p>
 			</div>
 			<div class="mentor-div">
 				<img src="/static/kewal.png"/>
-				<p class="mission bold">Co-Founder, COO,Co-CTO, AskByPoll - Ollivander's Technologies Private Limited</p>
+				<p class="mission bold">Co-Founder, COO, AskByPoll</p>
 				<p class="mission">Kewal has almost 3 Years of Experience in RnD and Start-ups. He has worked with Philips Research and Development in the MRI engineering department. During his 2 years stint at Philips he has filed for 1 patent on Analytics and Alerting System for MRIs and has been fecilitated with the Take Ownership award. He was also the winner of Google Chrome App Developer Challenge,2014 and has been awarded the Google-Tata Trust-Udacity Scholarship.He has been a project student at IIT, Kharagpur and also has 2 technical papers on cryptography and neural netowrks.
 				</p>
 			</div>
