@@ -178,4 +178,10 @@ ul#foodStartUpsShare li{
 	.particle-author,.particle-time{
 		font-size:1rem !important;
 	}
+	.particle-author{
+		padding-right:0.5rem;
+	}
+	.particle-time{
+		margin-left:0.5rem;
+	}
 }
