@@ -14,13 +14,15 @@ solution_caption = [
 					"Get expert advice and 24/7 support any time you need"
 					]
 	}},
-	{'government' : {
-		"caption": "Public Opinion<br>Social Interactions<br>Planning Data",
-		"brief":"With Citizen Involvement becoming more and more important in Public Policy Matters, it is becoming essential for the Governments to device ways to easily get in touch with the Citizens to gather their opinion. Use the AskByPoll Products and Services to gather opinion from Citizens at the click of a few buttons. This is how we can help –",
+	{'e-commerce' : {
+		"caption": "Consumer Insights<br>Product Reviews<br>Inventory Tagging",
+		"brief":" E-Commerce is one of the fastest Growing Sectors Today. Not only does it bring in convenience for customers, but also ensures easier availability, choice in options, flexible purchase & return and most importantly ability to choose the right Product based on reviews and ratings. Hence, it becomes critical for E-Commerce players to have robust systems to gather feedback on their Products from their customers as well as develop capabilities to gather opinion from a larger open Audience regarding their preferences.  Use the AskByPoll Products and Services to gather opinion from customers at the click of a few buttons. This is how we can help –",
 		"details": [
-					"Gather Citizen Feedback Using Our Social Campaign Tool",
-					"Use the Power of Social Polls to Talk to Citizens to Seek Their Opinion" 
-					"Offload your End-to-End Research Requirements to us and Get  Actionable Insights",
+					"Gather Preference Insights From Consumers Outside Your Own Customer Base",
+					"Perform Product Reviews to Understand Category and SKU Specific Preferences" 
+					"Offload Your Category Tagging Activities to our Online Community",
+					"Plan your Inventory Better By Understanding demand Preferences of People",
+					"New Product or Feature Launch Validation & User Testing before Making it Public",
 					"Gain access to AskByPoll Respondent Community ",
 					"Integrate with your existing systems",
 					"Secure Data, Always Yours",
@@ -55,84 +57,6 @@ solution_caption = [
 					"Get expert advice and 24/7 support any time you need"
 					]
 	}},
-	{'marketresearch' : {
-		"caption": "Meaningful Insights<br>Advanced Analysis<br>Meaningful Insights",
-		"brief":" Understanding market research and using it to your advantage is vital in reaching out to your target audience and increasing your sales.",
-		"details": [
-					"Gather valuable data from customer feedback to product research",
-					"Use advanced analytics to turn your data into smarter business decisions",
-					"Create sophisticated surveys in minutes",
-					"Customised NPS Study, In-person Interviews and Analysis",
-					"Own your organization’s data regardless of personnel changes",
-					"Easily manage multiple users—allow single sign on through your network",
-					"Protect data with advanced SSL security and HIPAA-compliant features",
-					"Gain access to millions of respondents with AskByPoll Audience",
-					"Innovative Employee Interaction and Engagement Mechanisms",
-					"Customised Website and Email Widgets",
-					"Easily manage multiple users—allow single sign on through your network",
-					"Protect data with advanced SSL security and HIPAA-compliant features",
-					"Gain access to millions of respondents with AskByPoll Audience",
-					"Innovative Employee Interaction and Engagement Mechanisms",
-					"Customised Website and Email Widgets",
-					"Get expert advice and 24/7 support any time you need"
-					]
-	}},
-	{'academics' : {
-		"caption": "Student Faculty Interactions<br>Alumni Feedback<br>Academic Research",
-		"brief":" Academic Institutions are Temples of Knowledge and Knowledge is best imparted through Sharing. In today’s Hyper Connected World it is critical for all the stakeholders of an Academic Institution to engage with each other. Use the AskByPoll Products and Services to increase Student, Faculty and Alumni Engagement at the click of a few buttons. This is how we can help –",
-		"details": [
-					"Research Project Tool for Students & Faculty, Assessment System",
-					"Course and Faculty Feedback System",
-					"Alumni Interaction System – Awards, Event Planning, Feedback",
-					"Student Club Activities – Elections, Promotions, Feedback, Planning",
-					"Gain access to AskByPoll Respondent Community ",
-					"Integrate with your existing systems",
-					"Secure Data, Always Yours",
-					"Get expert advice and 24/7 support any time you need"
-					]
-	}},
-	{'healthcare' : {
-		"caption": "Quality Control<br>Patient Feedback<br>Vendor Feedback",
-		"brief":" With the Commoditization of the Health Care Market, Patient Satisfaction becomes essential to Ensure Repeat Customers. It is critical to gather feedback from all Stakeholders Regarding Expectations and Experiences. Use the AskByPoll Products and Services to Gather Feedback from All Stakeholders at the click of a few buttons.This is how we can help –",
-		"details": [
-					"End to End Patient Feedback System for Various Departments including Rooms, Food Etc.",
-					"Quality Control Feedback Monitoring Technology",
-					"Internal Departmental Feedback Systems",
-					"End to End Vendor & Supplier Feedback Mechanisms",
-					"Gain access to AskByPoll Respondent Community ",
-					"Integrate with your existing systems",
-					"Secure Data, Always Yours",
-					"Get expert advice and 24/7 support any time you need"
-					]
-	}},
-	{'e-commerce' : {
-		"caption": "Consumer Insights<br>Product Reviews<br>Inventory Tagging",
-		"brief":" E-Commerce is one of the fastest Growing Sectors Today. Not only does it bring in convenience for customers, but also ensures easier availability, choice in options, flexible purchase & return and most importantly ability to choose the right Product based on reviews and ratings. Hence, it becomes critical for E-Commerce players to have robust systems to gather feedback on their Products from their customers as well as develop capabilities to gather opinion from a larger open Audience regarding their preferences.  Use the AskByPoll Products and Services to gather opinion from customers at the click of a few buttons. This is how we can help –",
-		"details": [
-					"Gather Preference Insights From Consumers Outside Your Own Customer Base",
-					"Perform Product Reviews to Understand Category and SKU Specific Preferences" 
-					"Offload Your Category Tagging Activities to our Online Community",
-					"Plan your Inventory Better By Understanding demand Preferences of People",
-					"New Product or Feature Launch Validation & User Testing before Making it Public",
-					"Gain access to AskByPoll Respondent Community ",
-					"Integrate with your existing systems",
-					"Secure Data, Always Yours",
-					"Get expert advice and 24/7 support any time you need"
-					]
-	}},
-	{'hospitality' : {
-		"caption": "Customer Feedback<br>Public Opinion<br>Vendor Feedback",
-		"brief":" Customer Comfort and Satisfaction is at the core of Hospitality. It is important to ensure that all the departments within the Hotel work towards ensuring that the Customer is feeling welcome, comfortable and happy being in the Hotel. Equally important is also to ensure that a proper feedback loop is developed to understand the intricacies of the customer’s experience. Use the AskByPoll Products and Services to gather Feedback from Customers at the click of a few buttons. This is how we can help –",
-		"details": [
-					"Offload Your End to End Room, Dining and Other Departmental Feedback Requirements",
-					"Capture Business Critical Data Points from Live Customers using our Technology",
-					"Vendor & Supplier Feedback Technology for Easy Data Gathering and Analysis",
-					"Gain access to AskByPoll Respondent Community ",
-					"Integrate with your existing systems",
-					"Secure Data, Always Yours",
-					"Get expert advice and 24/7 support any time you need"
-					]
-	}},
 	{'publishers' : {
 		"caption": "Increased User Engagement<br>Public Opinion<br>Sensitivity Campaigns ",
 		"brief":" One of the most Competitive Landscapes existing today, Publishing thrives on User Traction and Engagement.  More engaging the content and more interactive the interfaces between the content and consumers better the chances of success for the Publisher.  Use the AskByPoll Products and Services to gather Public Opinion at the click of a few buttons. This is how we can help –",
@@ -157,6 +81,82 @@ solution_caption = [
 					"Gain access to AskByPoll Respondent Community ",
 					"Integrate with your existing systems",
 					"Secure Data, Always Yours",
+					"Get expert advice and 24/7 support any time you need"
+					]
+	}},
+	{'government' : {
+		"caption": "Public Opinion<br>Social Interactions<br>Planning Data",
+		"brief":"With Citizen Involvement becoming more and more important in Public Policy Matters, it is becoming essential for the Governments to device ways to easily get in touch with the Citizens to gather their opinion. Use the AskByPoll Products and Services to gather opinion from Citizens at the click of a few buttons. This is how we can help –",
+		"details": [
+					"Gather Citizen Feedback Using Our Social Campaign Tool",
+					"Use the Power of Social Polls to Talk to Citizens to Seek Their Opinion" 
+					"Offload your End-to-End Research Requirements to us and Get  Actionable Insights",
+					"Gain access to AskByPoll Respondent Community ",
+					"Integrate with your existing systems",
+					"Secure Data, Always Yours",
+					"Get expert advice and 24/7 support any time you need"
+					]
+	}},
+	{'academics' : {
+		"caption": "Student Faculty Interactions<br>Alumni Feedback<br>Academic Research",
+		"brief":" Academic Institutions are Temples of Knowledge and Knowledge is best imparted through Sharing. In today’s Hyper Connected World it is critical for all the stakeholders of an Academic Institution to engage with each other. Use the AskByPoll Products and Services to increase Student, Faculty and Alumni Engagement at the click of a few buttons. This is how we can help –",
+		"details": [
+					"Research Project Tool for Students & Faculty, Assessment System",
+					"Course and Faculty Feedback System",
+					"Alumni Interaction System – Awards, Event Planning, Feedback",
+					"Student Club Activities – Elections, Promotions, Feedback, Planning",
+					"Gain access to AskByPoll Respondent Community ",
+					"Integrate with your existing systems",
+					"Secure Data, Always Yours",
+					"Get expert advice and 24/7 support any time you need"
+					]
+	}},
+	{'hospitality' : {
+		"caption": "Customer Feedback<br>Public Opinion<br>Vendor Feedback",
+		"brief":" Customer Comfort and Satisfaction is at the core of Hospitality. It is important to ensure that all the departments within the Hotel work towards ensuring that the Customer is feeling welcome, comfortable and happy being in the Hotel. Equally important is also to ensure that a proper feedback loop is developed to understand the intricacies of the customer’s experience. Use the AskByPoll Products and Services to gather Feedback from Customers at the click of a few buttons. This is how we can help –",
+		"details": [
+					"Offload Your End to End Room, Dining and Other Departmental Feedback Requirements",
+					"Capture Business Critical Data Points from Live Customers using our Technology",
+					"Vendor & Supplier Feedback Technology for Easy Data Gathering and Analysis",
+					"Gain access to AskByPoll Respondent Community ",
+					"Integrate with your existing systems",
+					"Secure Data, Always Yours",
+					"Get expert advice and 24/7 support any time you need"
+					]
+	}},
+	{'healthcare' : {
+		"caption": "Quality Control<br>Patient Feedback<br>Vendor Feedback",
+		"brief":" With the Commoditization of the Health Care Market, Patient Satisfaction becomes essential to Ensure Repeat Customers. It is critical to gather feedback from all Stakeholders Regarding Expectations and Experiences. Use the AskByPoll Products and Services to Gather Feedback from All Stakeholders at the click of a few buttons.This is how we can help –",
+		"details": [
+					"End to End Patient Feedback System for Various Departments including Rooms, Food Etc.",
+					"Quality Control Feedback Monitoring Technology",
+					"Internal Departmental Feedback Systems",
+					"End to End Vendor & Supplier Feedback Mechanisms",
+					"Gain access to AskByPoll Respondent Community ",
+					"Integrate with your existing systems",
+					"Secure Data, Always Yours",
+					"Get expert advice and 24/7 support any time you need"
+					]
+	}},
+	{'marketresearch' : {
+		"caption": "Meaningful Insights<br>Advanced Analysis<br>Meaningful Insights",
+		"brief":" Understanding market research and using it to your advantage is vital in reaching out to your target audience and increasing your sales.",
+		"details": [
+					"Gather valuable data from customer feedback to product research",
+					"Use advanced analytics to turn your data into smarter business decisions",
+					"Create sophisticated surveys in minutes",
+					"Customised NPS Study, In-person Interviews and Analysis",
+					"Own your organization’s data regardless of personnel changes",
+					"Easily manage multiple users—allow single sign on through your network",
+					"Protect data with advanced SSL security and HIPAA-compliant features",
+					"Gain access to millions of respondents with AskByPoll Audience",
+					"Innovative Employee Interaction and Engagement Mechanisms",
+					"Customised Website and Email Widgets",
+					"Easily manage multiple users—allow single sign on through your network",
+					"Protect data with advanced SSL security and HIPAA-compliant features",
+					"Gain access to millions of respondents with AskByPoll Audience",
+					"Innovative Employee Interaction and Engagement Mechanisms",
+					"Customised Website and Email Widgets",
 					"Get expert advice and 24/7 support any time you need"
 					]
 	}},
