@@ -184,4 +184,11 @@ ul#foodStartUpsShare li{
 	.particle-time{
 		margin-left:0.5rem !important;
 	}
+	img.article-images.article-images-ws.bad-img, img.valentines-info {
+	    display: block;
+	    width: 100%;
+	}
+	.particle-body li{
+		line-height: 24px;
+	}
 }
