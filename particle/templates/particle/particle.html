@@ -19,21 +19,23 @@
 	<section id="content">
 		{% if particles %}
 			<div id="featured-partciles">
-				<a href="{% url 'particle:particle_detail' particles.primer.id particles.primer.particle_slug %}">
-					<div class="featured-col col1">
-						<div class="particle-feature-detail">
-							<p class="primer-title">
-								{{ particles.primer.particle_title }}
-							</p>
-							<p class="primer-details">
-								{{ particles.primer.user.first_name }} 
-							</p>
-							<p class="primer-details">
-								A {{ particles.primer.read_time }} read
-							</p>
+				<div class="container-primer">
+					<a href="{% url 'particle:particle_detail' particles.primer.id particles.primer.particle_slug %}">
+						<div class="featured-col col1">
+							<div class="particle-feature-detail primer-detail">
+								<p class="primer-title">
+									{{ particles.primer.particle_title }}
+								</p>
+								<p class="primer-details">
+									{{ particles.primer.user.first_name }} 
+								</p>
+								<p class="primer-details">
+									A {{ particles.primer.read_time }} read
+								</p>
+							</div>
 						</div>
-					</div>
-				</a>
+					</a>
+				</div>
 				<div class="featured-col col2">
 					{% for featured in particles.featuredParticles1 %}
 						<a href="{% url 'particle:particle_detail' featured.id featured.particle_slug %}">

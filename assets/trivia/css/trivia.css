@@ -148,6 +148,7 @@ div.poll-info a{
         margin:0 auto;
     }
     .masonry {
+        margin-top:0rem;
         -moz-column-count: 1;
         -webkit-column-count: 1;
         column-count: 1;

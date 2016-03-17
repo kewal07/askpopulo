@@ -127,3 +127,38 @@ ul#foodStartUpsShare{
 ul#foodStartUpsShare li{
 	display: inline-block;
 }
+@media only screen and (max-width: 767px){
+	#featured-partciles{
+		height: auto;
+		position: initial;
+	}
+	.featured-col{
+		position: initial;
+	}
+	.container-primer{
+		margin-bottom:1rem;
+		height: 300px;
+	}
+	.col1{
+		width:100%;
+		margin:0 auto;
+		position: relative;
+		border:none !important;
+	}
+	.col2,.col3{
+		position: initial;
+		width:100%;
+	}
+	.particle-feature-detail{
+		position: initial;
+	}
+	.featured-col-row {
+		height: auto; 
+		position: initial; 
+		border: none;
+		margin:0 !important;
+	}
+	.primer-detail{
+		position: absolute;
+	}
+}
