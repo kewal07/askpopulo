@@ -131,8 +131,11 @@ ul#foodStartUpsShare li{
 	#content p,.particle-feature-detail p{
 		font-size: 1rem;
 	}
+	.particle-body h1{
+		font-size:1.3rem !important;
+	}
 	blockquote p{
-		font-size:1.2rem !important;
+		font-size:1.1rem !important;
 	}
 	p.main-heading{
 		font-size:1.5rem !important;

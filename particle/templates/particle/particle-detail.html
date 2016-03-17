@@ -30,7 +30,7 @@
 			</p>
 			<img class="user-particle" src="{{ particle.user.extendeduser.get_profile_pic_url }}" alt="User {{ particle.user.first_name }}"> 
 			<p class="particle-author">{{ particle.user.first_name }}</p>
-			<p class="particle-time">A {{ particle.read_time }} Read</p>
+			<p class="particle-time">{{ particle.read_time }} Read</p>
 		</div>
 		<div class="cta">
 			<img class="featured-image" src="{{ particle.get_img_url }}">
