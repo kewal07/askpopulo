@@ -162,7 +162,7 @@ ul#foodStartUpsShare li{
 		position: absolute;
 	}
 	p.main-heading{
-		line-height: 40px;
+		line-height: 36px !important;
 	}
 	.particle-detail img.user-particle{
 		margin-left:1rem;
