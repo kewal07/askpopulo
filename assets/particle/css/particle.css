@@ -185,7 +185,8 @@ ul#foodStartUpsShare li{
 		margin-left:0.5rem !important;
 	}
 	.particle-body img{
-		width:98%;
+		width: 98% !important;
+    	height: auto !important;
 		display: block;
 		margin:0 auto;
 	}
