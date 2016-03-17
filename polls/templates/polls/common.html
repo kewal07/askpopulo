@@ -52,9 +52,9 @@
 				<div class="container-header clearfix">
 					<div class="navbar-header clearfix">
 						{% if user.is_authenticated %}
-							<button class="user-btn" type="button">
-								<img id="user-in-nav" src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}"/>
-							</button>
+							<!-- <button class="user-btn" type="button"> -->
+								<img id="user-in-nav" class="user-btn" src="{{ user.extendeduser.get_profile_pic_url }}"  alt="User {{ user.first_name }}"/>
+							<!-- </button> -->
 						{% endif %}
 						<button class="navbar-toggle" type="button">
 							<i class="fa fa-bars"></i>
