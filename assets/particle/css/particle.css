@@ -175,4 +175,7 @@ ul#foodStartUpsShare li{
 		display: block;
 		width:100%;
 	}
+	.particle-author,.particle-time{
+		font-size:1rem;
+	}
 }
