@@ -1913,6 +1913,9 @@ def embed_poll(request):
 		#print(request.session.session_key)
 		pollId = int(request.GET.get('pollId'))
 		callback = request.GET.get('callback', '')
+		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
+		if not divClass:
+			divClass = "basic"
 		analysisNeeded = False
 		if request.GET.get('analysisNeeded',"") == "true":
 			analysisNeeded = True
@@ -1920,7 +1923,7 @@ def embed_poll(request):
 		poll = Question.objects.get(pk=pollId)
 		extra_context_data = {}
 		extra_context_data['analysisNeeded'] = analysisNeeded
-		html = get_widget_html(poll,extra_context_data=extra_context_data)
+		html = get_widget_html(poll, extra_context_data=extra_context_data, widgetType=divClass)
 		req ['html'] = html
 		if poll.protectResult == 1:
 			req['protect'] = 1
@@ -1942,6 +1945,9 @@ def vote_embed_poll(request):
 		poll = Question.objects.get(pk=pollId)
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		src = request.GET.get('src','')
+		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
+		if not divClass:
+			divClass = "basic"
 		ipAddress = getIpAddress(request)
 		# ipAddress = '139.130.4.22'
 		# sessionKey = request.session.session_key

@@ -40,7 +40,7 @@
 				<li class="dashboard-menu-li">Advanced</li>
 				<li id="dashboard-surveys-tab" class="dashboard-menu-li">Surveys</li>
 				<li id="dashboard-export-tab" class="dashboard-menu-li">Export</li>
-				<!-- li class="dashboard-menu-li">Feedback</li -->
+				<li class="dashboard-menu-li">Feedback</li>
 			</ul>
 		</div>
 		<div id="dashboard-content" class="admin-dash-div clearfix">
@@ -1330,12 +1330,10 @@
 			<div class="dashboard-stats clearfix">
 				{% for poll in feedback_polls %}
 					<div class="feedback-half">
-				
-				   		{% if poll.id == 3838 %}
-							{% include "feedback.html" with poll=poll %}
-						{% elif poll.id == 3839 %}
-							{% include "feedback2.html" with poll=poll %}
-						{% endif %}
+				   		{% include "polls/webtemplates/feedback1_widget_template.html" with poll=poll %}
+					</div>
+					<div class="feedback-half">
+				   		{% include "polls/webtemplates/feedback2_widget_template.html" with poll=poll %}
 					</div>
 				{% endfor %}
 			</div>
