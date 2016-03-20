@@ -5,7 +5,7 @@
 	{% for share_image in has_image %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}{{ share_image }}"/>
 	{% endfor %}
-		<meta property="og:image:width" content="300" /> 
+		<meta property="og:image:width" content="300" />
 		<meta property="og:image:height" content="300" />
 	{% else %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
@@ -18,7 +18,7 @@
 {% endblock %}
 {% load disqus_tags %}
 {% disqus_show_comments %}
-{% set_disqus_url object.get_absolute_url %} 
+{% set_disqus_url object.get_absolute_url %}
 {% load static %}
 {% block extra_css %}
 	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
@@ -56,7 +56,7 @@
 								{{ question.pub_date }}
 							</p>
 						</div>
-					</div> 
+					</div>
 					<div class="mainPoll">
 						<p class="que_text">{{ question.question_text }}
 							{% if user.is_authenticated %}
@@ -82,23 +82,23 @@
 						{% endif %}
 						<div class="poll-info">
 							{% if data.user_already_voted %}
-								<a href="javascript:;" class="light-grey">Voted 
+								<a href="javascript:;" class="light-grey">Voted
 							{% else %}
-								<a href="javascript:;" class="light-grey">Vote 
+								<a href="javascript:;" class="light-grey">Vote
 							{% endif %}
 									<span class="q-det-num">{{ data.votes }}</span>
 								</a>
 							{% if data.subscribed %}
-								<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.id }}---{{ question.que_slug }}" title="Unfollow">Followed 
+								<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.id }}---{{ question.que_slug }}" title="Unfollow">Followed
 							{% else %}
-								<a href="javascript:;" class="light-grey followButton" id="follow{{ question.id }}---{{ question.que_slug }}" title="Follow">Follow 
+								<a href="javascript:;" class="light-grey followButton" id="follow{{ question.id }}---{{ question.que_slug }}" title="Follow">Follow
 							{% endif %}
 									<span class="q-det-num" id="sub_num{{ question.id }}">{{ data.subscribers }}</span>
 								</a>
 							{% if user in data.upvotedusers %}
-								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvoted 
+								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvoted
 							{% else %}
-								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvote 
+								<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.id }}---{{ question.que_slug }}">Upvote
 							{% endif %}
 				    				<span class="q-det-num" id="upvotenum{{ question.id }}">{{ data.upvoteCount }}</span>
 				    			</a>
@@ -139,26 +139,26 @@
 						<div class="analyzeAndShare">
 							<ul class="share-buttons">
 								{% if user.is_authenticated %}
-									<li >
+									<li class="social-share-div">
 										<div class="fb-share-button" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count">
 										</div>
 									</li>&nbsp&nbsp&nbsp
-									<li>
+									<li class="social-share-div">
 										<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-via="askbypoll" data-count="horizontal" data-counturl="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}" data-hashtags="AskByPoll">Tweet
 										</a>
 									</li>&nbsp&nbsp&nbsp
-									<li>
-										<div class="g-plus" data-action="share" data-annotation="bubble" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}">										
+									<li class="social-share-div">
+										<div class="g-plus" data-action="share" data-annotation="bubble" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}?referral={{ referral_code }}">
 										</div>
 									</li>
 								{% else %}
-									<li >
+									<li class="social-share-div">
 										<div class="fb-share-button" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-image='https://askbypoll.com/static/pollsLogoShareNew.png'  data-layout="button_count"></div>
 									</li>&nbsp&nbsp&nbsp
-									<li>
+									<li class="social-share-div">
 										<a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-count="horizontal" data-counturl="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}" data-hashtags="AskByPoll">Tweet</a>
 									</li>&nbsp&nbsp&nbsp
-									<li>
+									<li class="social-share-div">
 										<div class="g-plus" data-action="share" data-annotation="bubble" data-href="{{ DOMAIN_URL }}/{% url 'polls:polls_share' question.id question.que_slug %}"></div>
 									</li>
 								{% endif %}
@@ -216,10 +216,10 @@
 			var disqus_config = function() {
 				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
 				this.page.api_key = "{{ ssoData.pub_key }}";
-				this.callbacks.onNewComment = [function(comment) { 
-			
+				this.callbacks.onNewComment = [function(comment) {
+
 				var commentLength = comment.text.length;
-				
+
 				var data_dict = {"que_id":{{ question.id }}, "que_author":"{{ question.user.first_name }}", "commentLength":commentLength, "to_user_id":{{ question.user.id }},"com_author":"{{ user.username }}","que_text":"{{ question.question_text }}","que_url":"https://{{ request.META.HTTP_HOST }}{% url 'polls:polls_vote' question.id question.que_slug %}", 'csrfmiddlewaretoken': "{{ csrf_token }}" };
 
 				$.ajax({
@@ -235,7 +235,7 @@
 
 			google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 			$(document).ready(function(){
-			 
+
 			  drawPollsChart("{{ csrf_token }}","",{{ question.id }});
 			  if($('.analysis').is(':visible')){
 				drawGenderChart("{{ csrf_token }}","",{{ question.id }});

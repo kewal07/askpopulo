@@ -16,8 +16,8 @@
 .questionContent{
 	width:95%;
 	margin:0 auto;
-	display: -ms-flex; 
-  	display: -webkit-flex; 
+	display: -ms-flex;
+  	display: -webkit-flex;
   	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
   	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
   	display: -ms-flexbox;      /* TWEENER - IE 10 */
@@ -192,25 +192,29 @@ ul.share-buttons li{
   position:relative;
 }
 
+.social-share-div{
+	display:inline-block !important;
+}
+
 @media only screen and (max-width: 980px){
 	.questionContent{
 		display: block;
-	}	
+	}
 	div.userInfo{
 		padding:1rem;
 		border-bottom:2px dashed #666;
-		-webkit-box-flex: none;      
-		-moz-box-flex: none;                       
-		-webkit-flex: none;          
-		-ms-flex: none;              
-		flex: none; 
+		-webkit-box-flex: none;
+		-moz-box-flex: none;
+		-webkit-flex: none;
+		-ms-flex: none;
+		flex: none;
 		width:100%;
 	}
 	div.userImage{
 		float:left;
 	}
 	div.userBrief {
-		float:left; 
+		float:left;
 		margin-left:0.5rem;
 	}
 	div.userBrief p{
@@ -293,4 +297,3 @@ ul.share-buttons li{
 		left:0;
 	}
 }
-
