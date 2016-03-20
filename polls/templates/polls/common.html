@@ -70,6 +70,7 @@
 							<li><a href="{% url 'polls:polls_category' %}">Category</a></li>
 							<li><a href="{% url 'particle:particle' %}">Particle</a></li>
 							<li><a href="{% url 'trivia:trivia' %}">Trivia</a></li>
+              <li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>
 			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
 			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
@@ -106,7 +107,7 @@
 						<li><a href="{% url 'company_page' user.extendeduser.company.company_slug %}">{{ user.extendeduser.company.name}}</a></li>
 						<li><a href="{% url 'login:adminDashboard' user.id user.extendeduser.user_slug %}">Dashboard</a></li>
 					{% endif %}
-					<li id="notification_count_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-bell"></i>{{ notification_count}} pNotes{{ notification_count|pluralize }}</a></li>
+					<li id="notification_count_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-bell"></i>{{ notification_count}} pNote{{ notification_count|pluralize }}</a></li>
 					<li id="notification_credit_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-coins"></i>{{ user.extendeduser.credits }} pCoin{{ user.extendeduser.credits|pluralize }}</a></li>
 					<li class="user_not_credit_message_li"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i> Redeem</a></li>
 					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} pMail {{ messageCount|pluralize }}
