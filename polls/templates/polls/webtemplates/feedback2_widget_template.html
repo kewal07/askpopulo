@@ -1,0 +1,106 @@
+<style>
+	.askbypoll-embed-poll-feedback2{
+		margin:0 !important;
+		padding:none;
+		border:none !important;
+	}
+	.askbypoll-embed-poll-wrapper-feedback2{
+		background:transparent !important;
+	}
+	.askbypoll-embed-poll-header-feedback2{
+		display: none !important;
+	}
+	.askbypoll-embed-poll-question-choice-img-text-feedback2{
+		display: none !important;
+	}
+	.askbypoll-embed-poll-question-feedback2{
+		margin-top:0rem;
+	}
+	.askbypoll-embed-poll-question-choice-feedback2 {
+	     margin-right: 0rem !important; 
+	     border:none;
+	}
+	.askbypoll-widget-title-feedback2{
+		margin-top:0;
+	}
+	img.askbypoll-embed-poll-logo-feedback2 {
+		width: 75px !important;
+ 			height: 75px !important;
+ 		}
+	.askbypoll-embed-poll-question-choices-feedback2{
+		margin-bottom:0rem !important;
+	}
+	.askbypoll-embed-progress-bar-feedback2{
+		background:transparent !important;
+	}
+	img.askbypoll-embed-poll-question-choice-img-feedback2 {
+	    width: 50px !important;
+	    height: 50px !important;
+	    margin: 0 auto;
+	    display: block;
+	}
+	.askbypoll-embed-poll-powered-by-feedback2 {
+	    position: relative;
+	    display: inline-block;
+	     margin-top: 0rem; 
+	}
+	p.askbypoll-embed-poll-powered-by-p-feedback2 {
+	    position: initial; 
+	    display: inline-block;
+	    text-align: right;
+	    font-size: 0.7rem;
+	    margin: 0 !important;
+	    width: 8rem;
+	}
+</style>
+<div class="askbypoll-embed-poll-wrapper askbypoll-embed-poll-wrapper-feedback2" id="askbypoll-embed-poll-wrapper---{{ poll.id }}">
+	<div class="a-clearfix askbypoll-embed-poll-header askbypoll-embed-poll-header-feedback2" id="askbypoll-embed-poll-header---{{ poll.id }}">
+		<a class="askbypoll-embed-poll-icon" id="askbypoll-embed-poll-icon---{{ poll.id }}"  href="{{ domain_url }}" target="new">
+			<img class="askbypoll-embed-poll-logo askbypoll-embed-poll-logo-feedback2" src="{{ domain_url }}/static/widgetLogo.png">
+		</a>
+		<div class="askbypoll-embed-poll-question askbypoll-embed-poll-question-feedback2" id="askbypoll-embed-poll-question---{{ poll.id }}">
+			<p class="askbypoll-widget-title askbypoll-widget-title-feedback2" id="askbypoll-widget-title---{{ poll.id }}"> 
+				YOUR OPINION MATTERS 
+			</p>
+			<p class="askbypoll-embed-poll-question-text" id="askbypoll-embed-poll-question-text---{{ poll.id }}">
+				{{ poll.question_text }}
+			</p>
+			{% if poll.description %}
+				<p class="askbypoll-embed-poll-question-description" id="askbypoll-embed-poll-question-description---{{ poll.id }}">
+					Description: {{ poll.description }}
+				</p>
+			{% endif %}
+		</div>
+	</div>
+	<div class="askbypoll-embed-poll-question-choices askbypoll-embed-poll-question-choices-feedback2" id="askbypoll-embed-poll-question-choices---{{ poll.id }}">
+		{% for choice in poll.choice_set.all %}
+			{% if choice.choice_image %}
+				<div class="askbypoll-embed-poll-question-choice askbypoll-embed-poll-question-choice-feedback2" id="askbypoll-embed-poll-question-choice---{{ choice.id }}">
+					<img class="askbypoll-embed-poll-question-choice-img askbypoll-embed-poll-question-choice-img-feedback2 askbypoll-embed-poll-question-choice-img---{{ poll.id }}" id="askbypoll-embed-poll-question-choice-img---{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}">
+					<div class="askbypoll-progress-bar-Img-div" style="position:relative;">
+						<p class="askbypoll-embed-poll-question-choice-img-text askbypoll-embed-poll-question-choice-img-text-feedback2 askbypoll-embed-poll-question-choice-img-text-feedback1 askbypoll-embed-poll-question-choice-img-text---{{ poll.id }}" id="askbypoll-embed-poll-question-choice---text-{{ choice.id }}">
+							{{ choice.choice_text }}
+						</p>
+						<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-feedback2 askbypoll-embed-progress-bar-img" id="askbypoll-embed-progress-bar---{{ choice.id }}">
+						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="askbypoll-embed-poll-choice" id="askbypoll-embed-poll-choice---{{ choice.id }}">
+					<p class="askbypoll-embed-poll-question-choice-text" id="askbypoll-embed-poll-question-choice-text---{{ choice.id }}">
+						{{ choice.choice_text }}
+					</p>
+					<div class="askbypoll-embed-progress-bar askbypoll-embed-progress-bar-feedback2 askbypoll-embed-progress-bar-text" id="askbypoll-embed-progress-bar---{{ choice.id }}">
+						<span class="askbypoll-poll-result" id="askbypoll-result-choice---{{ choice.id }}"></span>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="askbypoll-embed-poll-powered-by askbypoll-embed-poll-powered-by-feedback2">
+		<p class="askbypoll-embed-poll-powered-by-p askbypoll-embed-poll-powered-by-p-feedback2"  id="askbypoll-embed-poll-powered-by-p---{{ poll.id }}">Powered By 
+			<a class="askbypoll-embed-poll-askbypoll-url" href="{{ domain_url }}" target="new">AskByPoll</a>
+		</p>
+	</div>
+</div>
