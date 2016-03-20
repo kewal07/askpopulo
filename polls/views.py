@@ -202,7 +202,9 @@ class IndexView(BaseViewList):
 		for mainquestion in latest_questions:
 			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
 		particleList = Particle.objects.order_by('-pub_date')
-		primer = Particle.objects.filter(is_prime=1).latest()
+		primer = Particle.objects.filter(is_prime=1)
+		if primer:
+			primer = primer.latest()
 		context['primer'] = primer
 		featuredParticles = []
 		for x in particleList:
@@ -430,6 +432,7 @@ class CreatePollView(BaseViewList):
 		question = None
 		curtime = datetime.datetime.now();
 		home_visible = 1
+		featuredpoll = 0
 		if user.extendeduser.company_id > 1:
 			home_visible=0
 		# print(request.POST)
@@ -458,6 +461,7 @@ class CreatePollView(BaseViewList):
 					curtime = timezone.now();
 					qExpiry = question.expiry
 				previousBet = question.isBet
+				featuredpoll = question.featuredPoll
 			qeyear = int(request.POST.getlist('qExpiry_year')[0])
 			qemonth = int(request.POST.getlist('qExpiry_month')[0])
 			qeday = int(request.POST.getlist('qExpiry_day')[0])
@@ -602,6 +606,7 @@ class CreatePollView(BaseViewList):
 			makeFeaturedError = ""
 			if makeFeatured and user.extendeduser.credits - 100 >= 0:
 				home_visible = 1
+				featuredpoll = 1
 				if not (edit and question.home_visible == 1):
 					user.extendeduser.credits -= 100
 					user.extendeduser.save()
@@ -663,8 +668,9 @@ class CreatePollView(BaseViewList):
 				question.protectResult = protectResult
 				question.home_visible = home_visible
 				question.featured_image = shareImage
+				question.featuredPoll = featuredpoll
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage, featuredPoll = featuredpoll)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
@@ -3159,13 +3165,10 @@ class AskByPollAboutUsView(BaseViewList):
 
 def get_number_votes(mainquestion):
 	numVotes = mainquestion.voted_set.count()
-	print("_________________-------------------get_num")
-	print(numVotes)
 	considered_email = []
 	for voted in Voted.objects.filter(question=mainquestion):
 		considered_email.append(voted.user.email)
 	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
-	print(numVotes)
 	return numVotes
 
 def get_index_question_detail(mainquestion,user,sub_que,curtime,company_data={}):

@@ -392,7 +392,7 @@
 					{% if user.extendeduser.company.id > 1 %}
 						<div class="admin-checkbox">
 							<p class="anonymous"  id="makeFeaturedP">
-							{% if question.home_visible %}
+							{% if question.featuredPoll %}
 								<input id="makeFeatured" name="makeFeatured" type="checkbox" checked>
 							{% else %}
 								<input id="makeFeatured" name="makeFeatured" type="checkbox">
