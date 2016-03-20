@@ -4,7 +4,7 @@ solution_caption = [
 		"brief":"Many companies follow a Customer first Approach whereas there a lot many which follow an Employee first approach as well. With the Hyper Connected World, it is becoming essential for Enterprises to constantly be in touch with their Customers as well as Employees. Use the AskByPoll Products and Services to measure Employee & Customer Satisfaction at the click of a few buttons. This is how we can help –",
 		"details": [
 					"Customized NPS Survey with In-Person Interviews and Analysis",
-					"Gather Business Critical Data from Customers Through Product Feedback Widgets" 
+					"Gather Business Critical Data from Customers Through Product Feedback Widgets", 
 					"Offload Your End to End Employee Satisfaction Measurement and Analysis Process",
 					"Increase Employee Engagement by Involving them in Decision Making & Activity Planning",
 					"Use our Technology for Transport Service, Caterer, Work Life Balance, Cultural Feedback",
@@ -14,12 +14,12 @@ solution_caption = [
 					"Get expert advice and 24/7 support any time you need"
 					]
 	}},
-	{'e-commerce' : {
+	{'e-Commerce' : {
 		"caption": "Consumer Insights<br>Product Reviews<br>Inventory Tagging",
 		"brief":" E-Commerce is one of the fastest Growing Sectors Today. Not only does it bring in convenience for customers, but also ensures easier availability, choice in options, flexible purchase & return and most importantly ability to choose the right Product based on reviews and ratings. Hence, it becomes critical for E-Commerce players to have robust systems to gather feedback on their Products from their customers as well as develop capabilities to gather opinion from a larger open Audience regarding their preferences.  Use the AskByPoll Products and Services to gather opinion from customers at the click of a few buttons. This is how we can help –",
 		"details": [
 					"Gather Preference Insights From Consumers Outside Your Own Customer Base",
-					"Perform Product Reviews to Understand Category and SKU Specific Preferences" 
+					"Perform Product Reviews to Understand Category and SKU Specific Preferences", 
 					"Offload Your Category Tagging Activities to our Online Community",
 					"Plan your Inventory Better By Understanding demand Preferences of People",
 					"New Product or Feature Launch Validation & User Testing before Making it Public",
@@ -34,7 +34,7 @@ solution_caption = [
 		"brief":" Starting something of your own is always thrilling. As and when you start planning or even after you have started finding your foot in the vast ocean of business it is extremely critical to say in touch with your customers and take their feedback as well as validate and cross check the business model to gradually move towards success. Use the AskByPoll Products and Services to gather opinion from customers and validate your business at the click of a few buttons. This is how we can help –",
 		"details": [
 					"Get your Business Model Validated With Actual Customers",
-					"Get help with Pre-Launch App and Website Design & Functionality User Testing" 
+					"Get help with Pre-Launch App and Website Design & Functionality User Testing", 
 					"Gauge the Attractiveness of Your Product or Service with Your Target Market Group",
 					"Gather Customer Feedback After Launching",
 					"Improve Your Customer Engagement using Social Polls & Campaigns",
@@ -71,7 +71,7 @@ solution_caption = [
 					"Get expert advice and 24/7 support any time you need"
 					]
 	}},
-	{'fmcg' : {
+	{'FMCG' : {
 		"caption": "Consumer Research<br>Customer Engagement<br>Planning Data",
 		"brief":" At the heart of the Consumer Goods market lies the fact that people will buy a product based on its perception, brand value as well as their past personal experience. Hence, it is critical to gather feedback from customers before the Purchase as well as after its use. Use the AskByPoll Products and Services to Gather Business Critical Feedback from Customers at the click of a few buttons. This is how we can help –",
 		"details": [
@@ -89,7 +89,7 @@ solution_caption = [
 		"brief":"With Citizen Involvement becoming more and more important in Public Policy Matters, it is becoming essential for the Governments to device ways to easily get in touch with the Citizens to gather their opinion. Use the AskByPoll Products and Services to gather opinion from Citizens at the click of a few buttons. This is how we can help –",
 		"details": [
 					"Gather Citizen Feedback Using Our Social Campaign Tool",
-					"Use the Power of Social Polls to Talk to Citizens to Seek Their Opinion" 
+					"Use the Power of Social Polls to Talk to Citizens to Seek Their Opinion", 
 					"Offload your End-to-End Research Requirements to us and Get  Actionable Insights",
 					"Gain access to AskByPoll Respondent Community ",
 					"Integrate with your existing systems",

@@ -4,6 +4,7 @@
 }
 .group{
     position: relative;
+	text-align:justify;
 }
 .group:after {
     content:"";
@@ -47,9 +48,12 @@ div.case-study li.features{
     text-align: center;
     color:black;
 }
+ul.abp-product-feature{
+	list-style:initial;
+}
 .product-constants ul.product-feature{
     padding-left:0;
-    list-style: none;
+
 }
 .abpb-col{
     width: 30%;
