@@ -110,9 +110,9 @@
 					<li id="notification_count_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-bell"></i>{{ notification_count}} pNote{{ notification_count|pluralize }}</a></li>
 					<li id="notification_credit_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-coins"></i>{{ user.extendeduser.credits }} pCoin{{ user.extendeduser.credits|pluralize }}</a></li>
 					<li class="user_not_credit_message_li"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i> Redeem</a></li>
-					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} pMail {{ messageCount|pluralize }}
+					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} pMail
 					</a></li>
-          <li class="user_not_credit_message_li"><a href="{% url 'polls:polls_create' %}">Ask</a></li>
+          <!-- <li class="user_not_credit_message_li"><a href="{% url 'polls:polls_create' %}">Ask</a></li> -->
           <!-- <li class="user_not_credit_message_li" ><a href="{% url 'polls:polls_category' %}">Category</a></li> -->
           <li class="location_select user_not_credit_message_li"><a>{{ request.COOKIES.location|default:"global"|capfirst }}</a>
             <div class="dropDownLoc">
