@@ -90,7 +90,7 @@ h2{
 @media only screen and (max-width: 768px) {
     #content{
         margin-bottom:10rem;
-        padding:5rem 0rem 0rem 0rem;
+        padding:1rem;
     }
     .left{
         float: none;
@@ -98,7 +98,7 @@ h2{
     }
     .abpb-col{
         width:100%;
-    } 
+    }
     .case-study{
         padding: 0;
     }
@@ -119,7 +119,7 @@ h2{
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
     .abpb-col{
         width:44%;
-    } 
+    }
     .case-study{
         width:100%;
     }
@@ -127,7 +127,7 @@ h2{
 @media only screen and (min-width: 1025px) and (max-width: 1300px) {
     .abpb-col{
         width:31%;
-    } 
+    }
     .case-study{
         width:100%;
     }

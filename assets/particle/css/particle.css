@@ -12,7 +12,7 @@ html{
 #content p{
 	color:#555f77;
 	font-size: 1.2rem;
-	line-height: 24px; 
+	line-height: 24px;
 	letter-spacing: 1px;
 }
 #featured-partciles{
@@ -86,6 +86,7 @@ p.main-heading{
 	font-size:2rem !important;
 	font-weight: bold !important;
 	text-align: center !important;
+	line-height: 40px;
 	margin-bottom:0;
 }
 img.user-particle{
@@ -167,8 +168,8 @@ ul#foodStartUpsShare li{
 		position: initial;
 	}
 	.featured-col-row {
-		height: auto; 
-		position: initial; 
+		height: auto;
+		position: initial;
 		border: none;
 		margin:0 !important;
 	}
