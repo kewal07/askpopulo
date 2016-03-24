@@ -25,7 +25,7 @@ p.abp-brief{
 }
 li.features{
     margin:1rem 0;
-    font-size: 1rem;
+    font-size: 1.2rem;
     letter-spacing: 1px;
 }
 div.case-study li.features{
@@ -118,6 +118,9 @@ h2{
     p.abp-brief{
         font-size:1rem;
         letter-spacing: 1px;
+    }
+    li.features{
+        font-size: 1rem;
     }
 }
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
