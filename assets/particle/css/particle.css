@@ -86,7 +86,7 @@ p.main-heading{
 	font-size:2rem !important;
 	font-weight: bold !important;
 	text-align: center !important;
-	line-height: 40px;
+	line-height: 40px !important;
 	margin-bottom:0;
 }
 img.user-particle{
