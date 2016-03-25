@@ -357,6 +357,19 @@ span.page-links a{
 	text-align: center;
 	margin-bottom:1rem;
 }
+#display_message_section{
+	padding: 7rem 5rem 0rem 5rem;
+}
+.display_message{
+	text-align :center;
+	border: 3px solid #000;
+  	border-radius: 25px;
+  	background-color: white;
+  	opacity: 0.93;
+  	padding: 3rem 3rem;
+  	margin-bottom:2rem;
+	font-size : 2rem;
+}
 @media only screen and (max-width: 980px){
 	.navbar-header{
 		float:none;
@@ -440,6 +453,14 @@ span.page-links a{
 		height:20px;
 		padding:0;
 	}
+	#display_message_section{
+		margin: 0;
+		padding: 7rem 1rem 0rem 1rem;
+	}
+	.display_message{
+		padding: 1rem;
+		font-size: 1rem;
+	}
 }
 @media only screen and (min-width: 981px) and (max-width: 1280px){
 	.logged-in-header{
@@ -522,19 +543,6 @@ span.page-links a{
 #yes, #no, #okay4, #cancel4{
 	margin: 0;
 	display: inline-block;
-}
-#display_message_section{
-	margin: 7rem 5rem 0rem 5rem;
-}
-.display_message{
-	text-align :center;
-	border: 3px solid #000;
-  	border-radius: 25px;
-  	background-color: white;
-  	opacity: 0.93;
-  	padding: 3rem 3rem;
-  	margin-bottom:2rem;
-	font-size : 2rem;
 }
 .dropDownLoc{
 	display: none;
