@@ -21,7 +21,7 @@
 		<meta name="revisit-after" content="1 days">
 		<meta itemprop="image" content="https://{{ request.META.HTTP_HOST }}/static/pollsLogo.png">
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<meta property="og:type" content="article"/>
 		{% block meta_data_extra %}
 		{% endblock %}
@@ -68,7 +68,7 @@
 						<ul class="menu-ul">
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'polls:polls_category' %}">Category</a></li>
-							<li><a href="{% url 'particle:particle' %}">Particle</a></li>
+							<li><a href="{% url 'particle:particle' %}">pArticle</a></li>
 							<li><a href="{% url 'trivia:trivia' %}">Trivia</a></li>
               <li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>

@@ -104,6 +104,12 @@ h2{
     }
     p.case-study-p{
         padding:0 1rem;
+	font-size:1rem;
+    }
+    img.case-study-img{
+	display: block;
+	float: none;
+	margin: 0 auto;
     }
     .case-study ul.product-feature{
         padding:0 1rem;

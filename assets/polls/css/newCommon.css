@@ -428,6 +428,10 @@ span.page-links a{
 		width: 100% !important;
 		position: absolute;
 	}
+	#overlay-inAbox7{
+		margin-left: 0 !important;
+		width: 98%;
+	}
 	.dropDownLoc{
 		width:90%;
 	}

@@ -225,6 +225,10 @@
 			#ui-faces-div{
 				display: none;
 			}
+			.section{
+				height: 100%;
+				padding:3rem 0;
+			}
 			.section1-div{
 				margin:0rem;
 			}
@@ -233,18 +237,17 @@
 			}
 			.section1-div2{
 				width:90%;
-				margin-top: 2rem;
 			}
 			.bar-graphs{
 				height: 3rem;
 			}
 			p.heading{
 				margin:0;
-				font-size: 1.25rem;
-				/*margin-bottom:0.5rem;*/
+				font-size: 1rem;
+				margin-bottom:0.5rem;
 			}
 			p.main-heading{
-				font-size: 1.25rem;
+				font-size: 1rem;
     			margin-top: 2rem;	
     			/*margin-bottom:1rem;*/
 			}
@@ -310,7 +313,7 @@
 	<div id="pagepiling">
 		<div class="section" id="empty-section"></div>
 	    <div class="section" id="section1">
-	    	<p class="heading main-heading">Questions, Answers, Analytics, Insights, Freebies</p>
+	    	<p class="heading main-heading">Questions, Answers, Insights, Freebies</p>
 	    	<div class="section-wrapper" id="section1-wrapper">
 		    	<div class="section-div section1-div1">
 		    		<div class="image-row1">
@@ -436,6 +439,12 @@
 </section>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$('input').click(function(){
+			$(this).focus();
+			var top = $(this).position().top;
+			window.scrollTo(0, top-150 );
+			//$(this)[0].scrollIntoView(true);
+		});
 		if($(window).height() >= 630){
 			$("#user-confused-div").addClass("slideRight");
 			setTimeout(function(){
@@ -517,8 +526,8 @@
 	    	$.fn.pagepiling.moveSectionDown();
 		}
 		else{
-			$("html").css("overflow","auto");
-			$("body").css("overflow","auto");
+			$("html").css("overflow","initial");
+			$("body").css("overflow","initial");
 			// $("#section1").css("padding-bottom","36rem");
 			$(".bar-graphs").css("display","none");
 			$(".arrow").css("display","none");
