@@ -439,12 +439,6 @@
 </section>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('input').click(function(){
-			$(this).focus();
-			var top = $(this).position().top;
-			window.scrollTo(0, top-150 );
-			//$(this)[0].scrollIntoView(true);
-		});
 		if($(window).height() >= 630){
 			$("#user-confused-div").addClass("slideRight");
 			setTimeout(function(){
@@ -533,6 +527,12 @@
 			$(".arrow").css("display","none");
 			// $("#footer").css("display","block");
 			// $("#footer").css("margin-top","-6rem");
+			$('input').click(function(){
+				$(this).focus();
+				var top = $(this).position().top;
+				window.scrollTo(0, top-150 );
+				//$(this)[0].scrollIntoView(true);
+			});
 		}
 		if($(window).height() <= 768){
 			$(".bar-graphs").css("display","none");
