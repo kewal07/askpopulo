@@ -2082,7 +2082,7 @@ def results_embed_poll(request):
 			user_data["state"] = existingVote.state
 			user_data["city"] = existingVote.city
 			if email and not User.objects.filter(email=email):
-				new_user = create_new_user_mail_login(request,mailId,question)
+				new_user = create_new_user_mail_login(request,email,poll)
 				new_extended_user = new_user.extendeduser
 				if user_age > 0:
 					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
