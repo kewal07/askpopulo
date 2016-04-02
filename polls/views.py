@@ -60,6 +60,11 @@ class WebRtcView(BaseViewList):
 	def get_queryset(self):
 		return {}
 
+class ABPChatPubNubView(BaseViewList):
+	template_name = 'polls/abp_chat_pubnub.html'
+	def get_queryset(self):
+		return {}
+
 class TeamView(BaseViewList):
 	template_name = 'polls/team.html'
 	def get_queryset(self):
