@@ -88,7 +88,7 @@ a.askbypoll-embed-poll-askbypoll-url{
 	color:orange;
 }
 img.askbypoll-embed-poll-question-choice-img{
-	width: 150px !important ;
+    width: 150px ;
     height: 150px ;
     display: block;
 }
