@@ -356,22 +356,22 @@
 						</p>
 						<p>
 							<label class=" required" for="choice1">Choice 1</label>
-							<input id="choice1" class="createPollText choice-input-text" type="text" name="choice1" placeholder="First Choice" maxlength="200">
+							<input id="choice1" class="createPollText choice-input-text" type="text" name="choice1" placeholder="First Choice" maxlength="100">
 							<input id="choice1" class="fileButtonClass" type="file" name="choice1" accept="image/*">
 						</p>
 						<p>
 							<label class=" required" for="choice2">Choice 2</label>
-							<input id="choice2" class="createPollText choice-input-text" type="text" name="choice2" placeholder="Second Choice" maxlength="200">
+							<input id="choice2" class="createPollText choice-input-text" type="text" name="choice2" placeholder="Second Choice" maxlength="100">
 							<input id="choice2" class="fileButtonClass" type="file" name="choice2" accept="image/*">
 						</p>
 						<p>
 							<label for="choice3">Choice 3</label>
-							<input id="choice3" class="createPollText choice-input-text" type="text" name="choice3" placeholder="Third Choice" maxlength="200">
+							<input id="choice3" class="createPollText choice-input-text" type="text" name="choice3" placeholder="Third Choice" maxlength="100">
 							<input id="choice3" class="fileButtonClass" type="file" name="choice3" accept="image/*">
 						</p>
 						<p>
 							<label for="choice4">Choice 4</label>
-							<input id="choice4" class="createPollText choice-input-text" type="text" name="choice4" placeholder="Fourth Choice" maxlength="200">
+							<input id="choice4" class="createPollText choice-input-text" type="text" name="choice4" placeholder="Fourth Choice" maxlength="100">
 							<input id="choice4" class="fileButtonClass" type="file" name="choice4" accept="image/*">
 						</p>
 						{% if data.extra_choices > 0 %}
@@ -474,7 +474,7 @@
 		function add_another_choice(added_choice_count){
 			choice_elem = '<p>';
 			choice_elem += '<label for="choice'+added_choice_count+'">Choice '+added_choice_count+'</label><input id="choice'+added_choice_count;
-			choice_elem += '" class="createPollText choice-input-text" type="text" name="choice'+added_choice_count+'" placeholder="Enter Choice" maxlength="200">';
+			choice_elem += '" class="createPollText choice-input-text" type="text" name="choice'+added_choice_count+'" placeholder="Enter Choice" maxlength="100">';
 			choice_elem += '<input id="choice'+added_choice_count+'file" class="fileButtonClass" type="file" name="choice'+added_choice_count+'" accept="image/*">';
 			choice_elem += '</p>';
 			// console.log($("#"+choice_elem_div).last());
