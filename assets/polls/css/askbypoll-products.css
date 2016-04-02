@@ -4,6 +4,7 @@
 }
 .group{
     position: relative;
+	text-align:justify;
 }
 .group:after {
     content:"";
@@ -12,7 +13,7 @@
 }
 h1.product-heading{
     margin-top: 5rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-bottom: 2rem;
     border-bottom: 2px solid;
     padding-bottom: 0.5rem;
@@ -47,9 +48,12 @@ div.case-study li.features{
     text-align: center;
     color:black;
 }
+ul.abp-product-feature{
+	list-style:initial;
+}
 .product-constants ul.product-feature{
     padding-left:0;
-    list-style: none;
+
 }
 .abpb-col{
     width: 30%;
@@ -81,12 +85,12 @@ img.case-study-img{
 h2{
     text-align: center;
     border-bottom: 2px solid;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
 }
 @media only screen and (max-width: 768px) {
     #content{
         margin-bottom:10rem;
-        padding:5rem 0rem 0rem 0rem;
+        padding:1rem;
     }
     .left{
         float: none;
@@ -94,12 +98,18 @@ h2{
     }
     .abpb-col{
         width:100%;
-    } 
+    }
     .case-study{
         padding: 0;
     }
     p.case-study-p{
         padding:0 1rem;
+	font-size:1rem;
+    }
+    img.case-study-img{
+	display: block;
+	float: none;
+	margin: 0 auto;
     }
     .case-study ul.product-feature{
         padding:0 1rem;
@@ -111,11 +121,18 @@ h2{
         padding:0;
         margin:0;
     }
+    p.abp-brief{
+        font-size:1rem;
+        letter-spacing: 1px;
+    }
+    li.features{
+        font-size: 1rem;
+    }
 }
 @media only screen and (min-width: 769px) and (max-width: 1024px) {
     .abpb-col{
         width:44%;
-    } 
+    }
     .case-study{
         width:100%;
     }
@@ -123,7 +140,7 @@ h2{
 @media only screen and (min-width: 1025px) and (max-width: 1300px) {
     .abpb-col{
         width:31%;
-    } 
+    }
     .case-study{
         width:100%;
     }

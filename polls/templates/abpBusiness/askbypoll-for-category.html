@@ -10,7 +10,7 @@
 		    <div class="left">
 		        <h1 class="product-heading">{{ abp_solution.category|capfirst }} Solutions</h1>
 		        <p class="abp-brief">{{ abp_solution.brief }}</p>
-		        <ul class="product-feature">
+		        <ul class="product-feature abp-product-feature">
 		        	{% for line in abp_solution.details %}
 		        		<li class="features">{{ line }}</li>
 		        	{% endfor %}

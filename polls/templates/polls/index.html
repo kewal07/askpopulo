@@ -18,21 +18,23 @@
 	<section id="content">
 		<div id="featured-partciles">
 			<div class="container-primer">
-				<a href="{% url 'particle:particle_detail' data.primer.id data.primer.particle_slug %}">
-					<div class="featured-col col1">
-						<div class="particle-feature-detail primer-detail">
-							<p class="primer-title">
-								{{ data.primer.particle_title }}
-							</p>
-							<p class="primer-details">
-								{{ data.primer.user.first_name }} 
-							</p>
-							<p class="primer-details">
-								A {{ data.primer.read_time }} read
-							</p>
+				{% if data.primer %}
+					<a href="{% url 'particle:particle_detail' data.primer.id data.primer.particle_slug %}">
+						<div class="featured-col col1">
+							<div class="particle-feature-detail primer-detail">
+								<p class="primer-title">
+									{{ data.primer.particle_title }}
+								</p>
+								<p class="primer-details">
+									{{ data.primer.user.first_name }} 
+								</p>
+								<p class="primer-details">
+									{{ data.primer.read_time }} read
+								</p>
+							</div>
 						</div>
-					</div>
-				</a>
+					</a>
+				{% endif %}
 			</div>
 			<div class="featured-col col2">
 				{% for featured in data.featuredParticles1 %}
@@ -46,7 +48,7 @@
 									{{ featured.user.first_name }} 
 								</p>
 								<p class="primer-details">
-									A {{ featured.read_time }} read
+									{{ featured.read_time }} read
 								</p>
 							</div>
 						</div>
@@ -65,7 +67,7 @@
 									{{ featured.user.first_name }} 
 								</p>
 								<p class="primer-details">
-									A {{ featured.read_time }} read
+									{{ featured.read_time }} read
 								</p>
 							</div>
 						</div>

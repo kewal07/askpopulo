@@ -21,7 +21,7 @@
 		<meta name="revisit-after" content="1 days">
 		<meta itemprop="image" content="https://{{ request.META.HTTP_HOST }}/static/pollsLogo.png">
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<meta property="og:type" content="article"/>
 		{% block meta_data_extra %}
 		{% endblock %}
@@ -68,8 +68,9 @@
 						<ul class="menu-ul">
 							<li><a href="{% url 'polls:index' %}">Home</a></li>
 							<li><a href="{% url 'polls:polls_category' %}">Category</a></li>
-							<li><a href="{% url 'particle:particle' %}">Particle</a></li>
+							<li><a href="{% url 'particle:particle' %}">pArticle</a></li>
 							<li><a href="{% url 'trivia:trivia' %}">Trivia</a></li>
+              <li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>
 			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
 			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
@@ -106,12 +107,12 @@
 						<li><a href="{% url 'company_page' user.extendeduser.company.company_slug %}">{{ user.extendeduser.company.name}}</a></li>
 						<li><a href="{% url 'login:adminDashboard' user.id user.extendeduser.user_slug %}">Dashboard</a></li>
 					{% endif %}
-					<li id="notification_count_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-bell"></i>{{ notification_count}} pNotes{{ notification_count|pluralize }}</a></li>
+					<li id="notification_count_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-bell"></i>{{ notification_count}} pNote{{ notification_count|pluralize }}</a></li>
 					<li id="notification_credit_span" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-coins"></i>{{ user.extendeduser.credits }} pCoin{{ user.extendeduser.credits|pluralize }}</a></li>
 					<li class="user_not_credit_message_li"><a href="{% url 'login:redeem' user.id user.extendeduser.user_slug %}"><i class="fa fa-money"></i> Redeem</a></li>
-					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} pMail {{ messageCount|pluralize }}
+					<li id="common_inbox" class="user_not_credit_message_li"><a href="{% url 'login:loggedIn' user.id user.extendeduser.user_slug %}"><i class="fa fa-inbox"></i>{{ messageCount}} pMail
 					</a></li>
-          <li class="user_not_credit_message_li"><a href="{% url 'polls:polls_create' %}">Ask</a></li>
+          <!-- <li class="user_not_credit_message_li"><a href="{% url 'polls:polls_create' %}">Ask</a></li> -->
           <!-- <li class="user_not_credit_message_li" ><a href="{% url 'polls:polls_category' %}">Category</a></li> -->
           <li class="location_select user_not_credit_message_li"><a>{{ request.COOKIES.location|default:"global"|capfirst }}</a>
             <div class="dropDownLoc">
@@ -298,7 +299,7 @@
 					var js, fjs = d.getElementsByTagName(s)[0];
 					if (d.getElementById(id)) return;
 					js = d.createElement(s); js.id = id;
-					js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1573017902971015";
+					js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=1543103769284237";
 					fjs.parentNode.insertBefore(js, fjs);
 			}
 			(document, 'script', 'facebook-jssdk'));

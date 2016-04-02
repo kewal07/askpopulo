@@ -2,11 +2,6 @@
 {% load static %}
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/about-us.css' %}" />
-	<style>
-		p{
-			text-align:justify;
-		}
-	</style>
 {% endblock %}
 {% block content %}
 	<section id="content">
@@ -24,7 +19,7 @@
 			<p class="mission">In today’s Data Driven Business Ecosystem, Consumer Insights & Public Opinion form the basis for decision making and policy formulations.</p>
 			<p class="mission">The ability to ‘Ask’ the people a question and measure what the majority has to say - is a tool that is firmly embedded in the fundamentals of Decision Making. The Power of Internet and Social Communities can empower organisations with a strong tool for Business Decisions.</p>
 			<p class="mission">AskByPoll has been created with the intent to make the Opinion Gathering from Consumers Fast, Easy and Cost Effective</p>
-			<img src="/static/askbypoll-aboutus-image.png">
+			<img id="askbypoll-about-us-img" src="/static/askbypoll-aboutus-image.png">
 			<div class="cta">
 				<a href="{% url 'polls:abp_business' %}" class="signup-a light-blue">Business Solutions</a>
 	    		<a href="{% url 'polls:abp_case_study' %}" class="signup-a green">Case Studies</a>
@@ -47,12 +42,12 @@
 			<h2>Mentors</h2>
 			<div class="mentor-div">
 				<img src="/static/anjana.png"/>
-				<p class="mission bold">Anjana Vivek: Founder,Director,VentureBean Consulting</p>
+				<p class="mission bold">Anjana Vivek: Founder, Director, VentureBean Consulting</p>
 				<p class="mission">Fellow Chartered Accountant with BSc.Hons (Physics), Former faculty member in the
 					Finance & Control Area at IIM, Bangalore (IIMB). Key former positions held VP, Erns&Young, COO-NSR Centre for Entrepreneurial Learning at IIMB, VP- CTD/NVCF
 					Project of USAID. Has been Board/Committee Member of Institute of Chartered
 					Accountants of India, IIMB, Federation of Karnataka Chambers of Commerce and
-					Industry & TiE,founder editor of Indian Venture Capital Reports from 1993-9
+					Industry.
 				</p>
 			</div>
 			<div class="mentor-div">
