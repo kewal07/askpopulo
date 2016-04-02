@@ -112,7 +112,12 @@ img.featured-image{
 .particle-body{
 	padding:1rem 3rem;
 	background: white;
-	text-align: justify;
+	/* text-align: justify; */
+}
+.particle-body img{
+	display: block;
+	width: 100%;
+	height: auto;
 }
 blockquote p {
   font-size: 1.25rem !important;
@@ -181,7 +186,7 @@ ul#foodStartUpsShare li{
 	}
 	.particle-detail img.user-particle{
 		margin-left:1rem;
-		margin0top:1rem;
+		margin-top:1rem;
 	}
 	.particle-body{
 		padding:1rem;
@@ -204,6 +209,10 @@ ul#foodStartUpsShare li{
     	height: auto !important;
 		display: block;
 		margin:0 auto;
+	}
+	img.askbypoll-embed-poll-question-choice-img{
+		width: 100px !important;
+		height: 100px !important;
 	}
 	img.article-images.article-images-ws.bad-img, img.valentines-info {
 	    display: block;
