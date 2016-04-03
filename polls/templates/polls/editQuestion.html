@@ -365,7 +365,7 @@
 					{% for choice in question.choice_set.all %}
 					<p>
 						<label for="choice{{ forloop.counter }}">Choice {{ forloop.counter }}</label>
-						<input class="choice-input-text" id="choice{{ forloop.counter }}" type="text" name="choice{{ forloop.counter }}" placeholder="First Choice" value="{{ choice.choice_text }}" maxlength="200">
+						<input class="choice-input-text" id="choice{{ forloop.counter }}" type="text" name="choice{{ forloop.counter }}" placeholder="First Choice" value="{{ choice.choice_text }}" maxlength="100">
 						{% if choice.choice_image %}
 							<img class="choices choice_image" id="imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
 							<input type="hidden" id="imagetextchoice{{ forloop.counter }}" name="imagechoice{{ forloop.counter }}" value="/media/choices/{{ choice.get_file_name }}---{{ choice.id }}" />
@@ -376,7 +376,7 @@
 					{% for x in question.get_extra_choices %}
 					<p>
 						<label for="choice{{ x }}">Choice {{ x }}</label>
-						<input class="choice-input-text" id="choice{{ x }}" type="text" name="choice{{ x }}" placeholder="Choice" maxlength="200">
+						<input class="choice-input-text" id="choice{{ x }}" type="text" name="choice{{ x }}" placeholder="Choice" maxlength="100">
 						<input id="choice{{ x }}" class="fileButtonClass" type="file" name="choice{{ x }}" accept="image/*">
 					</p>
 					{% endfor %}
@@ -481,7 +481,7 @@
 		function add_another_choice(added_choice_count){
 			choice_elem = '<p>';
 			choice_elem += '<label for="choice'+added_choice_count+'">Choice '+added_choice_count+'</label><input id="choice'+added_choice_count;
-			choice_elem += '" class="createPollText choice-input-text" type="text" name="choice'+added_choice_count+'" placeholder="Enter Choice" maxlength="200">';
+			choice_elem += '" class="createPollText choice-input-text" type="text" name="choice'+added_choice_count+'" placeholder="Enter Choice" maxlength="100">';
 			choice_elem += '<input id="choice'+added_choice_count+'file" class="fileButtonClass" type="file" name="choice'+added_choice_count+'" accept="image/*">';
 			choice_elem += '</p>';
 			// console.log($("#"+choice_elem_div).last());

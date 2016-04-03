@@ -60,6 +60,11 @@ class WebRtcView(BaseViewList):
 	def get_queryset(self):
 		return {}
 
+class ABPChatPubNubView(BaseViewList):
+	template_name = 'polls/abp_chat_pubnub.html'
+	def get_queryset(self):
+		return {}
+
 class TeamView(BaseViewList):
 	template_name = 'polls/team.html'
 	def get_queryset(self):
@@ -1945,6 +1950,7 @@ def vote_embed_poll(request):
 		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
 		if not divClass:
 			divClass = "basic"
+		# print(divClass,request.GET.get('divClass','basic'))
 		ipAddress = getIpAddress(request)
 		# ipAddress = '139.130.4.22'
 		# sessionKey = request.session.session_key
@@ -1991,6 +1997,9 @@ def vote_embed_poll(request):
 				choice_count_dic[i.get('choice')] = i.get('choiceCount')
 				totalVotes += i.get('choiceCount')
 			#print(totalVotes,choices)
+			percent_ratio = 1.39
+			if divClass in ["mu"]:
+				percent_ratio = 1
 			for choice in question.choice_set.all():
 				result[choice.id] = {}
 				choice_vote_count = choice_count_dic.get(choice.id,0) + choice_dic.get(choice.id,0)
@@ -2000,16 +2009,17 @@ def vote_embed_poll(request):
 					percent = round(choice_vote_count/totalVotes * 100)
 					width = percent
 					if not choice.choice_image:
-						width = round(percent/1.39)
-						if percent == 0:
+						width = round(percent/percent_ratio)
+						if percent == 0 and percent_ratio > 1:
 							width = 15
 				result[choice.id]["percent"] = percent
 				result[choice.id]["width"] = width
-			#print(result)
+			# print(result)
 			req ['result'] = result
 		else:
 			req = {}
 		req['sessionKey'] = sessionKey
+		print(req)
 		response = json.dumps(req)
 		response = callback + '(' + response + ');'
 		return HttpResponse(response,content_type="application/json")
@@ -2033,6 +2043,9 @@ def results_embed_poll(request):
 		pollId = int(request.GET.get('pollId'))
 		poll = Question.objects.get(pk=pollId)
 		choices = Choice.objects.filter(question_id=pollId)
+		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
+		if not divClass:
+			divClass = "basic"
 		# if not request.session.exists(request.session.session_key):
 		# 	request.session.create()
 		# sessionKey = request.session.session_key
@@ -2073,7 +2086,7 @@ def results_embed_poll(request):
 			user_data["state"] = existingVote.state
 			user_data["city"] = existingVote.city
 			if email and not User.objects.filter(email=email):
-				new_user = create_new_user_mail_login(request,mailId,question)
+				new_user = create_new_user_mail_login(request,email,poll)
 				new_extended_user = new_user.extendeduser
 				if user_age > 0:
 					new_extended_user.birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
@@ -2109,8 +2122,9 @@ def results_embed_poll(request):
 		percent = {}
 		totalVotes = 0
 		for index,choice in enumerate(choices):
-			choice_data[choice.id] = "choice" + str(index)
-			percent["choice" + str(index)] = 0
+			choice_data[choice.id] = choice
+			# percent["choice" + str(index)] = 0
+			percent[choice.id] = 0
 		# get gender count
 		gender_dic = {}
 		gender_dic['M'] = 0
@@ -2134,7 +2148,8 @@ def results_embed_poll(request):
 		for voteUser in Vote.objects.filter(choice__in=choices):
 			email_list_voted.append(voteUser.user.email)
 			totalVotes += 1
-			percent[choice_data[voteUser.choice_id]] = percent.get(choice_data[voteUser.choice_id],0) + 1
+			# percent[choice_data[voteUser.choice_id]] = percent.get(choice_data[voteUser.choice_id],0) + 1
+			percent[voteUser.choice_id] = percent.get(voteUser.choice_id,0) + 1
 			voteApi = voteUser.user.extendeduser
 			# gender = voteApi.gender
 			# user_age = voteApi.calculate_age()
@@ -2170,7 +2185,8 @@ def results_embed_poll(request):
 				pass
 			else:
 				totalVotes += 1
-				percent[choice_data[voteApi.choice_id]] = percent.get(choice_data[voteApi.choice_id],0) + 1
+				# percent[choice_data[voteApi.choice_id]] = percent.get(choice_data[voteApi.choice_id],0) + 1
+				percent[voteApi.choice_id] = percent.get(voteApi.choice_id,0) + 1
 				gender = voteApi.gender
 				user_age = voteApi.age
 				profession = voteApi.profession
@@ -2193,32 +2209,54 @@ def results_embed_poll(request):
 					# if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
 					# 	country = 'United Kingdom'
 					country_dic[country] = country_dic.get(country,0) + 1
-		choice_details_list =[]
-		for index,choice in enumerate(choices):
-			choice_text = "Option "+str(index)
-			# print(percent[choice_data[choice.id]])
-			# print(percent[choice_data[choice.id]]/totalVotes)
-			choice_percent = (percent[choice_data[choice.id]]/totalVotes) * 100
-			if choice.choice_text:
-				choice_text = choice.choice_text
-			choice_details = {}
-			choice_details["choice"] = choice
-			choice_details["text"] = choice_text
-			choice_details["percent"] = round(choice_percent)
-			width = choice_details["percent"]
-			if not choice.choice_image:
-				width = choice_percent/1.39
-				if width == 0:
-					width = 15
-			choice_details["width"] = round(width)
-			choice_details_list.append(choice_details)
+		# choice_details_list =[]
+		percent_ratio = 1.39
+		if divClass in ["mu"]:
+			percent_ratio = 1
+		result = {}
+		for choice,choice_vote_count in percent.items():
+			result[choice] = {}
+			# choice_vote_count = percent[choice]
+			f_percent = 0
+			width = 0
+			if totalVotes > 0:
+				f_percent = round(choice_vote_count/totalVotes * 100)
+				width = f_percent
+				if not choice_data[choice].choice_image:
+					width = round(f_percent/percent_ratio)
+					if f_percent == 0 and percent_ratio > 1:
+						width = 15
+			result[choice]["percent"] = f_percent
+			result[choice]["width"] = width
+			# print(result)
+		# for index,choice in enumerate(choices):
+		# 	choice_text = "Option "+str(index)
+		# 	# print(percent[choice_data[choice.id]])
+		# 	# print(percent[choice_data[choice.id]]/totalVotes)
+		# 	choice_percent = (percent[choice_data[choice.id]]/totalVotes) * 100
+		# 	if choice.choice_text:
+		# 		choice_text = choice.choice_text
+		# 	choice_details = {}
+		# 	choice_details["choice"] = choice
+		# 	choice_details["text"] = choice_text
+		# 	choice_details["percent"] = round(choice_percent)
+		# 	width = choice_details["percent"]
+		# 	if not choice.choice_image:
+		# 		width = choice_percent/1.39
+		# 		if width == 0:
+		# 			width = 15
+		# 	choice_details["width"] = round(width)
+		# 	choice_details_list.append(choice_details)
 		req = {}
+		req["choice"] = result
 		if poll.protectResult == 1:
 			req['protect'] = 1
 		elif poll.protectResult == 0:
 			req['protect'] = 0
 		extra_context_data = {}
-		extra_context_data["choice_details"] = choice_details_list
+		# extra_context_data["choice_details"] = choice_details_list
+		poll_template_name = "polls/webtemplates/"+divClass+"_widget_template.html"
+		extra_context_data["poll_template_name"] = poll_template_name
 		html = get_widget_html(poll,widgetType="demographic_result",extra_context_data=extra_context_data)
 		req ['html'] = html
 		req['votedChoice'] = votedChoice

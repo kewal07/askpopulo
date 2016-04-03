@@ -244,6 +244,7 @@ ul.menu-ul img{
 }
 .searchBox{
 	position: absolute;
+	text-align: center;
     top: 11px;
     left: 2rem;
     width: 235px;

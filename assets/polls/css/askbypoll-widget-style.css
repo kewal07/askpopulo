@@ -9,6 +9,7 @@
     position: relative;
     margin:1rem 0 !important;
     border:1px solid !important;
+    color: black;
 }
 .a-clearfix:after {
      visibility: hidden;
@@ -31,7 +32,6 @@ a.askbypoll-embed-poll-icon{
 }
 
 .askbypoll-embed-poll-question-description{
-    color: black;
     display: inline-block !important;
     padding-bottom: 0.5rem;
     /*margin-top:0.5rem;*/
@@ -56,7 +56,6 @@ a.askbypoll-embed-poll-icon{
 }
 
 .askbypoll-widget-title{
-    color:black !important;
     border-bottom: 5px solid red;
     margin-bottom: 0rem !important;
     /*padding-bottom: 0.5rem;*/
@@ -88,7 +87,7 @@ a.askbypoll-embed-poll-askbypoll-url{
 	color:orange;
 }
 img.askbypoll-embed-poll-question-choice-img{
-	width: 120px !important ;
+    width: 150px ;
     height: 150px ;
     display: block;
 }
@@ -207,7 +206,7 @@ select{
     padding: 1rem;
     background-color: white;
     font-family: 'Montserrat', sans-serif;
-    color:#fff !important;
+    /*color:#fff !important;*/
     position: relative;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -228,7 +227,6 @@ select{
     /* line-height: initial !important; */
     margin-bottom: 0.5rem !important;
     margin-top: 5px;
-    color: black !important;
 }
 .askbypoll-embed-poll-question-choice-text{
     width: 31%;
@@ -253,10 +251,10 @@ select{
   font-weight: initial !important;
      line-height:initial !important; 
      margin-bottom: 0px !important;
-     color:black !important;
      cursor: pointer;
          word-wrap: break-word;
          padding: .5rem 0 !important;
+         margin:0;
 }
 .askbypoll-embed-poll-powered-by{
     position: relative;
@@ -302,10 +300,11 @@ span.askbypoll-poll-result{
     position: absolute;
     /* right: 5px;*/
     left: 4px;
-    top: 8px;
+    /*top: 8px;*/
     z-index: 1000;
-    color:black;
     font-size: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
 }
 .askbypoll-embed-overlay{
     display: none;
@@ -314,7 +313,7 @@ span.askbypoll-poll-result{
     position: absolute;
     z-index: 10000000;
     /* top: 5%; */
-    width: 48%;
+    width: 75%;
     background: beige;
     margin: 0 auto;
     opacity: 1;

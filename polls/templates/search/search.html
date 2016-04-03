@@ -22,4 +22,11 @@
 	  </div>
     {% endif %}
   </section>
+  {% if query|length < 5 %}
+	<style>
+		#footer{
+		  position: absolute;
+		}
+	</style>
+  {% endif %}
 {% endblock %}

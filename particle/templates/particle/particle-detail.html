@@ -22,6 +22,9 @@
 		}
 	</style>
 {% endblock %}
+{% block extra_js %}
+	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
+{% endblock %}
 {% block content %}
 	<section id="content">
 		<div class="particle-detail clearfix">
@@ -55,8 +58,5 @@
 		  fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));</script>
 	</section>
-{% block extra_js %}
-	<script type='text/javascript' src='https://www.askbypoll.com/static/js/widgetwithdatas.js'></script>
-{% endblock %}
 
 {% endblock %}
