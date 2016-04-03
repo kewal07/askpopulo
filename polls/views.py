@@ -1887,15 +1887,6 @@ def survey_mail(request):
 		line = linecache.getline(filename, lineno, f.f_globals)
 		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
-# class WebsiteWidgetTemplateView(generic.DetailView):
-# 	model = Question
-# 	def get_template_names(self):
-# 		template_name = 'polls/basic_widget_template.html'
-# 		return [template_name]
-# 	def get_context_data(self, **kwargs):
-# 		context = super(WebsiteWidgetTemplateView, self).get_context_data(**kwargs)
-# 		return context
-
 def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra_context_data = {}):
 	try:
 		template_name = ""
@@ -3281,3 +3272,40 @@ class SendMails(BaseViewList):
 		send_mail(subject, message, 'support@askbypoll.com',['shradha@askbypoll.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
+
+class WidgetsView(BaseViewList):
+	context_object_name = "data"
+	def get_template_names(self):
+		template_name = "widgets/index.html"
+		print(template_name)
+		return [template_name]
+	def get_queryset(self):
+		print("widgets")
+		webWidgets = ["basic"]
+		feedbackWidgets = ["feedback1", "feedback2"]
+		webTemplatesFinal = []
+		feedbackTemplatesFinal = []
+		for x in webWidgets:
+			webTemplatesFinal.append("polls/webtemplates/"+x+"_widget_template.html")
+		for x in feedbackWidgets:
+			feedbackTemplatesFinal.append("polls/webtemplates/"+x+"_widget_template.html")
+		context = {}
+		context["poll_templates"] = webTemplatesFinal
+		context["feedback_template"] = feedbackTemplatesFinal
+		context["demo_poll_text"] = Question.objects.get(id=4)
+		context["demo_poll_image"] = Question.objects.get(id=5)
+		context["demo_poll_feedback"] = Question.objects.get(id=3)
+		mypolls = Question.objects.filter(user_id=self.request.user.id)
+		context["mypolls"] = mypolls
+		print(context)
+		return context
+
+class WebsiteWidgetTemplateView(generic.ListView):
+	def post(self, request, *args, **kwargs):
+		poll = request.POST.get("poll")
+		widget_type = request.POST.get("widgetType")
+		template = get_widget_html(poll=poll, widgetFolder="webtemplates", widgetType=widget_type, extra_context_data = {})
+		data = {}
+		data["template"] = template
+		return HttpResponse(json.dumps(data),content_type='application/json')
+
