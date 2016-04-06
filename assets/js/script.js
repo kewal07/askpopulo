@@ -1019,12 +1019,14 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
               easing: 'inAndOut',
          },
         };
+        if(chart != ""){
 		if(graphType != ""){
-        	chart.draw(data, optionsCol);
-        }else{
-        	chart.draw(data, options);
-        }
-        if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
+	        	chart.draw(data, optionsCol);
+	        }else{
+	        	chart.draw(data, options);
+	        }
+	    }
+        if(document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	dataExtra = google.visualization.arrayToDataTable(pollsDataExtra);
 	        chartExtra.draw(dataExtra, options);
         }  
