@@ -2,6 +2,7 @@ var user_authenticated;
 var csrfmiddlewaretoken;
 var acnt_login_url;
 var user_credits;
+var cookie_prepend = "ABP_OWN_";
 $(document).ready(function(){
 
 	user_authenticated = $("#if_user_authenticated").val() === "True";
@@ -346,7 +347,7 @@ $(document).ready(function(){
 		var betValue = 0;
 		// console.log(quebet === "True");
 		var elemid = "#optionsForm"+queid;//$(this)[0].id
-		var vote_url = $(elemid).attr("action");
+		var vote_url = $(elemid).attr("action")+"&src="+location.href;
 		$(elemid).bind('submit', function()
 		{
 			$("#"+voteSubmitId).attr("disabled","disabled");
@@ -358,10 +359,28 @@ $(document).ready(function(){
 				success:function(response)
 				{
 					var form_errors = response.form_errors;
+					var giveData = response.noData;
+					var allData = response.allData;
+					var votedSession = response.sessionKey;
+					var votedChoice = response.choice;
 					// console.log(response);
 					// console.log(form_errors);
 					
-					if(typeof form_errors === 'undefined'){
+					if(!(typeof allData === 'undefined')){
+						saveCookie(cookie_prepend,'VOTED_'+queid,true);
+						saveCookie(cookie_prepend,'VOTED_SESSION_'+queid,votedSession);
+						saveCookie(cookie_prepend,'VOTED_CHOICE_'+queid,votedChoice);
+						saveCookie(cookie_prepend,'DATA_GIVEN_'+queid,true);
+						location.href = "/polls/"+queid+"/"+queslug;
+						$("#"+voteSubmitId).removeAttr("disabled");
+					}else if(!(typeof giveData === 'undefined')){
+						saveCookie(cookie_prepend,'VOTED_'+queid,true);
+						saveCookie(cookie_prepend,'VOTED_SESSION_'+queid,votedSession);
+						saveCookie(cookie_prepend,'VOTED_CHOICE_'+queid,votedChoice);
+						openOverlay("#overlay-data---"+queid+"---"+queslug);
+						$("#"+voteSubmitId).removeAttr("disabled");
+					}
+					else if(typeof form_errors === 'undefined'){
 						if (user_credits > 10){
 							if(quebet === "True"){
 								openOverlay("#overlay-inAbox5");
@@ -402,6 +421,53 @@ $(document).ready(function(){
 			});     
 			return false;
 		});
+	});
+	$(".open-overlay-data").click(function(){
+		var elemId = $(this)[0].id;
+		var queid = elemId.split("---")[1];
+		var queslug = elemId.split("---")[2];
+		openOverlay("#overlay-data---"+queid+"---"+queslug);
+	});
+	$(".overlay-data-closeButton").click(function(){
+		var elemId = $(this)[0].id;
+		var pollId = elemId.split("---")[1];
+		var pollSlug = elemId.split("---")[2];
+		closeOverlay();
+		location.href = "/polls/"+pollId+"/"+pollSlug;
+	});
+	$(".overlay-data-nextButton").click(function(){
+		var elemId = $(this)[0].id;
+		var pollId = elemId.split("---")[1];
+		var pollSlug = elemId.split("---")[2];
+		var askbypollAge = $("#overlay-data-age---"+pollId).val();
+		var askbypollGender = $("#overlay-data-gender---"+pollId).val();
+		var askbypollProfession = $("#overlay-data-profession---"+pollId).val();
+		var askbypollEmail = $("#overlay-data-email---"+pollId).val();
+		var votedSession = getCookie(cookie_prepend+'VOTED_SESSION_'+pollId);
+		var votedChoice = getCookie(cookie_prepend+'VOTED_CHOICE_'+pollId);
+		if(askbypollAge.trim() == "" || askbypollGender == "notSelected" || askbypollProfession == "notSelected"){
+			$("#overlay-data-age---"+pollId).parent().prepend('<span class="askbypoll-embed-error"> Age Gender Profession are mandatory</span>');
+		} else {
+			var data = {'question' : pollId, 'age' : askbypollAge, 'gender' : askbypollGender, 'profession' : askbypollProfession, 'email' : askbypollEmail, 'choice' : votedChoice, 'sessionKey' : votedSession, 'src' : location.href, 'csrfmiddlewaretoken': csrfmiddlewaretoken};
+			$.ajax(
+			{
+				type: 'POST',
+				url: '/senddata',
+				data:data,
+				success:function(response)
+				{
+					saveCookie(cookie_prepend,'DATA_GIVEN_'+pollId,true);
+					saveCookie(cookie_prepend,'AGE',askbypollAge);
+					saveCookie(cookie_prepend,'GENDER',askbypollGender);
+					saveCookie(cookie_prepend,'PROFESSION',askbypollProfession);
+					var deleteCookies = response.removecookies;
+					if(!(typeof deleteCookies === 'undefined')){
+						deleteAllCookies(cookie_prepend);
+					}
+					location.href = "/polls/"+pollId+"/"+pollSlug;
+				}
+			});
+		}
 	});
 	// Vote end
 
@@ -588,6 +654,28 @@ $(document).ready(function(){
 	});
 	// contact us overlay end
 });
+
+function saveCookie(prepend,name,val,time=365){
+	var a = new Date();
+	a = new Date(a.getTime() +1000*60*60*24*time);
+	document.cookie = prepend+name+'='+val+'; expires='+a.toGMTString()+';path=/';
+}
+
+function deleteAllCookies(startwithStr) {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+    	var cookie = cookies[i];
+    	var eqPos = cookie.indexOf("=");
+    	var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    	if(name.startsWith(startwithStr))
+    		deleteCookie(name);
+    }
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+}
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -835,15 +923,18 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         		chart.draw(data, optionsCol);
         	}
         }else{
-        	chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
-        	chart.draw(data, options);
+        	if(document.getElementById(analyse_type+'pollsChart---'+pollId) != null){
+	        	chart = new google.visualization.BarChart(document.getElementById(analyse_type+'pollsChart---'+pollId));
+	        	chart.draw(data, options);
+	        }
         }
         google.visualization.events.addListener(chart, 'animationfinish', displayAnnotation);
         if(document.getElementById("#polls-votes-count---"+pollId) != null)
         	$("#polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
         if(document.getElementById("#advanced-polls-votes-count---"+pollId) != null)
         	$("#advanced-polls-votes-count---"+pollId)[0].innerHTML =  advanced_analyse_dic['total_votes'] + " Votes";
-        if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
+        // if(advanced_analyse_dic['total_votes'] != advanced_analyse_dic['total_votes_extra'] && document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
+        if(document.getElementById(analyse_type+'pollsChart---'+pollId+'---extra') != null){
         	$("#advanced-ana-bar-graph-1---"+pollId).show();
         	$("#advanced-ana-bar-graph-2---"+pollId).show();
         	$("#advanced-ana-bar-graph-1---"+pollId).html("Results With All Responses : "+advanced_analyse_dic['total_votes_extra']);

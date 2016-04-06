@@ -72,9 +72,6 @@
 							<li><a href="{% url 'particle:particle' %}">pArticle</a></li>
 							<li><a href="{% url 'trivia:trivia' %}">Trivia</a></li>
 							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
-							{% if user.is_authenticated %}
-								<li id="widget-element" onclick="openOverlay('#overlay-widget');">Widget</li>
-							{% endif %}
 							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>
 			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
 			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
@@ -159,6 +156,13 @@
 		{% endblock %}
 		{% if user.is_authenticated %}
 			{% include 'polls/snippets/overlay-widget.html' %}
+		{% else %}
+			<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
+			<style type="text/css">
+				.askbypoll-embed-overlay{
+					position: fixed;
+				}
+			</style>
 		{% endif %}
 		<div id="overlay-inAbox" class="overlay">
 			<div class="wrapper">

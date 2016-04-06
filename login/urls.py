@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from login import views
 from django.contrib.auth.decorators import login_required
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'askpopulo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
@@ -22,4 +22,4 @@ urlpatterns = patterns('',
 	url(r'^editgroup$',login_required(views.EditGroup.as_view()),name='edit_group'),
 	url(r'^deletegroup$',login_required(views.DeleteGroup.as_view()),name='delete_group'),
 	# url(r'^/detail$',views.DetailView.as_view(),name='detail'),
-)
+]

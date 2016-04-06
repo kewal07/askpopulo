@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^category$',login_required(views.IndexView.as_view()),name='polls_category'),
 	url(r'^polls/featuredpolls$',login_required(views.IndexView.as_view()),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',views.VoteView.as_view(),name='polls_vote'),
+	url(r'^senddata$',views.save_poll_vote_data,name='polls_data'),
 	url(r'^public-url/polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',views.VoteView.as_view(),name='polls_share'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)/result$',login_required(views.VoteView.as_view()),name='polls_result'),
 	url(r'^editpoll/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',login_required(views.EditView.as_view()),name='polls_edit'),
