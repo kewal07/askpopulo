@@ -29,6 +29,15 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 {% endblock %}
 {% block content %}
+	{% if not user.is_authenticated %}
+		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
+		<style type="text/css">
+			.askbypoll-embed-overlay{
+				position: fixed;
+			}
+		</style>
+		{% include 'polls/snippets/overlay-get-data.html' with poll=question %}
+	{% endif %}
 	<section id="content">
 			<div class="questions">
 				<div class="questionContent">
@@ -133,7 +142,7 @@
 						{% if question.protectResult and user != question.user %}
 							<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. Results have been protected.</p>
 						{% else %}
-							<div class="pollsChart" id="pollsChart---{{ question.id }}">
+							<div class="pollsChart" id="pollsChart---{{ question.id }}---extra">
 							</div>
 						{% endif %}
 						<div class="analyzeAndShare">
@@ -166,8 +175,7 @@
 						</div>
 					</div>
 				</div>
-				{% if question.protectResult and user != question.user %}
-				{% else %}
+				{% if data.dataProvided %}
 				<div class="analysis">
 					<div class="gender">
 						<div class="graphContainer">
@@ -198,6 +206,8 @@
 						</div>
 					</div>
 				</div>
+				{% else %}
+					<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. <span class="open-overlay-data" id="open-overlay-data---{{ question.id }}---{{ question.que_slug }}"> Show Demographics</span></p>
 				{% endif %}
 				<div id="disqus_thread">
 				</div>

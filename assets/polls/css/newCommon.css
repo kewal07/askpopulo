@@ -371,6 +371,103 @@ span.page-links a{
   	margin-bottom:2rem;
 	font-size : 2rem;
 }
+#overlay-inAbox .wrapper {
+    text-align: center;
+}
+#overlay-shade {
+	display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: #000;
+}
+
+.overlay {
+	border: 3px solid #000;
+  	border-radius: 25px;
+  	background-color: #fff;
+    position: fixed;
+    /*top: -300px;
+    left: 0;*/
+    width: 50%;
+    /*min-height: 30%;*/
+    z-index: 11;
+    color: #000;
+} .ie7 .overlay {
+    height: 200px;
+} .overlay .wrapper {
+    padding: 15px 30px 30px;
+	text-align: center;
+}
+#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox5, #overlay-inAbox6, #overlay-inAbox7, #overlay-widget{
+	display:none;
+	margin-left: 25%;
+}
+#overlay-widget{
+	display:none;
+	margin-left: 25%;
+	border: none;
+	background: none;
+}
+#overlay-inAbox3 {
+	display: none;
+	position: absolute;
+    margin: 0 auto;
+    left: 15%;
+    width: 70%;
+}
+#overlay-inAbox7{
+	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
+}
+.overlaytext{
+	font-size: 1rem;
+	padding: 1rem;
+	/* margin-bottom: 1rem; */
+}
+#yes, #no, #okay4, #cancel4{
+	margin: 0;
+	display: inline-block;
+}
+.dropDownLoc{
+	display: none;
+	/*position: absolute;*/
+	z-index: 98;
+	padding: 10px;
+	background: rgba(0,0,0,0.8);
+	opacity: 1;
+	border: 2px solid white;
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+	text-align: center;
+	/*right:1rem;*/
+}
+ul.dropDownUL{
+	padding:0 0.5rem;
+}
+textarea{
+	border:1px solid #f96a0e;
+	border-radius:4px;
+	font-size:1.25rem;
+	width: 30rem;
+  height: 20rem;
+}
+.overlay-widget-images-div{
+	width: 100%;
+}
+.overlay-widget-image-div{
+	display: inline-block;
+	padding: 1rem 2rem;
+}
+.overlay-widget-image{
+	width: 100px;
+	height: 100px;
+}
+.overlay-widget-p{
+	color: white;
+}
 @media only screen and (max-width: 980px){
 	.navbar-header{
 		float:none;
@@ -490,81 +587,4 @@ span.page-links a{
 	.logged-in-header ul.menu-ul li{
 		margin-right: 0.9rem;
 	}
-}
-#overlay-inAbox .wrapper {
-    text-align: center;
-}
-#overlay-shade {
-	display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    background-color: #000;
-}
-
-.overlay {
-	border: 3px solid #000;
-  	border-radius: 25px;
-  	background-color: #fff;
-    position: fixed;
-    /*top: -300px;
-    left: 0;*/
-    width: 50%;
-    /*min-height: 30%;*/
-    z-index: 11;
-    color: #000;
-} .ie7 .overlay {
-    height: 200px;
-} .overlay .wrapper {
-    padding: 15px 30px 30px;
-	text-align: center;
-}
-#overlay-inAbox, #overlay-inAbox2, #overlay-inAbox5, #overlay-inAbox6, #overlay-inAbox7{
-	display:none;
-	margin-left: 25%;
-}
-#overlay-inAbox3 {
-	display: none;
-	position: absolute;
-    margin: 0 auto;
-    left: 15%;
-    width: 70%;
-}
-#overlay-inAbox7{
-	background: linear-gradient(60deg, #6ba0bd 0%, #bf6c9e 100%) no-repeat center center fixed;
-}
-.overlaytext{
-	font-size: 1rem;
-	padding: 1rem;
-	/* margin-bottom: 1rem; */
-}
-#yes, #no, #okay4, #cancel4{
-	margin: 0;
-	display: inline-block;
-}
-.dropDownLoc{
-	display: none;
-	/*position: absolute;*/
-	z-index: 98;
-	padding: 10px;
-	background: rgba(0,0,0,0.8);
-	opacity: 1;
-	border: 2px solid white;
-	border-radius: 0 0 5px 5px;
-	box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-	text-align: center;
-	/*right:1rem;*/
-}
-ul.dropDownUL{
-	padding:0 0.5rem;
-}
-textarea{
-	border:1px solid #f96a0e;
-	border-radius:4px;
-	font-size:1.25rem;
-	width: 30rem;
-  height: 20rem;
 }
