@@ -317,7 +317,7 @@ span.askbypoll-poll-result{
     background: beige;
     margin: 0 auto;
     opacity: 1;
-    top: 1rem;
+    top: 8rem;
     left: 0;
     right: 0;
 }
@@ -469,5 +469,13 @@ span.askbypoll-poll-result{
 .askbypoll-widget-error{
     color: red;
     text-align: center;
+}
+@media only screen and (max-width: 768px) {
+        .askbypoll-emailField{
+                font-size:12px;
+        }
+	.askbypoll-embed-overlay{
+		padding:1rem 0rem;
+	}
 }
 

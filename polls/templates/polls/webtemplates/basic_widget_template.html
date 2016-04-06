@@ -1,9 +1,9 @@
 <div class="askbypoll-embed-poll-wrapper" id="askbypoll-embed-poll-wrapper---{{ poll.id }}">
 {% if analysisNeeded %}
 	<div class="askbypoll-embed-overlay" id="askbypoll-embed-overlay---{{ poll.id }}">
-		<span class="askbypoll-enter-details">Enter Details To Analyse Results</span>
+		<span class="askbypoll-enter-details">Enter Details To View Graphs</span>
 		<select class="askbypoll-ageField askbypoll-enter" id="askbypoll-age---{{ poll.id }}" name="age">
-			<option value="notSelected">What's your Age Group?</option>
+			<option value="notSelected">What's your Age Group</option>
 			<option value="16"><19</option>
 			<option value="22">20-25</option>
 			<option value="28">26-30</option>
@@ -30,7 +30,7 @@
 			<option value="Manager">Manager</option>
 			<option value="Others">Others</option>
 		</select>
-		<input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---{{ poll.id }}" placeholder="What's your Email. We hate spam as much as you do." name="email">
+		<input type="text" class="askbypoll-emailField askbypoll-enter" id="askbypoll-email---{{ poll.id }}" placeholder="Enter your Email for Authentication. No Spam Ever!" na e="email">
 		<div class="askbypoll-embed-button">
 			<button id="askbypoll-closeButton---{{ poll.id }}" class="askbypoll-close-button"> Close </button>
 			<button id="askbypoll-nextButton---{{ poll.id }}" class="askbypoll-button"> Show me </button>
@@ -87,7 +87,7 @@
 	</div>
 	{% if analysisNeeded and not poll.protectResult %}
 		<div class="askbypoll-embed-show-demographics" id="askbypoll-embed-show-demographics---{{ poll.id }}">
-			Display Analysis
+			Display Graphs 
 		</div>
 	{% endif %}
 	<div class="askbypoll-embed-poll-powered-by">

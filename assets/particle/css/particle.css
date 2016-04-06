@@ -115,7 +115,7 @@ img.featured-image{
 	/* text-align: justify; */
 }
 .particle-body img{
-	display: block;
+	/* display: block; */
 	width: 100%;
 	height: auto;
 }
