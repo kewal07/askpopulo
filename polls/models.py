@@ -59,6 +59,7 @@ class Question(models.Model):
 	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 	is_survey = models.BooleanField(default=0)
 	is_feedback = models.BooleanField(default=0)
+	authenticate = models.BooleanField(default=0)
 
 	def iseditable(self, request_user):
 		editable = False

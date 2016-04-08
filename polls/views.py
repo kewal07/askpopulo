@@ -342,8 +342,10 @@ class VoteView(BaseViewDetail):
 			
 		else:
 			if request.is_ajax():
-				giveData = save_poll_vote_widget(request, question.id, choiceId)
-				print(giveData)
+				giveData = {}
+				if not question.authenticate:
+					giveData = save_poll_vote_widget(request, question.id, choiceId)
+					# print(giveData)
 				return HttpResponse(json.dumps(giveData),content_type='application/json')
 			next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 			extra_params = '?next=%s?referral=%s'%(next_url,request.GET.get("referral",""))
@@ -591,6 +593,7 @@ class CreatePollView(BaseViewList):
 			isBet = request.POST.get('bet')
 			isProtectResult = request.POST.get('protectResult',False)
 			makeFeatured = request.POST.get('makeFeatured',False)
+			authenticate = request.POST.get('authenticate',False)
 			if isAnon:
 				anonymous = 1
 			else:
@@ -607,6 +610,10 @@ class CreatePollView(BaseViewList):
 				protectResult = 1
 			else:
 				protectResult = 0
+			if authenticate:
+				authenticate = 1
+			else:
+				authenticate = 0
 			makeFeaturedError = ""
 			if makeFeatured and user.extendeduser.credits - 100 >= 0:
 				home_visible = 1
@@ -655,7 +662,7 @@ class CreatePollView(BaseViewList):
 				if 'duplicateImage' in errors:
 					break
 			"""
-			print("--------------------------------",errors or ajax,errors,ajax)
+			# print("--------------------------------",errors or ajax,errors,ajax)
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			# mark bet poll as private untill verified by admin
@@ -673,8 +680,9 @@ class CreatePollView(BaseViewList):
 				question.home_visible = home_visible
 				question.featured_image = shareImage
 				question.featuredPoll = featuredpoll
+				question.authenticate = authenticate
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage, featuredPoll = featuredpoll)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage, featuredPoll = featuredpoll, authenticate = authenticate)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()

@@ -158,6 +158,18 @@ $(document).ready(function(){
   		$("#featuredimage_tooltip").toggle();
   	});
 
+  	$("#authenticate_vote_fa").hover(function(e){
+  		// console.log($(this));
+  		var elem_pos = $(this).offset();
+  		// console.log(elem_pos.top,elem_pos.left);
+  		$("#authenticate_vote_tooltip").css({
+  			"top":elem_pos.top-100,
+  			"left":elem_pos.left-60,
+  			"width":"30%",
+  		});
+  		$("#authenticate_vote_tooltip").toggle();
+  	});
+
   	$("#private_poll_fa").hover(function(e){
   		// console.log("category_tooltip");
   		var elem_pos = $(this).offset();

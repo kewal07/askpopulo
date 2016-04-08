@@ -169,37 +169,37 @@
 						</div>
 					</div>
 				</div>
-				{% if data.dataProvided %}
-				<div class="analysis">
-					<div class="gender">
-						<div class="graphContainer">
-							<p> Gender </p>
-							<div class="genderChart" id="genderChart---{{ question.id }}">
+				{% if user.is_authenticated or data.dataProvided  %}
+					<div class="analysis">
+						<div class="gender">
+							<div class="graphContainer">
+								<p> Gender </p>
+								<div class="genderChart" id="genderChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="age">
+							<div class="graphContainer">
+								<p> Age </p>
+								<div class="ageChart" id="ageChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="location">
+							<div class="graphContainer">
+								<p> Location </p><div class="back" onClick="back('{{ csrf_token }}','',{{ question.id }})"><i class="fa fa-arrow-left"></i></div>
+								<div class="locationChart" id="locationChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="others">
+							<div class="graphContainer">
+								<p> Profession </p>
+								<div class="othersChart" id="othersChart---{{ question.id }}">
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="age">
-						<div class="graphContainer">
-							<p> Age </p>
-							<div class="ageChart" id="ageChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-					<div class="location">
-						<div class="graphContainer">
-							<p> Location </p><div class="back" onClick="back('{{ csrf_token }}','',{{ question.id }})"><i class="fa fa-arrow-left"></i></div>
-							<div class="locationChart" id="locationChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-					<div class="others">
-						<div class="graphContainer">
-							<p> Profession </p>
-							<div class="othersChart" id="othersChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-				</div>
 				{% else %}
 					<p class="thanks-for-voting-graph"> Thanks for Voting. Enter Demographics to view graphs. </p>
 					<p class="thanks-for-voting-graph">
