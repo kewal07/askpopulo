@@ -79,12 +79,6 @@
 			<div class="masonry">
 				{% for question in data.data %}
 					{% if not user.is_authenticated %}
-						<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
-						<style type="text/css">
-							.askbypoll-embed-overlay{
-								position: fixed;
-							}
-						</style>
 						{% include 'polls/snippets/overlay-get-data.html' with poll=question.question %}
 					{% endif %}
 					{% if question.question.user.extendeduser.company.id > 1 %}
@@ -152,7 +146,7 @@
 										{% if question.user_already_voted %}
 											<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 											{% if not question.dataProvided and not question.expired %}
-												<span class="open-overlay-data" id="open-overlay-data---{{ question.question.id }}---{{ question.question.que_slug }}"> Show Demographics</span>
+												<a class="btn voteResultSubmit open-overlay-data" id="open-overlay-data---{{ question.question.id }}---{{ question.question.que_slug }}" href="javascript:;"> Show Graphs</a>
 											{% endif %}
 										{% else %}
 											{% if question.expired %}

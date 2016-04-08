@@ -1,7 +1,8 @@
 <div id="overlay-data---{{ poll.id }}---{{ poll.que_slug }}" class="overlay askbypoll-embed-overlay">
-	<span class="overlay-data-enter-details">Enter Details To Analyse Results</span>
+	<div class="overlay-data-enter-details">Enter Details To View Graphs</div>
+	<div class="overlay-data-enter-details">Provide Email to Skip this Step in Future</div>
 	<select class="askbypoll-ageField askbypoll-enter" id="overlay-data-age---{{ poll.id }}" name="age">
-		<option value="notSelected">What's your Age Group?</option>
+		<option value="notSelected">What's your Age Group</option>
 		<option value="16"><19</option>
 		<option value="22">20-25</option>
 		<option value="28">26-30</option>
@@ -28,9 +29,9 @@
 		<option value="Manager">Manager</option>
 		<option value="Others">Others</option>
 	</select>
-	<input type="text" class="askbypoll-emailField askbypoll-enter" id="overlay-data-email---{{ poll.id }}" placeholder="What's your Email. We hate spam as much as you do." name="email">
+	<input type="text" class="askbypoll-emailField askbypoll-enter" id="overlay-data-email---{{ poll.id }}" placeholder="Enter Email for Authentication. No Spam Ever!" name="email">
 	<div class="askbypoll-embed-button">
 		<button id="overlay-data-closeButton---{{ poll.id }}---{{ poll.que_slug }}" class="askbypoll-close-button overlay-data-closeButton"> Close </button>
-		<button id="overlay-data-nextButton---{{ poll.id }}---{{ poll.que_slug }}" class="askbypoll-button overlay-data-nextButton"> Show me </button>
+		<button id="overlay-data-nextButton---{{ poll.id }}---{{ poll.que_slug }}" class="askbypoll-button overlay-data-nextButton"> Show Graphs </button>
 	</div>
 </div>

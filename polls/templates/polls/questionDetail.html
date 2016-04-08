@@ -30,12 +30,6 @@
 {% endblock %}
 {% block content %}
 	{% if not user.is_authenticated %}
-		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/askbypoll-widget-style.css' %}" />
-		<style type="text/css">
-			.askbypoll-embed-overlay{
-				position: fixed;
-			}
-		</style>
 		{% include 'polls/snippets/overlay-get-data.html' with poll=question %}
 	{% endif %}
 	<section id="content">
@@ -207,7 +201,17 @@
 					</div>
 				</div>
 				{% else %}
-					<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. <span class="open-overlay-data" id="open-overlay-data---{{ question.id }}---{{ question.que_slug }}"> Show Demographics</span></p>
+					<p class="thanks-for-voting-graph"> Thanks for Voting. Enter Demographics to view graphs. </p>
+					<p class="thanks-for-voting-graph">
+						<a class="open-overlay-data btn" id="open-overlay-data---{{ question.id }}---{{ question.que_slug }}" href="javascript:;"> Show Me</a>
+					</p>
+					<p class="thanks-for-voting-graph"> To Avoid the hassle of entering Demographics on each poll.</p>
+					<p class="thanks-for-voting-graph">
+						{% load socialaccount %}
+						<a href="{% provider_login_url "facebook" method="oauth2" %}" class="login-a btn facebook dark-blue">SignIn with Facebook</a>
+						<a href="{% url 'account_login' %}?next={{ request.path }}&{{ request.GET.urlencode }}" class="login-a btn abp orange">LogIn</a>
+		    			<a href="{% provider_login_url "google" %}" class="login-a btn google red">SignIn with Google</a>
+		    		</p>
 				{% endif %}
 				<div id="disqus_thread">
 				</div>
