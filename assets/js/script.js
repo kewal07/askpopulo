@@ -445,7 +445,7 @@ $(document).ready(function(){
 		var pollId = elemId.split("---")[1];
 		var pollSlug = elemId.split("---")[2];
 		closeOverlay();
-		location.href = "/polls/"+pollId+"/"+pollSlug;
+		location.href = "/polls/"+pollId+"/"+pollSlug+"?next=/polls/"+pollId+"/"+pollSlug;
 	});
 	$(".overlay-data-nextButton").click(function(){
 		var elemId = $(this)[0].id;
