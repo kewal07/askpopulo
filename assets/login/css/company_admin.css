@@ -108,13 +108,14 @@ svg{
 	width:100%;
 }
 .cube-admin{
+
 	width: 26%;
     display: inline-block;
     height: 100%;
 	-webkit-perspective:800;
-	perspective:800;
+	perspective:800px;
 	-webkit-perspective-origin:50% 110px;
-	perspective:50% 110px;
+	perspective-origin:50% 110px;
 	margin-right: 3rem;
 	float:right;
 }
@@ -126,8 +127,11 @@ svg{
 	margin-top:2rem;
 	height:300px;
 	width:300px;
+	-moz-animation:anim2 ease-in-out 60s infinite alternate;
 	-webkit-transform-style:preserve-3d;
+	-moz-transform-style:preserve-3d;
 	-webkit-transform:rotateX(0deg) rotateY(20deg);
+	-moz-transform:rotateX(0deg) rotateY(20deg);
 	-webkit-animation:anim2 ease-in-out 60s infinite alternate;
 }
 
@@ -144,6 +148,13 @@ svg{
 	50% {-webkit-transform:rotateY(360deg)}
 	to {-webkit-transform:rotateY(0deg)}
 }
+
+@-moz-keyframes anim2{
+	from {-webkit-transform:rotateY(0deg)}
+	50% {-webkit-transform:rotateY(360deg)}
+	to {-webkit-transform:rotateY(0deg)}
+}
+
 .face{
     position: absolute;
     height: 270px;
