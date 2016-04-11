@@ -1,5 +1,6 @@
-#surveyDescription,.survey-question-div textarea{
-	margin-top:-1rem;
+textarea{
+	width: 70%;
+    height: 3rem;
 }
 .survey-questions{
 	width: 90%;

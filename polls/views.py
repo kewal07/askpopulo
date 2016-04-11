@@ -39,7 +39,7 @@ import stream
 client = stream.connect(settings.STREAM_API_KEY, settings.STREAM_API_SECRET)
 from login.models import ExtendedGroup,ExtendedGroupFuture
 from django.contrib.auth.models import Group
-from django.db.models import Count
+from django.db.models import Count,Avg
 import django.contrib.auth.hashers
 from django.shortcuts import redirect
 from django.template import loader
@@ -62,6 +62,11 @@ class WebRtcView(BaseViewList):
 
 class ABPChatPubNubView(BaseViewList):
 	template_name = 'polls/abp_chat_pubnub.html'
+	def get_queryset(self):
+		return {}
+
+class ABPChatPubNubIntervieweeView(BaseViewList):
+	template_name = 'polls/abp_chat_pubnub_interviewee.html'
 	def get_queryset(self):
 		return {}
 
@@ -1451,7 +1456,7 @@ class CreateSurveyView(BaseViewList):
 			for que_index in question_count:
 				poll = {}
 				#print(que_index)
-				#print(post_data.get("qText"+str(que_index)))
+				# print(post_data)
 				que_text = post_data.get("qText"+str(que_index)).strip()
 				que_desc = post_data.get("qDesc"+str(que_index)).strip()
 				que_type = post_data.get("qType"+str(que_index)).strip()
@@ -1467,9 +1472,25 @@ class CreateSurveyView(BaseViewList):
 				choices = []
 				images = []
 				queError = ""
+				min_max = {}
 				if not que_text:
 					queError += "Question is required.<br>"
-				if que_type != "text":
+				if que_type == "rating":
+					# print(que_index+"---rating---Min")
+					min_value = post_data.get(que_index+"---rating---Min",0)
+					max_value = post_data.get(que_index+"---rating---Max",10)
+					if min_value:
+						min_value = int(min_value)
+					if max_value:
+						max_value = int(max_value)
+					min_max["min_value"] = min_value
+					min_max["max_value"] = max_value
+					choice_elem_id = 'question'+que_index+'choiceDiv'
+					if not (min_max["min_value"] and min_max["max_value"]):
+						errors[choice_elem_id] = "Min and Max value is required.<br>"
+					elif min_max["min_value"] > min_max["max_value"]:
+						errors[choice_elem_id] = "Min Value should be less than Max.<br>"
+				elif que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
 					#print(choice_list)
 					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
@@ -1497,6 +1518,7 @@ class CreateSurveyView(BaseViewList):
 					errors["qText"+str(que_index)] = queError
 				poll['choice_texts'] = choices
 				poll['choice_images'] = images
+				poll['min_max'] = min_max
 				polls_list.append(poll)
 			#print(polls_list)
 			#print(errors)
@@ -1596,7 +1618,9 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			for index,choice_text in enumerate(poll['choice_texts']):
 				choice = Choice(question=question,choice_text=choice_text,choice_image=poll['choice_images'][index])
 				choice.save()
-			survey_que = Survey_Question(survey=survey,question=question,question_type=poll['type'],add_comment=addComment,mandatory=mandatory)
+			min_value = poll['min_max'].get("min_value",0)
+			max_value = poll['min_max'].get("max_value",10)
+			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value)
 			survey_que.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1667,7 +1691,7 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		for x in Survey_Question.objects.filter(survey_id=context['survey'].id):
-			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
+			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value}
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1676,6 +1700,25 @@ class SurveyVoteView(BaseViewDetail):
 					poll_dict['user_already_voted'] = True
 					if x.question_type == "text":
 						poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
+					elif x.question_type == "rating":
+						myrate = int(VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text)
+						myrate = (myrate * (x.max_value - x.min_value))/100 + x.min_value
+						allrate = VoteText.objects.filter(question_id=x.question.id).aggregate(Avg('answer_text')).get('answer_text__avg')
+						allrate = (allrate * (x.max_value - x.min_value))/100 + x.min_value
+						if myrate > allrate:
+							to_val = myrate
+							from_val = allrate
+							to_str = "You"
+							from_str = "Others"
+						else:
+							to_val = allrate
+							from_val = myrate
+							from_str = "You"
+							to_str = "Others"
+						poll_dict["to_str"] = to_str
+						poll_dict["to_val"] = to_val
+						poll_dict["from_str"] = from_str
+						poll_dict["from_val"] = from_val
 				if x.add_comment:
 					voteText = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)
 					if voteText:
@@ -1685,7 +1728,7 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
-			#print(request.POST,request.path)
+			# print(request.POST,request.path)
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
@@ -1711,7 +1754,13 @@ class SurveyVoteView(BaseViewDetail):
 				# print(choice_list,choice_list_comment,mandatory,saveRequired)
 				if choice_list:
 					if saveRequired:
-						if que_type != "text":
+						if que_type == "rating":
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
+							if created:
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
+								voteText.save()
+						elif que_type != "text":
 							for choiceId in choice_list:
 								choice = Choice.objects.get(pk=choiceId)
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
@@ -1828,7 +1877,7 @@ class SurveyEditView(BaseViewDetail):
 					surveyAddComment = False
 				if not x.mandatory:
 					surveyMandatory = False
-				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory}
+				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value}
 				context['polls'].append(poll_dict)
 			context["surveyResultProtected"] = surveyResultProtected
 			context["surveyAddComment"] = surveyAddComment

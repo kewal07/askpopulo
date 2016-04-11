@@ -19,9 +19,12 @@
 {% block extra_css %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="{% static 'js/ion.rangeSlider.min.js' %}"></script>
 {% endblock %}
 {% block content %}
 	<section id="content">
@@ -88,6 +91,40 @@
 								<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
 								{% if question.type == "text" %}
 									<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+								{% elif question.type == "rating" %}
+									<div id="div-irs-{{ question.poll.id }}">
+								        <input type="text" id="range{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
+								        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+								    </div>
+								    <script>
+								    	{% if question.user_already_voted or expired%}
+
+								    		$('#range{{ question.poll.id }}').ionRangeSlider({
+									            keyboard: true,
+									            min: {{ question.min_value }},
+									            max: {{ question.max_value }},
+									            from: {{ question.from_val }},
+									            to: {{ question.to_val }},
+									            type: 'double',
+									            step: 1,
+									            disable: true
+									        });
+									        $("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
+									        $("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
+								    	{% else %}
+									    	 $('#range{{ question.poll.id }}').ionRangeSlider({
+									            keyboard: true,
+									            min: {{ question.min_value }},
+									            max: {{ question.max_value }},
+									            from: {{ question.min_value }},
+									            type: 'single',
+									            step: 1,
+									            onFinish: function (data) {
+													$('#choice{{ question.poll.id }}').val(data.from_percent);
+												}
+									        });
+										{% endif %}
+									</script>
 								{% else %}
 									{% for choice in question.poll.choice_set.all %}
 										<p>
@@ -110,7 +147,6 @@
 										</p>
 									{% endfor %}
 									{% if question.poll.protectResult and user != question.poll.user %}
-										<p id="pollsVoted---{{ question.poll.id }}" style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;display:none;"> Thanks for Voting. Results have been protected by Admin.</p>
 									{% else %}
 										<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
 									{% endif %}
@@ -216,19 +252,14 @@
 		{% endif %}
 		var continue_loop = true;
 		function saveVotes(){
-			// console.log("save as no error and draw charts too");
 			var form_n = $('.optionsForm').length;
 			var ajax_calls = 0;
 			$('.optionsForm').each(function(){
 				var elemid = $(this)[0].id;
-				// console.log(elemid);
-				// console.log($(this).serialize());
 				var form_data = $(this).serialize();
-				// console.log(form_data);
 				form_data += '&' + 'saveRequired=True';
 				var referral = getQueryParameterByName("referral")
 				form_data += '&' + 'referral_id='+referral;
-				// console.log(form_data);
 				var queid = elemid.replace("optionsForm","");
 					$.ajax(
 					{
@@ -238,31 +269,13 @@
 						data:form_data,
 						success:function(response)
 						{
-							// $(".errorlist").remove();
 							ajax_calls += 1;
-							// console.log(response,ajax_calls,form_n);
 							if("success" in response){
-								// if($("#pollsChart---"+queid).length >0)
-								// 	drawPollsChart("{{ csrf_token }}","",parseInt(queid));
-								// else{
-								// 	if($("#choiceText"+queid).val().length > 0){
-								// 		$("#choiceText"+queid).attr('disabled','disabled');
-								// 		if($("#pollsVoted---"+queid).length >0)
-								// 			$("#pollsVoted---"+queid).show();
-								// 	}
-								// }
-								// if($("#choiceText"+queid+"Comment").length >0)
-								// 	$("#choiceText"+queid+"Comment").attr('disabled','disabled');
-								// 	$('.surveySubmit').remove();
-								// if($(".surveySubmit").length == 0){
 								if(ajax_calls == form_n)
 									confirm_redirect_only('#overlay-inAbox6',response["success"],'');
-								// }
 							}else{
 								for(key in response){
-									// console.log(key,response[key],$("#survey-question"+key));
 									$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
-									// $("#"+voteSubmitId).removeAttr("disabled");
 								}
 							}
 						}
@@ -281,15 +294,12 @@
 				$("#wrapper").css("max-width","1220px");
 			}
 			$('.choice_image').css({"width":"120px","height":"120px"});
-			// console.log($(".surveySubmit"));
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
 			$('.surveySubmit').click(function()
 			{
 				question_covered = 0;
-				// console.log("sur sub");
 				var subButElem = $(this);
-				// subButElem.css("background","red");
 				var remove_disable = false;
 				var form_n = $('.optionsForm').length;
 				var ajax_calls = 0;
@@ -297,108 +307,42 @@
 				$(".errorlist").remove();
 				setTimeout(function(){
 				{% if user.is_authenticated %}
-					// $("#vote"+{{ survey.id }}).attr("disabled","disabled");
 					$('.optionsForm').each(function(){
 						var elemid = $(this)[0].id;
-						// console.log(elemid);
-						// console.log($(this).serialize());
 						var form_data = $(this).serialize();
-						// console.log(form_data);
 						form_data += '&' + 'saveRequired=False';
-						// console.log(form_data);
-						// $(elemid).bind('submit', function(){
-						// 	$("#"+voteSubmitId).attr("disabled","disabled");
-							$.ajax(
+						$.ajax(
+						{
+							type: 'POST',
+							url:'',
+							async: false,
+							data:form_data,
+							success:function(response)
 							{
-								type: 'POST',
-								url:'',
-								async: false,
-								data:form_data,
-								success:function(response)
-								{
-									ajax_calls += 1;
-									// $(".errorlist").remove();
-									question_covered += 1;
-									// console.log(response);
-									if("success" in response){
-									}else{
-										for(key in response){
-											// console.log(key,response[key],$("#survey-question"+key));
-											$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
-											// $("#"+voteSubmitId).removeAttr("disabled");
-											remove_disable = true;
-										}
-									}
-									// console.log(question_covered,question_count,"error",$(".errorlist"),$(".errorlist").length);
-									if(ajax_calls == form_n && remove_disable){
-										subButElem.removeAttr("disabled");
-										// subButElem.css("background","none");
-									}
-									if(question_covered == question_count && $(".errorlist").length == 0){
-										saveVotes();
+								ajax_calls += 1;
+								question_covered += 1;
+								if("success" in response){
+								}else{
+									for(key in response){
+										$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
+										remove_disable = true;
 									}
 								}
-							});
-						// 	return false;
-						// });
+								if(ajax_calls == form_n && remove_disable){
+									subButElem.removeAttr("disabled");
+								}
+								if(question_covered == question_count && $(".errorlist").length == 0){
+									saveVotes();
+								}
+							}
+						});
 					});
-					// $(this).removeAttr("disabled");
-					// $("#vote"+{{ survey.id }}).removeAttr("disabled");
 				{% else %}
-					url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}?{{ request.GET.urlencode }}'
-					// console.log(url);
+					url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}?{{ request.GET.urlencode }}';
 					$(location).attr('href',url);
 				{% endif %}
 			},50);
 			});
-			// if($(".surveySubmit").length == 0){
-			// 	confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
-			// }
-			// $('.surveySubmit').bind('click', function()
-			// {
-			// 	{% if user.is_authenticated %}
-			// 		var voteSubmitId = $(this)[0].id;
-			// 		var queid = $(this)[0].id.replace('vote','').split("---")[0];
-			// 		var elemid = "#optionsForm"+queid;//$(this)[0].id
-			// 		$(elemid).bind('submit', function()
-			// 		{
-			// 			$("#"+voteSubmitId).attr("disabled","disabled");
-			// 			$.ajax(
-			// 			{
-			// 				type: 'POST',
-			// 				url:'',
-			// 				data:$(elemid).serialize(),
-			// 				success:function(response)
-			// 				{
-			// 					$(".errorlist").remove();
-			// 					if(jQuery.isEmptyObject(response)){
-			// 						if($("#pollsChart---"+queid).length >0)
-			// 							drawPollsChart("{{ csrf_token }}","",parseInt(queid));
-			// 						else{
-			// 							$("#choiceText"+queid).attr('disabled','disabled');
-			// 							if($("#pollsVoted---"+queid).length >0)
-			// 								$("#pollsVoted---"+queid).show();
-			// 						}
-			// 						if($("#choiceText"+queid+"Comment").length >0)
-			// 							$("#choiceText"+queid+"Comment").attr('disabled','disabled');
-			// 						$("#"+voteSubmitId).remove();
-			// 						if($(".surveySubmit").length == 0){
-			// 							confirm_redirect_only('#overlay-inAbox6',"{{ survey.thanks_msg }}",'/');
-			// 						}
-			// 					}else{
-			// 						$("#"+voteSubmitId).parent().append('<span style="position:absolute" class="errorlist"><br>Please enter an answer</span>');
-			// 						$("#"+voteSubmitId).removeAttr("disabled");
-			// 					}
-			// 				}
-			// 			});
-			// 			return false;
-			// 		});
-			// 	{% else %}
-			// 		url = '{% url 'account_login' %}?next={% url 'polls:survey_vote' survey.id survey.survey_slug %}'
-			// 		// console.log(url);
-			// 		$(location).attr('href',url);
-			// 	{% endif %}
-			// });
 		});
 	</script>
 {% endblock %}

@@ -22,7 +22,6 @@
 	<script src="{% static 'js/jquery.autocomplete.multiselect.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/html2canvas.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
-
 {% endblock %}
 {% block content %}
 	<div id="mobile-dashboard">
@@ -1661,7 +1660,7 @@
 
 				/*For file browse */
 					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-					var label = $('<div class="fileLabel"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+					var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
 					// var upImg = $('<img id="upImg" width=>')
 					var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
 					// $("#"+choice_file_id).hide();
@@ -2253,7 +2252,7 @@
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		// change for radio default start
-			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="text">Text</option></select></p>';
+			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="rating">Rating</option><option value="text">Text</option></select></p>';
 			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
 			  		// change for radio default end
 			  		question_elem += '</div>';
@@ -2295,11 +2294,17 @@
 					$("#"+choice_elem_div).remove();
 		  			// console.log($("#"+choice_elem_div));
 		  			var selectedType = $("#"+select_elem_id+" option:selected").val();
-					if(selectedType != "text"){
+		  			console.log(selectedType);
+					if(selectedType != "text" && selectedType != "rating"){
 						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
 						$("#"+question_div).append(add_another_choice_elem);
 						$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
 						add_another_choice(question_count_select,selectedType);
+					}
+					if(selectedType == "rating"){
+						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
+						$("#"+question_div).append(add_another_choice_elem);
+						$("#"+choice_elem_div).append('<input type="text" name="'+question_count_select+'---'+selectedType+'---Min" id="'+question_count_select+'---'+selectedType+'---Min" placeholder="Minimum Value"/><input type="text" name="'+question_count_select+'---'+selectedType+'---Max" id="'+question_count_select+'---'+selectedType+'---Max" placeholder="Maximum Value"/>');
 					}
 					if(selectedType == "radio"){
 						$("#addComment"+question_count_select+"p").show();
