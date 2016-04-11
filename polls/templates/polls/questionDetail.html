@@ -29,6 +29,9 @@
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 {% endblock %}
 {% block content %}
+	{% if not user.is_authenticated %}
+		{% include 'polls/snippets/overlay-get-data.html' with poll=question %}
+	{% endif %}
 	<section id="content">
 			<div class="questions">
 				<div class="questionContent">
@@ -133,7 +136,7 @@
 						{% if question.protectResult and user != question.user %}
 							<p style="font-size:1rem;margin-top:2rem;color: white;border: 1px solid black;padding: 0.5rem;background: black;border-radius:5px;text-align:center;width:90%;"> Thanks for Voting. Results have been protected.</p>
 						{% else %}
-							<div class="pollsChart" id="pollsChart---{{ question.id }}">
+							<div class="pollsChart" id="pollsChart---{{ question.id }}---extra">
 							</div>
 						{% endif %}
 						<div class="analyzeAndShare">
@@ -166,38 +169,49 @@
 						</div>
 					</div>
 				</div>
-				{% if question.protectResult and user != question.user %}
+				{% if user.is_authenticated or data.dataProvided  %}
+					<div class="analysis">
+						<div class="gender">
+							<div class="graphContainer">
+								<p> Gender </p>
+								<div class="genderChart" id="genderChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="age">
+							<div class="graphContainer">
+								<p> Age </p>
+								<div class="ageChart" id="ageChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="location">
+							<div class="graphContainer">
+								<p> Location </p><div class="back" onClick="back('{{ csrf_token }}','',{{ question.id }})"><i class="fa fa-arrow-left"></i></div>
+								<div class="locationChart" id="locationChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+						<div class="others">
+							<div class="graphContainer">
+								<p> Profession </p>
+								<div class="othersChart" id="othersChart---{{ question.id }}">
+								</div>
+							</div>
+						</div>
+					</div>
 				{% else %}
-				<div class="analysis">
-					<div class="gender">
-						<div class="graphContainer">
-							<p> Gender </p>
-							<div class="genderChart" id="genderChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-					<div class="age">
-						<div class="graphContainer">
-							<p> Age </p>
-							<div class="ageChart" id="ageChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-					<div class="location">
-						<div class="graphContainer">
-							<p> Location </p><div class="back" onClick="back('{{ csrf_token }}','',{{ question.id }})"><i class="fa fa-arrow-left"></i></div>
-							<div class="locationChart" id="locationChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-					<div class="others">
-						<div class="graphContainer">
-							<p> Profession </p>
-							<div class="othersChart" id="othersChart---{{ question.id }}">
-							</div>
-						</div>
-					</div>
-				</div>
+					<p class="thanks-for-voting-graph"> Thanks for Voting. Enter Demographics to view graphs. </p>
+					<p class="thanks-for-voting-graph">
+						<a class="open-overlay-data btn" id="open-overlay-data---{{ question.id }}---{{ question.que_slug }}" href="javascript:;"> Show Me</a>
+					</p>
+					<p class="thanks-for-voting-graph"> To Avoid the hassle of entering Demographics on each poll.</p>
+					<p class="thanks-for-voting-graph">
+						{% load socialaccount %}
+						<a href="{% provider_login_url "facebook" method="oauth2" %}" class="login-a btn facebook dark-blue">SignIn with Facebook</a>
+						<a href="{% url 'account_login' %}?next={{ request.path }}&{{ request.GET.urlencode }}" class="login-a btn abp orange">LogIn</a>
+		    			<a href="{% provider_login_url "google" %}" class="login-a btn google red">SignIn with Google</a>
+		    		</p>
 				{% endif %}
 				<div id="disqus_thread">
 				</div>

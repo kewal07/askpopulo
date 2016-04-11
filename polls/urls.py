@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from polls import views
 
-urlpatterns = patterns('',
+urlpatterns = [
+	# r'',
     # Examples:
     # url(r'^$', 'askpopulo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
@@ -14,6 +15,7 @@ urlpatterns = patterns('',
 	url(r'^category$',login_required(views.IndexView.as_view()),name='polls_category'),
 	url(r'^polls/featuredpolls$',login_required(views.IndexView.as_view()),name='featured'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',views.VoteView.as_view(),name='polls_vote'),
+	url(r'^senddata$',views.save_poll_vote_data,name='polls_data'),
 	url(r'^public-url/polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',views.VoteView.as_view(),name='polls_share'),
 	url(r'^polls/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)/result$',login_required(views.VoteView.as_view()),name='polls_result'),
 	url(r'^editpoll/(?P<pk>\d+)/(?P<que_slug>[\w\-]+)$',login_required(views.EditView.as_view()),name='polls_edit'),
@@ -71,5 +73,7 @@ urlpatterns = patterns('',
 	url(r'^disclaimer$', TemplateView.as_view(template_name='disclaimer.html'), name='disclaimer'),
 	url(r'^termsandcondition$', TemplateView.as_view(template_name='termsandcondition.html'), name='termsandcondition'),
 	url(r'^voteqform$', login_required(views.AutoPopulateVotesView.as_view()), name='voteqform'),
-	url(r'^productofferings$', TemplateView.as_view(template_name='abpBusiness/productfeatures.html'), name='productofferings')
-)
+	url(r'^productofferings$', TemplateView.as_view(template_name='abpBusiness/productfeatures.html'), name='productofferings'),
+	url(r'^widget/(?P<widget_product>[\w\-]+)', login_required(views.WidgetsView.as_view()), name='widgetview'),
+	# url(r'^widget/(?P<widget_product>[\w\-]+)', login_required(views.WidgetsView.as_view()), name='widgetview'),
+]

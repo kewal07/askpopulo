@@ -761,4 +761,3 @@ def getAllLoggedInUsers():
 		data = session.get_decoded()
 		uid_list.append(data.get('_auth_user_id', None))
 	return len(User.objects.filter(id__in=uid_list));
-

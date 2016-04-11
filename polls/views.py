@@ -54,6 +54,10 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 
 # Create your views here.
 shakey=(settings.SHAKEY).encode('utf-8')
+cookie_prepend = "ABP_OWN_"
+
+def checkBooleanValue(value):
+	return value.lower() == "true"
 
 class WebRtcView(BaseViewList):
 	template_name = 'polls/webrtc.html'
@@ -210,7 +214,7 @@ class IndexView(BaseViewList):
 		if country_list:
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		for mainquestion in latest_questions:
-			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime))
+			mainData.append(get_index_question_detail(self.request,mainquestion,user,sub_que,curtime))
 		particleList = Particle.objects.order_by('-pub_date')
 		primer = Particle.objects.filter(is_prime=1)
 		if primer:
@@ -234,11 +238,13 @@ class VoteView(BaseViewDetail):
 	model = Question
 
 	def get_template_names(self):
-		#print(self.request.path)
+		# print(self.request.COOKIES)
 		template_name = 'polls/voteQuestion.html'
 		question = self.get_object()
 		question.numViews +=1
 		question.save()
+		votedCookie = cookie_prepend+"VOTED_"+str(question.id)
+		alreadyVoted = checkBooleanValue(self.request.COOKIES.get(votedCookie,""))
 		user = self.request.user
 		if self.request.path.startswith("/public-url"):
 			template_name = 'publictemplates/question_share.html'
@@ -248,6 +254,8 @@ class VoteView(BaseViewDetail):
 			# print(subscribed)
 			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ) or (self.request.path.endswith('result') and subscribed):
 				template_name = 'polls/questionDetail.html'
+		elif alreadyVoted:
+			template_name = 'polls/questionDetail.html'
 		#print(template_name)
 		return [template_name]
 
@@ -259,6 +267,7 @@ class VoteView(BaseViewDetail):
 		subscribed_questions = []
 		user_already_voted = False
 		sub_que = []
+		showDemographic = True
 		if user.is_authenticated():
 			createExtendedUser(user)
 			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
@@ -294,7 +303,9 @@ class VoteView(BaseViewDetail):
 			for sub in subscribed_questions:
 				sub_que.append(sub.question.id)
 				question_user_vote = Voted.objects.filter(user=user,question=context['question'])
-		context["data"] = get_index_question_detail(context['question'],user,sub_que,curtime)
+			if context['question'].protectResult and user != context['question'].user:
+				showDemographic = False
+		context["data"] = get_index_question_detail(self.request,context['question'],user,sub_que,curtime)
 		followers = len([ x.user for x in Follow.objects.filter(target_id=user.id,deleted_at__isnull=True) ])
 		following = len([ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ])
 		context['connection'] = followers + following
@@ -314,50 +325,40 @@ class VoteView(BaseViewDetail):
 		# print(request.is_ajax())
 		# queSlug = "None"
 		# print(user,user.is_authenticated())
-		if user.is_authenticated():
+		choiceId = request.POST.get('choice','')
+		if not choiceId:
+			# error to show no choice selected
+			data={}
+			data['form_errors'] = "Please select a choice"
+			return HttpResponse(json.dumps(data), content_type='application/json')
+		elif user.is_authenticated():
 			if request.is_ajax():
-				if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
-					return HttpResponse(json.dumps({}),content_type='application/json')
-			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state:
+				return HttpResponse(json.dumps({}),content_type='application/json')
+			if not user.extendeduser.gender or not user.extendeduser.birthDay or not user.extendeduser.profession or not user.extendeduser.country or not user.extendeduser.state or not user.extendeduser.city:
 				url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 				return HttpResponseRedirect(url)
-			if request.POST.get('choice'):
-				if request.is_ajax():
-					return HttpResponse(json.dumps({}),content_type='application/json')
-				choiceId = request.POST.get('choice')
-				choice = Choice.objects.get(pk=choiceId)
-				# questionId = request.POST.get('question')
-				# question = Question.objects.get(pk=questionId)
-				# queSlug = question.que_slug
-				voted_questions = user.voted_set.filter(user=user,question=question)
-				if not voted_questions:
-					if question.isBet and queBet:
-						vote = Vote(user=user, choice=choice, betCredit=queBet)
-					else:
-						vote = Vote(user=user, choice=choice)
-					voted = Voted(user=user, question=question)
-					# subscribed = Subscriber(user=user, question=question)
-					subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-					vote.save()
-					voted.save()
-					save_references(referral_user=request.GET.get("referral",""), poll=question)
-					# subscribed.save()
+			voteSuccess = False
+			if question.isBet and queBet:
+				voteSuccess = save_poll_vote(user,question.id,choiceId,queBet)
 			else:
-				# error to show no choice selected
-				data={}
-				data['form_errors'] = "Please select a choice"
-				return HttpResponse(json.dumps(data),
-	                            content_type='application/json')
+				voteSuccess = save_poll_vote(user,question.id,choiceId)
+			if voteSuccess:
+				save_references(referral_user=request.GET.get("referral",""), poll=question)
+			
 		else:
-				if request.is_ajax():
-					return HttpResponse(json.dumps({}),content_type='application/json')
-				next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
-				extra_params = '?next=%s?referral=%s'%(next_url,request.GET.get("referral",""))
-				url = reverse('account_login')
-				full_url = '%s%s'%(url,extra_params)
-				if request.is_ajax():
-					return HttpResponse(json.dumps({}),content_type='application/json')
-				return HttpResponseRedirect(full_url)
+			if request.is_ajax():
+				giveData = {}
+				if not question.authenticate:
+					giveData = save_poll_vote_widget(request, question.id, choiceId)
+					# print(giveData)
+				return HttpResponse(json.dumps(giveData),content_type='application/json')
+			next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
+			extra_params = '?next=%s?referral=%s'%(next_url,request.GET.get("referral",""))
+			url = reverse('account_login')
+			full_url = '%s%s'%(url,extra_params)
+			if request.is_ajax():
+				return HttpResponse(json.dumps({}),content_type='application/json')
+			return HttpResponseRedirect(full_url)
 		url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 		after_poll_vote_credits_activity(question,user,queBet)
 		return HttpResponseRedirect(url)
@@ -597,6 +598,7 @@ class CreatePollView(BaseViewList):
 			isBet = request.POST.get('bet')
 			isProtectResult = request.POST.get('protectResult',False)
 			makeFeatured = request.POST.get('makeFeatured',False)
+			authenticate = request.POST.get('authenticate',False)
 			if isAnon:
 				anonymous = 1
 			else:
@@ -613,6 +615,10 @@ class CreatePollView(BaseViewList):
 				protectResult = 1
 			else:
 				protectResult = 0
+			if authenticate:
+				authenticate = 1
+			else:
+				authenticate = 0
 			makeFeaturedError = ""
 			if makeFeatured and user.extendeduser.credits - 100 >= 0:
 				home_visible = 1
@@ -661,7 +667,7 @@ class CreatePollView(BaseViewList):
 				if 'duplicateImage' in errors:
 					break
 			"""
-			print("--------------------------------",errors or ajax,errors,ajax)
+			# print("--------------------------------",errors or ajax,errors,ajax)
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			# mark bet poll as private untill verified by admin
@@ -679,8 +685,9 @@ class CreatePollView(BaseViewList):
 				question.home_visible = home_visible
 				question.featured_image = shareImage
 				question.featuredPoll = featuredpoll
+				question.authenticate = authenticate
 			else:
-				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage, featuredPoll = featuredpoll)
+				question = Question(user=user, question_text=qText, description=qDesc, expiry=qExpiry, pub_date=curtime,isAnonymous=anonymous,privatePoll=private,isBet=bet,home_visible=home_visible,protectResult=protectResult, featured_image=shareImage, featuredPoll = featuredpoll, authenticate = authenticate)
 			question.save()
 			sub,created = Subscriber.objects.get_or_create(user=user,question=question)
 			# sub.save()
@@ -1104,7 +1111,7 @@ class CompanyIndexView(BaseViewList):
 		data['companyAdmins'] = str(';'.join(company_admin_list))
 		# mainData.append(data)
 		for mainquestion in latest_questions:
-			mainData.append(get_index_question_detail(mainquestion,user,sub_que,curtime,data))
+			mainData.append(get_index_question_detail(self.request,mainquestion,user,sub_que,curtime,data))
 		context['data'] = mainData
 		# dir(context)
 		# print (mainData)
@@ -1940,15 +1947,6 @@ def survey_mail(request):
 		linecache.checkcache(filename)
 		line = linecache.getline(filename, lineno, f.f_globals)
 		print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-
-# class WebsiteWidgetTemplateView(generic.DetailView):
-# 	model = Question
-# 	def get_template_names(self):
-# 		template_name = 'polls/basic_widget_template.html'
-# 		return [template_name]
-# 	def get_context_data(self, **kwargs):
-# 		context = super(WebsiteWidgetTemplateView, self).get_context_data(**kwargs)
-# 		return context
 
 def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra_context_data = {}):
 	try:
@@ -3072,6 +3070,89 @@ def emailResponse(request):
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
+def save_poll_vote_data(request):
+	data = {}
+	if request.POST.get('age'):
+		user_age = int(request.POST.get('age',18))
+	if request.POST.get('gender',"D") != "notSelected":
+		gender = request.POST.get('gender',"D")[0]
+	if request.POST.get('profession',"Others") != "notSelected":
+		profession = request.POST.get('profession','Others')
+	email = request.POST.get('email','').strip()
+	pollId = int(request.POST.get('question').strip())
+	choiceId = int(request.POST.get('choice').strip())
+	sessionKey = request.POST.get('sessionKey','').strip()
+	src = request.POST.get('src','').strip()
+	ipAddress = getIpAddress(request)
+	existingVote = VoteApi.objects.filter(question_id=pollId,choice_id=choiceId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
+	if existingVote:
+		existingVote = existingVote[0]
+		existingVote.age = user_age
+		existingVote.gender = gender
+		existingVote.profession = profession
+		if not email:
+			email = None
+		existingVote.email = email
+		existingVote.save()
+		user_data = {}
+		if user_age > 0:
+			birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
+			user_data["birthDay"] = birthDay
+		user_data["gender"] = gender
+		user_data["profession"] = profession
+		user_data["country"] = existingVote.country
+		user_data["state"] = existingVote.state
+		user_data["city"] = existingVote.city
+		if email:
+			if User.objects.filter(email=email):
+				newUser = User.objects.filter(email=email)[0]
+				login_user(request,newUser)
+			else:
+				newUser = create_new_user_mail_login(request,email,pollId)
+				save_extendeduser_data(newUser,user_data)
+			save_poll_vote(newUser,pollId,choiceId)
+			existingVote.delete()
+			data["removecookies"] = True
+	return HttpResponse(json.dumps(data), content_type='application/json')
+
+def save_extendeduser_data(newUser,user_data):
+	if user_data:
+		extendeduser = newUser.extendeduser
+		for key,val in user_data.items():
+			if hasattr(extendeduser, key):
+				setattr(extendeduser, key, val)
+		extendeduser.save()
+	return newUser
+
+def save_poll_vote_widget(request, pollId, choiceId):
+	ipAddress = getIpAddress(request)
+	if not request.session.exists(request.session.session_key):
+		request.session.create()
+	sessionKey = request.session.session_key
+	question = Question.objects.get(pk=pollId)
+	url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
+	dbIpResponse = requests.get(url)
+	locationData = dbIpResponse.json()
+	votedChoice = Choice.objects.get(pk=choiceId)
+	src = request.GET.get('src','')
+	alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
+	giveData = {}				
+	if not alreadyVoted:
+		votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src)
+		votedChoiceFromApi.save()
+		giveData["noData"] = True
+	else:
+		alreadyVoted = alreadyVoted[0]
+		print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
+		if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
+			giveData["noData"] = True
+		else:
+			giveData["allData"] = True
+	giveData["sessionKey"] = sessionKey
+	giveData["choice"] = choiceId
+	return giveData
+
+
 def save_poll_vote(user,question,choice,queBet=None):
 	#print("save_poll_vote")
 	try:
@@ -3084,15 +3165,13 @@ def save_poll_vote(user,question,choice,queBet=None):
 		choice = Choice.objects.get(pk=choiceId)
 	except:
 		pass
-	# if type(question) == int:
-	# 	question = Question.objects.get(pk=question)
-	# if type(choice) == int:
-	# 	choice = Choice.objects.get(pk=choice)
 	userVoteOnQuestion, created = Voted.objects.get_or_create(user=user,question=question)
 	if created:
 		userVote,created = Vote.objects.get_or_create(user=user, choice=choice)
 		subscriber,created = Subscriber.objects.get_or_create(user=user,question=question)
 		after_poll_vote_credits_activity(question,user,queBet)
+		return True
+	return False
 
 def after_poll_vote_credits_activity(question,user,queBet=None):
 	points = 0
@@ -3137,6 +3216,11 @@ def after_poll_vote_credits_activity(question,user,queBet=None):
 	user.extendeduser.save()
 
 def create_new_user_mail_login(request,mailId,question):
+	try:
+		questionId = int(question)
+		question = Question.objects.get(id=questionId)
+	except:
+		pass 
 	password = 'welcome'+mailId.split('@')[0]
 	newUser = User(first_name="User",email=mailId,username=mailId)
 	newUser.set_password(password)#no need to manually encrypt password using this
@@ -3157,6 +3241,10 @@ def create_new_user_mail_login(request,mailId,question):
 	}
 	msg.send()
 	return newUser
+
+def login_user(request,newUser):
+	newUser.backend = 'django.contrib.auth.backends.ModelBackend'
+	login(request, newUser)
 
 def validateEmail(email):
 	if not EMAIL_REGEX.match(email):
@@ -3255,10 +3343,11 @@ def get_number_votes(mainquestion):
 	considered_email = []
 	for voted in Voted.objects.filter(question=mainquestion):
 		considered_email.append(voted.user.email)
-	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
+	# numVotes += VoteApi.objects.filter(question=mainquestion).exclude(age__isnull=True).exclude(gender__isnull=True).exclude(profession__isnull=True).exclude(email__in=considered_email).count()
+	numVotes += VoteApi.objects.filter(question=mainquestion).exclude(email__in=considered_email).count()
 	return numVotes
 
-def get_index_question_detail(mainquestion,user,sub_que,curtime,company_data={}):
+def get_index_question_detail(request,mainquestion,user,sub_que,curtime,company_data={}):
 	data = {}
 	followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
 	following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
@@ -3284,11 +3373,18 @@ def get_index_question_detail(mainquestion,user,sub_que,curtime,company_data={})
 	if mainquestion.expiry and mainquestion.expiry < curtime:
 		data['expired'] = True
 	user_already_voted = False
+	dataProvided = False
 	if user.is_authenticated():
 		question_user_vote = Voted.objects.filter(user=user,question=mainquestion)
 		if question_user_vote:
 			user_already_voted = True
-	# print(mainquestion,user_already_voted,user)
+			dataProvided = True
+	else:
+		votedCookie = cookie_prepend+"VOTED_"+str(mainquestion.id)
+		user_already_voted = checkBooleanValue(request.COOKIES.get(votedCookie,""))
+		dataCookie = cookie_prepend+"DATA_GIVEN_"+str(mainquestion.id)
+		dataProvided = checkBooleanValue(request.COOKIES.get(dataCookie,""))
+	data["dataProvided"] = dataProvided
 	data['user_already_voted'] = user_already_voted
 	data["company_data"] = company_data
 	return data
@@ -3368,3 +3464,40 @@ class SendMails(BaseViewList):
 		send_mail(subject, message, 'support@askbypoll.com',['shradha@askbypoll.com'], fail_silently=False)
 		data = {}
 		return HttpResponse(json.dumps(data),content_type='application/json')
+
+class WidgetsView(BaseViewList):
+	context_object_name = "data"
+	def get_template_names(self):
+		template_name = "widgets/index.html"
+		print(template_name)
+		return [template_name]
+	def get_queryset(self):
+		print("widgets")
+		webWidgets = ["basic"]
+		feedbackWidgets = ["feedback1", "feedback2"]
+		webTemplatesFinal = []
+		feedbackTemplatesFinal = []
+		for x in webWidgets:
+			webTemplatesFinal.append("polls/webtemplates/"+x+"_widget_template.html")
+		for x in feedbackWidgets:
+			feedbackTemplatesFinal.append("polls/webtemplates/"+x+"_widget_template.html")
+		context = {}
+		context["poll_templates"] = webTemplatesFinal
+		context["feedback_template"] = feedbackTemplatesFinal
+		context["demo_poll_text"] = Question.objects.get(id=4)
+		context["demo_poll_image"] = Question.objects.get(id=5)
+		context["demo_poll_feedback"] = Question.objects.get(id=3)
+		mypolls = Question.objects.filter(user_id=self.request.user.id)
+		context["mypolls"] = mypolls
+		print(context)
+		return context
+
+class WebsiteWidgetTemplateView(generic.ListView):
+	def post(self, request, *args, **kwargs):
+		poll = request.POST.get("poll")
+		widget_type = request.POST.get("widgetType")
+		template = get_widget_html(poll=poll, widgetFolder="webtemplates", widgetType=widget_type, extra_context_data = {})
+		data = {}
+		data["template"] = template
+		return HttpResponse(json.dumps(data),content_type='application/json')
+

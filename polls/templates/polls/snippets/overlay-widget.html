@@ -1,0 +1,15 @@
+<div id="overlay-widget" class="overlay">
+	<div class="wrapper">
+		<div class="overlay-widget-images-div">
+			<a class="overlay-widget-image-div" id="overlay-widget-image-div-poll" href="{% url 'polls:widgetview' 'polls' %}">
+				<img class="overlay-widget-image" id="overlay-widget-poll" src="/static/widgetLogo.png"></img>
+				<p class="overlay-widget-p">Poll</p>
+			</a>
+			<a class="overlay-widget-image-div" id="overlay-widget-image-div-feedback" href="{% url 'polls:widgetview' 'feedback' %}">
+				<img class="overlay-widget-image" id="overlay-widget-feedback" src="/static/widgetLogo.png"></img>
+				<p class="overlay-widget-p">FeedBack</p>
+			</a>
+		</div>
+		<button id = "okay" class="btn">Cancel</button>
+	</div>
+</div>

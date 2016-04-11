@@ -410,6 +410,14 @@
 					{% endif %}
 					<div class="user-checkbox">
 						<p class="anonymous">
+							{% if question.authenticate %}
+								<input id="authenticate" name="authenticate" type="checkbox" checked>
+							{% else %}
+								<input id="authenticate" name="authenticate" type="checkbox">
+							{% endif %}
+							<label for="authenticate">Authenticate <i id="authenticate_vote_fa" class="fa fa-info-circle"></i></label>
+						</p>
+						<p class="anonymous">
 							{% if question.isAnonymous %}
 								<input id="anonymous" name="anonymous" type="checkbox" checked>
 							{% else %}
@@ -447,24 +455,7 @@
 				</form>
 				</div>
 			</div>
-			<div class="tooltip" id="category_tooltip">
-				<span>Categories list:<br></span>
-				{% for cat in data %}
-					<span class="cat_title_tooltip">{{ cat }},    </span>
-				{% endfor %}
-			</div>
-			<div class="tooltip" id="private_poll_tooltip">
-				<span class="cat_title_tooltip">The question will not be publicly visible. Please share the question directly with the concerned users for votes</span>
-			</div>
-			<div class="tooltip" id="protectResult_tooltip">
-				<span class="cat_title_tooltip">The Results would not be publicly visible. Only you would be able to see the results</span>
-			</div>
-			<div class="tooltip" id="makeFeatured_tooltip">
-				<span class="cat_title_tooltip">The Question would be sent to the Home page and 100 pCoins would be deducted. </span>
-			</div>
-			<div class="tooltip" id="featuredimage_tooltip">
-				<span class="cat_title_tooltip">This image will be used as the cover picture for social media sharing.</span>
-			</div>
+			{% include 'polls/snippets/question-tooltips.html' %}
 		</section>
 		<script>
 		var availableTags = []
