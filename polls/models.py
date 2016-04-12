@@ -60,6 +60,7 @@ class Question(models.Model):
 	is_survey = models.BooleanField(default=0)
 	is_feedback = models.BooleanField(default=0)
 	authenticate = models.BooleanField(default=0)
+	horizontal_options = models.BooleanField(default=0)
 
 	def iseditable(self, request_user):
 		editable = False
@@ -167,6 +168,7 @@ class Survey(models.Model):
 	home_visible = models.BooleanField(default=0)
 	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 	thanks_msg = models.CharField(max_length=400,null=True,blank=True, default="Thank You for Completing the Survey!!!")
+	authenticate = models.BooleanField(default=0)
 
 	def save(self, *args, **kwargs):
 		try:
@@ -300,17 +302,26 @@ class VoteText(models.Model):
 		return self.answer_text
 	def save(self, *args, **kwargs):
 		user_data = {}
-		if not self.user_data:
-			for field in self.user.extendeduser._meta.get_fields():
-				# print(dir(field))
-				if not field.is_relation and field.name != "imageUrl":
-					if field.name == "birthDay":
-						age = self.user.extendeduser.calculate_age()
-						user_data[field.name] = age
-					else:
-						user_data[field.name] = getattr(self.user.extendeduser, field.name)
-			self.user_data = str(user_data)
+		if self.user_data:
+			user_data = self.user_data
+		# if not self.user_data:
+		for field in self.user.extendeduser._meta.get_fields():
+			# print(dir(field))
+			if not field.is_relation and field.name != "imageUrl":
+				if field.name == "birthDay":
+					age = self.user.extendeduser.calculate_age()
+					user_data[field.name] = age
+				else:
+					user_data[field.name] = getattr(self.user.extendeduser, field.name)
+		self.user_data = str(user_data)
 		super(VoteText, self).save(*args, **kwargs)
+
+class Demographics(models.Model):
+	created_at = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	survey_id = models.IntegerField(default=0)
+	question_id = models.IntegerField(default=0)
+	demographic_data = models.TextField()
 
 class Vote(models.Model):
 	vote_pk = models.CharField(max_length=255)
@@ -329,16 +340,18 @@ class Vote(models.Model):
 			sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 			self.vote_pk = sig
 			user_data = {}
-			if not self.user_data:
-				for field in self.user.extendeduser._meta.get_fields():
-					# print(dir(field))
-					if not field.is_relation and field.name != "imageUrl":
-						if field.name == "birthDay":
-							age = self.user.extendeduser.calculate_age()
-							user_data[field.name] = age
-						else:
-							user_data[field.name] = getattr(self.user.extendeduser, field.name)
-				self.user_data = str(user_data)
+			if self.user_data:
+				user_data = self.user_data
+			# if not self.user_data:
+			for field in self.user.extendeduser._meta.get_fields():
+				# print(dir(field))
+				if not field.is_relation and field.name != "imageUrl":
+					if field.name == "birthDay":
+						age = self.user.extendeduser.calculate_age()
+						user_data[field.name] = age
+					else:
+						user_data[field.name] = getattr(self.user.extendeduser, field.name)
+			self.user_data = str(user_data)
 			# print("-------------",self.user_data)		
 			super(Vote, self).save(*args, **kwargs)
 		except Exception as e:
@@ -412,6 +425,8 @@ class VoteApi(models.Model):
 	email = models.EmailField(max_length=70,blank=True, null= True)
 	session = models.CharField(max_length=512,blank=True,null=True)
 	src = models.CharField(max_length=512,blank=True,null=True)
+	answer_text = models.CharField(max_length=512,blank=True,null=True)
+	user_data = models.TextField()
 	
 
 class PollTokens(models.Model):

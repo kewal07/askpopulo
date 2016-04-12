@@ -383,10 +383,11 @@ figcaption.members-figcaption {
 	margin-top: 2rem;
 }
 form#create-group-form,form#create-survey-form{
-	padding: 2rem 0rem 0 2rem;
+	padding: 2rem 0rem 2rem 2rem;
     margin: 0 auto;
-    border: 2px dashed #666;
+    border: 2px solid;
     margin-left: 1rem;
+    font-size: 1rem;
 }
 form#create-group-form p.form-p,form#create-survey-form p.form-p{
 	margin-bottom:3rem;
@@ -394,22 +395,59 @@ form#create-group-form p.form-p,form#create-survey-form p.form-p{
 form#create-group-form label,form#create-survey-form label{
 	display: inline-block;
 	width:20%;
-	color: #666;
+}
+.survey-question-div p:first-of-type {
+	text-align: center;
 }
 #create-group-form input[type="text"],#create-survey-form input[type="text"]{
 		height: 2rem;
-		border-radius: 10px;
-		border: 1px solid #4c4c4c;
+		border-radius: 0px;
+		border: 1px solid #f96a0e;
 		background: transparent;
 		overflow:hidden;
+		font-size:1rem;
+		vertical-align: middle;
+		width:75%;
 }
 form#create-group-form textarea,form#create-survey-form textarea{
-	border-radius: 10px;
-    border: 1px solid #666;
+	border-radius: 0px;
+    border: 1px solid #f96a0e;
     background: transparent;
     overflow: hidden;
-	width:50%;
+	width:75%;
 	height: 3rem;
+	font-size:1rem;
+	vertical-align: middle;
+	text-align: center;
+}
+.anonymous{
+	display: inline-block !important;
+	width:24%;
+	margin-bottom: 3rem;
+}
+.anonymous input[type="checkbox"]{
+	width:initial;
+	height: initial;
+}
+.anonymous label{
+	display: inline-block !important;
+	width:initial !important;
+}
+.question1choiceDiv .createPollText{
+	width:60%;
+}
+label.label-width{
+	width:initial !important;
+}
+.btn{
+	margin: 0;
+	margin-left:4px;
+	padding: 5px 12px;
+	font-size: 1.2rem;
+}
+.min-max-values{
+	width: 49% !important;
+    display: inline-block;
 }
 ::-webkit-input-placeholder {
     text-align: center;
@@ -446,13 +484,13 @@ li.questions-li{
 	float: none;
 	margin-left: 1rem;
 }
-.survey-question-div{
+.survey-question-div, .survey-demographic-div{
 	border: 1px solid;
     padding: 1rem;
     margin-right: 2rem;
     margin-bottom: 1rem;
 }
-.survey-question-div:active,.survey-question-div:hover{
+.survey-question-div:active,.survey-question-div:hover,.survey-demographic-div:active,.survey-demographic-div:hover{
     box-shadow: 5px 5px 5px;
 }
 .share-with-group{

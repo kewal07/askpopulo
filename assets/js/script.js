@@ -773,8 +773,11 @@ function confirm_redirect_only(olEl,val,url){
 }
 
 /* Function for charts start */
-function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType) {
+function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data={}) {
 	// console.log(analyse_type,pollId,age,gender,profession,location);
+	console.log(extra_data);
+	extra_data = JSON.stringify(extra_data);
+	console.log(extra_data);
 	var pollsData = [];
 	var pollsDataExtra = [];
 	var pollsColors = ["#F7464A","#46BFBD","#66FF33","#FF6600"];
@@ -807,6 +810,7 @@ function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,loc
         		profession: profession,
         		country: location,
         		state: state,
+        		extra_data: extra_data,
         		csrfmiddlewaretoken: csrf_token
         	},
         async: false,

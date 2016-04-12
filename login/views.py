@@ -11,7 +11,7 @@ from allauth.account.forms import ChangePasswordForm,UserForm
 from allauth.account.views import PasswordChangeView
 from django.template.defaultfilters import slugify
 from allauth.account.adapter import get_adapter
-from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question,VoteApi,VoteText, Vote, Choice
+from polls.models import Question,Voted,Subscriber,Survey,SurveyVoted,Survey_Question,VoteApi,VoteText, Vote, Choice, Demographics
 from categories.models import Category
 import json
 import base64
@@ -38,6 +38,7 @@ from django.core.mail import EmailMessage
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 import polls
+import ast
 
 class BaseViewList(generic.ListView):
 	def get_context_data(self, **kwargs):
@@ -576,6 +577,17 @@ class AdminDashboard(BaseViewDetail):
 					completeRate = int(((totalParticipants-incompleteResponses)/totalParticipants)*100)
 				sur_dict["incompleteResponses"] = completeRate
 
+				extra_demographics = Demographics.objects.filter(survey_id=survey.id)
+				demo_list = []
+				if extra_demographics:
+					extra_demographics = ast.literal_eval(extra_demographics[0].demographic_data)
+					for key,val in extra_demographics.items():
+						demo = {}
+						demo["name"] = key
+						demo["values"] = val
+						demo_list.append(demo)
+				sur_dict["demo_list"] = demo_list				
+
 				sur_dict['polls'] = []
 				for x in survey_questions:
 					# maxVotes = -1
@@ -651,6 +663,7 @@ class AdminDashboard(BaseViewDetail):
 			data['categories'] = Category.objects.all()
 			data['choice_id_text_data'] = choice_id_text_data
 			data["feedback_polls"] = Question.objects.filter(user_id=4,is_feedback=1)
+			data["demographics_captured"] = ["Age","Gender","Location","Profession"]
 			# print(data)
 			# return data
 			return self.render_to_response(data)

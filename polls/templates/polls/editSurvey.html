@@ -2,8 +2,8 @@
 	{% load static %}
 	{% block extra_css %}
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/jquery-ui.css' %}" />
-		<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/edit_survey.css' %}" />
 	{% endblock %}
 	{% block extra_js %}
@@ -15,7 +15,7 @@
 		<section id="content">
 			<div class="createPoll">
 				<div class="createPollContent">
-				<form id="createPollForm" class="createPollContentForm autocomplete-me" method="POST" action="{% url 'polls:polls_create' %}?qid={{ question.id }}"  enctype="multipart/form-data">
+				<form id="create-survey-form" class="autocomplete-me" method="POST" action="{% url 'polls:polls_create' %}?qid={{ question.id }}"  enctype="multipart/form-data">
 					{% csrf_token %}
 					<p class="form-p">
 						<label class="required" for="surveyName">Name</label>
@@ -312,6 +312,28 @@
 						{% endif %}
 						<label for="addComment">Require Feedback on every Question </label>
 					</p>
+					<p class="form-p" style="margin-top:2rem">
+						Demographics Captured :: 
+						{% for field in demographics_captured %}
+							{{ field }}
+						{% endfor %}
+						<i class="fa fa-plus-circle add-demographics"> Add More Demographics</i>
+					</p>
+					<div class="survey-demographics">
+						{% for demo in demo_list %}
+							<div class="survey-demographic-div" id="demographicDiv{{ forloop.counter }}">
+								<i id="remove-demographic{{ forloop.counter }}" class="fa fa-times-circle remove-demographic"> Remove</i>
+								<p class="form-p">
+									<label for="demographic_name{{ forloop.counter }}">Name</label>
+									<input type="text" id ="demographic_name{{ forloop.counter }}" name="demographic_name{{ forloop.counter }}" placeholder="Demographic Name" maxlength="64" value="{{ demo.name }}"></input>
+								</p>
+								<p class="form-p">
+									<label for="demographic_values{{ forloop.counter }}">Description</label><textarea id ="demographic_values{{ forloop.counter }}" name="demographic_values{{ forloop.counter }}" placeholder="Comma Separated Values Leave empty for text input" maxlength="400">
+										{{ demo.values }}
+									</textarea>
+								</p>
+						{% endfor %}
+					</div>
 					<div class="survey-questions">
 						{% for question in polls %}
 							<div class="survey-question-div" id="questionDiv{{ forloop.counter }}">
@@ -365,15 +387,15 @@
 								{% if question.type == "text" %}
 								{% elif question.type == "rating" %}
 									<div id="question{{ forloop.counter }}choiceDiv">
-										<input type="text" name="{{ forloop.counter }}---{{ question.type }}---Min" id="{{ forloop.counter }}---{{ question.type }}---Min" placeholder="Minimum Value" value="{{ question.min_value }}"/>
-										<input type="text" name="{{ forloop.counter }}---{{ question.type }}---Max" id="{{ forloop.counter }}---{{ question.type }}---Max" placeholder="Maximum Value" value="{{ question.max_value }}"/>
+										<input type="text" class="min-max-values" name="{{ forloop.counter }}---{{ question.type }}---Min" id="{{ forloop.counter }}---{{ question.type }}---Min" placeholder="Minimum Value" value="{{ question.min_value }}"/>
+										<input type="text" class="min-max-values" name="{{ forloop.counter }}---{{ question.type }}---Max" id="{{ forloop.counter }}---{{ question.type }}---Max" placeholder="Maximum Value" value="{{ question.max_value }}"/>
 									</div>
 								{% else %}
 									<div id="question{{ forloop.counter }}choiceDiv">
 										{% for choice in question.poll.choice_set.all %}
 											<div id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}Div">
 											<p>
-												<label for="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}"></label>
+												<label for="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" class="label-width"></label>
 												<input id="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" type="text" name="questionDiv{{ forloop.parentloop.counter }}choice{{ forloop.counter }}" placeholder="Enter Choice" value="{{ choice.choice_text }}" maxlength="200">
 												{% if choice.choice_image %}
 													<img class="choices choice_image" id="questionDiv{{ forloop.parentloop.counter }}imagechoice{{ forloop.counter }}" src="/media/choices/{{ choice.get_file_name }}" alt="{{ choice.choice_text }}" onmouseover='this.src="/static/polls/images/crossicon.png"' onmouseout='this.src="/media/choices/{{ choice.get_file_name }}"'>
@@ -429,6 +451,8 @@
 			});
 			var question_count = 0;
 			var question_list = [];
+			var demographic_count = 0;
+			var demographic_list = [];
 			var choice_count = {};
 			var choice_list = {};
 			var protectedResultSurvey = false;
@@ -452,7 +476,7 @@
 				}
 				if(selectedType != "text"){
 					choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
-					choice_elem += '<label for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
+					choice_elem += '<label for="'+choice_elem_id+'" class="label-width"></label><input id="'+choice_elem_id;
 					choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 					choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
 					choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
@@ -521,8 +545,32 @@
 					choice_count[question_count] += 1;
 				{% endfor %}
 				question_count += 1
+				{% for demo in demo_list %}
+					demographic_count += 1;
+					demographic_list.push(demographic_count.toString());
+				{% endfor %}
+				demographic_count += 1;
 				var display_question_count = question_count;
-				console.log(question_count,question_list,choice_count,choice_list);
+				console.log(question_count,question_list,choice_count,choice_list,demographic_count,demographic_list);
+
+				$(".add-demographics").click(function(){
+					var question_elem = '<div class="survey-demographic-div" id="demographicDiv'+demographic_count+'">';
+					question_elem += '<i id="remove-demographic' +demographic_count+ '" class="fa fa-times-circle remove-demographic"> Remove</i>';
+					question_elem += '<p class="form-p"><label for="demographic_name'+demographic_count+'">Name</label><input type="text" id ="demographic_name'+demographic_count+'" name="demographic_name'+demographic_count+'" placeholder="Demographic Name" maxlength="64"></input></p>';
+					question_elem += '<p class="form-p"><label for="demographic_values'+demographic_count+'">Description</label><textarea id ="demographic_values'+demographic_count+'" name="demographic_values'+demographic_count+'" placeholder="Comma Separated Values Leave empty for text input" maxlength="400"></textarea></p>';
+					demographic_list.push(demographic_count);
+					demographic_count += 1;
+					$(".survey-demographics").append(question_elem);
+				});
+
+				$(".remove-demographic").click(function(){
+					var elemId = $(this)[0].id;
+					var demographic_count_select = elemId.replace("remove-demographic","");
+					$("#demographicDiv"+demographic_count_select).remove();
+					demographic_list = jQuery.grep(demographic_list, function(value) {
+					  return value != demographic_count_select;
+					})
+				});
 
 				$(".add-q").click(function(){
 			  		choice_count[question_count] = 1;
@@ -570,6 +618,10 @@
 			  		// change for radio default end
 			  		question_count += 1;
 			  		display_question_count += 1;
+			  		var id="#questionDiv"+question_count_str;
+			  		$('html, body').animate({
+				        scrollTop: $(id).offset().top-120
+				    }, 1000);
 			  	});
 
 				$(".survey-questions").on("click",".remove-choice",function(){
@@ -609,7 +661,7 @@
 					if(selectedType == "rating"){
 						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
 						$("#"+question_div).append(add_another_choice_elem);
-						$("#"+choice_elem_div).append('<input type="text" name="'+question_count_select+'---'+selectedType+'---Min" id="'+question_count_select+'---'+selectedType+'---Min" placeholder="Minimum Value"/><input type="text" name="'+question_count_select+'---'+selectedType+'---Max" id="'+question_count_select+'---'+selectedType+'---Max" placeholder="Maximum Value"/>');
+						$("#"+choice_elem_div).append('<input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Min" id="'+question_count_select+'---'+selectedType+'---Min" placeholder="Minimum Value"/><input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Max" id="'+question_count_select+'---'+selectedType+'---Max" placeholder="Maximum Value"/>');
 					}
 					if(selectedType == "radio"){
 						$("#addComment"+question_count_select+"p").show();
@@ -651,11 +703,12 @@
 				$('.submit').bind('click', function()
 				{
 					// console.log("click called..........");
-					var elemid = "#createPollForm";//$(this)[0].id
+					var elemid = "#create-survey-form";//$(this)[0].id
 					// console.log($(elemid)); 
 					var form_data = new FormData($(elemid)[0]);
 					form_data.append('question_count', JSON.stringify(question_list));
 					form_data.append('choice_count', JSON.stringify(choice_list));
+					form_data.append('demographic_count', JSON.stringify(demographic_list));
 					var create_survey_url = "/create_survey?sid={{ survey.id }}";
 					{% if clone %}
 						create_survey_url = "/create_survey";
