@@ -1258,6 +1258,7 @@ class AccessDBView(BaseViewList):
 				response_dic["profession"] = prof_dic
 				response_dic["gender"] = gender_dic
 				response_dic["age"] = age_dic
+				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 			if request.path == "/advanced_analyse":
 				pollId = request.POST.get("question")
@@ -1356,8 +1357,11 @@ class AccessDBView(BaseViewList):
 								user_prof = vote.profession.lower()
 								user_country = vote.country.lower()
 								user_state = vote.state.lower()
-								user_data = ast.literal_eval(vote.user_data)
-								add_cnt = True
+								if vote.user_data :
+									user_data = ast.literal_eval(vote.user_data)
+									add_cnt = True
+								else:
+									add_cnt = False
 								if not (user_age >= min_age and user_age <= max_age):
 									add_cnt = False
 								if gender and user_gender != gender:
@@ -1383,7 +1387,7 @@ class AccessDBView(BaseViewList):
 				response_dic['choices'] = choices
 				response_dic['total_votes'] = total_votes
 				response_dic['total_votes_extra'] = total_votes_extra
-				# print(response_dic)
+				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
