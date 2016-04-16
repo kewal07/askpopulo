@@ -6,7 +6,7 @@
 	{% for share_image in has_image %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}{{ share_image }}"/>
 	{% endfor %}
-		<meta property="og:image:width" content="300" /> 
+		<meta property="og:image:width" content="300" />
 		<meta property="og:image:height" content="300" />
 	{% else %}
 		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
@@ -58,7 +58,7 @@
 								<span id="{{ survey.id }}expirydate"></span><br>
 						</p>
 					</div>
-				</div> 
+				</div>
 				<div class="mainPoll">
 					<p class="que_text" id="survey-title">{{ survey.survey_name }}
 						{% if user.is_authenticated %}
@@ -237,7 +237,7 @@
 										});
 										</script>
 									{% else %}
-										
+
 									{% endif %}
 								</form>
 								</p>
@@ -261,7 +261,7 @@
 							<script>
 								var currentDate = new Date();
 								var offset = currentDate.getTimezoneOffset();
-								
+
 								var utcDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }} - 1, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}, {{ survey.pub_date.second }});
 
 								var publicationDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }}, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}-offset, {{ survey.pub_date.second }});
@@ -297,7 +297,7 @@
 							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
 							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}"></div></li>
 							{% endif %}
-						</ul>							
+						</ul>
 					</ul>
 				</div>
 			</div>
@@ -343,7 +343,7 @@
 						success:function(response)
 						{
 							ajax_calls += 1;
-							console.log(response);							
+							console.log(response);
 							if("success" in response){
 								if("res" in response){
 									var res = response.res;
@@ -383,6 +383,7 @@
 			var question_covered = 0;
 			$('.surveySubmit').click(function()
 			{
+				$('#overlay-inAbox8').css('display','block');
 				question_covered = 0;
 				var subButElem = $(this);
 				var remove_disable = false;
@@ -423,9 +424,11 @@
 							}
 							if(ajax_calls == form_n && remove_disable){
 								subButElem.removeAttr("disabled");
+								$('#overlay-inAbox8').css('display','none');
 							}
 							if(question_covered == question_count && $(".errorlist").length == 0){
 								saveVotes();
+								$('#overlay-inAbox8').css('display','none');
 							}
 						}
 					});

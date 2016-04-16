@@ -24,9 +24,9 @@
 	<script type="text/javascript" src="{% static 'js/jspdf-debug.js' %}"></script>
 {% endblock %}
 {% block content %}
-	<div id="mobile-dashboard">
-		<p>Dashboard is currently available only on Desktops and would be coming soon to mobiles as well. If you require special assistance please contact support.</p>
-	</div>
+<div id="mobile-dashboard">
+	<p>Dashboard is currently available only on Desktops and would be coming soon to mobiles as well. If you require special assistance please contact support.</p>
+</div>
 	<section id="content" class="clearfix">
 		<div id="dashboard-menu" class="clearfix">
 			<ul class="dashboard-menu-items clearfix">
@@ -1150,10 +1150,8 @@
 			var choice_display = {};
 			// console.log({{ choice_id_text_data|safe }});
 			{% for key,val in choice_id_text_data.items %}
-				// console.log("{{ key }}");
 				choice_display["{{ key }}"] = "{{ val }}";
 			{% endfor %}
-			// console.log(choice_display);
 
 			function validateEmail(field) {
     			var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
@@ -1176,19 +1174,19 @@
 			    } else {
 			    	 $("#groupMembersError").text('Need to provide atleast one group member.');
 			    	 $("#createGroupSubmit").attr("disabled",false);
-			    	return false;
+			    	 return false;
 			    }
     			return true;
 			}
 
 			 // Method that checks that the browser supports the HTML5 File API
-		    function browserSupportFileUpload() {
-		        var isCompatible = false;
-		        if (window.File && window.FileReader && window.FileList && window.Blob) {
-		        isCompatible = true;
-		        }
-		        return isCompatible;
-		    }
+	    function browserSupportFileUpload() {
+	        var isCompatible = false;
+	        if (window.File && window.FileReader && window.FileList && window.Blob) {
+	        isCompatible = true;
+	        }
+	        return isCompatible;
+	    }
 
 			function createGroup(){
 				if(!editGroupFlag){
@@ -1363,85 +1361,73 @@
 
 			}
 
-			function add_another_choice(question_count_select,selectedType){
-			if(choice_list[question_count_select].length < {{ user.extendeduser.company.num_of_choices }} + 1){
-				var question_choice_count = choice_count[question_count_select];
-	  			choice_list[question_count_select].push(question_choice_count);
-	  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
-	  			var question_div = "questionDiv"+question_count_select;
-				var choice_elem_id = question_div+'choice'+question_choice_count;
-				var choice_file_id = question_div+'choice'+question_choice_count+'file';
-				// console.log(question_count_select,selectedType,question_div);
-				var font_awesome_str = "";
-				var choice_elem = "";
-				if(selectedType === "radio"){
-					font_awesome_str = "";
-				} else if(selectedType === "checkbox"){
-					font_awesome_str = "";
+			function add_another_choice(question_count_select,selectedType)
+			{
+				if(choice_list[question_count_select].length < {{ user.extendeduser.company.num_of_choices }} + 1){
+					var question_choice_count = choice_count[question_count_select];
+		  		choice_list[question_count_select].push(question_choice_count);
+		  		var choice_elem_div = "question"+question_count_select+"choiceDiv";
+		  		var question_div = "questionDiv"+question_count_select;
+					var choice_elem_id = question_div+'choice'+question_choice_count;
+					var choice_file_id = question_div+'choice'+question_choice_count+'file';
+					var font_awesome_str = "";
+					var choice_elem = "";
+					if(selectedType === "radio"){
+						font_awesome_str = "";
+					} else if(selectedType === "checkbox"){
+						font_awesome_str = "";
+					}
+					if(selectedType != "text"){
+						choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
+						choice_elem += '<label class="label-width" for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
+						choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
+						choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
+						choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
+						// console.log($("#"+choice_elem_div),choice_elem);
+						$("#"+choice_elem_div).append(choice_elem);
+					}
+					choice_count[question_count_select]+=1;
+
+					/*For file browse */
+						var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+						var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+						var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
+
+						fileInput.change(function(){
+						    $this = $(this);
+						    var fileVal = $this.val();
+					    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+					    	var fileName = fileVal.substr(fileNameIndex);
+					    	if (this.files && this.files[0]) {
+					        var reader = new FileReader();
+					        reader.onload = function (e) {
+						        imgSrc = e.target.result;
+										$this.parent().next().children().first().attr('src', e.target.result);
+										$this.parent().next().children().first().show();
+					        }
+					        reader.readAsDataURL(this.files[0]);
+					      }
+								$this.parent().next().children().first().next().hide();
+					    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+						})
+					/* End of file browse*/
 				}
-				if(selectedType != "text"){
-					choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
-					choice_elem += '<label class="label-width" for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
-					choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
-					choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
-					choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
-					// console.log($("#"+choice_elem_div),choice_elem);
-					$("#"+choice_elem_div).append(choice_elem);
-				}
-				choice_count[question_count_select]+=1;
-
-				/*For file browse */
-					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-					var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
-					// var upImg = $('<img id="upImg" width=>')
-					var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
-					// $("#"+choice_file_id).hide();
-
-					fileInput.change(function(){
-						// $('#upImgText').hide();
-					    $this = $(this);
-					    var fileVal = $this.val();
-				    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
-				    	var fileName = fileVal.substr(fileNameIndex);
-				    	if (this.files && this.files[0]) {
-				            var reader = new FileReader();
-
-				            reader.onload = function (e) {
-				                imgSrc = e.target.result;
-								console.log($this.parent().children().first());
-								// $(".upImg").attr('src', e.target.result);
-								$this.parent().next().children().first().attr('src', e.target.result);
-								// $(".upImg").show();
-								$this.parent().next().children().first().show();
-				            }
-
-				            reader.readAsDataURL(this.files[0]);
-				        }
-						// $("#upImgText").text(fileName);
-						$this.parent().next().children().first().next().hide();
-				    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
-					})
-				/* End of file browse*/
-			}
 			}
 
 			$(document).ready(function(){
-
 				$(".dashboard-menu-li").click(function(){
 					$(".dashboard-menu-li").removeClass("selectedLi");
 					$(this).addClass("selectedLi");
-					// console.log($(this)[0].innerHTML);
 					var elem_id = $(this)[0].innerHTML.toLowerCase() + "-content";
-					 // console.log(elem_id);
 					var new_elem_html = "";
 					if(elem_id == "messages-content"){
 						$("#messages-content").append('<object id="inboxObject" data="/messages/inbox/" style="height:25rem; width:100%;"/>');
 						$(".admin-dash-div").hide();
-					    $("#"+elem_id).show();
-			        }
+					  $("#"+elem_id).show();
+			    }
 					else if(elem_id == "dashboard-content"){
 						location.reload();
-			        }
+			    }
 					else
 						$.ajax({
 					        url: "{{ request.path }}",
@@ -1455,88 +1441,70 @@
 					        success: function(msg){
 					        	var new_html = document.createElement('html');
 					        	new_html.innerHTML = msg;
-					        	// console.log(new_html);
-					        	// console.log(typeof(new_html));
-					        	// console.log(new_html.getElementsByTagName("div"));
 					        	var new_divs = new_html.getElementsByTagName("div");
 					        	for (var i = 0, len = new_divs.length; i < len; i++) {
-								    if (new_divs[i].id === elem_id) {
-								        var result = new_divs[i];
-								        // console.log(result)
-								        new_elem_html = result.innerHTML;
-								        break;
-								    }
-								}
-								// console.log($("#"+elem_id));
-					            $("#"+elem_id)[0].innerHTML = new_elem_html;
-					            // console.log($("#"+elem_id));
-					            $(".admin-dash-div").hide();
-					            $("#"+elem_id).show();
-					            if(elem_id == "dashboard-content"){
-					            	drawChart();
-					            }
-					            if(elem_id == "advanced-content"){
+								    	if (new_divs[i].id === elem_id) {
+								        	var result = new_divs[i];
+								        	new_elem_html = result.innerHTML;
+								        	break;
+								    	}
+										}
+				            $("#"+elem_id)[0].innerHTML = new_elem_html;
+				            $(".admin-dash-div").hide();
+				            $("#"+elem_id).show();
+				            if(elem_id == "dashboard-content"){
+				            	drawChart();
+				            }
+					          if(elem_id == "advanced-content"){
 					            	{% for question in polls %}
 							            for (i = 0; i < profList.length; ++i) {
-										    var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
-										    // console.log(tempOption);
-										    $("#advancedanalyse---{{ question.poll.id }}---Profession---1").append(tempOption);
-										    $("#advancedanalyse---{{ question.poll.id }}---Profession---2").append(tempOption);
+											    	var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
+												    $("#advancedanalyse---{{ question.poll.id }}---Profession---1").append(tempOption);
+												    $("#advancedanalyse---{{ question.poll.id }}---Profession---2").append(tempOption);
+													}
+													populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---1");
+													populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---2");
+												{% endfor %}
 										}
-										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---1");
-										populateCountry("#advancedanalyse---{{ question.poll.id }}---Country---2");
-									{% endfor %}
-								}
-								if(elem_id == "polls-content"){
-					            	{% for question in polls %}
-							            for (i = 0; i < profList.length; ++i) {
-										    var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
-										    // console.log(tempOption);
-										    $("#askbypoll-group-filter-profession---{{ question.poll.id }}").append(tempOption);
+										if(elem_id == "polls-content"){
+							      	{% for question in polls %}
+									    	for (i = 0; i < profList.length; ++i)
+												{
+												    var tempOption = '<option value="'+profList[i]+'">'+profList[i]+'</option>';
+												    $("#askbypoll-group-filter-profession---{{ question.poll.id }}").append(tempOption);
+												}
+												populateCountry("#askbypoll-group-filter-country---{{ question.poll.id }}");
+											{% endfor %}
+											console.log('Display Status',$('#overlay-inAbox8').is(":visible"));
 										}
-										populateCountry("#askbypoll-group-filter-country---{{ question.poll.id }}");
-									{% endfor %}
-								}
-								$(".share-with-group").click(function(){
-									var surveyId=$(this)[0].id.replace("share-with-group","");
-									$(this).parent().next().toggle("slow");
-									$("#sharegroups"+surveyId ).autocomplete({
-										source: availableGroupTags,
-										multiselect: true,
-										maxselection: 5,
-										elemId: "shareselectedGroups"+surveyId
-									});
-									$(".share-button-g").click(function(){
-										var elemid = "#share-with-group-form"+surveyId;
-										var divelemid = "#shareselectedGroups"+surveyId + "Div";
-										var inputelemid = "#shareselectedGroups"+surveyId
-										var form_data = new FormData($(elemid)[0]);
-										$.ajax(
-										{
-											type: 'POST',
-											url:"/survey_mail",
-											data:form_data,
-											processData: false,
-											contentType: false,
-											success:function(obj)
-											{
-												// $("#sharegroups"+surveyId).autocomplete("destroy");
-												// $("#sharegroups"+surveyId).removeData('autocomplete');
-												// $(divelemid).replaceWith(function() {
-												// 	return $("#sharegroups"+surveyId, this);
-												// });
-												// children().not(".shareGroupsInput").remove();
-												// $(inputelemid).val("");
-												// $(elemid).hide();
-												$('#dashboard-surveys-tab').trigger("click");
-											}
-										});
-									});
-								});
-						 //    if(elem_id == "dashboard-content"){
-							// google.setOnLoadCallback(drawChart);
-					  //           	drawChart();
-					  //           }
+										$(".share-with-group").click(function(){
+											var surveyId=$(this)[0].id.replace("share-with-group","");
+											$(this).parent().next().toggle("slow");
+											$("#sharegroups"+surveyId ).autocomplete({
+												source: availableGroupTags,
+												multiselect: true,
+												maxselection: 5,
+												elemId: "shareselectedGroups"+surveyId
+											});
+											$(".share-button-g").click(function(){
+												var elemid = "#share-with-group-form"+surveyId;
+												var divelemid = "#shareselectedGroups"+surveyId + "Div";
+												var inputelemid = "#shareselectedGroups"+surveyId
+												var form_data = new FormData($(elemid)[0]);
+												$.ajax(
+												{
+													type: 'POST',
+													url:"/survey_mail",
+													data:form_data,
+													processData: false,
+													contentType: false,
+													success:function(obj)
+													{
+														$('#dashboard-surveys-tab').trigger("click");
+													}
+												});
+											});
+										}); //Share with group click end
 					        }
 					    });
 				});
@@ -1544,7 +1512,6 @@
 				$('#surveys-content').on("click",'.fileLabel',function(){
 					$(this).prev().children().first().click();
 				});
-
 
 				$('#polls-content').on("click",'.embed-poll-code',function(){
 					var embedCodePollId = $(this).attr('id').split('---')[1];
@@ -1606,8 +1573,6 @@
 					        timeout: 30000,
 							success:function(response)
 							{
-								// console.log(response);
-								// console.log($("#askbypoll-email-preview---"+mailPollId));
 								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
 								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
 								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = 'Subject : <p class="askbypoll-email-preview-sub">' + response.mail_subject + "</p>";
@@ -1643,8 +1608,8 @@
 					                // console.log(uploaded_mails_from_csv);
 					                if (data && data.length > 0) {
 					                	data.forEach(function(entry) {
-										   tempEmail += entry+";";
-										});
+										   				tempEmail += entry+";";
+														});
 					                }
 					                uploaded_mails_from_csv[mailPollId] = tempEmail;
 					            };
@@ -1715,7 +1680,6 @@
 					        timeout: 30000,
 							success:function(response)
 							{
-								console.log(response);
 								if("error" in response){
 									saveElem.parent().append('<span class="errorlist">'+response.error+'</span>');
 								}else{
@@ -1737,7 +1701,6 @@
 					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
 					var emailList = $("#mailPoll---"+mailPollId).val();
 					var emailListFromFile = uploaded_mails_from_csv[mailPollId];
-					// console.log(uploaded_mails_from_csv);
 					var subject = $("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML.replace('Subject : <p class="askbypoll-email-preview-sub">',"").replace("</p>","");
 					var body1 = $("#email-body1---"+mailPollId)[0].innerHTML;
 					var body2 = $("#email-body2---"+mailPollId)[0].innerHTML;
@@ -1868,12 +1831,7 @@
 						var selectedChoiceId = parseInt(selectedChoice.replace("choice",""));
 						console.log(pollId+"---"+selectedChoiceId,choice_display);
 						$("."+choice_text_para).html(choice_display[pollId+"---"+selectedChoiceId]);
-						// $(analysisDivId).hide();
-						// $(analysisDivId).toggle("slow");
-						// console.log(selectedChoiceId);
 						var delay=2000; //1 seconds
-						// setTimeout(function(){
-						//your code to be executed after 1 seconds
 						if($(analysisDivId).is(':visible')){
 						  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
 						  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoiceId,graphId);
@@ -1951,8 +1909,6 @@
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
 					var graphId = elemId.split("---")[3];
-					// console.log(elemId);
-					// console.log(pollId);
 					var common_elem_id_str = "#advancedanalyse---"+pollId+"---";
 					var selectedChoice_country= $(common_elem_id_str+"Country---"+graphId).val();
 					populateState(common_elem_id_str+"State---"+graphId,selectedChoice_country);
@@ -1976,7 +1932,6 @@
 					  return value != demographic_count_select;
 					})
 				});
-
 
 				$("#surveys-content").on("click",".add-q",function(){
 			  		choice_count[question_count] = 1;
@@ -2020,7 +1975,6 @@
 			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
 			  		// change for radio default end
 			  		question_elem += '</div>';
-			  		// console.log(question_elem);
 			  		$(".survey-questions").append(question_elem);
 			  		// change for radio default start
 			  		add_another_choice(question_count,"radio");
@@ -2048,7 +2002,6 @@
 						    $("#"+question_count_select2+'---'+selectedType2).show();
 						}
 					}
-					// choice_list[question_count_select2].remove(question_choice_count2);
 				});
 
 				$("#surveys-content").on("change",".question-type-select",function(){
@@ -2060,7 +2013,6 @@
 		  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
 		  			var question_div = "questionDiv"+question_count_select;
 					$("#"+choice_elem_div).remove();
-		  			// console.log($("#"+choice_elem_div));
 		  			var selectedType = $("#"+select_elem_id+" option:selected").val();
 		  			console.log(selectedType);
 					if(selectedType != "text" && selectedType != "rating"){
@@ -2167,7 +2119,6 @@
 							success:function(obj)
 							{
 								$(".errorlist").remove();
-								console.log(obj);
 								if(obj.hasOwnProperty("success")){
 									$('#dashboard-surveys-tab').trigger("click");
 									display_question_count = 1;
@@ -2227,9 +2178,7 @@
 							},
 							success:function(response)
 							{
-								// console.log(response);
 								var new_html = document.createElement('div');
-								// $(new_html).id = "pdf-html";
 					        	new_html.innerHTML = response;
 					        	$('body').append('<div id="pdf-body">'+response+'</div>');
 
