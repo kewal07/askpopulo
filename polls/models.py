@@ -427,6 +427,10 @@ class VoteApi(models.Model):
 	src = models.CharField(max_length=512,blank=True,null=True)
 	answer_text = models.CharField(max_length=512,blank=True,null=True)
 	user_data = models.TextField()
+	def save(self, *args, **kwargs):
+		if not self.email:
+			self.email = None
+		super(VoteApi, self).save(*args, **kwargs)
 	
 
 class PollTokens(models.Model):
