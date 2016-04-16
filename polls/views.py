@@ -3313,7 +3313,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 	dbIpResponse = requests.get(url)
 	locationData = dbIpResponse.json()
 	if not choiceId:
-		choiceId = 812
+		choiceId = 6335
 	votedChoice = Choice.objects.get(pk=choiceId)
 	src = request.GET.get('src','')
 	alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)

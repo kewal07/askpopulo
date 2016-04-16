@@ -19,7 +19,11 @@ html{
     background-color: #eee;
     margin-top: 0rem !important;
     font-size: 1rem;
+<<<<<<< HEAD
     display:block !important; 
+=======
+    display:block !important;
+>>>>>>> f917f35486db4348ed8b404c327438184e3a64e4
     border-radius: 4px;
     float: none !important;
     width:8rem;
@@ -287,6 +291,22 @@ ul.menu-ul img{
 }
 .overlay{
 	display: none;
+}
+#overlay-inAbox8 {
+	position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 190px;
+  height: 90px;
+  line-height: 90px;
+  text-align: center;
+  margin-top: -50px;
+  margin-left: -100px;
+	display: none;
+}
+
+#loading-gif{
+	width:100%;
 }
 .pagination{
 	text-align: center;

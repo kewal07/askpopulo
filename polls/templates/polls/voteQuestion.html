@@ -59,6 +59,7 @@
 							{{ question.pub_date }}
 						</p>
 						
+
 							{% if question.expiry and not data.expired %}
 							<!-- Time Left:<br> -->
 							<div id="{{ question.id }}timer" class="timerClass"></div>
@@ -85,7 +86,6 @@
 								}
 							</script>
 						{% endif %}
-					
 					</div>
 				</div>
 				<div class="mainPoll">

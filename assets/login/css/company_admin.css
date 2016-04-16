@@ -321,7 +321,7 @@ span.cube-num{
 
 #create-new-group,#create-new-survey{
 	position: absolute;
-    right: 131px;
+    right: 16rem;
     top: 8rem;
     border: 2px solid;
     padding: 0.5rem;
