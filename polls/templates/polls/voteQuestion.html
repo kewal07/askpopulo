@@ -59,7 +59,8 @@
 							{{ question.pub_date }}
 						</p>
 						
-						{% if question.expiry and not data.expired %}
+
+							{% if question.expiry and not data.expired %}
 							<!-- Time Left:<br> -->
 							<div id="{{ question.id }}timer" class="timerClass"></div>
 							<script>
@@ -85,7 +86,6 @@
 								}
 							</script>
 						{% endif %}
-
 					</div>
 				</div>
 				<div class="mainPoll">
@@ -176,32 +176,7 @@
 						{% endif %}
 					</p>
 					</form>
-					{% if question.expiry and not data.expired %}
-						<!-- Time Left:<br> -->
-						<div id="{{ question.id }}timer" class="timerClass green"></div>
-						<script>
-							var currentDate = new Date();
-							var offset = currentDate.getTimezoneOffset();
-
-							var utcDate = new Date({{ question.pub_date.year }}, {{ question.pub_date.month }} - 1, {{ question.pub_date.day }}, {{ question.pub_date.hour }}, {{ question.pub_date.minute }}, {{ question.pub_date.second }});
-
-							var publicationDate = new Date({{ question.pub_date.year }}, {{ question.pub_date.month }}, {{ question.pub_date.day }}, {{ question.pub_date.hour }}, {{ question.pub_date.minute }}-offset, {{ question.pub_date.second }});
-							// var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
-							// document.getElementById('{{ question.id }}pubdate').innerHTML = pubDateString;
-
-							{% if question.expiry and not question.expired %}
-							var expiryDate = new Date({{ question.expiry.year }}, {{ question.expiry.month }}, {{ question.expiry.day }}, {{ question.expiry.hour }}, {{ question.expiry.minute }}-offset, {{ question.expiry.second }});
-							$("#{{ question.id }}timer").countdown({until: new Date({{ question.expiry.year }}, {{ question.expiry.month }} - 1, {{ question.expiry.day }}, {{ question.expiry.hour }}, {{ question.expiry.minute }}-offset, {{ question.expiry.second }}),compact: true, onExpiry:disableVoteButton});
-							{% endif %}
-
-							function disableVoteButton(){
-								$('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
-								$('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
-								$('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
-								$('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
-							}
-						</script>
-					{% endif %}
+					
 					<div class="analyzeAndShare">
 						<ul class="share-buttons">
 							{% if user.is_authenticated %}
@@ -269,7 +244,13 @@
 		{% endif %}
 		$(document).ready(function()
 		{
-
+			$(".choices").click(function(){
+				$(this).parent().parent().children('p').css({"background":"rgb(250, 251, 252)"});
+				$(this).parent().parent().children().each(function(){
+					$(this).children("label").css({"background":"#fafbfc"});
+				})
+				$(this).parent().css({"background":"#f96a0e"});
+			});
 		});
 	</script>
 {% endblock %}

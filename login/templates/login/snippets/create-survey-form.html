@@ -260,6 +260,10 @@
 		<input id="groups" type="text" name="groups" style="border:none;">
 		<input id="selectedGroups" type="hidden" name="selectedGroups" value="">
 	</p>
+	<p class="form-p">
+		<label class="required" for="expectedTime">Expected Time To Complete</label>
+		<input type="text" id ="expectedTime" name="expectedTime" placeholder="Expected Time To Complete (Please Enter a Number. For ex, enter 3 if 3 minutes to complete.)" maxlength="64"></input>
+	</p>
 	<p style="margin-top:2rem">
 		<label for="shareImage">Featured Image <i id="featuredimage_tooltip_fa" class="fa fa-info-circle"></i></label>
 		<input id="shareImage" class="fileButtonClass" type="file" name="shareImage" accept="image/*">
@@ -289,6 +293,27 @@
 	</p>
 	<div class="survey-demographics">
 	</div>
+	<div class="survey-sections">
+		<p class="form-p">
+			<label for="qSection">Number of Sections</label>
+			<select id="qSection" name="qSection">
+					<option value="0">None</option>
+					<option value="1">One</option>
+					<option value="2">Two</option>
+					<option value="3">Three</option>
+					<option value="4">Four</option>
+					<option value="5">Five</option>
+					<option value="6">Six</option>
+					<option value="7">Seven</option>
+					<option value="8">Eight</option>
+					<option value="9">Nine</option>
+					<option value="10">Ten</option>
+					<option value="11">Eleven</option>
+					<option value="12">Twelve</option>
+			</select>
+		</p>
+	</div>
+	<i class="fa fa-plus-circle add-sections"> Add Sections</i>
 	<div class="survey-questions">
 	</div>
 	<i class="fa fa-plus-circle add-q"> Add Question</i>

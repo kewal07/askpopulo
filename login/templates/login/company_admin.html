@@ -1279,27 +1279,23 @@
 			var uploaded_mails_from_csv = {};
 			function createSurvey(){
 				$(".create-survey").toggle("slow");
-
 				$( "#categories" ).autocomplete({
 					source: availableTags,
 					multiselect: true,
 					maxselection: 5,
 					elemId: "selectedCategories"
 				});
-
 				$( "#groups" ).autocomplete({
 					source: availableGroupTags,
 					multiselect: true,
 					maxselection: 5,
 					elemId: "selectedGroups"
 				});
-
 				$('#id_categories').hide();
 				$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
 				$('#id_categories').prev().on('click', '#cats', function() {
 			    	$('#id_categories').toggle();
 			  	});
-
 			  	$("#category_tooltip_fa").hover(function(e){
 			  		// console.log($(this));
 			  		var elem_pos = $(this).offset();
@@ -1310,7 +1306,6 @@
 			  		});
 			  		$("#category_tooltip").toggle();
 			  	});
-
 			  	$("#featuredimage_tooltip_fa").hover(function(e){
 			  		// console.log($(this));
 			  		var elem_pos = $(this).offset();
@@ -1321,8 +1316,6 @@
 			  		});
 			  		$("#featuredimage_tooltip").toggle();
 			  	});
-
-
 			  	if(!featureImageWrapped){
 			  		featureImageWrapped = true;
 				  	/*For file browse */
@@ -1358,7 +1351,6 @@
 					})
 					/* End of file browse*/
 				}
-
 			}
 
 			function add_another_choice(question_count_select,selectedType)
@@ -1428,7 +1420,8 @@
 					else if(elem_id == "dashboard-content"){
 						location.reload();
 			    }
-					else
+					else{
+						console.log("{{ request.path }}");
 						$.ajax({
 					        url: "{{ request.path }}",
 					        type: 'GET',
@@ -1507,6 +1500,7 @@
 										}); //Share with group click end
 					        }
 					    });
+					}
 				});
 
 				$('#surveys-content').on("click",'.fileLabel',function(){
@@ -1933,6 +1927,20 @@
 					})
 				});
 
+				$("#surveys-content").on("click",".add-sections",function(){
+					$(".survey-sections").toggle();
+				});
+
+				$("#surveys-content").on("change","select#qSection",function(){
+					// var noOfSections = +'$("select#qSection option:selected" ).val()';
+					var noOfSections = $("select#qSection option:selected").val();
+					var i;
+					for (i = 1; i <= parseInt(noOfSections); i++) { 
+						var element = '<input type="text" class="survey-sec" id="sectionName---'+i+'" name="sectionName---'+i+'" placeholder="Section '+i+'" maxlength="64">';
+						$(".survey-sections").append(element);
+					}
+				});
+
 				$("#surveys-content").on("click",".add-q",function(){
 			  		choice_count[question_count] = 1;
 			  		choice_list[question_count] = [];
@@ -1968,6 +1976,13 @@
 			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="horizontalOptions' +question_count_str+ '" name="horizontalOptions' +question_count_str+ '" type="checkbox" checked><label for="horizontalOptions' +question_count_str+ '">Arrange Options Horizontaly </label></p>';
 			  		else
 			  			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="horizontalOptions' +question_count_str+ '" name="horizontalOptions' +question_count_str+ '" type="checkbox"><label for="horizontalOptions' +question_count_str+ '">Arrange Options Horizontaly </label></p>';
+			  		question_elem += '<p class="form-p"><label for="qSect---'+question_count_str+'">Section</label><select class="qSect" id="qSect---'+question_count_str+'" name="qSect---'+question_count_str+'">';
+			  		var noOfSections = $("select#qSection option:selected").val();
+			  		var i;
+			  		for (i = 0; i <= parseInt(noOfSections); i++) { 
+			  			question_elem += '<option value="'+$("#sectionName---"+i).val()+'">'+$("#sectionName---"+i).val()+'</option>';
+			  		}
+			  		question_elem += '</select></p>';
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		// change for radio default start
@@ -2108,6 +2123,7 @@
 					form_data.append('choice_count', JSON.stringify(choice_list));
 					form_data.append('demographic_count', JSON.stringify(demographic_list));
 					$("#createSurveySubmit").attr("disabled","disabled");
+					console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{

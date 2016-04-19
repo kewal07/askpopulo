@@ -215,5 +215,16 @@
 		{% else %}
 			<p>No polls are available</p>
 		{% endif %}		
+		<script>
+			$(document).ready(function(){
+				$(".choices").click(function(){
+					$(this).parent().parent().children('p').css({"background":"rgb(250, 251, 252)"});
+					$(this).parent().parent().children().each(function(){
+						$(this).children("label").css({"background":"#fafbfc"});
+					})
+					$(this).parent().css({"background":"#f96a0e"});
+				});
+			});
+		</script>
 	</section>
 {% endblock %}
