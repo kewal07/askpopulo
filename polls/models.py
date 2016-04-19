@@ -169,6 +169,8 @@ class Survey(models.Model):
 	featured_image = models.ImageField(upload_to=get_file_path_featured,blank=True,null=True)
 	thanks_msg = models.CharField(max_length=400,null=True,blank=True, default="Thank You for Completing the Survey!!!")
 	authenticate = models.BooleanField(default=0)
+	number_sections = models.IntegerField(blank=True,null=True,default=0)
+	expected_time = models.IntegerField(blank=True,null=True,default=0)
 
 	def save(self, *args, **kwargs):
 		try:
@@ -228,6 +230,8 @@ class Survey(models.Model):
 		return folder_day
 	def get_file_name(self):
 		return self.get_folder_day()+"/"+self.featured_image.path.split(os.sep)[-1]
+	def get_featured_image_url(self):
+		return "/media/featuredimages/"+self.get_file_name()
 
 class SurveyWithCategory(models.Model):
 	survey = models.ForeignKey(Survey)
@@ -237,6 +241,12 @@ class SurveyWithCategory(models.Model):
 	def save(self, *args, **kwargs):
 		super(SurveyWithCategory, self).save(*args, **kwargs)
 
+# class SurveySection(models.Model):
+# 	section_name = models.CharField(max_length=64)
+# 	section_id = models.IntegerField(blank=True,null=True,default=0)
+# 	def __str__(self):
+# 		return self.section_name+"---"+self.section_id
+
 class Survey_Question(models.Model):
 	survey = models.ForeignKey(Survey)
 	question = models.ForeignKey(Question)
@@ -245,6 +255,7 @@ class Survey_Question(models.Model):
 	mandatory = models.BooleanField(default=0)
 	min_value  = models.IntegerField(default=0)
 	max_value = models.IntegerField(default=10)
+	section_name = models.CharField(max_length=64,blank=True,null=True,default=None)
 	def __str__(self):
 		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 

@@ -318,7 +318,9 @@ span.cube-num{
 .groupMembers,.surveyDescription{
 	padding-bottom:1rem;
 }
-
+.survey-sections{
+	display: none;
+}
 #create-new-group,#create-new-survey{
 	position: absolute;
     right: 16rem;
@@ -445,9 +447,10 @@ label.label-width{
 	padding: 5px 12px;
 	font-size: 1.2rem;
 }
-.min-max-values{
+.min-max-values,input.survey-sec{
 	width: 49% !important;
     display: inline-block;
+    text-align: center;
 }
 ::-webkit-input-placeholder {
     text-align: center;
@@ -733,7 +736,7 @@ th.question-table-heading {
 	cursor: pointer;
     float: right;
 }
-.add-q,.add-choice{
+.add-q,.add-choice,.add-sections{
 	cursor: pointer;
 }
 .remove-choice{

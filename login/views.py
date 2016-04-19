@@ -480,6 +480,7 @@ class AdminDashboard(BaseViewDetail):
 				user_slug = user.extendeduser.user_slug
 				url = reverse('login:loggedIn', kwargs={'pk':user.id,'user_slug':user_slug})
 				return HttpResponseRedirect(url)
+			# Why are we taking everything here itself. Better to query on specific clicks
 			polls_vote_list = []
 			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id, is_survey = 0, is_feedback = 0).order_by('-pub_date')
@@ -566,12 +567,10 @@ class AdminDashboard(BaseViewDetail):
 				sur_dict['votes'] = totalParticipants
 				total_views += survey.numViews
 				survey_questions = Survey_Question.objects.filter(survey_id=survey.id)
-
 				incompleteResponses = 0				
 				for voted in surveyVoted:
 					if voted.survey_question_count != voted.user_answer_count:
 						incompleteResponses += 1
-
 				completeRate = 0
 				if totalParticipants > 0:
 					completeRate = int(((totalParticipants-incompleteResponses)/totalParticipants)*100)

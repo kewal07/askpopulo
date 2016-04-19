@@ -30,6 +30,16 @@
 	<section id="content">
 		<div class="questions">
 			<div class="questionContent">
+				<p class="que_text que_text_header">{{ survey.survey_name }}</p>
+				{% if survey.has_image %}
+					<img src="{{ survey.get_featured_image_url }}" class="survey-featured" alt="{{ survey.survey_name }}">
+				{% else %}
+					<style type="text/css">
+						.userInfo{
+							margin-top: -3%;
+						}
+					</style>
+				{% endif %}
 				<div class="userInfo">
 					<div class="userImage">
 						<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
@@ -136,117 +146,143 @@
 					</div>
 					{% endif %}
 					<div class="survey-questions">
-						{% for question in polls %}
-							<div class="survey-question {{ question.color }}" id="survey-question{{ question.poll.id }}">
-								<p class="que_text">{{ question.poll.question_text }}</p>
-								{% if question.poll.description %}
-									<p class="question_description_header">
-										<span class="question_description_header_span">Description</span>
-									</p>
-									<p class="question_description">{{ question.poll.description }}</p>
+						{% for key,value in polls_section_dict.items %}
+							{% if key == 'NULL' %}
+								<style type="text/css">
+									.survey-sections{
+										padding:0;
+										margin: 0;
+										border:0;
+										display: block;
+									}
+								</style>
+							{% endif %}
+							<div class="survey-sections" id="section---{{ forloop.counter }}">
+								{% if key != 'NULL' %}
+									<span class="section-name">{{ key }}</span>
 								{% endif %}
-								<p>
-								<form class="optionsForm" method="POST" id="optionsForm{{ question.poll.id }}">
-									{% csrf_token %}
-									<input type="hidden" name="question" value="{{ question.poll.id }}" />
-									<input type="hidden" name="questionType" value="{{ question.type }}" />
-									<input type="hidden" name="mandatory" value="{{ question.mandatory }}" />
-									<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
-									{% if question.type == "text" %}
-										<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
-									{% elif question.type == "rating" %}
-										<div id="div-irs-{{ question.poll.id }}">
-									        <input type="text" id="range{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
-									        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
-									    </div>
-									    <script>
-									    	{% if question.user_already_voted or expired%}
+								{% for question in value %}
+									<div class="survey-question" id="survey-question{{ question.poll.id }}">
+									<p class="que_text">{{ question.poll.question_text }}</p>
+									{% if question.poll.description %}
+										<p class="question_description_header">
+											<span class="question_description_header_span">Description</span>
+										</p>
+										<p class="question_description">{{ question.poll.description }}</p>
+									{% endif %}
+									<p>
+										<form class="optionsForm" method="POST" id="optionsForm{{ question.poll.id }}">
+										{% csrf_token %}
+										<input type="hidden" name="question" value="{{ question.poll.id }}" />
+										<input type="hidden" name="questionType" value="{{ question.type }}" />
+										<input type="hidden" name="mandatory" value="{{ question.mandatory }}" />
+										<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
+										{% if question.type == "text" %}
+											<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+										{% elif question.type == "rating" %}
+											<div id="div-irs-{{ question.poll.id }}">
+										        <input type="text" id="range{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
+										        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+										    </div>
+										    <script>
+										    	{% if question.user_already_voted or expired%}
 
-									    		$('#range{{ question.poll.id }}').ionRangeSlider({
-										            keyboard: true,
-										            min: {{ question.min_value }},
-										            max: {{ question.max_value }},
-										            from: {{ question.from_val }},
-										            to: {{ question.to_val }},
-										            type: 'double',
-										            step: 1,
-										            disable: true
-										        });
-										        $("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
-										        $("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
-									    	{% else %}
-										    	 $('#range{{ question.poll.id }}').ionRangeSlider({
-										            keyboard: true,
-										            min: {{ question.min_value }},
-										            max: {{ question.max_value }},
-										            from: {{ question.min_value }},
-										            type: 'single',
-										            step: 1,
-										            onFinish: function (data) {
-														$('#choice{{ question.poll.id }}').val(data.from_percent);
-													}
-										        });
-											{% endif %}
-										</script>
-									{% else %}
-										{% for choice in question.poll.choice_set.all %}
-											{% if question.horizontalOptions %}
-												<p class="horizontal-options">
-											{% else %}
-												<p>
-											{% endif %}
-												<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-												<label class="choice-text" for="choice{{ choice.id }}">
-													{% if choice.choice_image %}
-													<script>
-														$('.choice_image').css({"width":"120px","height":"120px"});
-														$("#choice{{ choice.id }}").hide();
-														var item = $("#choice{{ choice.id}}");
-														item.parent().css({"display":"inline-block"});
-														// console.log($this.parent().next().children().first().show());
-													</script>
-														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-														<!-- {{ choice.choice_text }} -->
-													{% else %}
-														{{ choice.choice_text }}
-													{% endif %}
-												</label>
-											</p>
-										{% endfor %}
-										{% if question.poll.protectResult and user != question.poll.user %}
+										    		$('#range{{ question.poll.id }}').ionRangeSlider({
+											            keyboard: true,
+											            min: {{ question.min_value }},
+											            max: {{ question.max_value }},
+											            from: {{ question.from_val }},
+											            to: {{ question.to_val }},
+											            type: 'double',
+											            step: 1,
+											            disable: true
+											        });
+											        $("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
+											        $("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
+										    	{% else %}
+											    	 $('#range{{ question.poll.id }}').ionRangeSlider({
+											            keyboard: true,
+											            min: {{ question.min_value }},
+											            max: {{ question.max_value }},
+											            from: {{ question.min_value }},
+											            type: 'single',
+											            step: 1,
+											            onFinish: function (data) {
+															$('#choice{{ question.poll.id }}').val(data.from_percent);
+														}
+											        });
+												{% endif %}
+											</script>
 										{% else %}
-											<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+											{% for choice in question.poll.choice_set.all %}
+												{% if question.horizontalOptions %}
+													<p class="horizontal-options">
+												{% else %}
+													{% if  forloop.counter0|divisibleby:2 %}
+														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
+													{% else %}
+														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
+													{% endif %}
+												{% endif %}
+													<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+													<label class="choice-text" for="choice{{ choice.id }}">
+														{% if choice.choice_image %}
+														<script>
+															$('.choice_image').css({"width":"120px","height":"120px"});
+															$("#choice{{ choice.id }}").hide();
+															var item = $("#choice{{ choice.id}}");
+															item.parent().css({"display":"inline-block"});
+															// console.log($this.parent().next().children().first().show());
+														</script>
+															<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+															<!-- {{ choice.choice_text }} -->
+														{% else %}
+															{{ choice.choice_text }}
+														{% endif %}
+													</label>
+												</p>
+											{% endfor %}
+											{% if question.poll.protectResult and user != question.poll.user %}
+											{% else %}
+												<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+											{% endif %}
+											{% if question.addComment and question.type == "radio" %}
+												<p>Why did you choose the above option?</p>
+												<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+											{% endif %}
 										{% endif %}
-										{% if question.addComment and question.type == "radio" %}
-											<p>Why did you choose the above option?</p>
-											<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
-										{% endif %}
-									{% endif %}
-									{% if question.user_already_voted or expired%}
-										<script type="text/javascript">
-										$(document).ready(function(){
-											if($("#pollsChart---"+{{ question.poll.id }}).length >0)
-												drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
-											else{
-												$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
-												if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
-													$("#pollsVoted---"+{{ question.poll.id }}).show();
-											}
-											if($("#choiceText"+{{ question.poll.id }}+"Comment").length >0)
-												$("#choiceText"+{{ question.poll.id }}+"Comment").attr('disabled','disabled');
-										});
-										</script>
-									{% else %}
+										{% if question.user_already_voted or expired%}
+											<script type="text/javascript">
+											$(document).ready(function(){
+												if($("#pollsChart---"+{{ question.poll.id }}).length >0)
+													drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
+												else{
+													$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
+													if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
+														$("#pollsVoted---"+{{ question.poll.id }}).show();
+												}
+												if($("#choiceText"+{{ question.poll.id }}+"Comment").length >0)
+													$("#choiceText"+{{ question.poll.id }}+"Comment").attr('disabled','disabled');
+											});
+											</script>
+										{% else %}
 
-									{% endif %}
-								</form>
-								</p>
+										{% endif %}
+										</form>
+									</p>
+									</div>
+								{%endfor%}
+								{% if polls_section_dict.items|length > forloop.counter %}
+									<p class="btn next-section" id="next-section---{{ forloop.counter }}">Next</p>
+								{% else %}
+									<input class="submit btn voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
+								{% endif %}
 							</div>
 						{% endfor %}
 					</div>
-					{% if not user_already_voted and not expired %}
+					<!-- {% if not user_already_voted and not expired %}
 						<input class="submit btn voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
-					{% endif %}
+					{% endif %} -->
 				</div>
 			</div>
 			<div class="pollInfo  pollsInfoVotePage clearfix">
@@ -356,7 +392,7 @@
 								if(ajax_calls == form_n){
 									if("res" in response)
 										saveCookie(cookie_prepend,'SURVEY_'+{{ survey.id }},true);
-									confirm_redirect_only('#overlay-inAbox6',response["success"],'/');
+									confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
 								}
 							}else{
 								for(key in response){
@@ -368,7 +404,22 @@
 			});
 		}
 		$(document).ready(function()
-		{
+		{	
+			$(".choices").click(function(){
+				var optionsFormId = $(this).parent().parent().attr("id");
+				$("#"+optionsFormId+" p").removeClass("selectedOption");
+				$(this).parent().addClass("selectedOption");
+			 });
+
+			$(".next-section").click(function(){
+				var elementId = $(this).attr("id").split("---")[1];
+				$(this).hide();
+				$(this).parent().next().toggle();
+				$('html, body').animate({
+				        scrollTop: $("#section---"+elementId).offset().top+200
+				    }, 1000);
+			});
+
 			if({{ survey.id }} == 30){
 				{% if not user.is_authenticated %}
 					location.href = "{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}";

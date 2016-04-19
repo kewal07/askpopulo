@@ -75,5 +75,6 @@ urlpatterns = [
 	url(r'^voteqform$', login_required(views.AutoPopulateVotesView.as_view()), name='voteqform'),
 	url(r'^productofferings$', TemplateView.as_view(template_name='abpBusiness/productfeatures.html'), name='productofferings'),
 	url(r'^widget/(?P<widget_product>[\w\-]+)', login_required(views.WidgetsView.as_view()), name='widgetview'),
+	url(r'^thankyou$',views.ThankYouView.as_view(),name='thankyou'),
 	# url(r'^widget/(?P<widget_product>[\w\-]+)', login_required(views.WidgetsView.as_view()), name='widgetview'),
 ]

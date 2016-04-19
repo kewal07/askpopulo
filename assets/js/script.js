@@ -75,13 +75,13 @@ $(document).ready(function(){
 	/* End of file browse*/
 
 	/* highlight selected choice */
-	$(".choices").click(function(){
-		$(this).parent().parent().children().css({"background":"#fafbfc"});
-		$(this).parent().parent().children().each(function(){
-			$(this).children("label").css({"background":"#fafbfc"});
-		})
-		$(this).parent().css({"background":"#f96a0e"});
-	});
+	// $(".choices").click(function(){
+	// 	$(this).parent().parent().children('p').css({"background":"rgb(250, 251, 252)"});
+	// 	$(this).parent().parent().children().each(function(){
+	// 		$(this).children("label").css({"background":"#fafbfc"});
+	// 	})
+	// 	$(this).parent().css({"background":"#f96a0e"});
+	// });
 	/* End of highlight selected choice */
 
 	$('.menuResponsive').click(function(){
