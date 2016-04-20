@@ -21,6 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -188,6 +189,27 @@
 										        });
 											{% endif %}
 										</script>
+									{% elif question.type == "matrixrating" %}
+										<div class="table-container">
+											<div class="table-component">
+												<table>
+													<tr>
+														<th></th>
+														{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+															<th> {{ columns.columnLabel }} </th>
+														{% endfor %}
+													</tr>
+													{% for choice in question.poll.choice_set.all %}
+														<tr>
+															<th> {{ choice.choice_text }} </th>
+															{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																<td> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ choice.id }}"> </td>
+															{% endfor %}
+														</tr>
+													{% endfor %}
+												</table>
+											</div>
+										</div>
 									{% else %}
 										{% for choice in question.poll.choice_set.all %}
 											{% if question.horizontalOptions %}
@@ -278,10 +300,6 @@
 								{% endif %}
 
 								function disableVoteButton(){
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
-									// $('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
 									$('#vote{{ survey.id }}').attr('disabled','disabled');
 									$('#vote{{ survey.id }}').attr('value','Expired');
 								}
@@ -323,6 +341,7 @@
 		{% endif %}
 		var continue_loop = true;
 		function saveVotes(){
+			console.log("called save votes too")
 			var form_n = $('.optionsForm').length;
 			var ajax_calls = 0;
 			$('.optionsForm').each(function(){

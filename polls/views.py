@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics
+from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -1419,7 +1419,7 @@ class TriviaPView(BaseViewList):
 class CreateSurveyView(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		try:
-			#print(request.POST)
+			print(request.POST)
 			#print(request.GET)
 			edit = False
 			curtime = datetime.datetime.now();
@@ -1519,6 +1519,7 @@ class CreateSurveyView(BaseViewList):
 				poll['addComment'] = addComment
 				poll['mandatory'] = mandatory
 				poll['horizontalOptions'] = horizontalOptions
+				columns = []
 				choices = []
 				images = []
 				queError = ""
@@ -1542,7 +1543,6 @@ class CreateSurveyView(BaseViewList):
 						errors[choice_elem_id] = "Min Value should be less than Max.<br>"
 				elif que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
-					#print(choice_list)
 					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
 					if len(choice_list) < 2:
 						queError += "Atleast 2 choices are required"
@@ -1564,8 +1564,25 @@ class CreateSurveyView(BaseViewList):
 							errors[choice_elem_id] = "Choice required"
 					if len(choices)!=len(set(choices)):
 						queError += "Please provide different choices<br>"
+				if que_type == "matrixrating":
+					column_list = json.loads(post_data.get("column_count")).get(que_index)
+					if len(column_list) < 2:
+						queError += "Atleast 2 columns are required"
+					elif len(column_list) > max_choice_cnt:
+						queError += "Maximum %s columns can be provided"%(max_choice_cnt)
+					for column_count in column_list:
+						column_elem_id = 'questionDiv'+que_index+'column'+str(column_count)
+						column = request.POST.getlist(column_elem_id)[0].strip()
+						columns.append(column)
+						if not column:
+							errors[column_elem_id] = "Column required"
+					if len(columns)!=len(set(columns)):
+						queError += "Please provide different columns<br>"
 				if queError:
 					errors["qText"+str(que_index)] = queError
+					
+				if que_type == "matrixrating":
+					poll['column_list'] = columns
 				poll['choice_texts'] = choices
 				poll['choice_images'] = images
 				poll['min_max'] = min_max
@@ -1696,6 +1713,10 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			max_value = poll['min_max'].get("max_value",10)
 			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value)
 			survey_que.save()
+			if poll['type'] == 'matrixrating':
+				for column in poll['column_list']:
+					column = MatrixRatingColumnLabels(question=question, columnLabel = column)
+					column.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -1777,6 +1798,8 @@ class SurveyVoteView(BaseViewDetail):
 		colors = ['light-blue','yellow','red','green']
 		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):		
 			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"color":colors[i%4],"horizontalOptions":x.question.horizontal_options}
+			if x.question_type == 'matrixrating':
+				poll_dict['columns'] = (MatrixRatingColumnLabels.objects.filter(question=x.question))
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1816,6 +1839,7 @@ class SurveyVoteView(BaseViewDetail):
 			# 	user_already_voted = checkBooleanValue(self.request.COOKIES.get(votedCookie,""))
 			# 	context['user_already_voted'] = user_already_voted
 			context['polls'].append(poll_dict)
+			print(context)
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -1833,15 +1857,20 @@ class SurveyVoteView(BaseViewDetail):
 			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg
-			# +"<br>Come back anytime to answer the rest of the questions!!"
 			data={}
-			#print(success_msg_text,user.is_authenticated())
-			choice_list = request.POST.getlist('choice'+str(questionId))
+			
+			if(que_type == 'matrixrating'):
+				choices = Choice.objects.filter(question=question)
+				choice_list = []
+				if choices:
+					for choice in choices:
+						tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
+						choice_list.append(tempChoiceColumn)
+			else:
+				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-			# print(choice_list,choice_list_comment)
 			choice_list = list(filter(None, choice_list))
 			choice_list_comment = list(filter(None, choice_list_comment))
-			# print(choice_list,choice_list_comment,mandatory,saveRequired)
 			post_data = request.POST
 			user_data = {}
 			for key,val in post_data.items():
@@ -1868,6 +1897,18 @@ class SurveyVoteView(BaseViewDetail):
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 								voteText = VoteText(question=question,user=user,answer_text=choice_list[0],user_data=user_data)
 								voteText.save()
+						elif que_type == "matrixrating":
+							for columns in choice_list:
+								choiceId = columns.split('---')[0]
+								columnId = columns.split('---')[1]
+								choice = Choice.objects.get(pk=int(choiceId))
+								column = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								vote, created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
+								if created:
+									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column)
+									votedcolumn.save()
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
 						elif que_type != "text":
 							for choiceId in choice_list:
 								choice = Choice.objects.get(pk=choiceId)

@@ -733,10 +733,10 @@ th.question-table-heading {
 	cursor: pointer;
     float: right;
 }
-.add-q,.add-choice{
+.add-q,.add-choice,.add-column{
 	cursor: pointer;
 }
-.remove-choice{
+.remove-choice, .remove-column{
 	cursor: pointer;
 	margin-left: 1rem;
 }
