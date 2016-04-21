@@ -1,0 +1,37 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% block extra_css %}
+	<style>
+		html{
+			background:url('/static/thankyou.jpg') no-repeat center center fixed;
+			background-size:cover;
+		}
+		#footer{
+			position: absolute;
+		}
+		#content{
+			    padding: 7rem 0 3rem 0;
+		}
+		.message {
+		    width: 400px;
+		    height: 100px;
+		    position: absolute;
+		    top:35%;
+		    bottom: 0;
+		    left: 0;
+		    right: 0;
+		    margin: auto;
+		}
+		.thank-you{
+			font-size:2rem;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<section id="content">
+		<div class="message">
+			<p><span class="thank-you">Thank You</span> for Your Response !</p>
+			<p>We may contact you in future if required.</p>
+		</div>
+	</section>
+{% endblock %}
