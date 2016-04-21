@@ -152,6 +152,11 @@ form.optionsForm{
 .optionsForm p{
 	padding:1rem;
 	margin:0;
+    cursor: pointer;
+}
+.userBrief-center{
+    text-align: center;
+    font-size:1.2rem;
 }
 .optionsForm p.horizontal-options{
 	display: inline-block;

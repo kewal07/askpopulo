@@ -46,26 +46,25 @@
 								<img src="{{ survey.user.extendeduser.get_profile_pic_url }}"  alt="User {{ survey.user.first_name }}">
 						</a>
 					</div>
+					<p class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
 					<div class="userBrief">
-						<p>
+						<!-- <p>
 							<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
 									{{ survey.user.first_name }}
 							</a>
-						</p>
+						</p> -->
 						<p>
-							Asked on:<br>
-								<span id="{{ survey.id }}pubdate"></span><br>
+							Survey Valid till : <span id="{{ survey.id }}expirydate"></span>
 						</p>
 					</div>
 					<div class="userBrief-right">
-						<p>
+						<!-- <p>
 							<a href="javascript:;">
 									{{ survey.user.extendeduser.company.description }}
 							</a>
-						</p>
+						</p> -->
 						<p>
-							Survey Valid till:<br>
-								<span id="{{ survey.id }}expirydate"></span><br>
+							Expected Time To Complete : <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
 						</p>
 					</div>
 				</div>
@@ -300,9 +299,9 @@
 
 								var utcDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }} - 1, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}, {{ survey.pub_date.second }});
 
-								var publicationDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }}, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}-offset, {{ survey.pub_date.second }});
-								var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
-								document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
+								// var publicationDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }}, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}-offset, {{ survey.pub_date.second }});
+								// var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
+								// document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
 
 								{% if survey.expiry and not expired %}
 								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }}, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
@@ -310,7 +309,7 @@
 								document.getElementById('{{ survey.id }}expirydate').innerHTML = expiryDateString;
 								$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
 								{% else %}
-								document.getElementById('{{ survey.id }}expirydate').innerHTML = "Till The End Of Time";
+									document.getElementById('{{ survey.id }}expirydate').innerHTML = "Till The End Of Time";
 								{% endif %}
 
 								function disableVoteButton(){
@@ -405,18 +404,36 @@
 		}
 		$(document).ready(function()
 		{	
-			$(".choices").click(function(){
-				var optionsFormId = $(this).parent().parent().attr("id");
+			// $(".choices").click(function(){
+			// 	console.log("Ok")
+			// 	var optionsFormId = $(this).parent().parent().attr("id");
+			// 	$("#"+optionsFormId+" p").removeClass("selectedOption");
+			// 	$(this).parent().addClass("selectedOption");
+			//  });
+
+			// $(".vertical-options").click(function(){
+			// 	$(this).children().first().click();
+			// 	$("#radio_1").attr('checked', 'checked');
+			// });
+
+			$(".vertical-options,.horizontal-options").click(function(){
+				var radioElem = $(this).children().first().attr("id");
+				console.log(radioElem);
+				$("#"+radioElem).attr('checked', 'checked');
+				var optionsFormId = $(this).parent().attr("id");
 				$("#"+optionsFormId+" p").removeClass("selectedOption");
-				$(this).parent().addClass("selectedOption");
+				$(this).addClass("selectedOption");
 			 });
 
 			$(".next-section").click(function(){
 				var elementId = $(this).attr("id").split("---")[1];
+				console.log(elementId);
 				$(this).hide();
 				$(this).parent().next().toggle();
+				var newElem = (parseInt(elementId)+1).toString();
+				console.log(newElem);
 				$('html, body').animate({
-				        scrollTop: $("#section---"+elementId).offset().top+200
+				        scrollTop: $("#section---"+newElem).offset().top
 				    }, 1000);
 			});
 
