@@ -62,15 +62,16 @@
 }
 span.section-name {
     position: absolute;
-    top: -18px;
+    top: -24px;
     left: -3px;
     padding: 0 0.5rem;
-    background: white;
+    background: #f96a0e;
     font-size:1.2rem;
+    color:white;
+    padding:4px;
 }
 .survey-sections{   
 	padding: 1rem;
-    border: 2px solid;
     margin: 2rem 0;
     position: relative;
     display: none;

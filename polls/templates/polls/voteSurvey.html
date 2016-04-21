@@ -158,7 +158,7 @@
 							{% endif %}
 							<div class="survey-sections" id="section---{{ forloop.counter }}">
 								{% if key != 'NULL' %}
-									<span class="section-name">{{ key }}</span>
+									<span class="section-name">Section : {{ key|title }}</span>
 								{% endif %}
 								{% for question in value %}
 									<div class="survey-question" id="survey-question{{ question.poll.id }}">
@@ -433,7 +433,7 @@
 				var newElem = (parseInt(elementId)+1).toString();
 				console.log(newElem);
 				$('html, body').animate({
-				        scrollTop: $("#section---"+newElem).offset().top
+				        scrollTop: $("#section---"+newElem).offset().top-200
 				    }, 1000);
 			});
 
