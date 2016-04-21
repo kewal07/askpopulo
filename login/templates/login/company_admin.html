@@ -369,8 +369,13 @@
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
 									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
-									{% if poll.q_type != "text" %}
-
+									{% if poll.q_type = "matrixrating" %}
+										<div class="choices clearfix">
+											{% for choice in poll.question.choice_set.all %}
+												{{ choice.choice_text }}
+											{% endfor %}
+										</div>
+									{% elif poll.q_type != "text" %}
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
