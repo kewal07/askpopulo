@@ -503,7 +503,7 @@ textarea{
 	color: white;
 }
 .askbypoll-embed-overlay{
-	position: fixed !important;
+	/*position: fixed !important;*/
 }
 div.overlay-data-enter-details{
 	width: 100%;

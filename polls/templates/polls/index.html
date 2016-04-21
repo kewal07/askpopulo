@@ -78,9 +78,6 @@
 		{% if data %}
 			<div class="masonry">
 				{% for question in data.data %}
-					{% if not user.is_authenticated %}
-						{% include 'polls/snippets/overlay-get-data.html' with poll=question.question %}
-					{% endif %}
 					{% if question.question.user.extendeduser.company.id > 1 %}
 			   			<div class="item featured">
 			   		{% else %}
@@ -89,6 +86,9 @@
 				   			<div class="trivia-title">
 								<a id="question---{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" >{{question.question.question_text}}</a>
 								<div class="poll-info">
+									{% if not user.is_authenticated %}
+                                                				{% include 'polls/snippets/overlay-get-data.html' with poll=question.question %}
+                                        				{% endif %}
 									{% if question.user_already_voted %}
 										<a href="javascript:;" class="light-grey">Voted 
 									{% else %}
