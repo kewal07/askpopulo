@@ -1748,6 +1748,7 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				choice.save()
 			min_value = poll['min_max'].get("min_value",0)
 			max_value = poll['min_max'].get("max_value",10)
+			print("Section Name",poll['sectionName'])
 			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value,section_name=poll['sectionName'])
 			survey_que.save()
 	except Exception as e:
@@ -3324,49 +3325,53 @@ def emailResponse(request):
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 def save_poll_vote_data(request):
-	data = {}
-	if request.POST.get('age'):
-		user_age = int(request.POST.get('age',18))
-	if request.POST.get('gender',"D") != "notSelected":
-		gender = request.POST.get('gender',"D")[0]
-	if request.POST.get('profession',"Others") != "notSelected":
-		profession = request.POST.get('profession','Others')
-	email = request.POST.get('email','').strip()
-	pollId = int(request.POST.get('question').strip())
-	choiceId = int(request.POST.get('choice').strip())
-	sessionKey = request.POST.get('sessionKey','').strip()
-	src = request.POST.get('src','').strip()
-	ipAddress = getIpAddress(request)
-	existingVote = VoteApi.objects.filter(question_id=pollId,choice_id=choiceId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
-	if existingVote:
-		existingVote = existingVote[0]
-		existingVote.age = user_age
-		existingVote.gender = gender
-		existingVote.profession = profession
-		if not email:
-			email = None
-		existingVote.email = email
-		existingVote.save()
-		user_data = {}
-		if user_age > 0:
-			birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
-			user_data["birthDay"] = birthDay
-		user_data["gender"] = gender
-		user_data["profession"] = profession
-		user_data["country"] = existingVote.country
-		user_data["state"] = existingVote.state
-		user_data["city"] = existingVote.city
-		if email:
-			if User.objects.filter(email=email):
-				newUser = User.objects.filter(email=email)[0]
-				login_user(request,newUser)
-			else:
-				newUser = create_new_user_mail_login(request,email,pollId)
-				save_extendeduser_data(newUser,user_data)
-			save_poll_vote(newUser,pollId,choiceId)
-			existingVote.delete()
-			data["removecookies"] = True
-	return HttpResponse(json.dumps(data), content_type='application/json')
+	try:
+		data = {}
+		if request.POST.get('age'):
+			user_age = int(request.POST.get('age',18))
+		if request.POST.get('gender',"D") != "notSelected":
+			gender = request.POST.get('gender',"D")[0]
+		if request.POST.get('profession',"Others") != "notSelected":
+			profession = request.POST.get('profession','Others')
+		email = request.POST.get('email','').strip()
+		pollId = int(request.POST.get('question').strip())
+		choiceId = int(request.POST.get('choice').strip())
+		sessionKey = request.POST.get('sessionKey','').strip()
+		src = request.POST.get('src','').strip()
+		ipAddress = getIpAddress(request)
+		existingVote = VoteApi.objects.filter(question_id=pollId,choice_id=choiceId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
+		if existingVote:
+			existingVote = existingVote[0]
+			existingVote.age = user_age
+			existingVote.gender = gender
+			existingVote.profession = profession
+			if not email:
+				email = None
+			existingVote.email = email
+			existingVote.save()
+			user_data = {}
+			if user_age > 0:
+				birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
+				user_data["birthDay"] = birthDay
+			user_data["gender"] = gender
+			user_data["profession"] = profession
+			user_data["country"] = existingVote.country
+			user_data["state"] = existingVote.state
+			user_data["city"] = existingVote.city
+			if email:
+				if User.objects.filter(email=email):
+					newUser = User.objects.filter(email=email)[0]
+					login_user(request,newUser)
+				else:
+					newUser = create_new_user_mail_login(request,email,pollId)
+					save_extendeduser_data(newUser,user_data)
+				save_poll_vote(newUser,pollId,choiceId)
+				existingVote.delete()
+				data["removecookies"] = True
+		return HttpResponse(json.dumps(data), content_type='application/json')
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 def save_extendeduser_data(newUser,user_data):
 	if user_data:
