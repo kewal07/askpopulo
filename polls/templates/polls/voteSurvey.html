@@ -176,6 +176,7 @@
 										<input type="hidden" name="questionType" value="{{ question.type }}" />
 										<input type="hidden" name="mandatory" value="{{ question.mandatory }}" />
 										<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
+										<input type="hidden" name="unique_key" value="{{ unique_key }}" />
 										{% if question.type == "text" %}
 											<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 										{% elif question.type == "rating" %}

@@ -1316,7 +1316,7 @@ class AccessDBView(BaseViewList):
 							pass
 						else:
 							if vote.age and vote.profession and vote.gender:
-								print("considered")
+								# print("considered")
 								if vote.user_data :
 									user_data = ast.literal_eval(vote.user_data)
 								else:
@@ -1386,14 +1386,6 @@ class AccessDBView(BaseViewList):
 			linecache.checkcache(filename)
 			line = linecache.getline(filename, lineno, f.f_globals)
 			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-
-def get_user_data_from_api(vote,user_data):
-	user_data["birthDay"] = vote.age
-	user_data["gender"] = vote.gender.lower()
-	user_data["profession"] = vote.profession.lower()
-	user_data["country"] = vote.country.lower()
-	user_data["state"] = vote.state.lower()
-	return user_data
 
 def get_if_choice_vote_add(user_data, extra_data):
 	user_age = user_data["birthDay"]
@@ -1837,8 +1829,8 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		sections = Survey_Question.objects.filter(survey_id=context['survey'].id).values('section_name').distinct()
-		print(sections)
-		print(len(sections))
+		# print(sections)
+		# print(len(sections))
 		polls_section_dict = {}
 		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):	
 			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"horizontalOptions":x.question.horizontal_options,"section_name":x.section_name}
@@ -1891,41 +1883,46 @@ class SurveyVoteView(BaseViewDetail):
 					polls_section_dict.setdefault(y['section_name'],[]).append(poll_dict)	
 			context['polls'].append(poll_dict)
 		context['polls_section_dict'] = polls_section_dict
+		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
+		context['unique_key'] = unique_key
 		return context
 
 	def post(self, request, *args, **kwargs):
 		try:
 			user = request.user
 			questionId = request.POST.get('question')
-			print(questionId)
+			# print(questionId)
 			question = Question.objects.get(pk=questionId)
 			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
 			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
 			survey_voted = None
 			que_type = request.POST.get('questionType')
-			print(que_type)
+			# print(que_type)
 			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
 			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
-			print(saveRequired)
+			# print(saveRequired)
 			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
-			print(saveRequired)
+			# print(saveRequired)
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg
 			# +"<br>Come back anytime to answer the rest of the questions!!"
 			data={}
 			#print(success_msg_text,user.is_authenticated())
 			choice_list = request.POST.getlist('choice'+str(questionId))
-			print(choice_list)
+			# print(choice_list)
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-			print(choice_list_comment)
+			# print(choice_list_comment)
 			# print(choice_list,choice_list_comment)
 			choice_list = list(filter(None, choice_list))
-			print(choice_list)
+			# print(choice_list)
 			choice_list_comment = list(filter(None, choice_list_comment))
-			print(choice_list_comment)
+			# print(choice_list_comment)
 			# print(choice_list,choice_list_comment,mandatory,saveRequired)
 			post_data = request.POST
 			user_data = {}
+			unique_key = post_data.get("unique_key")
+			if not unique_key.strip():
+				unique_key = None
 			for key,val in post_data.items():
 				if key.startswith("demographic-"):
 					key = key.replace("demographic-","")
@@ -1987,7 +1984,6 @@ class SurveyVoteView(BaseViewDetail):
 				#print(success_msg_text)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
-				#print(success_msg_text)
 				if request.is_ajax():
 					if data:
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -2001,10 +1997,10 @@ class SurveyVoteView(BaseViewDetail):
 								answer_text = choice_list[0]
 							else:
 								for choiceId in choice_list:
-									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data)
+									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, forced_add = True)
 									if que_type == "radio":
 										break
-							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data)
+							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key)
 							data["res"] = res_data
 						data["success"]=success_msg_text
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -2621,25 +2617,32 @@ def excel_view(request):
 		ws1.write(0,4,"Age Group",normal_style)
 		ws1.write(0,5,"Profession",normal_style)
 		i = 1
+		j = 1
+		survey_question_list = Survey_Question.objects.filter(survey_id = survey_id)
+		survey_questions = survey_question_list.values_list('question', flat=True)
+		# print(survey_questions)
 		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
+		demo_list = get_demographic_list(survey_id=survey_id)
 		for voted in voted_list:
-			j = 6
 			vote_user = voted.user
 			user_data = {}
-			for index,survey_question in enumerate(Survey_Question.objects.filter(survey_id = survey_id)):
+			addVal = 0
+			for index,survey_question in enumerate(survey_question_list):
 				question = survey_question.question
 				question_type = survey_question.question_type
 				excel_text = ""
-				choice_list = []
-				if question_type != "text":
-					choice_list = Choice.objects.filter(question_id=question.id)
+				choice_list = Choice.objects.filter(question_id=question.id)
 				excel_text = "Q"+str(index+1)
 				answer_text = ""
-				if question_type == "text":
+				answer_texts = []
+				excel_texts = []
+				if question_type in ["text", "rating"]:
 					vote_text = VoteText.objects.filter(user_id=vote_user.id,question_id=question.id)
 					if vote_text:
 						answer_text = vote_text[0].answer_text
 						user_data = ast.literal_eval(vote_text[0].user_data)
+						if question_type == "rating":
+							answer_text += "%"
 				elif question_type == "radio":
 					for c_index,choice in enumerate(choice_list):
 						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
@@ -2654,22 +2657,65 @@ def excel_view(request):
 						if vote:
 							answer_text = 1
 							user_data = ast.literal_eval(vote[0].user_data)
-						ws1.write(0,j,excel_text,normal_style)
-						ws1.write(i,j,answer_text,normal_style)
-						j += 1
-				if question_type != "checkbox":
-					ws1.write(0,j,excel_text,normal_style)
-					ws1.write(i,j,answer_text,normal_style)
-					j += 1
-			gender = user_data["gender"]
-			age = user_data["birthDay"]
-			profession = user_data["profession"]
-			ws1.write(i,0,user_data["country"],normal_style)
-			ws1.write(i,1,user_data["state"],normal_style)
-			ws1.write(i,2,user_data["city"],normal_style)
-			ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
-			ws1.write(i,4,get_age_group_excel(age),normal_style)
-			ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
+				if answer_texts:
+					for ans_index,answer in enumerate(answer_texts):
+						write_result_into_excel(ws1,excel_texts[ans_index],answer,i,j+index+ans_index+addVal)
+					addVal += ans_index
+				else:
+					write_result_into_excel(ws1,excel_text,answer_text,i,j+index+addVal)
+			i += 1
+		unique_keys = VoteApi.objects.filter(question_id__in=survey_questions).values_list('unique_key', flat=True).distinct()
+		# print(unique_keys)
+		for unique_key in unique_keys:
+			addVal = 0 
+			for index,survey_question in enumerate(survey_question_list):
+				question = survey_question.question
+				question_type = survey_question.question_type
+				excel_text = ""
+				choice_list = Choice.objects.filter(question_id=question.id)
+				excel_text = "Q"+str(index+1)
+				answer_text = ""
+				answer_texts = []
+				excel_texts = []
+				if question_type in ["text", "rating"]:
+					vote_text = VoteApi.objects.filter(unique_key=unique_key,question_id=question.id)
+					if vote_text:
+						answer_text = vote_text[0].answer_text
+						user_data = get_user_data_from_api(vote_text[0])
+						extra_data = ast.literal_eval(vote_text[0].user_data)
+						user_data.update(extra_data)
+						if question_type == "rating":
+							answer_text += "%"
+				elif question_type == "radio":
+					for c_index,choice in enumerate(choice_list):
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						if vote:
+							answer_text = str(c_index+1)
+							user_data = get_user_data_from_api(vote[0])
+							extra_data = ast.literal_eval(vote[0].user_data)
+							user_data.update(extra_data)
+				elif question_type == "checkbox":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						if vote:
+							answer_text = 1
+							user_data = get_user_data_from_api(vote[0])
+							extra_data = ast.literal_eval(vote[0].user_data)
+							user_data.update(extra_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
+				if answer_texts:
+					for ans_index,answer in enumerate(answer_texts):
+						write_result_into_excel(ws1,excel_texts[ans_index],answer,i,j+index+ans_index+addVal)
+					addVal += ans_index
+				else:
+					write_result_into_excel(ws1,excel_text,answer_text,i,j+index+addVal)
 			i += 1
 		wb.save(response)
 		return response
@@ -3344,39 +3390,46 @@ def save_user_vote_data(user_data,alreadyVoted):
 			alreadyVoted.user_data = str(extra_data)
 		alreadyVoted.save()
 
-def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None):
-	ipAddress = getIpAddress(request)
-	if not request.session.exists(request.session.session_key):
-		request.session.create()
-	sessionKey = request.session.session_key
-	question = Question.objects.get(pk=pollId)
-	url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
-	dbIpResponse = requests.get(url)
-	locationData = dbIpResponse.json()
-	if not choiceId:
-		choiceId = 812
-	votedChoice = Choice.objects.get(pk=choiceId)
-	src = request.GET.get('src','')
-	alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
-	giveData = {}				
-	if not alreadyVoted:
-		votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text)
-		votedChoiceFromApi.save()
-		alreadyVoted = votedChoiceFromApi
-		giveData["noData"] = True
-	else:
-		alreadyVoted = alreadyVoted[0]
-		print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
-		if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
+def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, forced_add = False):
+	try:
+		# print(unique_key)
+		ipAddress = getIpAddress(request)
+		if not request.session.exists(request.session.session_key):
+			request.session.create()
+		sessionKey = request.session.session_key
+		question = Question.objects.get(pk=pollId)
+		url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
+		dbIpResponse = requests.get(url)
+		locationData = dbIpResponse.json()
+		if not choiceId:
+			choiceId = settings.ZERO_CHOICE
+		votedChoice = Choice.objects.get(pk=choiceId)
+		src = request.GET.get('src','')
+		alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
+		if unique_key:
+			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
+		giveData = {}				
+		if not alreadyVoted or forced_add:
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key)
+			votedChoiceFromApi.save()
+			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
 		else:
-			giveData["allData"] = True
-	giveData["sessionKey"] = sessionKey
-	giveData["choice"] = choiceId
-	# print(giveData)
-	if user_data:
-		save_user_vote_data(user_data,alreadyVoted)
-	return giveData
+			alreadyVoted = alreadyVoted[0]
+			# print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
+			if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
+				giveData["noData"] = True
+			else:
+				giveData["allData"] = True
+		giveData["sessionKey"] = sessionKey
+		giveData["choice"] = choiceId
+		# print(giveData)
+		if user_data:
+			save_user_vote_data(user_data,alreadyVoted)
+		return giveData
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 
 def save_poll_vote(user,question,choice,queBet=None):
@@ -3727,3 +3780,46 @@ class WebsiteWidgetTemplateView(generic.ListView):
 		data["template"] = template
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
+def get_demographic_list(survey_id=None,question_id=None):
+	extra_demographics = None
+	demo_list = []
+	if survey_id:
+		extra_demographics = Demographics.objects.filter(survey_id=survey_id)
+	elif question_id:
+		extra_demographics = Demographics.objects.filter(question_id=question_id)
+	if extra_demographics:
+		extra_demographics = ast.literal_eval(extra_demographics[0].demographic_data)
+		for key,val in extra_demographics.items():
+			demo_list.append(key)
+	return demo_list
+
+def write_demographics_into_excel(ws1,user_data,demo_list,i):
+	gender = user_data.get("gender","")
+	age = user_data.get("birthDay")
+	profession = user_data.get("profession","")
+	ws1.write(i,0,user_data.get("country"),normal_style)
+	ws1.write(i,1,user_data.get("state"),normal_style)
+	ws1.write(i,2,user_data.get("city"),normal_style)
+	ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
+	ws1.write(i,4,get_age_group_excel(age),normal_style)
+	ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+	j = 6
+	for key in demo_list:
+		ws1.write(0,j,key,normal_style)
+		ws1.write(i,j,user_data.get(key),normal_style)
+		j += 1
+	return i,j
+
+def write_result_into_excel(ws1,excel_text,answer_text,i,j):
+	ws1.write(0,j,excel_text,normal_style)
+	ws1.write(i,j,answer_text,normal_style)
+	return i,j
+
+def get_user_data_from_api(vote,user_data={}):
+	user_data["birthDay"] = vote.age
+	user_data["gender"] = vote.gender
+	user_data["profession"] = vote.profession
+	user_data["country"] = vote.country
+	user_data["state"] = vote.state
+	user_data["city"] = vote.city
+	return user_data

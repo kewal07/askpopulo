@@ -438,6 +438,7 @@ class VoteApi(models.Model):
 	src = models.CharField(max_length=512,blank=True,null=True)
 	answer_text = models.CharField(max_length=512,blank=True,null=True)
 	user_data = models.TextField()
+	unique_key = models.CharField(max_length=512,blank=True,null=True)
 	def save(self, *args, **kwargs):
 		if not self.email:
 			self.email = None
