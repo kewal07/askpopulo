@@ -508,6 +508,7 @@ class VoteColumn(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
+	vote = models.ForeignKey(Vote)
 	choice = models.ForeignKey(Choice)
 	column = models.ForeignKey(MatrixRatingColumnLabels)
 	

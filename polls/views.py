@@ -1261,6 +1261,7 @@ class AccessDBView(BaseViewList):
 				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 			if request.path == "/advanced_analyse":
+				print(request.POST)
 				pollId = request.POST.get("question")
 				# poll = Question.objects.get(pk=pollId)
 				min_age = 0
@@ -1302,12 +1303,26 @@ class AccessDBView(BaseViewList):
 				# print(min_age,max_age,gender,profession)
 				total_votes_extra = 0
 				choices = []
+				
+				isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
+				questionType = ''
+				columnLabels = ()
+				if isSurveyQuestion:
+					questionType = isSurveyQuestion.question_type
+				if questionType == 'matrixrating':
+					columnLabels = MatrixRatingColumnLabels.objects.filter(question_id=pollId)
 				for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
 					choice_dic = {}
 					choice_text = "Choice"+str(idx+1)
+					choice_dic["id"] = choice.id
 					choice_dic["key"] = choice_text
 					choice_dic["val"] = 0
 					choice_dic["extra_val"] = 0
+					choice_dic["columns"] = []
+					if columnLabels:
+						for column in columnLabels:
+							choice_dic["columns"].append({column.id:0})
+							
 					email_list_voted = []
 					for vote in Vote.objects.filter(choice_id=choice.id):
 						# print(vote.user_data,type(vote.user_data),dir(ast))
@@ -1342,11 +1357,16 @@ class AccessDBView(BaseViewList):
 									add_cnt = False
 									break
 						if add_cnt:
+							if questionType == 'matrixrating':
+								voteColumn = VoteColumn.objects.get(vote=vote)
+								for column in choice_dic["columns"]:
+									for i in column:
+										if i == voteColumn.column_id:
+											column[i] += 1
 							choice_dic["val"] += 1
 							total_votes += 1
 							choice_dic["extra_val"] += 1
 							total_votes_extra += 1
-					print(choice.id)
 					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
@@ -1906,7 +1926,7 @@ class SurveyVoteView(BaseViewDetail):
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 								vote, created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
 								if created:
-									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column)
+									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column, vote=vote)
 									votedcolumn.save()
 							voted,created = Voted.objects.get_or_create(user=user, question=question)
 						elif que_type != "text":

@@ -363,19 +363,37 @@
 							</div>
 							<div class="survey-all-questions">
 								{% for poll in survey_det.polls %}
-									<p class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.question.id }}">
+									<p polltype="{{ poll.q_type }}" class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.question.id }}">
 										{{ poll.question.question_text }}
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
 									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
-									{% if poll.q_type = "matrixrating" %}
-										<div class="choices clearfix">
-											{% for choice in poll.question.choice_set.all %}
-												{{ choice.choice_text }}
-											{% endfor %}
-										</div>
-									{% elif poll.q_type != "text" %}
+									{% if poll.q_type != "text" %}
+										{% if poll.q_type = "matrixrating" %}
+											<div class="choices clearfix">
+												<div class="table-container">
+													<div class="table-component">
+														<table>
+															<tr>
+																<th></th>
+																{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																	<th> {{ columns.columnLabel }} </th>
+																{% endfor %}
+															</tr>
+															{% for choice in poll.question.choice_set.all %}
+																<tr>
+																	<th> {{ choice.choice_text }} </th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}"> Loading... </td>
+																	{% endfor %}
+																</tr>
+															{% endfor %}
+														</table>
+													</div>
+												</div>
+											</div>
+										{% else %}
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
@@ -395,6 +413,7 @@
 											{% endif %}
 											{% endfor %}
 											</div>
+										{% endif %}
 											<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
 												{% if poll.comments|length > 0 %}
 													<p>Comments :</p>
@@ -408,13 +427,13 @@
 											<p style="margin-bottom:1rem;font-weight:bold;text-align:center"> Comparative Demographic Analysis </p>
 											<div class="advancedAnaCmp" id="advancedAna">
 												<div class="advancedCmpSelect">
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
 														<option value="nochoice">Gender</option>
 														<option value="f">Female</option>
 														<option value="m">Male</option>
 														<option value="d">Undisclosed</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Age---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Age---1">
 														<option value="nochoice">Age</option>
 														<option value="<19">< 19</option>
 														<option value="20-25">20-25</option>
@@ -423,10 +442,10 @@
 														<option value="36-50">36-50</option>
 														<option value=">50">> 50</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Profession---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Profession---1">
 														<option value="nochoice">Profession</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Country---1" name="country">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Country---1" name="country">
 														<option value="nochoice">Country</option>
 													</select>
 													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---State---1" name="state">
@@ -443,18 +462,42 @@
 														{% endif %}
 													{% endfor %}
 												</div>
+												
+												{% if poll.q_type = 'matrixrating' %}
+													<div class="table-container">
+														<div class="table-component">
+															<table>
+																<tr>
+																	<th></th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<th> {{ columns.columnLabel }} </th>
+																	{% endfor %}
+																</tr>
+																{% for choice in poll.question.choice_set.all %}
+																	<tr>
+																		<th> {{ choice.choice_text }} </th>
+																		{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																			<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}---column1"> Loading... </td>
+																		{% endfor %}
+																	</tr>
+																{% endfor %}
+															</table>
+														</div>
+													</div>
+												{% else %}
 												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column1" class="pollsChartClass pollsChartClassColumn">
-											</div>
+												</div>
+												{% endif %}
 											</div>
 											<div class="advancedAnaCmp" id="advancedAna">
 												<div class="advancedCmpSelect">
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
 														<option value="nochoice">Gender</option>
 														<option value="f">Female</option>
 														<option value="m">Male</option>
 														<option value="d">Undisclosed</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Age---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Age---2">
 														<option value="nochoice">Age</option>
 														<option value="<19">< 19</option>
 														<option value="20-25">20-25</option>
@@ -463,13 +506,13 @@
 														<option value="36-50">36-50</option>
 														<option value=">50">> 50</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Profession---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Profession---2">
 														<option value="nochoice">Profession</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Country---2" name="country">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Country---2" name="country">
 														<option value="nochoice">Country</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---State---2" name="state">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---State---2" name="state">
 														<option value="nochoice">State</option>
 													</select>
 													{% for demo in survey_det.demo_list %}
@@ -483,9 +526,33 @@
 														{% endif %}
 													{% endfor %}
 												</div>
-												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column2" class="pollsChartClass pollsChartClassColumn">
-												</div>
+												{% if poll.q_type = 'matrixrating' %}
+													<div class="table-container">
+														<div class="table-component">
+															<table>
+																<tr>
+																	<th></th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<th> {{ columns.columnLabel }} </th>
+																	{% endfor %}
+																</tr>
+																{% for choice in poll.question.choice_set.all %}
+																	<tr>
+																		<th> {{ choice.choice_text }} </th>
+																		{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																			<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}---column2"> Loading... </td>
+																		{% endfor %}
+																	</tr>
+																{% endfor %}
+															</table>
+														</div>
+													</div>
+												{% else %}
+													<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column1" class="pollsChartClass pollsChartClassColumn">
+													</div>
+												{% endif %}
 											</div>
+											{% if not poll.q_type = 'matrixrating'  %}
 											<div class="advancedAnaCmp">
 												<p style="margin-bottom:1rem;text-align:center;"> Or</p>
 												<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ poll.question.id }}Select---1">
@@ -568,7 +635,7 @@
 													</div>
 												</div>
 											</div>
-
+											{% endif %}
 									{% else %}
 										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
 											{% for text in poll.comments %}
@@ -1489,7 +1556,6 @@
 												}
 												populateCountry("#askbypoll-group-filter-country---{{ question.poll.id }}");
 											{% endfor %}
-											console.log('Display Status',$('#overlay-inAbox8').is(":visible"));
 										}
 										$(".share-with-group").click(function(){
 											var surveyId=$(this)[0].id.replace("share-with-group","");
@@ -1764,6 +1830,8 @@
 
 				$('#polls-content,#advanced-content,#surveys-content').on("click","p.analyse_question_text",function(){
 					var elemId = $(this)[0].id;
+					var questionType = $(this)[0].getAttribute('polltype');
+					console.log("Question Type",questionType);	
 					var pollId = elemId.split("---")[1];
 					var analysisDivId = '#'+elemId+"Div";
 					var isMatch = /^advanced-*/.test(elemId);
@@ -1775,39 +1843,51 @@
 					setTimeout(function(){
 					$("#text-analyse---"+pollId+"Div").toggle("slow");
 					if($(analysisDivId).is(':visible')){
-					  drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  if(questionType === 'matrixrating'){
+						  drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						  drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						  drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+					  } else {
+						drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  }
 					  $(window).resize(function() {
 						    if(this.resizeTO) clearTimeout(this.resizeTO);
 						    this.resizeTO = setTimeout(function() {
-								drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+								 if(questionType === 'matrixrating'){
+						  			drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						  			drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+					  			} else {
+									drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+									drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  			}
 						    }, 500);
 						});
 					}
@@ -1886,6 +1966,7 @@
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
 					var graphId = elemId.split("---")[3];
+					var questionType = $(this)[0].getAttribute('polltype');
 					// console.log(elemId);
 					// console.log(pollId);
 					var isMatch = /^advancedanalyse-*/.test(elemId);
@@ -1906,12 +1987,20 @@
 					$( ".advancedanalyseSelectExtra---"+pollId+"---"+graphId ).each(function() {
 					  extra_data[$( this )[0].id.split("---")[2]] = $( this ).val();
 					});
-
-					drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					
+					if(questionType === 'matrixrating'){
+						drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					} else {
+						drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					}
 					$(window).resize(function() {
 					    if(this.resizeTO) clearTimeout(this.resizeTO);
 					    this.resizeTO = setTimeout(function() {
-							drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							if(questionType === 'matrixrating'){
+								drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							} else {	
+								drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							}
 					    }, 500);
 					});
 				});
