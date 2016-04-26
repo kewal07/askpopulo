@@ -509,5 +509,4 @@ class SurveysReferred(models.Model):
 	referred_survey = models.ForeignKey(Survey)
 	referred_survey_count = models.IntegerField(blank=True, null= True, default=0)
 	def __str__(self):
-		return self.user.username
-	
+		return self.user.username	
