@@ -21,6 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'login/css/company_admin.css' %}" />
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -187,59 +188,80 @@
 										    <script>
 										    	{% if question.user_already_voted or expired%}
 
-										    		$('#range{{ question.poll.id }}').ionRangeSlider({
-											            keyboard: true,
-											            min: {{ question.min_value }},
-											            max: {{ question.max_value }},
-											            from: {{ question.from_val }},
-											            to: {{ question.to_val }},
-											            type: 'double',
-											            step: 1,
-											            disable: true
-											        });
-											        $("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
-											        $("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
-										    	{% else %}
-											    	 $('#range{{ question.poll.id }}').ionRangeSlider({
-											            keyboard: true,
-											            min: {{ question.min_value }},
-											            max: {{ question.max_value }},
-											            from: {{ question.min_value }},
-											            type: 'single',
-											            step: 1,
-											            onFinish: function (data) {
-															$('#choice{{ question.poll.id }}').val(data.from_percent);
-														}
-											        });
-												{% endif %}
-											</script>
-										{% else %}
-											{% for choice in question.poll.choice_set.all %}
-												{% if question.horizontalOptions %}
-													<p class="horizontal-options">
+													$('#range{{ question.poll.id }}').ionRangeSlider({
+														keyboard: true,
+														min: {{ question.min_value }},
+														max: {{ question.max_value }},
+														from: {{ question.from_val }},
+														to: {{ question.to_val }},
+														type: 'double',
+														step: 1,
+														disable: true
+													});
+													$("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
+													$("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
+									    	{% else %}
+										    	 $('#range{{ question.poll.id }}').ionRangeSlider({
+										            keyboard: true,
+										            min: {{ question.min_value }},
+										            max: {{ question.max_value }},
+										            from: {{ question.min_value }},
+										            type: 'single',
+										            step: 1,
+										            onFinish: function (data) {
+														$('#choice{{ question.poll.id }}').val(data.from_percent);
+													}
+										        });
+											{% endif %}
+										</script>
+									{% elif question.type == "matrixrating" %}
+										<div class="table-container">
+											<div class="table-component">
+												<table>
+													<tr>
+														<th></th>
+														{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+															<th> {{ columns.columnLabel }} </th>
+														{% endfor %}
+													</tr>
+													{% for choice in question.poll.choice_set.all %}
+														<tr>
+															<th> {{ choice.choice_text }} </th>
+															{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																<td> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ choice.id }}"> </td>
+															{% endfor %}
+														</tr>
+													{% endfor %}
+												</table>
+											</div>
+										</div>
+									{% else %}
+										{% for choice in question.poll.choice_set.all %}
+											{% if question.horizontalOptions %}
+												<p class="horizontal-options">
+											{% else %}
+												{% if  forloop.counter0|divisibleby:2 %}
+													<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
 												{% else %}
-													{% if  forloop.counter0|divisibleby:2 %}
-														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
-													{% else %}
-														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
-													{% endif %}
+													<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
 												{% endif %}
-													<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-													<label class="choice-text" for="choice{{ choice.id }}">
-														{% if choice.choice_image %}
-														<script>
-															$('.choice_image').css({"width":"120px","height":"120px"});
-															$("#choice{{ choice.id }}").hide();
-															var item = $("#choice{{ choice.id}}");
-															item.parent().css({"display":"inline-block"});
-															// console.log($this.parent().next().children().first().show());
-														</script>
-															<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-															<!-- {{ choice.choice_text }} -->
-														{% else %}
-															{{ choice.choice_text }}
-														{% endif %}
-													</label>
+											{% endif %}
+												<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+												<label class="choice-text" for="choice{{ choice.id }}">
+													{% if choice.choice_image %}
+													<script>
+														$('.choice_image').css({"width":"120px","height":"120px"});
+														$("#choice{{ choice.id }}").hide();
+														var item = $("#choice{{ choice.id}}");
+														item.parent().css({"display":"inline-block"});
+														// console.log($this.parent().next().children().first().show());
+													</script>
+														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+														<!-- {{ choice.choice_text }} -->
+													{% else %}
+														 {{ choice.choice_text }}
+													{% endif %}
+												</label>
 												</p>
 											{% endfor %}
 											{% if question.poll.protectResult and user != question.poll.user %}
@@ -320,10 +342,6 @@
 								{% endif %}
 
 								function disableVoteButton(){
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('disabled','disabled');
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').attr('id','{{ question.id }}---{{ question.que_slug }}');
-									// $('#vote{{ question.id }}---{{ question.que_slug }}').removeAttr('vote{{ question.id }}---{{ question.que_slug }}');
-									// $('#{{ question.id }}---{{ question.que_slug }}').attr('value','Expired');
 									$('#vote{{ survey.id }}').attr('disabled','disabled');
 									$('#vote{{ survey.id }}').attr('value','Expired');
 								}
@@ -365,6 +383,7 @@
 		{% endif %}
 		var continue_loop = true;
 		function saveVotes(){
+			console.log("called save votes too")
 			var form_n = $('.optionsForm').length;
 			var ajax_calls = 0;
 			$('.optionsForm').each(function(){

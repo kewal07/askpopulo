@@ -772,6 +772,75 @@ function confirm_redirect_only(olEl,val,url){
 	});
 }
 
+function drawResultTable(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data={}){
+	extra_data = JSON.stringify(extra_data);
+	if (typeof graphType === "undefined" || graphType === null) { 
+	    graphType = ""; 
+	}
+	if (typeof age === "undefined" || age === null) { 
+	    age = "nochoice"; 
+	}
+	if (typeof gender === "undefined" || gender === null) { 
+	    gender = "nochoice"; 
+	}
+	if (typeof profession === "undefined" || profession === null) { 
+	    profession = "nochoice"; 
+	}
+	if (typeof location === "undefined" || location === null) { 
+	    location = "nochoice"; 
+	}
+	if (typeof state === "undefined" || state === null) { 
+	    state = "nochoice"; 
+	}
+	
+	$.ajax({
+        url: "/advanced_analyse",
+        type: 'POST',
+        data: { question: pollId,
+        		age: age,
+        		gender: gender,
+        		profession: profession,
+        		country: location,
+        		state: state,
+        		extra_data: extra_data,
+        		csrfmiddlewaretoken: csrf_token
+        	},
+        async: false,
+        cache: false,
+        timeout: 30000,
+        error: function(){
+            return true;
+        },
+        success: function(msg){
+        	advanced_analyse_dic=msg;
+			for(var choice in advanced_analyse_dic['choices']){
+				var inData = [];
+				var inDataExtra = [];
+				var choice_dic = advanced_analyse_dic['choices'][choice];
+				choice_dic['columns'].forEach(function(item){
+					var individualColumn = JSON.stringify(item);
+					individualColumn = individualColumn.replace(/{/g,'');
+					individualColumn = individualColumn.replace(/}/g,'');
+					individualColumn = individualColumn.replace(/"/g,'');
+					var columnId = individualColumn.split(':')[0];
+					var votes    = individualColumn.split(':')[1]/1;
+					var choiceId = choice_dic['id'];
+					var percent = "0 %";
+					if( choice_dic['val'] !== 0){
+						var percent = ((votes/choice_dic['val'])*100).toFixed(2)+" %";
+					}
+					console.log($("#"+pollId+"---"+choiceId+"---"+columnId));
+					if(graphType === '') {
+						$("#"+pollId+"---"+choiceId+"---"+columnId).html(percent);
+					} else {
+						$("#"+pollId+"---"+choiceId+"---"+columnId+"---"+graphType).html(percent);
+					}
+				});
+			}
+        }
+    });
+}
+
 /* Function for charts start */
 function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data={}) {
 	// console.log(analyse_type,pollId,age,gender,profession,location);

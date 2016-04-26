@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics
+from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -1266,6 +1266,7 @@ class AccessDBView(BaseViewList):
 				# print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 			if request.path == "/advanced_analyse":
+				print(request.POST)
 				pollId = request.POST.get("question")
 				# poll = Question.objects.get(pk=pollId)
 				min_age,max_age = get_min_max_age(request.POST.get("age"))
@@ -1299,6 +1300,13 @@ class AccessDBView(BaseViewList):
 				survey_poll = Survey_Question.objects.filter(question_id=pollId)
 				if survey_poll:
 					survey_poll = survey_poll[0]
+				isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
+				questionType = ''
+				columnLabels = ()
+				if isSurveyQuestion:
+					questionType = isSurveyQuestion.question_type
+				if questionType == 'matrixrating':
+					columnLabels = MatrixRatingColumnLabels.objects.filter(question_id=pollId)
 				if survey_poll and survey_poll.question_type == "rating":
 					email_list_voted = []
 					all_percent = 0
@@ -1311,7 +1319,7 @@ class AccessDBView(BaseViewList):
 						if add_cnt:
 							all_percent += int(vote.answer_text)
 							total_votes += 1
-					for vote in VoteApi.objects.filter(question_id=pollId):
+					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
 						else:
@@ -1333,20 +1341,32 @@ class AccessDBView(BaseViewList):
 						all_rating = 0
 					# print(all_rating,min_rating,max_rating)
 					all_rating = (all_percent * (max_rating - min_rating))/100 + min_rating
-					# print(all_rating,min_rating,max_rating)
+					# print(all_rating,min_rating,max_rating)	
 				else:
 					for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
 						choice_dic = {}
 						choice_text = "Choice"+str(idx+1)
 						choice_dic["key"] = choice_text
+						choice_dic["id"] = choice.id
 						choice_dic["val"] = 0
 						choice_dic["extra_val"] = 0
 						email_list_voted = []
+						choice_dic["columns"] = []
+						if columnLabels:
+							for column in columnLabels:
+								choice_dic["columns"].append({column.id:0})
 						for vote in Vote.objects.filter(choice_id=choice.id):
 							user_data = ast.literal_eval(vote.user_data)						
 							email_list_voted.append(vote.user.email)
 							add_cnt = get_if_choice_vote_add(user_data,extra_data)
+							print("addcnt",add_cnt)
 							if add_cnt:
+								if questionType == 'matrixrating':
+									voteColumn = VoteColumn.objects.get(vote=vote)
+									for column in choice_dic["columns"]:
+										for i in column:
+											if i == voteColumn.column_id:
+												column[i] += 1
 								choice_dic["val"] += 1
 								total_votes += 1
 								choice_dic["extra_val"] += 1
@@ -1373,7 +1393,7 @@ class AccessDBView(BaseViewList):
 				response_dic['rating'] = all_rating
 				response_dic['total_votes'] = total_votes
 				response_dic['total_votes_extra'] = total_votes_extra
-				# print(response_dic)
+				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1460,11 +1480,6 @@ class TriviaPView(BaseViewList):
 class CreateSurveyView(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		try:
-			print('***')
-			print(request.POST)
-			print('***')
-			print(request.GET)
-			print('***')
 			edit = False
 			curtime = datetime.datetime.now();
 			survey_id = -1
@@ -1571,6 +1586,7 @@ class CreateSurveyView(BaseViewList):
 				# poll['sectionId'] = post_data.get("sectionId")
 				poll['sectionName'] = post_data.get("qSect---"+str(que_index)).strip()
 				print(poll['sectionName'])
+				columns = []
 				choices = []
 				images = []
 				queError = ""
@@ -1594,7 +1610,6 @@ class CreateSurveyView(BaseViewList):
 						errors[choice_elem_id] = "Min Value should be less than Max.<br>"
 				elif que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
-					#print(choice_list)
 					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
 					if len(choice_list) < 2:
 						queError += "Atleast 2 choices are required"
@@ -1616,8 +1631,25 @@ class CreateSurveyView(BaseViewList):
 							errors[choice_elem_id] = "Choice required"
 					if len(choices)!=len(set(choices)):
 						queError += "Please provide different choices<br>"
+				if que_type == "matrixrating":
+					column_list = json.loads(post_data.get("column_count")).get(que_index)
+					if len(column_list) < 2:
+						queError += "Atleast 2 columns are required"
+					elif len(column_list) > max_choice_cnt:
+						queError += "Maximum %s columns can be provided"%(max_choice_cnt)
+					for column_count in column_list:
+						column_elem_id = 'questionDiv'+que_index+'column'+str(column_count)
+						column = request.POST.getlist(column_elem_id)[0].strip()
+						columns.append(column)
+						if not column:
+							errors[column_elem_id] = "Column required"
+					if len(columns)!=len(set(columns)):
+						queError += "Please provide different columns<br>"
 				if queError:
 					errors["qText"+str(que_index)] = queError
+					
+				if que_type == "matrixrating":
+					poll['column_list'] = columns
 				poll['choice_texts'] = choices
 				poll['choice_images'] = images
 				poll['min_max'] = min_max
@@ -1751,6 +1783,10 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 			print("Section Name",poll['sectionName'])
 			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value,section_name=poll['sectionName'])
 			survey_que.save()
+			if poll['type'] == 'matrixrating':
+				for column in poll['column_list']:
+					column = MatrixRatingColumnLabels(question=question, columnLabel = column)
+					column.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -1835,6 +1871,8 @@ class SurveyVoteView(BaseViewDetail):
 		polls_section_dict = {}
 		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):	
 			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"horizontalOptions":x.question.horizontal_options,"section_name":x.section_name}
+			if x.question_type == 'matrixrating':
+				poll_dict['columns'] = (MatrixRatingColumnLabels.objects.filter(question=x.question))
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1906,14 +1944,17 @@ class SurveyVoteView(BaseViewDetail):
 			# print(saveRequired)
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg
-			# +"<br>Come back anytime to answer the rest of the questions!!"
-			data={}
-			#print(success_msg_text,user.is_authenticated())
-			choice_list = request.POST.getlist('choice'+str(questionId))
-			# print(choice_list)
+			data={}			
+			if(que_type == 'matrixrating'):
+				choices = Choice.objects.filter(question=question)
+				choice_list = []
+				if choices:
+					for choice in choices:
+						tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
+						choice_list.append(tempChoiceColumn)
+			else:
+				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-			# print(choice_list_comment)
-			# print(choice_list,choice_list_comment)
 			choice_list = list(filter(None, choice_list))
 			# print(choice_list)
 			choice_list_comment = list(filter(None, choice_list_comment))
@@ -1948,6 +1989,18 @@ class SurveyVoteView(BaseViewDetail):
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 								voteText = VoteText(question=question,user=user,answer_text=choice_list[0],user_data=user_data)
 								voteText.save()
+						elif que_type == "matrixrating":
+							for columns in choice_list:
+								choiceId = columns.split('---')[0]
+								columnId = columns.split('---')[1]
+								choice = Choice.objects.get(pk=int(choiceId))
+								column = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								vote, created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
+								if created:
+									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column, vote=vote)
+									votedcolumn.save()
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
 						elif que_type != "text":
 							for choiceId in choice_list:
 								choice = Choice.objects.get(pk=choiceId)
