@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics
+from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -1266,6 +1266,7 @@ class AccessDBView(BaseViewList):
 				# print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 			if request.path == "/advanced_analyse":
+				print(request.POST)
 				pollId = request.POST.get("question")
 				# poll = Question.objects.get(pk=pollId)
 				min_age,max_age = get_min_max_age(request.POST.get("age"))
@@ -1299,6 +1300,13 @@ class AccessDBView(BaseViewList):
 				survey_poll = Survey_Question.objects.filter(question_id=pollId)
 				if survey_poll:
 					survey_poll = survey_poll[0]
+				isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
+				questionType = ''
+				columnLabels = ()
+				if isSurveyQuestion:
+					questionType = isSurveyQuestion.question_type
+				if questionType == 'matrixrating':
+					columnLabels = MatrixRatingColumnLabels.objects.filter(question_id=pollId)
 				if survey_poll and survey_poll.question_type == "rating":
 					email_list_voted = []
 					all_percent = 0
@@ -1311,12 +1319,12 @@ class AccessDBView(BaseViewList):
 						if add_cnt:
 							all_percent += int(vote.answer_text)
 							total_votes += 1
-					for vote in VoteApi.objects.filter(question_id=pollId):
+					for vote in VoteApi.objects.filter(choice_id=choice.id):
 						if vote.email and vote.email in email_list_voted:
 							pass
 						else:
 							if vote.age and vote.profession and vote.gender:
-								print("considered")
+								# print("considered")
 								if vote.user_data :
 									user_data = ast.literal_eval(vote.user_data)
 								else:
@@ -1333,20 +1341,32 @@ class AccessDBView(BaseViewList):
 						all_rating = 0
 					# print(all_rating,min_rating,max_rating)
 					all_rating = (all_percent * (max_rating - min_rating))/100 + min_rating
-					# print(all_rating,min_rating,max_rating)
+					# print(all_rating,min_rating,max_rating)	
 				else:
 					for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
 						choice_dic = {}
 						choice_text = "Choice"+str(idx+1)
 						choice_dic["key"] = choice_text
+						choice_dic["id"] = choice.id
 						choice_dic["val"] = 0
 						choice_dic["extra_val"] = 0
 						email_list_voted = []
+						choice_dic["columns"] = []
+						if columnLabels:
+							for column in columnLabels:
+								choice_dic["columns"].append({column.id:0})
 						for vote in Vote.objects.filter(choice_id=choice.id):
 							user_data = ast.literal_eval(vote.user_data)						
 							email_list_voted.append(vote.user.email)
 							add_cnt = get_if_choice_vote_add(user_data,extra_data)
+							print("addcnt",add_cnt)
 							if add_cnt:
+								if questionType == 'matrixrating':
+									voteColumn = VoteColumn.objects.get(vote=vote)
+									for column in choice_dic["columns"]:
+										for i in column:
+											if i == voteColumn.column_id:
+												column[i] += 1
 								choice_dic["val"] += 1
 								total_votes += 1
 								choice_dic["extra_val"] += 1
@@ -1373,7 +1393,7 @@ class AccessDBView(BaseViewList):
 				response_dic['rating'] = all_rating
 				response_dic['total_votes'] = total_votes
 				response_dic['total_votes_extra'] = total_votes_extra
-				# print(response_dic)
+				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1386,14 +1406,6 @@ class AccessDBView(BaseViewList):
 			linecache.checkcache(filename)
 			line = linecache.getline(filename, lineno, f.f_globals)
 			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-
-def get_user_data_from_api(vote,user_data):
-	user_data["birthDay"] = vote.age
-	user_data["gender"] = vote.gender.lower()
-	user_data["profession"] = vote.profession.lower()
-	user_data["country"] = vote.country.lower()
-	user_data["state"] = vote.state.lower()
-	return user_data
 
 def get_if_choice_vote_add(user_data, extra_data):
 	user_age = user_data["birthDay"]
@@ -1468,11 +1480,6 @@ class TriviaPView(BaseViewList):
 class CreateSurveyView(BaseViewList):
 	def post(self, request, *args, **kwargs):
 		try:
-			print('***')
-			print(request.POST)
-			print('***')
-			print(request.GET)
-			print('***')
 			edit = False
 			curtime = datetime.datetime.now();
 			survey_id = -1
@@ -1579,6 +1586,7 @@ class CreateSurveyView(BaseViewList):
 				# poll['sectionId'] = post_data.get("sectionId")
 				poll['sectionName'] = post_data.get("qSect---"+str(que_index)).strip()
 				print(poll['sectionName'])
+				columns = []
 				choices = []
 				images = []
 				queError = ""
@@ -1602,7 +1610,6 @@ class CreateSurveyView(BaseViewList):
 						errors[choice_elem_id] = "Min Value should be less than Max.<br>"
 				elif que_type != "text":
 					choice_list = json.loads(post_data.get("choice_count")).get(que_index)
-					#print(choice_list)
 					max_choice_cnt = user.extendeduser.company.num_of_choices + 1
 					if len(choice_list) < 2:
 						queError += "Atleast 2 choices are required"
@@ -1624,8 +1631,25 @@ class CreateSurveyView(BaseViewList):
 							errors[choice_elem_id] = "Choice required"
 					if len(choices)!=len(set(choices)):
 						queError += "Please provide different choices<br>"
+				if que_type == "matrixrating":
+					column_list = json.loads(post_data.get("column_count")).get(que_index)
+					if len(column_list) < 2:
+						queError += "Atleast 2 columns are required"
+					elif len(column_list) > max_choice_cnt:
+						queError += "Maximum %s columns can be provided"%(max_choice_cnt)
+					for column_count in column_list:
+						column_elem_id = 'questionDiv'+que_index+'column'+str(column_count)
+						column = request.POST.getlist(column_elem_id)[0].strip()
+						columns.append(column)
+						if not column:
+							errors[column_elem_id] = "Column required"
+					if len(columns)!=len(set(columns)):
+						queError += "Please provide different columns<br>"
 				if queError:
 					errors["qText"+str(que_index)] = queError
+					
+				if que_type == "matrixrating":
+					poll['column_list'] = columns
 				poll['choice_texts'] = choices
 				poll['choice_images'] = images
 				poll['min_max'] = min_max
@@ -1756,8 +1780,13 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				choice.save()
 			min_value = poll['min_max'].get("min_value",0)
 			max_value = poll['min_max'].get("max_value",10)
+			print("Section Name",poll['sectionName'])
 			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value,section_name=poll['sectionName'])
 			survey_que.save()
+			if poll['type'] == 'matrixrating':
+				for column in poll['column_list']:
+					column = MatrixRatingColumnLabels(question=question, columnLabel = column)
+					column.save()
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -1837,11 +1866,13 @@ class SurveyVoteView(BaseViewDetail):
 			context['expired'] = True
 		context['polls'] = []
 		sections = Survey_Question.objects.filter(survey_id=context['survey'].id).values('section_name').distinct()
-		print(sections)
-		print(len(sections))
+		# print(sections)
+		# print(len(sections))
 		polls_section_dict = {}
 		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):	
 			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"horizontalOptions":x.question.horizontal_options,"section_name":x.section_name}
+			if x.question_type == 'matrixrating':
+				poll_dict['columns'] = (MatrixRatingColumnLabels.objects.filter(question=x.question))
 			poll_dict['user_already_voted'] = False
 			question_user_vote = []
 			if user.is_authenticated():
@@ -1891,41 +1922,49 @@ class SurveyVoteView(BaseViewDetail):
 					polls_section_dict.setdefault(y['section_name'],[]).append(poll_dict)	
 			context['polls'].append(poll_dict)
 		context['polls_section_dict'] = polls_section_dict
+		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
+		context['unique_key'] = unique_key
 		return context
 
 	def post(self, request, *args, **kwargs):
 		try:
 			user = request.user
 			questionId = request.POST.get('question')
-			print(questionId)
+			# print(questionId)
 			question = Question.objects.get(pk=questionId)
 			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
 			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
 			survey_voted = None
 			que_type = request.POST.get('questionType')
-			print(que_type)
+			# print(que_type)
 			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
 			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
-			print(saveRequired)
+			# print(saveRequired)
 			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
-			print(saveRequired)
+			# print(saveRequired)
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg
-			# +"<br>Come back anytime to answer the rest of the questions!!"
-			data={}
-			#print(success_msg_text,user.is_authenticated())
-			choice_list = request.POST.getlist('choice'+str(questionId))
-			print(choice_list)
+			data={}			
+			if(que_type == 'matrixrating'):
+				choices = Choice.objects.filter(question=question)
+				choice_list = []
+				if choices:
+					for choice in choices:
+						tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
+						choice_list.append(tempChoiceColumn)
+			else:
+				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-			print(choice_list_comment)
-			# print(choice_list,choice_list_comment)
 			choice_list = list(filter(None, choice_list))
-			print(choice_list)
+			# print(choice_list)
 			choice_list_comment = list(filter(None, choice_list_comment))
-			print(choice_list_comment)
+			# print(choice_list_comment)
 			# print(choice_list,choice_list_comment,mandatory,saveRequired)
 			post_data = request.POST
 			user_data = {}
+			unique_key = post_data.get("unique_key")
+			if not unique_key.strip():
+				unique_key = None
 			for key,val in post_data.items():
 				if key.startswith("demographic-"):
 					key = key.replace("demographic-","")
@@ -1950,6 +1989,18 @@ class SurveyVoteView(BaseViewDetail):
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 								voteText = VoteText(question=question,user=user,answer_text=choice_list[0],user_data=user_data)
 								voteText.save()
+						elif que_type == "matrixrating":
+							for columns in choice_list:
+								choiceId = columns.split('---')[0]
+								columnId = columns.split('---')[1]
+								choice = Choice.objects.get(pk=int(choiceId))
+								column = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
+								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
+								vote, created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
+								if created:
+									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column, vote=vote)
+									votedcolumn.save()
+							voted,created = Voted.objects.get_or_create(user=user, question=question)
 						elif que_type != "text":
 							for choiceId in choice_list:
 								choice = Choice.objects.get(pk=choiceId)
@@ -1987,7 +2038,6 @@ class SurveyVoteView(BaseViewDetail):
 				#print(success_msg_text)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
-				#print(success_msg_text)
 				if request.is_ajax():
 					if data:
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -2001,10 +2051,10 @@ class SurveyVoteView(BaseViewDetail):
 								answer_text = choice_list[0]
 							else:
 								for choiceId in choice_list:
-									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data)
+									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, forced_add = True)
 									if que_type == "radio":
 										break
-							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data)
+							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key)
 							data["res"] = res_data
 						data["success"]=success_msg_text
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -2621,25 +2671,32 @@ def excel_view(request):
 		ws1.write(0,4,"Age Group",normal_style)
 		ws1.write(0,5,"Profession",normal_style)
 		i = 1
+		j = 1
+		survey_question_list = Survey_Question.objects.filter(survey_id = survey_id)
+		survey_questions = survey_question_list.values_list('question', flat=True)
+		# print(survey_questions)
 		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
+		demo_list = get_demographic_list(survey_id=survey_id)
 		for voted in voted_list:
-			j = 6
 			vote_user = voted.user
 			user_data = {}
-			for index,survey_question in enumerate(Survey_Question.objects.filter(survey_id = survey_id)):
+			addVal = 0
+			for index,survey_question in enumerate(survey_question_list):
 				question = survey_question.question
 				question_type = survey_question.question_type
 				excel_text = ""
-				choice_list = []
-				if question_type != "text":
-					choice_list = Choice.objects.filter(question_id=question.id)
+				choice_list = Choice.objects.filter(question_id=question.id)
 				excel_text = "Q"+str(index+1)
 				answer_text = ""
-				if question_type == "text":
+				answer_texts = []
+				excel_texts = []
+				if question_type in ["text", "rating"]:
 					vote_text = VoteText.objects.filter(user_id=vote_user.id,question_id=question.id)
 					if vote_text:
 						answer_text = vote_text[0].answer_text
 						user_data = ast.literal_eval(vote_text[0].user_data)
+						if question_type == "rating":
+							answer_text += "%"
 				elif question_type == "radio":
 					for c_index,choice in enumerate(choice_list):
 						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
@@ -2654,22 +2711,65 @@ def excel_view(request):
 						if vote:
 							answer_text = 1
 							user_data = ast.literal_eval(vote[0].user_data)
-						ws1.write(0,j,excel_text,normal_style)
-						ws1.write(i,j,answer_text,normal_style)
-						j += 1
-				if question_type != "checkbox":
-					ws1.write(0,j,excel_text,normal_style)
-					ws1.write(i,j,answer_text,normal_style)
-					j += 1
-			gender = user_data["gender"]
-			age = user_data["birthDay"]
-			profession = user_data["profession"]
-			ws1.write(i,0,user_data["country"],normal_style)
-			ws1.write(i,1,user_data["state"],normal_style)
-			ws1.write(i,2,user_data["city"],normal_style)
-			ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
-			ws1.write(i,4,get_age_group_excel(age),normal_style)
-			ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
+				if answer_texts:
+					for ans_index,answer in enumerate(answer_texts):
+						write_result_into_excel(ws1,excel_texts[ans_index],answer,i,j+index+ans_index+addVal)
+					addVal += ans_index
+				else:
+					write_result_into_excel(ws1,excel_text,answer_text,i,j+index+addVal)
+			i += 1
+		unique_keys = VoteApi.objects.filter(question_id__in=survey_questions).values_list('unique_key', flat=True).distinct()
+		# print(unique_keys)
+		for unique_key in unique_keys:
+			addVal = 0 
+			for index,survey_question in enumerate(survey_question_list):
+				question = survey_question.question
+				question_type = survey_question.question_type
+				excel_text = ""
+				choice_list = Choice.objects.filter(question_id=question.id)
+				excel_text = "Q"+str(index+1)
+				answer_text = ""
+				answer_texts = []
+				excel_texts = []
+				if question_type in ["text", "rating"]:
+					vote_text = VoteApi.objects.filter(unique_key=unique_key,question_id=question.id)
+					if vote_text:
+						answer_text = vote_text[0].answer_text
+						user_data = get_user_data_from_api(vote_text[0])
+						extra_data = ast.literal_eval(vote_text[0].user_data)
+						user_data.update(extra_data)
+						if question_type == "rating":
+							answer_text += "%"
+				elif question_type == "radio":
+					for c_index,choice in enumerate(choice_list):
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						if vote:
+							answer_text = str(c_index+1)
+							user_data = get_user_data_from_api(vote[0])
+							extra_data = ast.literal_eval(vote[0].user_data)
+							user_data.update(extra_data)
+				elif question_type == "checkbox":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						if vote:
+							answer_text = 1
+							user_data = get_user_data_from_api(vote[0])
+							extra_data = ast.literal_eval(vote[0].user_data)
+							user_data.update(extra_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
+				if answer_texts:
+					for ans_index,answer in enumerate(answer_texts):
+						write_result_into_excel(ws1,excel_texts[ans_index],answer,i,j+index+ans_index+addVal)
+					addVal += ans_index
+				else:
+					write_result_into_excel(ws1,excel_text,answer_text,i,j+index+addVal)
 			i += 1
 		wb.save(response)
 		return response
@@ -3278,49 +3378,53 @@ def emailResponse(request):
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 def save_poll_vote_data(request):
-	data = {}
-	if request.POST.get('age'):
-		user_age = int(request.POST.get('age',18))
-	if request.POST.get('gender',"D") != "notSelected":
-		gender = request.POST.get('gender',"D")[0]
-	if request.POST.get('profession',"Others") != "notSelected":
-		profession = request.POST.get('profession','Others')
-	email = request.POST.get('email','').strip()
-	pollId = int(request.POST.get('question').strip())
-	choiceId = int(request.POST.get('choice').strip())
-	sessionKey = request.POST.get('sessionKey','').strip()
-	src = request.POST.get('src','').strip()
-	ipAddress = getIpAddress(request)
-	existingVote = VoteApi.objects.filter(question_id=pollId,choice_id=choiceId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
-	if existingVote:
-		existingVote = existingVote[0]
-		existingVote.age = user_age
-		existingVote.gender = gender
-		existingVote.profession = profession
-		if not email:
-			email = None
-		existingVote.email = email
-		existingVote.save()
-		user_data = {}
-		if user_age > 0:
-			birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
-			user_data["birthDay"] = birthDay
-		user_data["gender"] = gender
-		user_data["profession"] = profession
-		user_data["country"] = existingVote.country
-		user_data["state"] = existingVote.state
-		user_data["city"] = existingVote.city
-		if email:
-			if User.objects.filter(email=email):
-				newUser = User.objects.filter(email=email)[0]
-				login_user(request,newUser)
-			else:
-				newUser = create_new_user_mail_login(request,email,pollId)
-				save_extendeduser_data(newUser,user_data)
-			save_poll_vote(newUser,pollId,choiceId)
-			existingVote.delete()
-			data["removecookies"] = True
-	return HttpResponse(json.dumps(data), content_type='application/json')
+	try:
+		data = {}
+		if request.POST.get('age'):
+			user_age = int(request.POST.get('age',18))
+		if request.POST.get('gender',"D") != "notSelected":
+			gender = request.POST.get('gender',"D")[0]
+		if request.POST.get('profession',"Others") != "notSelected":
+			profession = request.POST.get('profession','Others')
+		email = request.POST.get('email','').strip()
+		pollId = int(request.POST.get('question').strip())
+		choiceId = int(request.POST.get('choice').strip())
+		sessionKey = request.POST.get('sessionKey','').strip()
+		src = request.POST.get('src','').strip()
+		ipAddress = getIpAddress(request)
+		existingVote = VoteApi.objects.filter(question_id=pollId,choice_id=choiceId,ipAddress=ipAddress, session=sessionKey, src=src).order_by('-created_at')
+		if existingVote:
+			existingVote = existingVote[0]
+			existingVote.age = user_age
+			existingVote.gender = gender
+			existingVote.profession = profession
+			if not email:
+				email = None
+			existingVote.email = email
+			existingVote.save()
+			user_data = {}
+			if user_age > 0:
+				birthDay = datetime.date.today() - datetime.timedelta(days = user_age * 365)
+				user_data["birthDay"] = birthDay
+			user_data["gender"] = gender
+			user_data["profession"] = profession
+			user_data["country"] = existingVote.country
+			user_data["state"] = existingVote.state
+			user_data["city"] = existingVote.city
+			if email:
+				if User.objects.filter(email=email):
+					newUser = User.objects.filter(email=email)[0]
+					login_user(request,newUser)
+				else:
+					newUser = create_new_user_mail_login(request,email,pollId)
+					save_extendeduser_data(newUser,user_data)
+				save_poll_vote(newUser,pollId,choiceId)
+				existingVote.delete()
+				data["removecookies"] = True
+		return HttpResponse(json.dumps(data), content_type='application/json')
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 def save_extendeduser_data(newUser,user_data):
 	if user_data:
@@ -3344,39 +3448,46 @@ def save_user_vote_data(user_data,alreadyVoted):
 			alreadyVoted.user_data = str(extra_data)
 		alreadyVoted.save()
 
-def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None):
-	ipAddress = getIpAddress(request)
-	if not request.session.exists(request.session.session_key):
-		request.session.create()
-	sessionKey = request.session.session_key
-	question = Question.objects.get(pk=pollId)
-	url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
-	dbIpResponse = requests.get(url)
-	locationData = dbIpResponse.json()
-	if not choiceId:
-		choiceId = 812
-	votedChoice = Choice.objects.get(pk=choiceId)
-	src = request.GET.get('src','')
-	alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
-	giveData = {}				
-	if not alreadyVoted:
-		votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text)
-		votedChoiceFromApi.save()
-		alreadyVoted = votedChoiceFromApi
-		giveData["noData"] = True
-	else:
-		alreadyVoted = alreadyVoted[0]
-		print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
-		if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
+def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, forced_add = False):
+	try:
+		# print(unique_key)
+		ipAddress = getIpAddress(request)
+		if not request.session.exists(request.session.session_key):
+			request.session.create()
+		sessionKey = request.session.session_key
+		question = Question.objects.get(pk=pollId)
+		url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
+		dbIpResponse = requests.get(url)
+		locationData = dbIpResponse.json()
+		if not choiceId:
+			choiceId = settings.ZERO_CHOICE
+		votedChoice = Choice.objects.get(pk=choiceId)
+		src = request.GET.get('src','')
+		alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
+		if unique_key:
+			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
+		giveData = {}				
+		if not alreadyVoted or forced_add:
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key)
+			votedChoiceFromApi.save()
+			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
 		else:
-			giveData["allData"] = True
-	giveData["sessionKey"] = sessionKey
-	giveData["choice"] = choiceId
-	# print(giveData)
-	if user_data:
-		save_user_vote_data(user_data,alreadyVoted)
-	return giveData
+			alreadyVoted = alreadyVoted[0]
+			# print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
+			if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
+				giveData["noData"] = True
+			else:
+				giveData["allData"] = True
+		giveData["sessionKey"] = sessionKey
+		giveData["choice"] = choiceId
+		# print(giveData)
+		if user_data:
+			save_user_vote_data(user_data,alreadyVoted)
+		return giveData
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 
 
 def save_poll_vote(user,question,choice,queBet=None):
@@ -3727,3 +3838,46 @@ class WebsiteWidgetTemplateView(generic.ListView):
 		data["template"] = template
 		return HttpResponse(json.dumps(data),content_type='application/json')
 
+def get_demographic_list(survey_id=None,question_id=None):
+	extra_demographics = None
+	demo_list = []
+	if survey_id:
+		extra_demographics = Demographics.objects.filter(survey_id=survey_id)
+	elif question_id:
+		extra_demographics = Demographics.objects.filter(question_id=question_id)
+	if extra_demographics:
+		extra_demographics = ast.literal_eval(extra_demographics[0].demographic_data)
+		for key,val in extra_demographics.items():
+			demo_list.append(key)
+	return demo_list
+
+def write_demographics_into_excel(ws1,user_data,demo_list,i):
+	gender = user_data.get("gender","")
+	age = user_data.get("birthDay")
+	profession = user_data.get("profession","")
+	ws1.write(i,0,user_data.get("country"),normal_style)
+	ws1.write(i,1,user_data.get("state"),normal_style)
+	ws1.write(i,2,user_data.get("city"),normal_style)
+	ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
+	ws1.write(i,4,get_age_group_excel(age),normal_style)
+	ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+	j = 6
+	for key in demo_list:
+		ws1.write(0,j,key,normal_style)
+		ws1.write(i,j,user_data.get(key),normal_style)
+		j += 1
+	return i,j
+
+def write_result_into_excel(ws1,excel_text,answer_text,i,j):
+	ws1.write(0,j,excel_text,normal_style)
+	ws1.write(i,j,answer_text,normal_style)
+	return i,j
+
+def get_user_data_from_api(vote,user_data={}):
+	user_data["birthDay"] = vote.age
+	user_data["gender"] = vote.gender
+	user_data["profession"] = vote.profession
+	user_data["country"] = vote.country
+	user_data["state"] = vote.state
+	user_data["city"] = vote.city
+	return user_data

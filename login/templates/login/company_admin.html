@@ -363,14 +363,37 @@
 							</div>
 							<div class="survey-all-questions">
 								{% for poll in survey_det.polls %}
-									<p class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.question.id }}">
+									<p polltype="{{ poll.q_type }}" class="main activity_url analyse_question_text" id="advanced-analyse---{{ poll.question.id }}">
 										{{ poll.question.question_text }}
 									</p>
 									<p class="pollsDesc">{{ poll.question.description }}
 									</p>
 									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 									{% if poll.q_type != "text" %}
-
+										{% if poll.q_type = "matrixrating" %}
+											<div class="choices clearfix">
+												<div class="table-container">
+													<div class="table-component">
+														<table>
+															<tr>
+																<th></th>
+																{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																	<th> {{ columns.columnLabel }} </th>
+																{% endfor %}
+															</tr>
+															{% for choice in poll.question.choice_set.all %}
+																<tr>
+																	<th> {{ choice.choice_text }} </th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}"> Loading... </td>
+																	{% endfor %}
+																</tr>
+															{% endfor %}
+														</table>
+													</div>
+												</div>
+											</div>
+										{% else %}
 											<div class="choices clearfix">
 											{% for choice in poll.question.choice_set.all %}
 											{% if choice.choice_image %}
@@ -390,6 +413,7 @@
 											{% endif %}
 											{% endfor %}
 											</div>
+										{% endif %}
 											<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
 												{% if poll.comments|length > 0 %}
 													<p>Comments :</p>
@@ -403,13 +427,13 @@
 											<p style="margin-bottom:1rem;font-weight:bold;text-align:center"> Comparative Demographic Analysis </p>
 											<div class="advancedAnaCmp" id="advancedAna">
 												<div class="advancedCmpSelect">
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Gender---1">
 														<option value="nochoice">Gender</option>
 														<option value="f">Female</option>
 														<option value="m">Male</option>
 														<option value="d">Undisclosed</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Age---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Age---1">
 														<option value="nochoice">Age</option>
 														<option value="<19">< 19</option>
 														<option value="20-25">20-25</option>
@@ -418,10 +442,10 @@
 														<option value="36-50">36-50</option>
 														<option value=">50">> 50</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Profession---1">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Profession---1">
 														<option value="nochoice">Profession</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Country---1" name="country">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---Country---1" name="country">
 														<option value="nochoice">Country</option>
 													</select>
 													<select class="advancedanalyseSelect advancedanalyseSelectColumn1" id="advancedanalyse---{{ poll.question.id }}---State---1" name="state">
@@ -438,18 +462,42 @@
 														{% endif %}
 													{% endfor %}
 												</div>
+												
+												{% if poll.q_type = 'matrixrating' %}
+													<div class="table-container">
+														<div class="table-component">
+															<table>
+																<tr>
+																	<th></th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<th> {{ columns.columnLabel }} </th>
+																	{% endfor %}
+																</tr>
+																{% for choice in poll.question.choice_set.all %}
+																	<tr>
+																		<th> {{ choice.choice_text }} </th>
+																		{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																			<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}---column1"> Loading... </td>
+																		{% endfor %}
+																	</tr>
+																{% endfor %}
+															</table>
+														</div>
+													</div>
+												{% else %}
 												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column1" class="pollsChartClass pollsChartClassColumn">
-											</div>
+												</div>
+												{% endif %}
 											</div>
 											<div class="advancedAnaCmp" id="advancedAna">
 												<div class="advancedCmpSelect">
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Gender---2">
 														<option value="nochoice">Gender</option>
 														<option value="f">Female</option>
 														<option value="m">Male</option>
 														<option value="d">Undisclosed</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Age---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Age---2">
 														<option value="nochoice">Age</option>
 														<option value="<19">< 19</option>
 														<option value="20-25">20-25</option>
@@ -458,13 +506,13 @@
 														<option value="36-50">36-50</option>
 														<option value=">50">> 50</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Profession---2">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Profession---2">
 														<option value="nochoice">Profession</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Country---2" name="country">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectCountry advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---Country---2" name="country">
 														<option value="nochoice">Country</option>
 													</select>
-													<select class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---State---2" name="state">
+													<select polltype="{{ poll.q_type }}" class="advancedanalyseSelect advancedanalyseSelectColumn2" id="advancedanalyse---{{ poll.question.id }}---State---2" name="state">
 														<option value="nochoice">State</option>
 													</select>
 													{% for demo in survey_det.demo_list %}
@@ -478,9 +526,33 @@
 														{% endif %}
 													{% endfor %}
 												</div>
-												<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column2" class="pollsChartClass pollsChartClassColumn">
-												</div>
+												{% if poll.q_type = 'matrixrating' %}
+													<div class="table-container">
+														<div class="table-component">
+															<table>
+																<tr>
+																	<th></th>
+																	{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																		<th> {{ columns.columnLabel }} </th>
+																	{% endfor %}
+																</tr>
+																{% for choice in poll.question.choice_set.all %}
+																	<tr>
+																		<th> {{ choice.choice_text }} </th>
+																		{% for columns in poll.question.matrixratingcolumnlabels_set.all %}
+																			<td id="{{ poll.question.id }}---{{ choice.id }}---{{ columns.id }}---column2"> Loading... </td>
+																		{% endfor %}
+																	</tr>
+																{% endfor %}
+															</table>
+														</div>
+													</div>
+												{% else %}
+													<div id="advancedanalyse-pollsChart---{{ poll.question.id }}---column1" class="pollsChartClass pollsChartClassColumn">
+													</div>
+												{% endif %}
 											</div>
+											{% if not poll.q_type = 'matrixrating'  %}
 											<div class="advancedAnaCmp">
 												<p style="margin-bottom:1rem;text-align:center;"> Or</p>
 												<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ poll.question.id }}Select---1">
@@ -563,7 +635,7 @@
 													</div>
 												</div>
 											</div>
-
+											{% endif %}
 									{% else %}
 										<div class="ana-text" id="text-analyse---{{ poll.question.id }}Div">
 											{% for text in poll.comments %}
@@ -1272,6 +1344,8 @@
 			var demographic_list = [];
 			var choice_count = {};
 			var choice_list = {};
+			var column_count = {};
+			var column_list = {};
 			var protectedResultSurvey = false;
 			var mandatorySurvey = false;
 			var addCommentSurvey = false;
@@ -1357,9 +1431,9 @@
 			{
 				if(choice_list[question_count_select].length < {{ user.extendeduser.company.num_of_choices }} + 1){
 					var question_choice_count = choice_count[question_count_select];
-		  		choice_list[question_count_select].push(question_choice_count);
-		  		var choice_elem_div = "question"+question_count_select+"choiceDiv";
-		  		var question_div = "questionDiv"+question_count_select;
+					choice_list[question_count_select].push(question_choice_count);
+					var choice_elem_div = "question"+question_count_select+"choiceDiv";
+					var question_div = "questionDiv"+question_count_select;
 					var choice_elem_id = question_div+'choice'+question_choice_count;
 					var choice_file_id = question_div+'choice'+question_choice_count+'file';
 					var font_awesome_str = "";
@@ -1369,8 +1443,15 @@
 					} else if(selectedType === "checkbox"){
 						font_awesome_str = "";
 					}
-					if(selectedType != "text"){
-						choice_elem += '<div id="'+choice_elem_id+'Div"><p class"form-p">'+ font_awesome_str;
+
+					if(selectedType === 'matrixrating'){
+						choice_elem += '<div id="'+choice_elem_id+'Div"><p class="form-p">'+ font_awesome_str;
+						choice_elem += '<label class="label-width" for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
+						choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Row Label" maxlength="200">';
+						choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
+						$("#"+choice_elem_div).append(choice_elem);
+					} else if(selectedType != "text"){
+						choice_elem += '<div id="'+choice_elem_id+'Div"><p class="form-p">'+ font_awesome_str;
 						choice_elem += '<label class="label-width" for="'+choice_elem_id+'"></label><input id="'+choice_elem_id;
 						choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 						choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
@@ -1381,27 +1462,27 @@
 					choice_count[question_count_select]+=1;
 
 					/*For file browse */
-						var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
-						var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
-						var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
+					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
+					var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
+					var fileInput = $("#"+choice_file_id).after(label).wrap(invisible);
 
-						fileInput.change(function(){
-						    $this = $(this);
-						    var fileVal = $this.val();
-					    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
-					    	var fileName = fileVal.substr(fileNameIndex);
-					    	if (this.files && this.files[0]) {
-					        var reader = new FileReader();
-					        reader.onload = function (e) {
-						        imgSrc = e.target.result;
-										$this.parent().next().children().first().attr('src', e.target.result);
-										$this.parent().next().children().first().show();
-					        }
-					        reader.readAsDataURL(this.files[0]);
-					      }
-								$this.parent().next().children().first().next().hide();
-					    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
-						})
+					fileInput.change(function(){
+						$this = $(this);
+						var fileVal = $this.val();
+						var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
+						var fileName = fileVal.substr(fileNameIndex);
+						if (this.files && this.files[0]) {
+						var reader = new FileReader();
+						reader.onload = function (e) {
+							imgSrc = e.target.result;
+									$this.parent().next().children().first().attr('src', e.target.result);
+									$this.parent().next().children().first().show();
+						}
+						reader.readAsDataURL(this.files[0]);
+						}
+							$this.parent().next().children().first().next().hide();
+						$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
+					});
 					/* End of file browse*/
 				}
 			}
@@ -1468,7 +1549,6 @@
 												}
 												populateCountry("#askbypoll-group-filter-country---{{ question.poll.id }}");
 											{% endfor %}
-											console.log('Display Status',$('#overlay-inAbox8').is(":visible"));
 										}
 										$(".share-with-group").click(function(){
 											var surveyId=$(this)[0].id.replace("share-with-group","");
@@ -1744,6 +1824,8 @@
 
 				$('#polls-content,#advanced-content,#surveys-content').on("click","p.analyse_question_text",function(){
 					var elemId = $(this)[0].id;
+					var questionType = $(this)[0].getAttribute('polltype');
+					console.log("Question Type",questionType);	
 					var pollId = elemId.split("---")[1];
 					var analysisDivId = '#'+elemId+"Div";
 					var isMatch = /^advanced-*/.test(elemId);
@@ -1755,39 +1837,51 @@
 					setTimeout(function(){
 					$("#text-analyse---"+pollId+"Div").toggle("slow");
 					if($(analysisDivId).is(':visible')){
-					  drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-					  drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
-					  drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-					  drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  if(questionType === 'matrixrating'){
+						  drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						  drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						  drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+					  } else {
+						drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+						drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+						drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+						drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  }
 					  $(window).resize(function() {
 						    if(this.resizeTO) clearTimeout(this.resizeTO);
 						    this.resizeTO = setTimeout(function() {
-								drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
-								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
-								drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
-								drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
-								drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+								 if(questionType === 'matrixrating'){
+						  			drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+						  			drawResultTable("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+					  			} else {
+									drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId))
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId));
+									drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column1");
+									drawPollsChart("{{ csrf_token }}","advancedanalyse-",parseInt(pollId),null,null,null,null,null,"column2");
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"1");
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'1');
+									drawGenderChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawAgeChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawOthersChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,"2");
+									drawLocationChart("{{ csrf_token }}",analyse_type,parseInt(pollId),null,'2');
+					  			}
 						    }, 500);
 						});
 					}
@@ -1805,8 +1899,8 @@
 			     $(this).parent().parent().parent().first().next().next().toggle("slow");
 			    });
 
-			    $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
-			    	var elemId = $(this)[0].id;
+			  $("#polls-content, #advanced-content,#surveys-content").on("change","select.analyseSelect",function(){
+			    var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1].replace("Select","");
 					var graphId = elemId.split("---")[2];
 					var choice_text_para = "choice---"+pollId+"---"+graphId;
@@ -1866,6 +1960,7 @@
 			    	var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
 					var graphId = elemId.split("---")[3];
+					var questionType = $(this)[0].getAttribute('polltype');
 					// console.log(elemId);
 					// console.log(pollId);
 					var isMatch = /^advancedanalyse-*/.test(elemId);
@@ -1884,23 +1979,28 @@
 					var extra_data = {};
 
 					$( ".advancedanalyseSelectExtra---"+pollId+"---"+graphId ).each(function() {
-						console.log( $( this ));
 					  extra_data[$( this )[0].id.split("---")[2]] = $( this ).val();
 					});
-					console.log(extra_data);
-
-					// console.log(selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state);
-					drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					
+					if(questionType === 'matrixrating'){
+						drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					} else {
+						drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+					}
 					$(window).resize(function() {
 					    if(this.resizeTO) clearTimeout(this.resizeTO);
 					    this.resizeTO = setTimeout(function() {
-							drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							if(questionType === 'matrixrating'){
+								drawResultTable("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							} else {	
+								drawPollsChart("{{ csrf_token }}",analyse_type,parseInt(pollId),selectedChoice_age,selectedChoice_gender,selectedChoice_prof,selectedChoice_country,selectedChoice_state,"column"+graphId,extra_data);
+							}
 					    }, 500);
 					});
 				});
 
 				$("#advanced-content,#surveys-content").on("change","select.advancedanalyseSelectCountry",function(){
-			    	var elemId = $(this)[0].id;
+			    var elemId = $(this)[0].id;
 					var pollId = elemId.split("---")[1];
 					var graphId = elemId.split("---")[3];
 					var common_elem_id_str = "#advancedanalyse---"+pollId+"---";
@@ -1986,7 +2086,7 @@
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		// change for radio default start
-			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="rating">Rating</option><option value="text">Text</option></select></p>';
+			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="rating">Rating</option><option value="text">Text</option><option value="matrixrating">Matrix / Rating Scale</option></select></p>';
 			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
 			  		// change for radio default end
 			  		question_elem += '</div>';
@@ -2018,6 +2118,22 @@
 						}
 					}
 				});
+				
+				$("#surveys-content").on("click",".remove-column",function(){
+					var elemId = $(this)[0].id;
+					var question_count_select2 = elemId.split("---")[0];
+					var question_column_count2 = elemId.split("---")[1];
+					var selectedType2 = elemId.split("---")[2];
+					$("#questionDiv"+question_count_select2+"column"+question_column_count2+"Div").remove();
+					column_list[question_count_select2] = jQuery.grep(column_list[question_count_select2], function(value) {
+					  return value != question_column_count2;
+					})
+					if(column_list[question_count_select2].length < {{ user.extendeduser.company.num_of_choices }} + 1){
+						if ($("#"+question_count_select2+'---'+selectedType2).length > 0) {
+						    $("#"+question_count_select2+'---'+selectedType2).show();
+						}
+					}
+				});
 
 				$("#surveys-content").on("change",".question-type-select",function(){
 		  			var select_elem_id = $(this)[0].id;
@@ -2026,25 +2142,67 @@
 		  			choice_list[question_count_select] = [];
 		  			var question_choice_count = choice_count[question_count_select];
 		  			var choice_elem_div = "question"+question_count_select+"choiceDiv";
+					var column_elem_div = "question"+question_count_select+"columnDiv";
 		  			var question_div = "questionDiv"+question_count_select;
 					$("#"+choice_elem_div).remove();
 		  			var selectedType = $("#"+select_elem_id+" option:selected").val();
-		  			console.log(selectedType);
-					if(selectedType != "text" && selectedType != "rating"){
-						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
-						$("#"+question_div).append(add_another_choice_elem);
-						$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
-						add_another_choice(question_count_select,selectedType);
+
+					  	if(selectedType === 'matrixrating'){
+							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
+							var add_another_column_elem = '<div id="'+column_elem_div+'"></div>';
+							column_count[question_count_select] = 1;
+							column_list[question_count_select] = [];
+							
+							$("#"+question_div).append(add_another_choice_elem);
+							$("#"+question_div).append(add_another_column_elem);
+							
+							$("#"+choice_elem_div).append('<p> Rows </p>');
+							$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
+							add_another_choice(question_count_select,selectedType);
+							$("#"+column_elem_div).append('<p> Columns </p>');
+							$("#"+column_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-column"> Add Another</i>');
+							//add_another_choice(question_count_select,selectedType);
+						} else if(selectedType != "text" && selectedType != "rating") {
+							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
+							$("#"+question_div).append(add_another_choice_elem);
+							$("#"+choice_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-choice"> Add Another</i>');
+							add_another_choice(question_count_select,selectedType);
+						}
+						if(selectedType == "rating"){
+							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
+							$("#"+question_div).append(add_another_choice_elem);
+							$("#"+choice_elem_div).append('<input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Min" id="'+question_count_select+'---'+selectedType+'---Min" placeholder="Minimum Value"/><input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Max" id="'+question_count_select+'---'+selectedType+'---Max" placeholder="Maximum Value"/>');
+						}
+
+						if(selectedType == "radio"){
+							$("#addComment"+question_count_select+"p").show();
+						} else {
+							$("#addComment"+question_count_select+"p").hide();
+						}
+				});
+				
+				$("#surveys-content").on("click",".add-column",function(){
+					var elemId = $(this)[0].id;
+					var question_count_select1 = elemId.split("---")[0];
+					var selectedType1 = elemId.split("---")[1];
+					if(column_list[question_count_select1].length < {{ user.extendeduser.company.num_of_choices }} + 1){
+						var question_column_count = column_count[question_count_select1];
+						column_list[question_count_select1].push(question_column_count);
+						var column_elem_div = "question"+question_count_select1+"columnDiv";
+						var question_div = "questionDiv"+question_count_select1;
+						var column_elem_id = question_div+'column'+question_column_count;
+						var font_awesome_str = "";
+						var column_elem = "";
+						column_elem += '<div id="'+column_elem_id+'Div"><p class="form-p">'+ font_awesome_str;
+						column_elem += '<label class="label-width" for="'+column_elem_id+'"></label><input id="'+column_elem_id;
+						column_elem += '" class="createPollText" type="text" name="'+column_elem_id+'" placeholder="Column Label" maxlength="200">';
+						column_elem += '<i id="' +question_count_select1+'---'+ question_column_count+'---'+selectedType1+ '" class="fa fa-times-circle remove-column"> Remove</i></p></div>';
+						$("#"+column_elem_div).append(column_elem);
+						column_count[question_count_select1]+=1;
 					}
-					if(selectedType == "rating"){
-						var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
-						$("#"+question_div).append(add_another_choice_elem);
-						$("#"+choice_elem_div).append('<input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Min" id="'+question_count_select+'---'+selectedType+'---Min" placeholder="Minimum Value"/><input type="text" class="min-max-values" name="'+question_count_select+'---'+selectedType+'---Max" id="'+question_count_select+'---'+selectedType+'---Max" placeholder="Maximum Value"/>');
-					}
-					if(selectedType == "radio"){
-						$("#addComment"+question_count_select+"p").show();
-					} else {
-						$("#addComment"+question_count_select+"p").hide();
+					
+					if(column_list[question_count_select1].length >= {{ user.extendeduser.company.num_of_choices }} + 1){
+						$("#"+question_count_select1+'---'+selectedType1).hide();
 					}
 				});
 
@@ -2121,6 +2279,7 @@
 					var form_data = new FormData($(elemid)[0]);
 					form_data.append('question_count', JSON.stringify(question_list));
 					form_data.append('choice_count', JSON.stringify(choice_list));
+					form_data.append('column_count', JSON.stringify(column_list));
 					form_data.append('demographic_count', JSON.stringify(demographic_list));
 					$("#createSurveySubmit").attr("disabled","disabled");
 					console.log(form_data);
@@ -2145,6 +2304,8 @@
 									demographic_list = [];
 									choice_count = {};
 									choice_list = {};
+									column_count = {};
+									column_list = {};
 									protectedResultSurvey = false;
 									addCommentSurvey = false;
 									mandatorySurvey = false;

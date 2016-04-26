@@ -438,6 +438,7 @@ class VoteApi(models.Model):
 	src = models.CharField(max_length=512,blank=True,null=True)
 	answer_text = models.CharField(max_length=512,blank=True,null=True)
 	user_data = models.TextField()
+	unique_key = models.CharField(max_length=512,blank=True,null=True)
 	def save(self, *args, **kwargs):
 		if not self.email:
 			self.email = None
@@ -510,3 +511,19 @@ class SurveysReferred(models.Model):
 	referred_survey_count = models.IntegerField(blank=True, null= True, default=0)
 	def __str__(self):
 		return self.user.username	
+		
+class MatrixRatingColumnLabels(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	question = models.ForeignKey(Question)
+	columnLabel = models.CharField(max_length=200)
+	columnWeight = models.IntegerField(default=1)
+	def __str__(self):
+		return self.columnLabel + "__" + str(self.columnWeight)
+
+class VoteColumn(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	question = models.ForeignKey(Question)
+	vote = models.ForeignKey(Vote)
+	choice = models.ForeignKey(Choice)
+	column = models.ForeignKey(MatrixRatingColumnLabels)	
