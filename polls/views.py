@@ -1300,7 +1300,10 @@ class AccessDBView(BaseViewList):
 				survey_poll = Survey_Question.objects.filter(question_id=pollId)
 				if survey_poll:
 					survey_poll = survey_poll[0]
-				isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
+				try:
+					isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
+				except:
+					isSurveyQuestion = None
 				questionType = ''
 				columnLabels = ()
 				if isSurveyQuestion:
