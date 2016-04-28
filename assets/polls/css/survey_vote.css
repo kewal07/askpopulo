@@ -9,6 +9,7 @@
 }
 .questionContent{
 	display: block;
+	width:100% !important;
 }
 .questionContent>div{
 	-webkit-box-flex: none;
@@ -71,7 +72,6 @@ span.section-name {
     padding:4px;
 }
 .survey-sections{   
-	padding: 1rem;
     margin: 2rem 0;
     position: relative;
     display: none;
@@ -311,7 +311,7 @@ th.question-table-heading {
     	display: none !important;
     }
     .survey-sections{
-    	padding:1rem 0.5rem;
+    	/* padding:1rem 0.5rem;*/
     }
     .userBrief {
             margin-left:2rem;
@@ -349,3 +349,8 @@ th.question-table-heading {
     }
 }
 
+@media only screen and (max-width: 980px) and (min-width: 481px)
+	.questionContent {
+    		width: 100% !important
+	}
+}
