@@ -1263,12 +1263,9 @@ class AccessDBView(BaseViewList):
 				response_dic["profession"] = prof_dic
 				response_dic["gender"] = gender_dic
 				response_dic["age"] = age_dic
-				# print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 			if request.path == "/advanced_analyse":
-				print(request.POST)
 				pollId = request.POST.get("question")
-				# poll = Question.objects.get(pk=pollId)
 				min_age,max_age = get_min_max_age(request.POST.get("age"))
 				gender = ""
 				if request.POST.get("gender") != "nochoice":
@@ -1284,7 +1281,7 @@ class AccessDBView(BaseViewList):
 					state = request.POST.get("state").lower()
 				extra_data = request.POST.get("extra_data",'{}')
 				extra_data = json.loads(extra_data)
-				# print(extra_data)
+				
 				extra_data["gender"] = gender
 				extra_data["profession"] = profession
 				extra_data["country"] = country
@@ -1300,14 +1297,10 @@ class AccessDBView(BaseViewList):
 				survey_poll = Survey_Question.objects.filter(question_id=pollId)
 				if survey_poll:
 					survey_poll = survey_poll[0]
-				try:
-					isSurveyQuestion = Survey_Question.objects.get(question_id=pollId)
-				except:
-					isSurveyQuestion = None
 				questionType = ''
 				columnLabels = ()
-				if isSurveyQuestion:
-					questionType = isSurveyQuestion.question_type
+				if survey_poll:
+					questionType = survey_poll.question_type
 				if questionType == 'matrixrating':
 					columnLabels = MatrixRatingColumnLabels.objects.filter(question_id=pollId)
 				if survey_poll and survey_poll.question_type == "rating":
@@ -1327,7 +1320,6 @@ class AccessDBView(BaseViewList):
 							pass
 						else:
 							if vote.age and vote.profession and vote.gender:
-								# print("considered")
 								if vote.user_data :
 									user_data = ast.literal_eval(vote.user_data)
 								else:
@@ -1337,14 +1329,11 @@ class AccessDBView(BaseViewList):
 								if add_cnt:
 									all_percent += float(vote.answer_text)
 									total_votes += 1
-					# print(all_percent,min_rating,max_rating,total_votes)
 					if total_votes:
 						all_rating = all_percent/total_votes
 					else:
 						all_rating = 0
-					# print(all_rating,min_rating,max_rating)
 					all_rating = (all_percent * (max_rating - min_rating))/100 + min_rating
-					# print(all_rating,min_rating,max_rating)	
 				else:
 					for idx,choice in enumerate(Choice.objects.filter(question_id=pollId)):
 						choice_dic = {}
@@ -1362,7 +1351,6 @@ class AccessDBView(BaseViewList):
 							user_data = ast.literal_eval(vote.user_data)						
 							email_list_voted.append(vote.user.email)
 							add_cnt = get_if_choice_vote_add(user_data,extra_data)
-							print("addcnt",add_cnt)
 							if add_cnt:
 								if questionType == 'matrixrating':
 									voteColumn = VoteColumn.objects.get(vote=vote)
@@ -1374,7 +1362,6 @@ class AccessDBView(BaseViewList):
 								total_votes += 1
 								choice_dic["extra_val"] += 1
 								total_votes_extra += 1
-						# print(choice.id)
 						for vote in VoteApi.objects.filter(choice_id=choice.id):
 							if vote.email and vote.email in email_list_voted:
 								pass
@@ -1387,6 +1374,13 @@ class AccessDBView(BaseViewList):
 									user_data = get_user_data_from_api(vote,user_data)
 									add_cnt = get_if_choice_vote_add(user_data,extra_data)
 									if add_cnt:
+										if questionType == 'matrixrating':
+											voteColumn = vote.votecolumn
+											for column in choice_dic["columns"]:
+												for i in column:
+													if i == voteColumn.column_id:
+														column[i] += 1
+												
 										choice_dic["val"] += 1
 										total_votes += 1
 								choice_dic["extra_val"] += 1
@@ -1396,7 +1390,6 @@ class AccessDBView(BaseViewList):
 				response_dic['rating'] = all_rating
 				response_dic['total_votes'] = total_votes
 				response_dic['total_votes_extra'] = total_votes_extra
-				print(response_dic)
 				return HttpResponse(json.dumps(response_dic), content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -1414,25 +1407,11 @@ def get_if_choice_vote_add(user_data, extra_data):
 	user_age = user_data["birthDay"]
 	min_age = extra_data.get("min_age",0)
 	max_age = extra_data.get("max_age",9999)
-	# user_gender = user_data["gender"].lower()
-	# user_prof = user_data["profession"].lower()
-	# user_country = user_data["country"].lower()
-	# user_state = user_data["state"].lower()
 	add_cnt = True
-	# print(user_age,user_gender,user_prof,user_prof != profession,profession,user_country,user_state)
 	if not (user_age >= min_age and user_age <= max_age):
 		add_cnt = False
-	# if gender and user_gender != gender:
-	# 	add_cnt = False
-	# if profession and user_prof != profession:
-	# 	add_cnt = False
-	# if state and user_state != state:
-	# 	add_cnt = False
-	# if country and user_country != country:
-	# 	add_cnt = False
 	non_str_values = ["min_age","max_age"]
 	for key,val in extra_data.items():
-		# print(key,user_data[key].lower(),val)
 		if key not in non_str_values:
 			if val and val != "nochoice":
 				user_val = user_data.get(key,"")
@@ -1657,8 +1636,6 @@ class CreateSurveyView(BaseViewList):
 				poll['choice_images'] = images
 				poll['min_max'] = min_max
 				polls_list.append(poll)
-			#print(polls_list)
-			#print(errors)
 			if errors:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
@@ -1933,18 +1910,14 @@ class SurveyVoteView(BaseViewDetail):
 		try:
 			user = request.user
 			questionId = request.POST.get('question')
-			# print(questionId)
 			question = Question.objects.get(pk=questionId)
 			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
 			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
 			survey_voted = None
 			que_type = request.POST.get('questionType')
-			# print(que_type)
 			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
 			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
-			# print(saveRequired)
 			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
-			# print(saveRequired)
 			queSlug = question.que_slug
 			success_msg_text = survey.thanks_msg
 			data={}			
@@ -1959,10 +1932,7 @@ class SurveyVoteView(BaseViewDetail):
 				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
 			choice_list = list(filter(None, choice_list))
-			# print(choice_list)
 			choice_list_comment = list(filter(None, choice_list_comment))
-			# print(choice_list_comment)
-			# print(choice_list,choice_list_comment,mandatory,saveRequired)
 			post_data = request.POST
 			user_data = {}
 			unique_key = post_data.get("unique_key")
@@ -1978,12 +1948,9 @@ class SurveyVoteView(BaseViewDetail):
 						data["error"] = "Demographics is mandatory"
 			if not choice_list:
 				if mandatory and not already_voted:
-					# print("mandatory for",questionId,type(mandatory))
 					data[str(questionId)] = "Please enter an answer"
-					# return HttpResponse(json.dumps(data),content_type='application/json')
 			if user.is_authenticated():
 				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
-				#print(survey_voted,created)
 				if choice_list:
 					if saveRequired:
 						if que_type == "rating":
@@ -2023,7 +1990,6 @@ class SurveyVoteView(BaseViewDetail):
 								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
 								voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
 								voteText.save()
-						# survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
 						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
 						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
 						survey_voted.save()
@@ -2038,7 +2004,6 @@ class SurveyVoteView(BaseViewDetail):
 					if saveRequired and survey_voted.user_answer_count == 1:
 						referral_user = request.POST.get("referral_id")
 						save_references(referral_user,survey=survey)
-				#print(success_msg_text)
 				return HttpResponse(json.dumps(data),content_type='application/json')
 			else:
 				if request.is_ajax():
@@ -2048,16 +2013,24 @@ class SurveyVoteView(BaseViewDetail):
 						if saveRequired:
 							answer_text = None
 							choiceId = None
+							votecolumn = None
 							if choice_list_comment:
 								answer_text = choice_list_comment[0]
 							if que_type == "rating" or que_type == "text":
 								answer_text = choice_list[0]
+							elif que_type == "matrixrating":
+								for columns in choice_list:
+									choiceId = columns.split('---')[0]
+									columnId = columns.split('---')[1]
+									choice = Choice.objects.get(pk=int(choiceId))
+									votecolumn = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
+									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
 							else:
 								for choiceId in choice_list:
-									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, forced_add = True)
+									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
 									if que_type == "radio":
 										break
-							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key)
+							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
 							data["res"] = res_data
 						data["success"]=success_msg_text
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -3451,7 +3424,7 @@ def save_user_vote_data(user_data,alreadyVoted):
 			alreadyVoted.user_data = str(extra_data)
 		alreadyVoted.save()
 
-def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, forced_add = False):
+def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
 	try:
 		# print(unique_key)
 		ipAddress = getIpAddress(request)
@@ -3471,7 +3444,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
 		giveData = {}				
 		if not alreadyVoted or forced_add:
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True

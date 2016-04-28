@@ -421,6 +421,14 @@ class QuestionUpvotes(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	vote = models.BooleanField(default=0)
+	
+class MatrixRatingColumnLabels(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	question = models.ForeignKey(Question)
+	columnLabel = models.CharField(max_length=200)
+	columnWeight = models.IntegerField(default=1)
+	def __str__(self):
+		return self.columnLabel + "__" + str(self.columnWeight)
 
 class VoteApi(models.Model):
 	choice = models.ForeignKey(Choice)
@@ -437,6 +445,7 @@ class VoteApi(models.Model):
 	session = models.CharField(max_length=512,blank=True,null=True)
 	src = models.CharField(max_length=512,blank=True,null=True)
 	answer_text = models.CharField(max_length=512,blank=True,null=True)
+	votecolumn = models.ForeignKey(MatrixRatingColumnLabels, null=True)
 	user_data = models.TextField()
 	unique_key = models.CharField(max_length=512,blank=True,null=True)
 	def save(self, *args, **kwargs):
@@ -512,18 +521,11 @@ class SurveysReferred(models.Model):
 	def __str__(self):
 		return self.user.username	
 		
-class MatrixRatingColumnLabels(models.Model):
-	timestamp = models.DateTimeField(auto_now_add=True)
-	question = models.ForeignKey(Question)
-	columnLabel = models.CharField(max_length=200)
-	columnWeight = models.IntegerField(default=1)
-	def __str__(self):
-		return self.columnLabel + "__" + str(self.columnWeight)
-
 class VoteColumn(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	vote = models.ForeignKey(Vote)
 	choice = models.ForeignKey(Choice)
-	column = models.ForeignKey(MatrixRatingColumnLabels)	
+	column = models.ForeignKey(MatrixRatingColumnLabels)
+
