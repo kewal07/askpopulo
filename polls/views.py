@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels
+from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels, SurveySection
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -50,6 +50,7 @@ import ast
 import re
 from random import shuffle
 from particle.models import Particle
+from collections import OrderedDict as SortedDict
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 
 # Create your views here.
@@ -1486,9 +1487,10 @@ class CreateSurveyView(BaseViewList):
 			qemin = int(request.POST.getlist('qExpiry_min')[0])
 			qeap = request.POST.getlist('qExpiry_ap')[0]
 			qSection = post_data.get("qSection")
-			print(qSection)
+			sectionList = []
+			for i in range(1, int(qSection)+1):
+				sectionList.append({"sectionName":post_data.get("sectionName---"+str(i)), "sectionOrder":i})
 			qExpectedTime = post_data.get("expectedTime")
-			print(qExpectedTime)
 			surveyError = ""
 			if not survey_name:
 				surveyError += "Survey Name is Required<br>"
@@ -1548,8 +1550,6 @@ class CreateSurveyView(BaseViewList):
 				errors['demographicDiv'+str(demographic_index)] = demo_error
 			for que_index in question_count:
 				poll = {}
-				#print(que_index)
-				# print(post_data)
 				que_text = post_data.get("qText"+str(que_index)).strip()
 				que_desc = post_data.get("qDesc"+str(que_index)).strip()
 				que_type = post_data.get("qType"+str(que_index)).strip()
@@ -1640,6 +1640,9 @@ class CreateSurveyView(BaseViewList):
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
 				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage,thanks_msg,qExpectedTime,qSection)
+				for section in sectionList:
+					section = SurveySection(survey=survey, sectionName=section['sectionName'], sectionOrder=section['sectionOrder'])
+					section.save()
 				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				createDemographics(survey=survey,demographic_list=demo_list,user=user)
 				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
@@ -1760,9 +1763,14 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				choice.save()
 			min_value = poll['min_max'].get("min_value",0)
 			max_value = poll['min_max'].get("max_value",10)
-			print("Section Name",poll['sectionName'])
-			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value,section_name=poll['sectionName'])
+			surveyQuestionSection = None
+			try:
+				surveyQuestionSection = SurveySection.objects.get(survey=survey, sectionName=poll['sectionName'])
+			except:
+				surveyQuestionSection = None
+			survey_que = Survey_Question(survey=survey, question=question, question_type=poll['type'], add_comment=addComment, mandatory=mandatory, min_value=min_value, max_value=max_value,section=surveyQuestionSection)
 			survey_que.save()
+			
 			if poll['type'] == 'matrixrating':
 				for column in poll['column_list']:
 					column = MatrixRatingColumnLabels(question=question, columnLabel = column)
@@ -1845,12 +1853,21 @@ class SurveyVoteView(BaseViewDetail):
 		if context['survey'].expiry and context['survey'].expiry < timezone.now():
 			context['expired'] = True
 		context['polls'] = []
-		sections = Survey_Question.objects.filter(survey_id=context['survey'].id).values('section_name').distinct()
-		# print(sections)
-		# print(len(sections))
-		polls_section_dict = {}
-		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):	
-			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"horizontalOptions":x.question.horizontal_options,"section_name":x.section_name}
+		sections = SurveySection.objects.filter(survey_id=context['survey'].id).order_by('sectionOrder')
+		polls_section_dict = SortedDict()
+		for section in sections:
+			polls_section_dict[section.sectionName] = []
+		polls_section_dict['Common'] = []
+		
+		for i,x in enumerate(Survey_Question.objects.filter(survey_id=context['survey'].id)):
+			#Finding the section in which current poll is present. If No section is choosen then section name will be None
+			tempSectionName = ''
+			if x.section:
+				tempSectionName = x.section.sectionName
+			else:
+				tempSectionName = None
+					
+			poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value,"horizontalOptions":x.question.horizontal_options,"section_name":tempSectionName}
 			if x.question_type == 'matrixrating':
 				poll_dict['columns'] = (MatrixRatingColumnLabels.objects.filter(question=x.question))
 			poll_dict['user_already_voted'] = False
@@ -1863,15 +1880,9 @@ class SurveyVoteView(BaseViewDetail):
 						poll_dict['answer'] = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text
 					elif x.question_type == "rating":
 						myrate = int(float(VoteText.objects.filter(user_id=user.id,question_id=x.question.id)[0].answer_text))
-						# print('***')
-						# print(x.question.id)
-						# print(myrate)
 						myrate = (myrate * (x.max_value - x.min_value))/100 + x.min_value
 						allrate = VoteText.objects.filter(question_id=x.question.id).aggregate(Avg('answer_text')).get('answer_text__avg')
-						# print(allrate)
 						allrate = (allrate * (x.max_value - x.min_value))/100 + x.min_value
-						# print(myrate)
-						# print(allrate)
 						if myrate > allrate:
 							to_val = myrate
 							from_val = allrate
@@ -1890,16 +1901,15 @@ class SurveyVoteView(BaseViewDetail):
 					voteText = VoteText.objects.filter(user_id=user.id,question_id=x.question.id)
 					if voteText:
 						poll_dict['answer'] = voteText[0].answer_text
-			# else:
-			# 	votedCookie = cookie_prepend+"VOTED_"+str(x.question.id)
-			# 	user_already_voted = checkBooleanValue(self.request.COOKIES.get(votedCookie,""))
-			# 	poll_dict['user_already_voted'] = user_already_voted
-			# 	votedCookie = cookie_prepend+"SURVEY_"+str(context['survey'].id)
-			# 	user_already_voted = checkBooleanValue(self.request.COOKIES.get(votedCookie,""))
-			# 	context['user_already_voted'] = user_already_voted
-			for i,y in enumerate(sections):
-				if x.section_name == y['section_name'] :
-					polls_section_dict.setdefault(y['section_name'],[]).append(poll_dict)	
+			
+			if tempSectionName:
+				polls_section_dict[tempSectionName].append(poll_dict)
+			else:
+				polls_section_dict['Common'].append(poll_dict)
+			# for i,y in enumerate(sections):
+			# 	if x.section_name == y['sectionName'] :
+			# 		polls_section_dict.setdefault(y['section_name'],[]).append(poll_dict)
+			# print(polls_section_dict)	
 			context['polls'].append(poll_dict)
 		context['polls_section_dict'] = polls_section_dict
 		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
@@ -1908,6 +1918,7 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
+			print(self.request.POST)
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
@@ -2028,9 +2039,10 @@ class SurveyVoteView(BaseViewDetail):
 							else:
 								for choiceId in choice_list:
 									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
+									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
 									if que_type == "radio":
 										break
-							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
+							print(res_data)
 							data["res"] = res_data
 						data["success"]=success_msg_text
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -3412,21 +3424,24 @@ def save_extendeduser_data(newUser,user_data):
 	return newUser
 
 def save_user_vote_data(user_data,alreadyVoted):
+	print(user_data, alreadyVoted)
 	if user_data:
 		extra_data = {}
 		for key,val in user_data.items():
 			if hasattr(alreadyVoted, key):
+				print("KEY",key)
 				setattr(alreadyVoted, key, val)
 			else:
 				extra_data[key] = val
 		# print(extra_data)
 		if extra_data:
 			alreadyVoted.user_data = str(extra_data)
+		print("ALREADY VOTED", alreadyVoted)
 		alreadyVoted.save()
 
 def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
 	try:
-		# print(unique_key)
+		print(request, pollId, choiceId, answer_text, user_data, unique_key, votecolumn, forced_add)
 		ipAddress = getIpAddress(request)
 		if not request.session.exists(request.session.session_key):
 			request.session.create()
@@ -3442,24 +3457,39 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 		alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
 		if unique_key:
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
+			
+		isSurveyQuestion = Survey_Question.objects.filter(question=question)
+		
+		if(isSurveyQuestion and (not isSurveyQuestion.question_type == 'checkbox' and not isSurveyQuestion.question_type == 'matrixrating')):
+			if(user_data['email']	):
+				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
+
 		giveData = {}				
-		if not alreadyVoted or forced_add:
+		if not alreadyVoted and forced_add:
 			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
 		else:
 			alreadyVoted = alreadyVoted[0]
-			# print(alreadyVoted.age , alreadyVoted.gender , alreadyVoted.profession)
 			if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
 				giveData["noData"] = True
 			else:
 				giveData["allData"] = True
 		giveData["sessionKey"] = sessionKey
 		giveData["choice"] = choiceId
-		# print(giveData)
 		if user_data:
-			save_user_vote_data(user_data,alreadyVoted)
+			#save_user_vote_data(user_data,alreadyVoted)
+			extra_data = {}
+			alreadyVoted = VoteApi.objects.get(pk=alreadyVoted.id)
+			for key,val in user_data.items():
+				if hasattr(alreadyVoted, key):
+					setattr(alreadyVoted, key, val)
+				else:
+					extra_data[key] = val
+			if extra_data:
+				alreadyVoted.user_data = str(extra_data)
+			alreadyVoted.save()
 		return giveData
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()

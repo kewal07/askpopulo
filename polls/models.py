@@ -241,11 +241,12 @@ class SurveyWithCategory(models.Model):
 	def save(self, *args, **kwargs):
 		super(SurveyWithCategory, self).save(*args, **kwargs)
 
-# class SurveySection(models.Model):
-# 	section_name = models.CharField(max_length=64)
-# 	section_id = models.IntegerField(blank=True,null=True,default=0)
-# 	def __str__(self):
-# 		return self.section_name+"---"+self.section_id
+class SurveySection(models.Model):
+	sectionName = models.CharField(max_length=64)
+	sectionOrder = models.IntegerField()
+	survey = models.ForeignKey(Survey)
+	def __str__(self):
+		return self.section_name+"---"+self.section_order
 
 class Survey_Question(models.Model):
 	survey = models.ForeignKey(Survey)
@@ -255,7 +256,7 @@ class Survey_Question(models.Model):
 	mandatory = models.BooleanField(default=0)
 	min_value  = models.IntegerField(default=0)
 	max_value = models.IntegerField(default=10)
-	section_name = models.CharField(max_length=64,blank=True,null=True,default=None)
+	section = models.ForeignKey(SurveySection,null=True,default=None)
 	def __str__(self):
 		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 
