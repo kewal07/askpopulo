@@ -227,7 +227,7 @@
 														<tr>
 															<th> {{ choice.choice_text }} </th>
 															{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
-																<td> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ choice.id }}"> </td>
+																<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ choice.id }}"> </td>
 															{% endfor %}
 														</tr>
 													{% endfor %}
@@ -365,6 +365,10 @@
 		</div>
 	</section>
 	<script type="text/javascript">
+		function handleRadioRow(el) {
+    		var radioBtn = $(el).find('input').first();
+    		radioBtn.prop('checked',true);
+  		}
 		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 		{% if user.is_authenticated %}
 			var disqus_shortname = 'askbypoll';
