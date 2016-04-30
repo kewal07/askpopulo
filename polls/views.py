@@ -2735,8 +2735,9 @@ def excel_view(request):
 						if vote:
 							answer_text = str(c_index+1)
 							user_data = get_user_data_from_api(vote[0])
-							extra_data = ast.literal_eval(vote[0].user_data)
-							user_data.update(extra_data)
+							if vote[0].user_data:
+								extra_data = ast.literal_eval(vote[0].user_data)
+								user_data.update(extra_data)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
@@ -2745,8 +2746,9 @@ def excel_view(request):
 						if vote:
 							answer_text = 1
 							user_data = get_user_data_from_api(vote[0])
-							extra_data = ast.literal_eval(vote[0].user_data)
-							user_data.update(extra_data)
+							if vote[0].user_data:
+								extra_data = ast.literal_eval(vote[0].user_data)
+								user_data.update(extra_data)
 						answer_texts.append(answer_text)
 						excel_texts.append(excel_text)
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
