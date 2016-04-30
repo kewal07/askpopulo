@@ -1905,12 +1905,11 @@ class SurveyVoteView(BaseViewDetail):
 		context['polls_section_dict'] = polls_section_dict
 		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
 		context['unique_key'] = unique_key
+		print(context)
 		return context
 
 	def post(self, request, *args, **kwargs):
 		try:
-			print(self.request.POST)
-			print(request.POST)
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
@@ -2015,6 +2014,12 @@ class SurveyVoteView(BaseViewDetail):
 						return HttpResponse(json.dumps(data),content_type='application/json')
 					else:
 						if saveRequired:
+							if user_data['email']:
+								votedCheck = VoteApi.objects.filter(question=question, email=user_data['email'])
+								if votedCheck:
+									data["success"]="You have already voted on this survey"
+									data["res"]={}
+									return HttpResponse(json.dumps(data),content_type='application/json')
 							answer_text = None
 							choiceId = None
 							res_data = None
@@ -2030,11 +2035,9 @@ class SurveyVoteView(BaseViewDetail):
 									choice = Choice.objects.get(pk=int(choiceId))
 									votecolumn = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
 									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
-									#res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
 							else:
 								for choiceId in choice_list:
 									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
-									#res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
 									if que_type == "radio":
 										break
 							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
@@ -3474,9 +3477,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 		giveData["sessionKey"] = sessionKey
 		giveData["choice"] = choiceId
 		if user_data:
-			#save_user_vote_data(user_data,alreadyVoted)
 			extra_data = {}
-			#alreadyVoted = VoteApi.objects.get(pk=alreadyVoted.id)
 			for key,val in user_data.items():
 				if hasattr(alreadyVoted, key):
 					setattr(alreadyVoted, key, val)
