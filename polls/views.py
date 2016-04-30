@@ -1288,7 +1288,6 @@ class AccessDBView(BaseViewList):
 				response_dic = {}
 				all_rating = 0
 				total_votes = 0
-				# print(min_age,max_age,gender,profession)
 				total_votes_extra = 0
 				choices = []
 				survey_poll = Survey_Question.objects.filter(question_id=pollId)
@@ -1373,13 +1372,10 @@ class AccessDBView(BaseViewList):
 									if add_cnt:
 										if questionType == 'matrixrating':
 											voteColumn = vote.votecolumn.id
-											print("VoteColumn", voteColumn)
 											for column in choice_dic["columns"]:
 												for i in column:
-													print(i)
 													if i == voteColumn:
-														column[i] += 1
-												
+														column[i] += 1	
 										choice_dic["val"] += 1
 										total_votes += 1
 								choice_dic["extra_val"] += 1
@@ -1829,10 +1825,8 @@ class SurveyVoteView(BaseViewDetail):
 			)
 			context['ssoData'] = ssoData
 			question_user_vote = SurveyVoted.objects.filter(user=user,survey=context['survey'])
-			#print(question_user_vote,"print(question_user_vote)")
 			if question_user_vote:
 				question_user_vote = question_user_vote[0]
-				#print(question_user_vote)
 				if question_user_vote.survey_question_count == question_user_vote.user_answer_count:
 					user_already_voted = True
 			context['user_already_voted'] = user_already_voted
@@ -1903,11 +1897,11 @@ class SurveyVoteView(BaseViewDetail):
 				polls_section_dict[tempSectionName].append(poll_dict)
 			else:
 				polls_section_dict['Common'].append(poll_dict)
-			# for i,y in enumerate(sections):
-			# 	if x.section_name == y['sectionName'] :
-			# 		polls_section_dict.setdefault(y['section_name'],[]).append(poll_dict)
-			# print(polls_section_dict)	
 			context['polls'].append(poll_dict)
+			
+		if(not polls_section_dict['Common']):
+			polls_section_dict.pop('Common',None)
+
 		context['polls_section_dict'] = polls_section_dict
 		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
 		context['unique_key'] = unique_key
