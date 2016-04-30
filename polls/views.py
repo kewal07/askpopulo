@@ -1910,6 +1910,7 @@ class SurveyVoteView(BaseViewDetail):
 	def post(self, request, *args, **kwargs):
 		try:
 			print(self.request.POST)
+			print(request.POST)
 			user = request.user
 			questionId = request.POST.get('question')
 			question = Question.objects.get(pk=questionId)
@@ -2015,6 +2016,7 @@ class SurveyVoteView(BaseViewDetail):
 						if saveRequired:
 							answer_text = None
 							choiceId = None
+							res_data = None
 							votecolumn = None
 							if choice_list_comment:
 								answer_text = choice_list_comment[0]
