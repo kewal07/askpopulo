@@ -91,9 +91,7 @@ class IndexView(BaseViewList):
 
 	def render_to_response(self, context, **response_kwargs):
 		response = super(IndexView, self).render_to_response(context, **response_kwargs)
-		# print(self.request.COOKIES.get("location"))
 		if not self.request.COOKIES.get("location"):
-			# print("setting location cookie")
 			response.set_cookie("location","global")
 		return response
 
@@ -119,8 +117,6 @@ class IndexView(BaseViewList):
 		if request.COOKIES.get("location","global").lower() != "global":
 			global_location = request.COOKIES.get("location").lower()
 			country_list = polls.continent_country_dict.continent_country_dict.get(global_location)
-		# print(global_location)
-		# print(country_list)
 
 		if request.path.endswith('category') and not request.GET.get('category'):
 			mainData = Category.objects.all()
@@ -3441,7 +3437,6 @@ def save_user_vote_data(user_data,alreadyVoted):
 
 def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
 	try:
-		print(request, pollId, choiceId, answer_text, user_data, unique_key, votecolumn, forced_add)
 		ipAddress = getIpAddress(request)
 		if not request.session.exists(request.session.session_key):
 			request.session.create()
@@ -3460,7 +3455,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 			
 		isSurveyQuestion = Survey_Question.objects.filter(question=question)
 		
-		if(isSurveyQuestion and (not isSurveyQuestion.question_type == 'checkbox' and not isSurveyQuestion.question_type == 'matrixrating')):
+		if(isSurveyQuestion[0] and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
 			if(user_data['email']	):
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
@@ -3497,7 +3492,6 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 
 
 def save_poll_vote(user,question,choice,queBet=None):
-	#print("save_poll_vote")
 	try:
 		questionId = int(question)
 		question = Question.objects.get(pk=questionId)
@@ -3636,7 +3630,6 @@ def save_references(referral_user, poll = None, survey = None, referred_user = N
 class ArticleView(BaseViewList):
 
 	def get_template_names(self, **kwargs):
-		# print(self.request.path)
 		template_name = self.request.path.replace("/article/","") + '.html'
 		return [template_name]
 
@@ -3662,7 +3655,6 @@ class AskByPollBusinessCategoryView(BaseViewList):
 		import polls.abp_business_constants as abp_business_constants
 		for category_dict in abp_business_constants.solution_caption:
 			for key, val in category_dict.items():
-				print(category_name,key,key == category_name)
 				if key == category_name:
 					context["details"] = val["details"]
 					context["brief"] = val["brief"]
@@ -3695,7 +3687,6 @@ def get_index_question_detail(request,mainquestion,user,sub_que,curtime,company_
 	followers = [ x.user for x in Follow.objects.filter(target_id=mainquestion.user_id,deleted_at__isnull=True) ]
 	following = [ x.target for x in Follow.objects.filter(user_id=mainquestion.user_id,deleted_at__isnull=True) ]
 	data['connection'] = len(followers) + len(following)
-	# print(data['connection'])
 	data ['question'] = mainquestion
 	subscribers = mainquestion.subscriber_set.count()
 	data['votes'] = get_number_votes(mainquestion)
@@ -3812,10 +3803,8 @@ class WidgetsView(BaseViewList):
 	context_object_name = "data"
 	def get_template_names(self):
 		template_name = "widgets/index.html"
-		print(template_name)
 		return [template_name]
 	def get_queryset(self):
-		print("widgets")
 		webWidgets = ["basic"]
 		feedbackWidgets = ["feedback1", "feedback2"]
 		webTemplatesFinal = []
@@ -3832,7 +3821,6 @@ class WidgetsView(BaseViewList):
 		context["demo_poll_feedback"] = Question.objects.get(id=3)
 		mypolls = Question.objects.filter(user_id=self.request.user.id)
 		context["mypolls"] = mypolls
-		print(context)
 		return context
 
 class WebsiteWidgetTemplateView(generic.ListView):
