@@ -92,10 +92,12 @@
 						{% endfor %}
 					</p>
 					{% endif %}
-					{% if demo_list|length > 0 %}
+					
+					{% if demo_list|length > 0 and user.is_authenticated %}
 					<p class="question_description_header">
 						<span class="question_description_header_span">Demographics</span>
 					</p>
+					{% endif %}
 					<div class="question_description" id="demographic-div">
 						<form class="" method="POST" id="demographic">
 							{% if not user.is_authenticated %}
@@ -143,7 +145,6 @@
 							{% endfor %}
 						</form>
 					</div>
-					{% endif %}
 					<div class="survey-questions">
 						{% for key,value in polls_section_dict.items %}
 							{% if key == 'NULL' %}
