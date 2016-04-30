@@ -1928,9 +1928,9 @@ class SurveyVoteView(BaseViewDetail):
 				choice_list = []
 				if choices:
 					for choice in choices:
-						print("LIST",request.POST.getlist(str(choice.id)))
-						tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
-						choice_list.append(tempChoiceColumn)
+						if request.POST.getlist(str(choice.id)):
+							tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
+							choice_list.append(tempChoiceColumn)
 			else:
 				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
