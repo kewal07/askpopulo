@@ -3465,7 +3465,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
 		giveData = {}				
-		if not alreadyVoted and forced_add:
+		if not alreadyVoted or forced_add:
 			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
