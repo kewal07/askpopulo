@@ -1372,10 +1372,12 @@ class AccessDBView(BaseViewList):
 									add_cnt = get_if_choice_vote_add(user_data,extra_data)
 									if add_cnt:
 										if questionType == 'matrixrating':
-											voteColumn = vote.votecolumn
+											voteColumn = vote.votecolumn.id
+											print("VoteColumn", voteColumn)
 											for column in choice_dic["columns"]:
 												for i in column:
-													if i == voteColumn.column_id:
+													print(i)
+													if i == voteColumn:
 														column[i] += 1
 												
 										choice_dic["val"] += 1
@@ -1794,7 +1796,6 @@ class SurveyVoteView(BaseViewDetail):
 		return [template_name]
 
 	def get_context_data(self, **kwargs):
-
 		context = super(SurveyVoteView, self).get_context_data(**kwargs)
 		user = self.request.user
 		user_already_voted = False
@@ -2038,7 +2039,6 @@ class SurveyVoteView(BaseViewDetail):
 									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
 									if que_type == "radio":
 										break
-							print(res_data)
 							data["res"] = res_data
 						data["success"]=success_msg_text
 						return HttpResponse(json.dumps(data),content_type='application/json')
@@ -3429,7 +3429,6 @@ def save_user_vote_data(user_data,alreadyVoted):
 				setattr(alreadyVoted, key, val)
 			else:
 				extra_data[key] = val
-		# print(extra_data)
 		if extra_data:
 			alreadyVoted.user_data = str(extra_data)
 		print("ALREADY VOTED", alreadyVoted)
@@ -3449,14 +3448,16 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 			choiceId = settings.ZERO_CHOICE
 		votedChoice = Choice.objects.get(pk=choiceId)
 		src = request.GET.get('src','')
-		alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src)
-		if unique_key:
+		isSurveyQuestion = Survey_Question.objects.filter(question=question)
+		alreadyVoted = None
+		
+		alreadyVoted = VoteApi.objects.filter(question=question, choice_id=choiceId, ipAddress=ipAddress, session=sessionKey, src=src)
+		
+		if unique_key and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
 			
-		isSurveyQuestion = Survey_Question.objects.filter(question=question)
-		
 		if(isSurveyQuestion[0] and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
-			if(user_data['email']	):
+			if(user_data.get('email','')):
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
 		giveData = {}				
@@ -3465,7 +3466,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
-		else:
+		elif alreadyVoted:
 			alreadyVoted = alreadyVoted[0]
 			if not (alreadyVoted.age and alreadyVoted.gender and alreadyVoted.profession):
 				giveData["noData"] = True

@@ -518,6 +518,9 @@
 										remove_disable = true;
 									}
 								}
+								$('html, body').animate({
+									scrollTop: $(".errorlist").offset().top-200
+								}, 1000);
 							}
 							if(ajax_calls == form_n && remove_disable){
 								subButElem.removeAttr("disabled");
