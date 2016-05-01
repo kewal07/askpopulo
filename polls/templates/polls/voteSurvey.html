@@ -435,9 +435,17 @@
 		{	
 
 			$(".vertical-options,.horizontal-options").click(function(){
-				var radioElem = $(this).children().first().attr("id");
-				console.log(radioElem);
-				$("#"+radioElem).attr('checked', 'checked');
+				var input = $(this).find('input').first();
+				
+				if(input.attr('type') === 'checkbox'){
+					if($('#'+input.attr('id')).is(':checked')){
+						input.prop('checked', false);
+					} else {
+						input.prop('checked', true);
+					}
+				} else if(input.attr('type') === 'radio') {
+					input.prop('checked', true);
+				}				
 				var optionsFormId = $(this).parent().attr("id");
 				$("#"+optionsFormId+" p").removeClass("selectedOption");
 				$(this).addClass("selectedOption");
@@ -445,11 +453,9 @@
 
 			$(".next-section").click(function(){
 				var elementId = $(this).attr("id").split("---")[1];
-				console.log(elementId);
 				$(this).hide();
 				$(this).parent().next().toggle();
 				var newElem = (parseInt(elementId)+1).toString();
-				console.log(newElem);
 				$('html, body').animate({
 				        scrollTop: $("#section---"+newElem).offset().top-200
 				    }, 1000);
