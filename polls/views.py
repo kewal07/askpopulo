@@ -1931,6 +1931,8 @@ class SurveyVoteView(BaseViewDetail):
 						if request.POST.getlist(str(choice.id)):
 							tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
 							choice_list.append(tempChoiceColumn)
+						else:
+							data[str(questionId)] = "All the options in Matrix Rating Question in mandatory"
 			else:
 				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')

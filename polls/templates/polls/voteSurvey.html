@@ -387,7 +387,6 @@
 		{% endif %}
 		var continue_loop = true;
 		function saveVotes(){
-			console.log("called save votes too")
 			var form_n = $('.optionsForm').length;
 			var ajax_calls = 0;
 			$('.optionsForm').each(function(){
@@ -434,17 +433,6 @@
 		}
 		$(document).ready(function()
 		{	
-			// $(".choices").click(function(){
-			// 	console.log("Ok")
-			// 	var optionsFormId = $(this).parent().parent().attr("id");
-			// 	$("#"+optionsFormId+" p").removeClass("selectedOption");
-			// 	$(this).parent().addClass("selectedOption");
-			//  });
-
-			// $(".vertical-options").click(function(){
-			// 	$(this).children().first().click();
-			// 	$("#radio_1").attr('checked', 'checked');
-			// });
 
 			$(".vertical-options,.horizontal-options").click(function(){
 				var radioElem = $(this).children().first().attr("id");
