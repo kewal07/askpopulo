@@ -2691,6 +2691,8 @@ def excel_view(request):
 						if vote:
 							answer_text = str(c_index+1)
 							user_data = ast.literal_eval(vote[0].user_data)
+					answer_texts.append(answer_text)
+					excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
@@ -2723,7 +2725,7 @@ def excel_view(request):
 					additionalComment = VoteText.objects.filter(user=voted.user, question=question)
 					if additionalComment:
 						answer_texts.append(additionalComment[0].answer_text)
-					else additionalComment:
+					else:
 						answer_texts.append("No Comments")
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
@@ -2765,6 +2767,8 @@ def excel_view(request):
 							if vote[0].user_data:
 								extra_data = ast.literal_eval(vote[0].user_data)
 								user_data.update(extra_data)
+							answer_texts.append(answer_text)
+							excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
