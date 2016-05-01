@@ -2725,8 +2725,9 @@ def excel_view(request):
 					if vote_text:
 						answer_text = vote_text[0].answer_text
 						user_data = get_user_data_from_api(vote_text[0])
-						extra_data = ast.literal_eval(vote_text[0].user_data)
-						user_data.update(extra_data)
+						if vote_text[0].user_data:
+							extra_data = ast.literal_eval(vote_text[0].user_data)
+							user_data.update(extra_data)
 						if question_type == "rating":
 							answer_text += "%"
 				elif question_type == "radio":
