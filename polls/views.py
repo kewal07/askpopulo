@@ -2718,12 +2718,11 @@ def excel_view(request):
 							#user_data = ast.literal_eval(vote[0].user_data)
 						answer_texts.append(answer_text)
 						excel_texts.append(excel_text)
-				print("IS FEEDBACK1",question.is_feedback)
 				if survey_question.add_comment:
 					excel_texts.append("Comments")
-					additionalComment = VoteText.objects.get(user=voted.user, question=question)
+					additionalComment = VoteText.objects.filter(user=voted.user, question=question)
 					if additionalComment:
-						answer_texts.append(additionalComment)
+						answer_texts.append(additionalComment[0].answer_text)
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
 					for ans_index,answer in enumerate(answer_texts):
