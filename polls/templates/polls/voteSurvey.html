@@ -268,7 +268,7 @@
 											{% else %}
 												<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
 											{% endif %}
-											{% if question.addComment and question.type == "radio" %}
+											{% if question.addComment %}
 												<p>Any Other Comments</p>
 												<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 											{% endif %}
@@ -434,16 +434,18 @@
 		$(document).ready(function()
 		{	
 
-			$(".vertical-options,.horizontal-options").click(function(){
+			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
 				
-				if(input.attr('type') === 'checkbox'){
-					if($('#'+input.attr('id')).is(':checked')){
+				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
+					if(input.is(':checked')){
 						input.prop('checked', false);
 					} else {
 						input.prop('checked', true);
 					}
-				} else if(input.attr('type') === 'radio') {
+				} 
+				
+				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
 					input.prop('checked', true);
 				}				
 				var optionsFormId = $(this).parent().attr("id");
