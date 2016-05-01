@@ -2723,6 +2723,8 @@ def excel_view(request):
 					additionalComment = VoteText.objects.filter(user=voted.user, question=question)
 					if additionalComment:
 						answer_texts.append(additionalComment[0].answer_text)
+					else additionalComment:
+						answer_texts.append("No Comments")
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
 					for ans_index,answer in enumerate(answer_texts):
@@ -2790,13 +2792,13 @@ def excel_view(request):
 								user_data.update(extra_data)
 						answer_texts.append(answer_text)
 						excel_texts.append(excel_text)
-				print("IS FEEDBACK",question.is_feedback)
 				if survey_question.add_comment:
 					excel_texts.append("Comments")
 					additionalComment = VoteApi.objects.filter(unique_key=unique_key, question=question)
 					if additionalComment:
 						answer_texts.append(additionalComment[0].answer_text)
-
+					else:
+						answer_texts.append("No Comments")
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
 					for ans_index,answer in enumerate(answer_texts):
