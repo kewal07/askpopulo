@@ -2794,9 +2794,9 @@ def excel_view(request):
 				print("IS FEEDBACK",question.is_feedback)
 				if survey_question.add_comment:
 					excel_texts.append("Comments")
-					additionalComment = VoteApi.objects.filter(unique_key=unique_key, question=question)[0].answer_text
+					additionalComment = VoteApi.objects.filter(unique_key=unique_key, question=question)
 					if additionalComment:
-						answer_texts.append(additionalComment)
+						answer_texts.append(additionalComment[0].answer_text)
 
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
