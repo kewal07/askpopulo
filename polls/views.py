@@ -2699,6 +2699,17 @@ def excel_view(request):
 							user_data = ast.literal_eval(vote[0].user_data)
 						answer_texts.append(answer_text)
 						excel_texts.append(excel_text)
+				elif question_type == "matrixrating":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
+						column = VoteColumn.objects.get(user_id=vote_user.id,vote=vote,choice=choice)
+						if column:
+							answer_text = MatrixRatingColumnLabels.objects.get(pk=column.column_id).columnLabel
+							user_data = ast.literal_eval(vote[0].user_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
 				i,j = write_demographics_into_excel(ws1,user_data,demo_list,i)
 				if answer_texts:
 					for ans_index,answer in enumerate(answer_texts):
@@ -2725,8 +2736,9 @@ def excel_view(request):
 					if vote_text:
 						answer_text = vote_text[0].answer_text
 						user_data = get_user_data_from_api(vote_text[0])
-						extra_data = ast.literal_eval(vote_text[0].user_data)
-						user_data.update(extra_data)
+						if vote_text[0].user_data:
+							extra_data = ast.literal_eval(vote_text[0].user_data)
+							user_data.update(extra_data)
 						if question_type == "rating":
 							answer_text += "%"
 				elif question_type == "radio":
@@ -2745,6 +2757,21 @@ def excel_view(request):
 						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
 						if vote:
 							answer_text = 1
+							user_data = get_user_data_from_api(vote[0])
+							if vote[0].user_data:
+								extra_data = ast.literal_eval(vote[0].user_data)
+								user_data.update(extra_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				elif question_type == "matrixrating":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						column = vote[0].votecolumn_id
+						print("COLUMN", column)
+						if column:
+							answer_text = MatrixRatingColumnLabels.objects.get(pk=column).columnLabel
 							user_data = get_user_data_from_api(vote[0])
 							if vote[0].user_data:
 								extra_data = ast.literal_eval(vote[0].user_data)
