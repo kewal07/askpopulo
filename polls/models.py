@@ -246,7 +246,7 @@ class SurveySection(models.Model):
 	sectionOrder = models.IntegerField()
 	survey = models.ForeignKey(Survey)
 	def __str__(self):
-		return self.section_name+"---"+self.section_order
+		return self.sectionName+"---"+self.sectionOrder
 
 class Survey_Question(models.Model):
 	survey = models.ForeignKey(Survey)
@@ -258,7 +258,7 @@ class Survey_Question(models.Model):
 	max_value = models.IntegerField(default=10)
 	section = models.ForeignKey(SurveySection,null=True,default=None)
 	def __str__(self):
-		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
+		return self.section.sectionName+"_"+self.question.question_text+"_"+self.question_type
 
 class SurveyVoted(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
