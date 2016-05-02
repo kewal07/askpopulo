@@ -327,14 +327,16 @@
 								// document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
 
 								{% if survey.expiry and not expired %}
-								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} , {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
+
+								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
 								var ampm = expiryDate.getHours() > 12 ? 'pm' : 'am';
 								var hours = expiryDate.getHours()%12;
 								var minutes = expiryDate.getMinutes();
 								hours = hours ? hours : 12;
 								minutes = minutes < 10 ? '0'+minutes : minutes;
 								
-								var expiryDateString = expiryDate.getDate()+'/'+expiryDate.getMonth()+'/'+expiryDate.getFullYear()+' '+hours+':'+minutes+' '+ampm;
+								var month = expiryDate.getMonth()+1;
+								var expiryDateString = expiryDate.getDate()+'/'+month+'/'+expiryDate.getFullYear()+' '+hours+':'+minutes+' '+ampm;
 								document.getElementById('{{ survey.id }}expirydate').innerHTML = expiryDateString;
 								$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
 								{% else %}
