@@ -1953,7 +1953,7 @@ class SurveyVoteView(BaseViewDetail):
 						data["error"] = "Demographics is mandatory"
 			if not choice_list:
 				if mandatory and not already_voted:
-					data[str(questionId)] = "Please enter an answer"
+					data[str(questionId)] = "Please Enter Your Response"
 			if user.is_authenticated():
 				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
 				if choice_list:
