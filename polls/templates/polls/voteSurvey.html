@@ -327,7 +327,7 @@
 								// document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
 
 								{% if survey.expiry and not expired %}
-								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }}, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
+								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} , {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
 								var ampm = expiryDate.getHours() > 12 ? 'pm' : 'am';
 								var hours = expiryDate.getHours()%12;
 								var minutes = expiryDate.getMinutes();
@@ -433,8 +433,12 @@
 		}
 		$(document).ready(function()
 		{	
+			$(".choice-text").click(function(event){
+				event.preventDefault();
+			})
 
 			$(".vertical-options,.horizontal-options").click(function(event){
+				
 				var input = $(this).find('input').first();
 				
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
