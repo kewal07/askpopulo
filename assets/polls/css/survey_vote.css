@@ -108,7 +108,6 @@ span.section-name {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: -12%;
     font-size: 1.5rem;
     margin-bottom:1rem;
 }
@@ -335,10 +334,6 @@ th.question-table-heading {
 	}
 	.question_description{
 		font-size: .95rem !important;
-	}
-	.surveySubmit, .next-section{
-        bottom:-5%;
-		margin-bottom: 1rem;
 	}
     .text-ans{
         font-size:1rem;

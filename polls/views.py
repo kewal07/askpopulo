@@ -1932,7 +1932,7 @@ class SurveyVoteView(BaseViewDetail):
 							tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
 							choice_list.append(tempChoiceColumn)
 						else:
-							data[str(questionId)] = "All the options in Matrix Rating Question in mandatory"
+							data[str(questionId)] = "All Options in Matrix Rating Question Are Mandatory"
 			else:
 				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
@@ -2691,7 +2691,10 @@ def excel_view(request):
 						if vote:
 							answer_text = str(c_index+1)
 							user_data = ast.literal_eval(vote[0].user_data)
-					answer_texts.append(answer_text)
+					if answer_text:
+						answer_texts.append(answer_text)
+					else:
+						answer_texts.append(0)
 					excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
@@ -2767,8 +2770,11 @@ def excel_view(request):
 							if vote[0].user_data:
 								extra_data = ast.literal_eval(vote[0].user_data)
 								user_data.update(extra_data)
-							answer_texts.append(answer_text)
-							excel_texts.append(excel_text)
+					if answer_text:
+						answer_texts.append(answer_text)
+					else:
+						answer_texts.append(0)
+					excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
