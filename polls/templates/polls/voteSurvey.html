@@ -100,7 +100,7 @@
 					{% endif %}
 					<div class="question_description" id="demographic-div">
 						<form class="" method="POST" id="demographic">
-							{% if not user.is_authenticated %}
+							{% if not user.is_authenticated and not survey.id = 54 and not survey.id = 55 %}
 								<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
 									<option value="16"><19</option>
@@ -396,7 +396,8 @@
 				var form_data = $(this).serialize();
 				var demo_data = $("#demographic").serialize();
 				form_data += '&' + 'saveRequired=True';
-				var referral = getQueryParameterByName("referral")
+				//var referral = getQueryParameterByName("referral");
+				var referral = "";
 				form_data += '&' + 'referral_id='+referral;
 				form_data += '&' + demo_data;
 				var queid = elemid.replace("optionsForm","");
@@ -415,13 +416,13 @@
 									var res = response.res;
 									var votedSession = res.sessionKey;
 									var votedChoice = res.choice;
-									saveCookie(cookie_prepend,'VOTED_'+queid,true);
-									saveCookie(cookie_prepend,'VOTED_SESSION_'+queid,votedSession);
-									saveCookie(cookie_prepend,'VOTED_CHOICE_'+queid,votedChoice);
+									//saveCookie(cookie_prepend,'VOTED_'+queid,true);
+									//saveCookie(cookie_prepend,'VOTED_SESSION_'+queid,votedSession);
+									//saveCookie(cookie_prepend,'VOTED_CHOICE_'+queid,votedChoice);
 								}
 								if(ajax_calls == form_n){
 									if("res" in response)
-										saveCookie(cookie_prepend,'SURVEY_'+{{ survey.id }},true);
+										//saveCookie(cookie_prepend,'SURVEY_'+{{ survey.id }},true);
 									confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
 								}
 							}else{

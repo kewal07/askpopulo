@@ -2016,7 +2016,7 @@ class SurveyVoteView(BaseViewDetail):
 						return HttpResponse(json.dumps(data),content_type='application/json')
 					else:
 						if saveRequired:
-							if user_data['email']:
+							if 'email' in user_data:
 								votedCheck = VoteApi.objects.filter(question=question, email=user_data['email'])
 								if votedCheck:
 									data["success"]="You have already voted on this survey"
@@ -2929,18 +2929,19 @@ def write_to_description(ws0, obj_type="survey"):
 
 def get_age_group_excel(age):
 	res = -1
-	if age <= 19:
-		res = 1
-	elif age >19 and age <=25:
-		res = 2
-	elif age >25 and age <=30:
-		res = 3
-	elif age >30 and age <= 35:
-		res = 4
-	elif age >35 and age <= 50:
-		res = 5
-	elif age > 50:
-		res = 6
+	if age:
+		if age <= 19:
+			res = 1
+		elif age >19 and age <=25:
+			res = 2
+		elif age >25 and age <=30:
+			res = 3
+		elif age >30 and age <= 35:
+			res = 4
+		elif age >35 and age <= 50:
+			res = 5
+		elif age > 50:
+			res = 6
 	return res
 
 class PDFView(generic.DetailView):
