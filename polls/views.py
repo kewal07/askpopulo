@@ -966,7 +966,6 @@ class MyUnsubscribeView(BaseViewList):
 			if(('emptyemail' in error) or ('nouser' in error)):
 				return HttpResponse(json.dumps(error), content_type='application/json')
 			else:
-				print("here")
 				error['success'] = "You are successfully unsubscribed from all email notifications."
 				return HttpResponse(json.dumps(error), content_type='application/json')
 
@@ -1561,7 +1560,6 @@ class CreateSurveyView(BaseViewList):
 				# Not taking id now but ideally should take some id maybe ?
 				# poll['sectionId'] = post_data.get("sectionId")
 				poll['sectionName'] = post_data.get("qSect---"+str(que_index)).strip()
-				print(poll['sectionName'])
 				columns = []
 				choices = []
 				images = []
@@ -1905,7 +1903,6 @@ class SurveyVoteView(BaseViewDetail):
 		context['polls_section_dict'] = polls_section_dict
 		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
 		context['unique_key'] = unique_key
-		print(context)
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -2320,7 +2317,6 @@ def vote_embed_poll(request):
 		else:
 			req = {}
 		req['sessionKey'] = sessionKey
-		print(req)
 		response = json.dumps(req)
 		response = callback + '(' + response + ');'
 		return HttpResponse(response,content_type="application/json")
@@ -3483,18 +3479,15 @@ def save_extendeduser_data(newUser,user_data):
 	return newUser
 
 def save_user_vote_data(user_data,alreadyVoted):
-	print(user_data, alreadyVoted)
 	if user_data:
 		extra_data = {}
 		for key,val in user_data.items():
 			if hasattr(alreadyVoted, key):
-				print("KEY",key)
 				setattr(alreadyVoted, key, val)
 			else:
 				extra_data[key] = val
 		if extra_data:
 			alreadyVoted.user_data = str(extra_data)
-		print("ALREADY VOTED", alreadyVoted)
 		alreadyVoted.save()
 
 def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
@@ -3516,10 +3509,10 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 		
 		alreadyVoted = VoteApi.objects.filter(question=question, choice_id=choiceId, ipAddress=ipAddress, session=sessionKey, src=src)
 		
-		if unique_key and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
+		if unique_key and isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
 			
-		if(isSurveyQuestion[0] and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
+		if(isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
 			if(user_data.get('email','')):
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
