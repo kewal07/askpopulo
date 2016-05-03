@@ -292,10 +292,12 @@ ul.menu-ul img{
   position: fixed;
   top: 50%;
   left: 50%;
-  height: 90px;
   margin-top: -50px;
   margin-left: -100px;
   display: none;
+  background: white;
+  padding: 1rem;
+  text-align: center;
 }
 
 #loading-gif{
