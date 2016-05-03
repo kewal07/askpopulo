@@ -258,7 +258,7 @@ class Survey_Question(models.Model):
 	max_value = models.IntegerField(default=10)
 	section = models.ForeignKey(SurveySection,null=True,default=None)
 	def __str__(self):
-		return self.section.sectionName+"_"+self.question.question_text+"_"+self.question_type
+		return self.survey.survey_name+"_"+self.question.question_text+"_"+self.question_type
 
 class SurveyVoted(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -529,4 +529,6 @@ class VoteColumn(models.Model):
 	vote = models.ForeignKey(Vote)
 	choice = models.ForeignKey(Choice)
 	column = models.ForeignKey(MatrixRatingColumnLabels)
+	def __str__(self):
+		return self.question.question_text+"__"+self.choice.choice_text+"__"+self.column.columnLabel
 
