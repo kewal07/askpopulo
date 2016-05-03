@@ -133,6 +133,19 @@ ul#foodStartUpsShare{
 ul#foodStartUpsShare li{
 	display: inline-block;
 }
+iframe#youtube-embed{
+	width: 50%;
+    display: block;
+    margin: 0 auto;
+    height: 365px;
+}
+iframe#fb-post{
+	width: 50%;
+    display: block;
+    margin: 0 auto;
+    height: 365px;
+	height: 250px;
+}
 @media only screen and (max-width: 767px){
 	#content p,.particle-feature-detail p{
 		font-size: 1rem;
@@ -220,5 +233,8 @@ ul#foodStartUpsShare li{
 	}
 	.particle-body li{
 		line-height: 24px;
+	}
+	iframe#youtube-embed,iframe#fb-post{
+		width:100%;
 	}
 }

@@ -114,7 +114,7 @@ $(document).ready(function(){
 	
 	/* Overlay */
 	/* close overlay call */
-	$("#okay").click(function(){
+	$(".okay").click(function(){
 		closeOverlay();
 	});
 	/* close overlay call end */
@@ -667,7 +667,9 @@ $(document).ready(function(){
 	// contact us overlay end
 });
 
-function saveCookie(prepend,name,val,time=365){
+function saveCookie(prepend,name,val,time){
+	if(typeof time == 'undefined' || time === null)
+		time = 365;
 	var a = new Date();
 	a = new Date(a.getTime() +1000*60*60*24*time);
 	document.cookie = prepend+name+'='+val+'; expires='+a.toGMTString()+';path=/';
@@ -772,7 +774,9 @@ function confirm_redirect_only(olEl,val,url){
 	});
 }
 
-function drawResultTable(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data={}){
+function drawResultTable(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data){
+	if(typeof extra_data == 'undefined' || extra_data === null)
+		extra_data = {};
 	extra_data = JSON.stringify(extra_data);
 	if (typeof graphType === "undefined" || graphType === null) { 
 	    graphType = ""; 
@@ -842,7 +846,9 @@ function drawResultTable(csrf_token,analyse_type,pollId,age,gender,profession,lo
 }
 
 /* Function for charts start */
-function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data={}) {
+function drawPollsChart(csrf_token,analyse_type,pollId,age,gender,profession,location,state, graphType, extra_data) {
+	if(typeof extra_data == 'undefined' || extra_data === null)
+		extra_data = {};
 	// console.log(analyse_type,pollId,age,gender,profession,location);
 	console.log(extra_data);
 	extra_data = JSON.stringify(extra_data);

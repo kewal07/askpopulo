@@ -13,17 +13,19 @@
 			    padding: 7rem 0 3rem 0;
 		}
 		.message {
-		    width: 400px;
+		    width: 90%;
 		    height: 100px;
 		    position: absolute;
-		    top:50%;
+		    top: 70%;
 		    bottom: 0;
 		    left: 0;
 		    right: 0;
-		    margin: auto;
+		    margin: 0 auto;
+		    display: block;
+		    text-align: center;
 		}
 		.thank-you{
-			font-size:2rem;
+			font-size:1.5rem;
 		}
 		@media only screen and (max-width: 768px){
 			html{
@@ -38,7 +40,7 @@
 {% block content %}
 	<section id="content">
 		<div class="message">
-			<p><span class="thank-you">Thank You</span> for Your Response !</p>
+			<p class="thank-you">Thank You for Your Response !</p>
 			<p>We may contact you in future if required.</p>
 		</div>
 	</section>

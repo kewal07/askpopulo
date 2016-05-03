@@ -966,7 +966,6 @@ class MyUnsubscribeView(BaseViewList):
 			if(('emptyemail' in error) or ('nouser' in error)):
 				return HttpResponse(json.dumps(error), content_type='application/json')
 			else:
-				print("here")
 				error['success'] = "You are successfully unsubscribed from all email notifications."
 				return HttpResponse(json.dumps(error), content_type='application/json')
 
@@ -1561,7 +1560,6 @@ class CreateSurveyView(BaseViewList):
 				# Not taking id now but ideally should take some id maybe ?
 				# poll['sectionId'] = post_data.get("sectionId")
 				poll['sectionName'] = post_data.get("qSect---"+str(que_index)).strip()
-				print(poll['sectionName'])
 				columns = []
 				choices = []
 				images = []
@@ -1905,7 +1903,6 @@ class SurveyVoteView(BaseViewDetail):
 		context['polls_section_dict'] = polls_section_dict
 		unique_key = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds() + context['survey'].id
 		context['unique_key'] = unique_key
-		print(context)
 		return context
 
 	def post(self, request, *args, **kwargs):
@@ -1932,7 +1929,7 @@ class SurveyVoteView(BaseViewDetail):
 							tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
 							choice_list.append(tempChoiceColumn)
 						else:
-							data[str(questionId)] = "All the options in Matrix Rating Question in mandatory"
+							data[str(questionId)] = "All Options in Matrix Rating Question Are Mandatory"
 			else:
 				choice_list = request.POST.getlist('choice'+str(questionId))
 			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
@@ -1953,7 +1950,7 @@ class SurveyVoteView(BaseViewDetail):
 						data["error"] = "Demographics is mandatory"
 			if not choice_list:
 				if mandatory and not already_voted:
-					data[str(questionId)] = "Please enter an answer"
+					data[str(questionId)] = "Please Enter Your Response"
 			if user.is_authenticated():
 				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
 				if choice_list:
@@ -2016,7 +2013,7 @@ class SurveyVoteView(BaseViewDetail):
 						return HttpResponse(json.dumps(data),content_type='application/json')
 					else:
 						if saveRequired:
-							if user_data['email']:
+							if 'email' in user_data:
 								votedCheck = VoteApi.objects.filter(question=question, email=user_data['email'])
 								if votedCheck:
 									data["success"]="You have already voted on this survey"
@@ -2320,7 +2317,6 @@ def vote_embed_poll(request):
 		else:
 			req = {}
 		req['sessionKey'] = sessionKey
-		print(req)
 		response = json.dumps(req)
 		response = callback + '(' + response + ');'
 		return HttpResponse(response,content_type="application/json")
@@ -2691,7 +2687,10 @@ def excel_view(request):
 						if vote:
 							answer_text = str(c_index+1)
 							user_data = ast.literal_eval(vote[0].user_data)
-					answer_texts.append(answer_text)
+					if answer_text:
+						answer_texts.append(answer_text)
+					else:
+						answer_texts.append(0)
 					excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
@@ -2767,8 +2766,11 @@ def excel_view(request):
 							if vote[0].user_data:
 								extra_data = ast.literal_eval(vote[0].user_data)
 								user_data.update(extra_data)
-							answer_texts.append(answer_text)
-							excel_texts.append(excel_text)
+					if answer_text:
+						answer_texts.append(answer_text)
+					else:
+						answer_texts.append(0)
+					excel_texts.append(excel_text)
 				elif question_type == "checkbox":
 					for c_index,choice in enumerate(choice_list):
 						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
@@ -2923,18 +2925,19 @@ def write_to_description(ws0, obj_type="survey"):
 
 def get_age_group_excel(age):
 	res = -1
-	if age <= 19:
-		res = 1
-	elif age >19 and age <=25:
-		res = 2
-	elif age >25 and age <=30:
-		res = 3
-	elif age >30 and age <= 35:
-		res = 4
-	elif age >35 and age <= 50:
-		res = 5
-	elif age > 50:
-		res = 6
+	if age:
+		if age <= 19:
+			res = 1
+		elif age >19 and age <=25:
+			res = 2
+		elif age >25 and age <=30:
+			res = 3
+		elif age >30 and age <= 35:
+			res = 4
+		elif age >35 and age <= 50:
+			res = 5
+		elif age > 50:
+			res = 6
 	return res
 
 class PDFView(generic.DetailView):
@@ -3476,18 +3479,15 @@ def save_extendeduser_data(newUser,user_data):
 	return newUser
 
 def save_user_vote_data(user_data,alreadyVoted):
-	print(user_data, alreadyVoted)
 	if user_data:
 		extra_data = {}
 		for key,val in user_data.items():
 			if hasattr(alreadyVoted, key):
-				print("KEY",key)
 				setattr(alreadyVoted, key, val)
 			else:
 				extra_data[key] = val
 		if extra_data:
 			alreadyVoted.user_data = str(extra_data)
-		print("ALREADY VOTED", alreadyVoted)
 		alreadyVoted.save()
 
 def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
@@ -3509,10 +3509,10 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 		
 		alreadyVoted = VoteApi.objects.filter(question=question, choice_id=choiceId, ipAddress=ipAddress, session=sessionKey, src=src)
 		
-		if unique_key and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
+		if unique_key and isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
 			
-		if(isSurveyQuestion[0] and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
+		if(isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
 			if(user_data.get('email','')):
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
