@@ -168,6 +168,9 @@ iframe#fb-post{
 	#content p,.particle-feature-detail p{
 		font-size: 1rem;
 	}
+        .particle-detail{
+		padding:1rem;
+	}
 	.particle-body h1{
 		font-size:1.3rem !important;
 	}
@@ -217,7 +220,6 @@ iframe#fb-post{
 	}
 	.particle-detail img.user-particle{
 		margin-left:1rem;
-		margin-top:1rem;
 	}
 	.particle-body{
 		padding:1rem;

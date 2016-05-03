@@ -114,7 +114,7 @@ $(document).ready(function(){
 	
 	/* Overlay */
 	/* close overlay call */
-	$("#okay").click(function(){
+	$(".okay").click(function(){
 		closeOverlay();
 	});
 	/* close overlay call end */
