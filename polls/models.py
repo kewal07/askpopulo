@@ -429,7 +429,7 @@ class MatrixRatingColumnLabels(models.Model):
 	columnLabel = models.CharField(max_length=200)
 	columnWeight = models.IntegerField(default=1)
 	def __str__(self):
-		return self.columnLabel + "__" + str(self.columnWeight)
+		return self.question.question_text + "__"  + self.columnLabel + "__" + str(self.columnWeight)
 
 class VoteApi(models.Model):
 	choice = models.ForeignKey(Choice)
