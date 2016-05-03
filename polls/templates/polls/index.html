@@ -22,8 +22,11 @@
 					<a href="{% url 'particle:particle_detail' data.primer.id data.primer.particle_slug %}">
 						<div class="featured-col col1">
 							<div class="particle-feature-detail primer-detail">
-								<p class="primer-title">
+								<p class="primer-title" id="primer-featured-title">
 									{{ data.primer.particle_title }}
+								</p>
+								<p class="primer-summary" id="primer-featured-summary">
+									{{ data.primer.particle_summary }}
 								</p>
 							</div>
 						</div>
