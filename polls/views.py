@@ -802,7 +802,7 @@ class CreatePollView(BaseViewList):
 							msg.global_merge_vars = {
 			                    'inviter': request.user.first_name,
 			                    'companyname':request.user.extendeduser.company.name,
-			                    'questionUrl':"localhost:8000"+url,
+			                    'questionUrl':settings.CUSTOM_DOMAIN+url,
 			                    'questionText':question.question_text
 			                }
 							msg.send()

@@ -165,6 +165,9 @@ iframe#fb-post{
 	padding:0rem 1rem;
 }
 @media only screen and (max-width: 767px){
+	#content{
+		padding:6rem 0 3rem 0;
+	}
 	#content p,.particle-feature-detail p{
 		font-size: 1rem;
 	}
