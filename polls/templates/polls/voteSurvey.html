@@ -237,6 +237,17 @@
 											</div>
 										</div>
 									{% else %}
+										{% if question.poll.id|stringformat:"s" == "4047" %}
+											<p class="question_description_header">
+												<span class="question_description_header_span">Chennai</span>
+											</p>
+											<p id="question_description_1" class="question_description"></p>
+											
+											<p class="question_description_header">
+												<span class="question_description_header_span">Greater Chennai</span>
+											</p>
+											<p id="question_description_2" class="question_description"></p>
+										{% endif %}
 										{% for choice in question.poll.choice_set.all %}
 											{% if question.horizontalOptions %}
 												<p class="horizontal-options">
@@ -247,23 +258,36 @@
 													<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
 												{% endif %}
 											{% endif %}
-												<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-												<label class="choice-text" for="choice{{ choice.id }}">
-													{% if choice.choice_image %}
-													<script>
-														$('.choice_image').css({"width":"120px","height":"120px"});
-														$("#choice{{ choice.id }}").hide();
-														var item = $("#choice{{ choice.id}}");
-														item.parent().css({"display":"inline-block"});
-														// console.log($this.parent().next().children().first().show());
-													</script>
-														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-														<!-- {{ choice.choice_text }} -->
+												{% if question.poll.id|stringformat:"s" == "4047" %}
+													{% if choice.choice_text == "Dr.Radhakrishnan Nagar" or choice.choice_text == "Perambur" or choice.choice_text == "Kolathur" or choice.choice_text == "Villivakkam" or choice.choice_text == "Thiru. Vi. Ka. Nagar (SC)" or choice.choice_text == "Egmore (SC)" or choice.choice_text == "Royapuram" or choice.choice_text == "Harbour" or choice.choice_text == "Chepauk-Thiruvallikeni" or choice.choice_text == "Thousand Lights" or choice.choice_text == "Anna Nagar" or choice.choice_text == "Virugambakkam" or choice.choice_text == "Saidapet" or choice.choice_text == "T. Nagar" or choice.choice_text == "Mylapore" or choice.choice_text == "Velachery" %}
+														<script>
+															$('#question_description_1').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /> <label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }} ');
+														</script>
 													{% else %}
-														 {{ choice.choice_text }}
+														<script>
+															$('#question_description_2').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+														<label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }} ');
+														</script>
 													{% endif %}
-												</label>
-												</p>
+												{% else %}
+													<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+													<label class="choice-text" for="choice{{ choice.id }}">
+														{% if choice.choice_image %}
+														<script>
+															$('.choice_image').css({"width":"120px","height":"120px"});
+															$("#choice{{ choice.id }}").hide();
+															var item = $("#choice{{ choice.id}}");
+															item.parent().css({"display":"inline-block"});
+															// console.log($this.parent().next().children().first().show());
+														</script>
+															<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+															<!-- {{ choice.choice_text }} -->
+														{% else %}
+															{{ choice.choice_text }}
+														{% endif %}
+													</label>
+													</p>
+												{% endif %}
 											{% endfor %}
 											{% if question.poll.protectResult and user != question.poll.user %}
 											{% else %}
