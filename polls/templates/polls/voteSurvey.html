@@ -265,8 +265,7 @@
 														</script>
 													{% else %}
 														<script>
-															$('#question_description_2').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-														<label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }} ');
+															$('#question_description_2').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }} ');
 														</script>
 													{% endif %}
 												{% else %}
