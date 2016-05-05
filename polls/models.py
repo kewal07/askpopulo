@@ -246,7 +246,7 @@ class SurveySection(models.Model):
 	sectionOrder = models.IntegerField()
 	survey = models.ForeignKey(Survey)
 	def __str__(self):
-		return self.sectionName+"---"+self.sectionOrder
+		return self.sectionName+"---"+str(self.sectionOrder)
 
 class Survey_Question(models.Model):
 	survey = models.ForeignKey(Survey)
