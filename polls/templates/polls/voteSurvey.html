@@ -246,7 +246,7 @@
 											<p class="question_description_header">
 												<span class="question_description_header_span">Greater Chennai</span>
 											</p>
-											<p id="question_description_2" class="question_description"></p>
+											<p  id="question_description_2" class="question_description"></p>
 										{% endif %}
 										{% for choice in question.poll.choice_set.all %}
 											{% if question.horizontalOptions %}
@@ -261,11 +261,11 @@
 												{% if question.poll.id|stringformat:"s" == "4047" %}
 													{% if choice.choice_text == "Dr.Radhakrishnan Nagar" or choice.choice_text == "Perambur" or choice.choice_text == "Kolathur" or choice.choice_text == "Villivakkam" or choice.choice_text == "Thiru. Vi. Ka. Nagar (SC)" or choice.choice_text == "Egmore (SC)" or choice.choice_text == "Royapuram" or choice.choice_text == "Harbour" or choice.choice_text == "Chepauk-Thiruvallikeni" or choice.choice_text == "Thousand Lights" or choice.choice_text == "Anna Nagar" or choice.choice_text == "Virugambakkam" or choice.choice_text == "Saidapet" or choice.choice_text == "T. Nagar" or choice.choice_text == "Mylapore" or choice.choice_text == "Velachery" %}
 														<script>
-															$('#question_description_1').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /> <label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label>&nbsp&nbsp&nbsp&nbsp');
+															$('#question_description_1').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)"><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label></p>');
 														</script>
 													{% else %}
 														<script>
-															$('#question_description_2').append('<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label>&nbsp&nbsp&nbsp&nbsp');
+															$('#question_description_2').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)" ><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}">{{ choice.choice_text }}</label></p>');
 														</script>
 													{% endif %}
 												{% else %}
@@ -396,6 +396,11 @@
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
   		}
+
+		function handleRadioP(el){
+			var radioBtn = $(el).find('input').first();
+	                radioBtn.prop('checked',true);
+		}
 		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 		{% if user.is_authenticated %}
 			var disqus_shortname = 'askbypoll';
