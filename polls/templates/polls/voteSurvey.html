@@ -86,7 +86,7 @@
 							<span class="question_description_header_span">Description</span>
 					</p>
 					<p class="question_description">
-						{{ survey.description }}
+						{{ survey.description|urlize|url_target_blank }}
 						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 						{% for cat in survey.questionwithcategory_set.all %}
 							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
