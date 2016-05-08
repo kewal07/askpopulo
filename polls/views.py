@@ -3245,7 +3245,6 @@ def get_age_data(user_age,age_dic):
 	return age_dic
 
 def sendPollMail(request):
-	# print(request.POST)
 	try:
 		emailList = request.POST.get('emailList',"").split(';')
 		emailListFromFile = request.POST.get('emailListFromFile',"").split(';')
@@ -3255,7 +3254,6 @@ def sendPollMail(request):
 		savehtml = request.POST.get('savehtml',"false").lower().replace("false","")
 		gettemplate = request.POST.get('gettemplate',"false").lower().replace("false","")
 		emailtemplatename = request.POST.get('widgetType')
-		# print(emailList,emailListFromFile)
 		sender = request.user
 		response = {}
 		digestmod = hashlib.sha1
@@ -3267,7 +3265,6 @@ def sendPollMail(request):
 			emailtemplate = emailtemplate[0]
 		else:
 			emailtemplate = EmailTemplates.objects.get(pk=1)
-		# print(emailList)
 		if not emailList and not gethtml and not savehtml and not gettemplate:
 			response['error'] = "You have not provided any mail Id's"
 			return HttpResponse(json.dumps(response),content_type='application/json')
@@ -3326,12 +3323,10 @@ def sendPollMail(request):
 				return HttpResponse(json.dumps(response),content_type='application/json')
 
 			invalidEmailList = []
-			#print("starting")
 			failEmailList = []
 			for email in emailList:
 				if email.strip():
 					email = email.strip().replace(" ","")
-					#print(email)
 					if not validateEmail(email):
 						invalidEmailList.append(email)
 					else:
@@ -3339,30 +3334,25 @@ def sendPollMail(request):
 						msg = ("%s %s"%(email, str(time.time()))).encode('utf-8')
 						token = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 						extra_context_data["token"] = token
-						# html_message = "' "+html_message+" '"
 						html_message = get_widget_html(poll=question, widgetFolder="emailtemplates", widgetType="basic", extra_context_data=extra_context_data)
 						try:
-							send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
+							send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + 'support@askbypoll.com' + ' >',[email],html_message=html_message)
 							pollToken = PollTokens(token=token,email=email,question=question)
 							pollToken.save()
-							#time.sleep(60)
 						except Exception as e:
 							exc_type, exc_obj, exc_tb = sys.exc_info()
 							print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
 							sendMailAgain = True
 							while sendMailAgain:
 								try:
-									#print(email)
-									send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + request.user.email + ' >',[email],html_message=html_message)
+									send_mail(mail_subject,"", request.user.extendeduser.company.name + '< ' + 'support@askbypoll.com' + ' >',[email],html_message=html_message)
 									pollToken = PollTokens(token=token,email=email,question=question)
 									pollToken.save()
 									sendMailAgain = False
 								except Exception as e:
 									exc_type, exc_obj, exc_tb = sys.exc_info()
 									print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
-			print("end")
 			if invalidEmailList:
-				#print(invalidEmailList)
 				response['fail'] = "%s invalid emails were provided"%(len(invalidEmailList))
 			response['success'] = "Mail sent successfully to %s recipients"%((len(emailList)-len(invalidEmailList)))
 			return HttpResponse(json.dumps(response),content_type='application/json')

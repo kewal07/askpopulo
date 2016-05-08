@@ -27,7 +27,7 @@ urlpatterns = patterns('',
 	url(r'^trivia/',include('trivia.urls',namespace="trivia")),
 	(r'^ckeditor/', include('ckeditor_uploader.urls')),
 	url(r'^404/$',django.views.defaults.page_not_found, ),
-	#url(r'^admin/django-ses/', include('django_ses.urls')),
+	url(r'^admin/django-ses/', include('django_ses.urls')),
 )
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
