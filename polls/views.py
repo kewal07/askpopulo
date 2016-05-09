@@ -905,22 +905,22 @@ def comment_mail(request):
 		to_email.append(User.objects.filter(pk=request.POST.get('to_user_id'))[0].email)
 	for sub_user in Subscriber.objects.filter(question_id=request.POST.get('que_id')):
 		sub_email = sub_user.user.email
-		if sub_email not in to_email and sub_user.user.id != request.user.id:
+		if sub_email not in to_email and sub_user.user.id != request.user.id and sub_user.extendeduser.mailSubscriptionFlag==0:
 			to_email.append(sub_email)
 			que_author.append(sub_user.user.first_name)
-	# print(to_email)
-	doNotSendList = ['reading.goddess@yahoo.com','mrsalyssadandy@gmail.com','ourmisconception@gmail.com','sdtortorici@gmail.com','valeriepetsoasis@aol.com','gladys.adams.ga@gmail.com','denysespecktor@gmail.com','kjsmilesatme@gmail.com']
+	template_name = "polls/templates/polls/emailtemplates/comment_template.html"
+	mail_subject = "AskByPoll : Comment on your Poll"
 	for index,to_mail in enumerate(to_email):
-		if (not to_email in doNotSendList):
-			msg = EmailMessage(subject="Discussion @ AskByPoll", from_email="askbypoll@gmail.com",to=[to_mail])
-			msg.template_name = "commetnotificationquestionauthor"           # A Mandrill template name
-			msg.global_merge_vars = {                       # Merge tags in your template
+		if (validateEmail(to_email)):
+			context = {                      
 		    	"QuestionAuthor" : que_author[index],
 		    	"CommentAuthor" : com_author,
 		    	"QuestionURL" : que_url,
-		    	"QuestionText" : que_text
+		    	"QuestionText" : que_text,
+				"domain_url":settings.DOMAIN_URL
 				}
-			msg.send()
+			html = render_to_string(template_name, context)
+			send_mail(mail_subject,"", 'support@askbypoll.com', [to_email],html_message=html_message)
 	user = request.user
 	actor_user_name = user.username
 	actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
@@ -2200,7 +2200,6 @@ def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra
 		for key in extra_context_data:
 			context[key] = extra_context_data[key]
 		html = render_to_string(template_name, context)
-		# print(html)
 		return html
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -2209,8 +2208,6 @@ def get_widget_html(poll, widgetFolder="webtemplates", widgetType="basic", extra
 
 def embed_poll(request):
 	try:
-		#print("embed_poll")
-		#print(request.session.session_key)
 		pollId = int(request.GET.get('pollId'))
 		callback = request.GET.get('callback', '')
 		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
@@ -2327,13 +2324,6 @@ def vote_embed_poll(request):
 
 def results_embed_poll(request):
 	try:
-		# for abc in Vote.objects.all():
-		# 	# print(abc)
-		# 	try:
-		# 		abc.save()
-		# 	except:
-		# 		print("+++++++++++++++++++",abc)
-		# 		pass
 		alreadyVoted = request.GET.get('alreadyVoted','false')
 		dataStored = request.GET.get('dataStored','false')
 		callback = request.GET.get('callback', '')
@@ -2343,9 +2333,6 @@ def results_embed_poll(request):
 		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
 		if not divClass:
 			divClass = "basic"
-		# if not request.session.exists(request.session.session_key):
-		# 	request.session.create()
-		# sessionKey = request.session.session_key
 		sessionKey = request.GET.get('votedSession', '')
 		src = request.GET.get('src', '')
 		user_age = 0
@@ -2353,7 +2340,6 @@ def results_embed_poll(request):
 		email = ''
 		profession = ''
 		user_data = {}
-		#print(alreadyVoted, dataStored,sessionKey)
 		votedChoice = -1
 		error = ""
 		if alreadyVoted == 'false' and dataStored == 'false':
