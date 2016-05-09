@@ -908,10 +908,10 @@ def comment_mail(request):
 		if sub_email not in to_email and sub_user.user.id != request.user.id and sub_user.extendeduser.mailSubscriptionFlag==0:
 			to_email.append(sub_email)
 			que_author.append(sub_user.user.first_name)
-	template_name = "polls/templates/polls/emailtemplates/comment_template.html"
+	template_name = "polls/emailtemplates/comment_template.html"
 	mail_subject = "AskByPoll : Comment on your Poll"
 	for index,to_mail in enumerate(to_email):
-		if (validateEmail(to_email)):
+		if (to_email):
 			context = {                      
 		    	"QuestionAuthor" : que_author[index],
 		    	"CommentAuthor" : com_author,
@@ -919,8 +919,8 @@ def comment_mail(request):
 		    	"QuestionText" : que_text,
 				"domain_url":settings.DOMAIN_URL
 				}
-			html = render_to_string(template_name, context)
-			send_mail(mail_subject,"", 'support@askbypoll.com', [to_email],html_message=html_message)
+			html_message = render_to_string(template_name, context)
+			send_mail(mail_subject,"", 'support@askbypoll.com', [to_mail],html_message=html_message)
 	user = request.user
 	actor_user_name = user.username
 	actor_user_url = '/user/'+str(user.id)+"/"+user.extendeduser.user_slug
