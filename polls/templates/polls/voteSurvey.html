@@ -22,11 +22,13 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/toastr.min.css' %}"></script>
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" src="{% static 'js/ion.rangeSlider.min.js' %}"></script>
-{% endblock %}
+	<script type="text/javascript" src="{% static 'js/toastr.min.js' %}"></script>
+{% endblock %} 
 {% block content %}
 	<section id="content">
 		<div class="questions">
@@ -100,7 +102,7 @@
 					</p>
 					{% endif %}
 					
-					{% if not survey.id = 54 and not survey.id = 55 and not user.is_authenticated or demo_list|length > 0 %}
+					{% if not survey.id = 53 and not survey.id = 63 and not user.is_authenticated or demo_list|length > 0 %}
 					<div class="question_description" id="demographic-div">
 						<form class="" method="POST" id="demographic">
 								<select class="" id="age" name="demographic-age">
@@ -393,6 +395,7 @@
 		</div>
 	</section>
 	<script type="text/javascript">
+			
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
@@ -466,6 +469,8 @@
 		}
 		$(document).ready(function()
 		{	
+			const mandatoryCommentsId = [];
+			
 			$(".choice-text").click(function(event){
 				event.preventDefault();
 			})
@@ -474,6 +479,87 @@
 				
 				var input = $(this).find('input').first();
 				
+				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
+					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
+					toastr.options.closeButton = true;
+					toastr.info('Please provide additional feedback');
+					mandatoryCommentsId.push(questionDivId);
+				}
+				
+				if(input.attr('id') === 'choice7858' || input.attr('id') === 'choice7859' || input.attr('id') === 'choice7860' || input.attr('id') === 'choice7861'){
+					if($('#choice7858').is(":checked")){
+						$('survey-question'+'4186').css('display:block');
+						$('survey-question'+'4187').css('display:block');
+						$('survey-question'+'4188').css('display:block');
+						$('survey-question'+'4189').css('display:block');
+					} else {
+						$('survey-question'+'4186').css('display:none');
+						$('survey-question'+'4187').css('display:none');
+						$('survey-question'+'4188').css('display:none');
+						$('survey-question'+'4189').css('display:none');
+						for(var temp=7862; temp<=7885; temp++){
+							$('#choice'+temp).attr('checked',false);
+							if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
+								$('#choice'+temp).attr('checked',true);
+							}
+						}
+					}
+					
+					if($('#choice7859').is(":checked")){
+						$('survey-question'+'4191').css('display:block');
+						$('survey-question'+'4192').css('display:block');
+						$('survey-question'+'4190').css('display:block');
+						$('survey-question'+'4193').css('display:block');
+					} else {
+						$('survey-question'+'4190').css('display:none');
+						$('survey-question'+'4191').css('display:none');
+						$('survey-question'+'4192').css('display:none');
+						$('survey-question'+'4193').css('display:none');
+						for(var temp=7886; temp<=7909; temp++){
+							$('#choice'+temp).attr('checked',false);
+							if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
+								$('#choice'+temp).attr('checked',true);
+							}
+						}
+					}
+					
+					if($('#choice7860').is(":checked")){
+						$('survey-question'+'4194').css('display:block');
+						$('survey-question'+'4195').css('display:block');
+						$('survey-question'+'4196').css('display:block');
+						$('survey-question'+'4197').css('display:block');
+					} else {
+						$('survey-question'+'4194').css('display:none');
+						$('survey-question'+'4195').css('display:none');
+						$('survey-question'+'4196').css('display:none');
+						$('survey-question'+'4197').css('display:none');
+						for(var temp=7910; temp<=7933; temp++){
+							$('#choice'+temp).attr('checked',false);
+							if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
+								$('#choice'+temp).attr('checked',true);
+							}
+						}
+					}
+					
+					if($('#choice7861').is(":checked")){
+						$('survey-question'+'4198').css('display:block');
+						$('survey-question'+'4199').css('display:block');
+						$('survey-question'+'4200').css('display:block');
+						$('survey-question'+'4201').css('display:block');
+					} else {
+						$('survey-question'+'4198').css('display:none');
+						$('survey-question'+'4199').css('display:none');
+						$('survey-question'+'4200').css('display:none');
+						$('survey-question'+'4201').css('display:none');
+						for(var temp=7934; temp<=7956; temp++){
+							$('#choice'+temp).attr('checked',false);
+							if(temp === 7939 || temp === 7945 || temp == 7951 || temp === 7957){
+								$('#choice'+temp).attr('checked',true);
+							}
+						}
+					}
+					
+				}
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
 						input.prop('checked', false);
@@ -512,8 +598,19 @@
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
-			$('.surveySubmit').click(function()
+			$('.surveySubmit').click(function(event)
 			{
+				for(var i=0; i<mandatoryCommentsId.length; i++){
+					var commentDivId = "choiceText"+mandatoryCommentsId[i]+"Comment";
+					if($('#'+commentDivId).val() === ''){
+						$("#survey-question"+mandatoryCommentsId[i]).append('<span class="errorlist"><br> Please provide us additional feedback </span>');
+						$('html, body').animate({
+							scrollTop: $(".errorlist").offset().top-200
+						}, 1000);
+						return;
+					}
+				}
+				
 				$('#overlay-inAbox8').css('display','block');
 				question_covered = 0;
 				var subButElem = $(this);
