@@ -570,7 +570,7 @@ li.first{
   background-color: #ADD8E6;
   font-size: 1rem;
 }
-label.required:after { content: '*'; color:red; }
+.required:after { content: '*'; color:red; }
 .passwordResetKeyForm p label{
 	display: none;
 }

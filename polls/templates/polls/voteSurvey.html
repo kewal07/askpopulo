@@ -175,7 +175,7 @@
 								{% endif %}
 								{% for question in value %}
 									<div class="survey-question" id="survey-question{{ question.poll.id }}">
-									<p class="que_text">{{ question.poll.question_text }}</p>
+									<p class="que_text {{ question.mandatory|get_required }}">{{ question.poll.question_text }}</p>
 									{% if question.poll.description %}
 										<p class="question_description_header">
 											<span class="question_description_header_span">Description</span>

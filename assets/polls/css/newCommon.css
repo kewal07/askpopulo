@@ -36,6 +36,7 @@ ul{
 figcaption, p{
 	word-wrap:break-word;
 }
+.required:after { content: '*'; color:red; }
 .btn{
     display: inline-block;
     margin-bottom: 0;
