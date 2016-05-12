@@ -486,6 +486,22 @@
 					mandatoryCommentsId.push(questionDivId);
 				}
 				
+				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
+					if(input.is(':checked')){
+						input.prop('checked', false);
+					} else {
+						input.prop('checked', true);
+					}
+				} 
+				
+				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
+					input.prop('checked', true);
+				}				
+				var optionsFormId = $(this).parent().attr("id");
+				$("#"+optionsFormId+" p").removeClass("selectedOption");
+				$(this).addClass("selectedOption");
+				
+				// Symphony summit changes
 				if(input.attr('id') === 'choice7858' || input.attr('id') === 'choice7859' || input.attr('id') === 'choice7860' || input.attr('id') === 'choice7861'){
 					if($('#choice7858').is(":checked")){
 						$('survey-question'+'4186').css('display:block');
@@ -560,20 +576,8 @@
 					}
 					
 				}
-				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
-					if(input.is(':checked')){
-						input.prop('checked', false);
-					} else {
-						input.prop('checked', true);
-					}
-				} 
+				// Symphony summit changes end
 				
-				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
-					input.prop('checked', true);
-				}				
-				var optionsFormId = $(this).parent().attr("id");
-				$("#"+optionsFormId+" p").removeClass("selectedOption");
-				$(this).addClass("selectedOption");
 			 });
 
 			$(".next-section").click(function(){
