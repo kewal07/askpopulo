@@ -100,9 +100,12 @@
 					</p>
 					{% endif %}
 					
-					{% if not survey.id = 54 and not survey.id = 55 and not user.is_authenticated or demo_list|length > 0 %}
-					<div class="question_description" id="demographic-div">
-						<form class="" method="POST" id="demographic">
+					<div class="survey-questions">
+						<form id="survey-form" method="POST" enctype="multipart/form-data">
+						{% csrf_token %}
+						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
+						{% if not survey.id = 54 and not survey.id = 55 and not user.is_authenticated %}
+							<div class="question_description" id="demographic-div">
 								<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
 									<option value="16"><19</option>
@@ -132,22 +135,26 @@
 									<option value="Others">Others</option>
 								</select>
 								<input style="width: 20rem;" type="text" class="" id="email" placeholder="Enter Email for Authentication. No Spam Ever!" name="demographic-email">
+						{% elif demo_list|length > 0 %}
+							<div class="question_description" id="demographic-div">
+						{% endif %}
+						{% for demo in demo_list %}
+							{% if demo.values|length > 0 %}
+								<select class="question-type-select" id="{{ demo.name }}" name="demographic-{{ demo.name }}">
+								<option value="">{{ demo.name }}</option>
+									{% for value in demo.values %}
+										<option value="{{ value }}">{{ value }}</option>
+									{% endfor %}
+								</select>
+							{% else %}
+								<input type="text" id="{{ demo.name }}" value="" placeholder="{{ demo.name }}" name="demographic-{{ demo.name }}" />
 							{% endif %}
-							{% for demo in demo_list %}
-								{% if demo.values|length > 0 %}
-									<select class="question-type-select" id="{{ demo.name }}" name="demographic-{{ demo.name }}">
-									<option value="">{{ demo.name }}</option>
-										{% for value in demo.values %}
-											<option value="{{ value }}">{{ value }}</option>
-										{% endfor %}
-									</select>
-								{% else %}
-									<input type="text" id="{{ demo.name }}" value="" placeholder="{{ demo.name }}" name="demographic-{{ demo.name }}" />
-								{% endif %}
-							{% endfor %}
-						</form>
-					</div>
-					<div class="survey-questions">
+						{% endfor %}
+						{% if not survey.id = 54 and not survey.id = 55 and not user.is_authenticated %}
+							</div>
+						{% elif demo_list|length > 0 %}
+							</div>
+						{% endif %}
 						{% for key,value in polls_section_dict.items %}
 							{% if key == 'NULL' %}
 								<style type="text/css">
@@ -173,19 +180,13 @@
 										<p class="question_description">{{ question.poll.description|urlize|url_target_blank }}</p>
 									{% endif %}
 									<p>
-										<form class="optionsForm" method="POST" id="optionsForm{{ question.poll.id }}">
-										{% csrf_token %}
-										<input type="hidden" name="question" value="{{ question.poll.id }}" />
-										<input type="hidden" name="questionType" value="{{ question.type }}" />
-										<input type="hidden" name="mandatory" value="{{ question.mandatory }}" />
-										<input type="hidden" name="voted" value="{{ question.user_already_voted }}" />
-										<input type="hidden" name="unique_key" value="{{ unique_key }}" />
+										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
 										{% if question.type == "text" %}
 											<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 										{% elif question.type == "rating" %}
 											<div id="div-irs-{{ question.poll.id }}">
-										        <input type="text" id="range{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
-										        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+										        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+										        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
 										    </div>
 										    <script>
 										    	{% if question.user_already_voted or expired%}
@@ -230,7 +231,7 @@
 														<tr>
 															<th> {{ choice.choice_text }} </th>
 															{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
-																<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ choice.id }}"> </td>
+																<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ question.poll.id }}"> </td>
 															{% endfor %}
 														</tr>
 													{% endfor %}
@@ -315,7 +316,7 @@
 										{% else %}
 
 										{% endif %}
-										</form>
+										</div>
 									</p>
 									</div>
 								{%endfor%}
@@ -326,6 +327,7 @@
 								{% endif %}
 							</div>
 						{% endfor %}
+						</form>
 					</div>
 					<!-- {% if not user_already_voted and not expired %}
 						<input class="submit btn voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
@@ -417,53 +419,6 @@
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				};
 		{% endif %}
-		var continue_loop = true;
-		function saveVotes(){
-			var form_n = $('.optionsForm').length;
-			var ajax_calls = 0;
-			$('.optionsForm').each(function(){
-				var elemid = $(this)[0].id;
-				var form_data = $(this).serialize();
-				var demo_data = $("#demographic").serialize();
-				form_data += '&' + 'saveRequired=True';
-				//var referral = getQueryParameterByName("referral");
-				var referral = "";
-				form_data += '&' + 'referral_id='+referral;
-				form_data += '&' + demo_data;
-				var queid = elemid.replace("optionsForm","");
-					$.ajax(
-					{
-						type: 'POST',
-						url:'',
-						async: false,
-						data:form_data,
-						success:function(response)
-						{
-							ajax_calls += 1;
-							console.log(response);
-							if("success" in response){
-								if("res" in response){
-									var res = response.res;
-									var votedSession = res.sessionKey;
-									var votedChoice = res.choice;
-									//saveCookie(cookie_prepend,'VOTED_'+queid,true);
-									//saveCookie(cookie_prepend,'VOTED_SESSION_'+queid,votedSession);
-									//saveCookie(cookie_prepend,'VOTED_CHOICE_'+queid,votedChoice);
-								}
-								if(ajax_calls == form_n){
-									if("res" in response)
-										//saveCookie(cookie_prepend,'SURVEY_'+{{ survey.id }},true);
-									confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
-								}
-							}else{
-								for(key in response){
-									$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
-								}
-							}
-						}
-					});
-			});
-		}
 		$(document).ready(function()
 		{	
 			$(".choice-text").click(function(event){
@@ -515,59 +470,41 @@
 			$('.surveySubmit').click(function()
 			{
 				$('#overlay-inAbox8').css('display','block');
-				question_covered = 0;
 				var subButElem = $(this);
-				var remove_disable = false;
-				var form_n = $('.optionsForm').length;
-				var ajax_calls = 0;
 				subButElem.attr("disabled","disabled");
 				$(".errorlist").remove();
-				setTimeout(function(){
-				$('.optionsForm').each(function(){
-					var elemid = $(this)[0].id;
-					var form_data = $(this).serialize();
-					form_data += '&' + 'saveRequired=False';
-					var demo_data = $("#demographic").serialize();
-					form_data += '&' + demo_data;
-					$.ajax(
+				var form_data = $("#survey-form").serialize();
+				var demo_data = $("#demographic").serialize();
+				form_data += '&' + demo_data;
+				console.log(form_data,demo_data);
+				$.ajax({
+					type: 'POST',
+					url:'',
+					async: true,
+					data:form_data,
+					success:function(response)
 					{
-						type: 'POST',
-						url:'',
-						async: false,
-						data:form_data,
-						success:function(response)
-						{
-							ajax_calls += 1;
-							question_covered += 1;
-							if("success" in response){
-							}else{
-								for(key in response){
-									if(key == "error"){
-										if(!$(".demographic-error").length > 0)
-											$("#demographic-div").append('<span class="errorlist demographic-error"><br>'+response[key]+'</span>');
-										remove_disable = true;
-									}
-									else{
-										$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
-										remove_disable = true;
-									}
+						console.log(response);
+						if("success" in response){
+							confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
+						}else{
+							for(key in response){
+								if(key == "error"){
+									if(!$(".demographic-error").length > 0)
+										$("#demographic-div").append('<span class="errorlist demographic-error"><br>'+response[key]+'</span>');
 								}
-								$('html, body').animate({
-									scrollTop: $(".errorlist").offset().top-200
-								}, 1000);
+								else{
+									$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
+								}
 							}
-							if(ajax_calls == form_n && remove_disable){
-								subButElem.removeAttr("disabled");
-								$('#overlay-inAbox8').css('display','none');
-							}
-							if(question_covered == question_count && $(".errorlist").length == 0){
-								saveVotes();
-								$('#overlay-inAbox8').css('display','none');
-							}
+							$('html, body').animate({
+								scrollTop: $(".errorlist").offset().top-200
+							}, 1000);
 						}
-					});
+						subButElem.removeAttr("disabled");
+						$('#overlay-inAbox8').css('display','none');
+					}
 				});
-			},50);
 			});
 		});
 	</script>

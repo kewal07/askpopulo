@@ -76,6 +76,9 @@ span.section-name {
     position: relative;
     display: none;
 }
+#section---1{
+	display: block;
+}
 /*p.next-section{
     padding: 0 10px;
     font-size: 1rem;

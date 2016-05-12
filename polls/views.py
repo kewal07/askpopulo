@@ -1907,35 +1907,15 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
+			print(request.POST)
+			path = request.path
 			user = request.user
-			questionId = request.POST.get('question')
-			question = Question.objects.get(pk=questionId)
-			survey = Survey_Question.objects.filter(question_id=question.id)[0].survey
-			survey_question_count = Survey_Question.objects.filter(survey_id=survey.id).count()
-			survey_voted = None
-			que_type = request.POST.get('questionType')
-			mandatory = bool(request.POST.get('mandatory').lower().replace("false",""))
-			saveRequired = bool(request.POST.get('saveRequired',"true").strip().lower().replace("false",""))
-			already_voted = bool(request.POST.get('voted').lower().replace("false",""))
-			queSlug = question.que_slug
-			success_msg_text = survey.thanks_msg
-			data={}			
-			if(que_type == 'matrixrating'):
-				choices = Choice.objects.filter(question=question)
-				choice_list = []
-				if choices:
-					for choice in choices:
-						if request.POST.getlist(str(choice.id)):
-							tempChoiceColumn = request.POST.getlist(str(choice.id))[0]
-							choice_list.append(tempChoiceColumn)
-						else:
-							data[str(questionId)] = "All Options in Matrix Rating Question Are Mandatory"
-			else:
-				choice_list = request.POST.getlist('choice'+str(questionId))
-			choice_list_comment = request.POST.getlist('choice'+str(questionId)+'Comment')
-			choice_list = list(filter(None, choice_list))
-			choice_list_comment = list(filter(None, choice_list_comment))
 			post_data = request.POST
+			survey = self.get_object()
+			survey_voted = None
+			survey_questions = Survey_Question.objects.filter(survey = survey)
+			votes_list = []
+			errors = {}
 			user_data = {}
 			unique_key = post_data.get("unique_key")
 			if not unique_key.strip():
@@ -1947,110 +1927,64 @@ class SurveyVoteView(BaseViewDetail):
 						val = val[0]
 					user_data[key] = val
 					if key != "email" and not val:
-						data["error"] = "Demographics is mandatory"
-			if not choice_list:
-				if mandatory and not already_voted:
-					data[str(questionId)] = "Please Enter Your Response"
-			if user.is_authenticated():
-				survey_voted,created = SurveyVoted.objects.get_or_create(survey=survey,user=user,survey_question_count=survey_question_count)
-				if choice_list:
-					if saveRequired:
-						if que_type == "rating":
-							voted,created = Voted.objects.get_or_create(user=user, question=question)
-							if created:
-								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-								voteText = VoteText(question=question,user=user,answer_text=choice_list[0],user_data=user_data)
-								voteText.save()
-						elif que_type == "matrixrating":
-							for columns in choice_list:
-								choiceId = columns.split('---')[0]
-								columnId = columns.split('---')[1]
-								choice = Choice.objects.get(pk=int(choiceId))
-								column = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
-								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-								vote, created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
-								if created:
-									votedcolumn = VoteColumn(user=user, question=question, choice=choice, column=column, vote=vote)
-									votedcolumn.save()
-							voted,created = Voted.objects.get_or_create(user=user, question=question)
-						elif que_type != "text":
-							for choiceId in choice_list:
-								choice = Choice.objects.get(pk=choiceId)
-								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-								voted,created = Voted.objects.get_or_create(user=user, question=question)
-								if que_type == "radio":
-									if created:
-										vote,created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
-								else:
-									vote,created = Vote.objects.get_or_create(user=user, choice=choice,user_data=user_data)
-							if choice_list_comment:
-								voteText = VoteText(question=question,user=user,answer_text=choice_list_comment[0],user_data=user_data)
-								voteText.save()
+						errors["error"] = "Demographics is mandatory"
+			for survey_question in survey_questions:
+				vote = {}
+				question_type = survey_question.question_type
+				question = survey_question.question
+				question_id = question.id
+				question_id_str = str(question_id)
+				mandatory = survey_question.mandatory
+				vote["id"] = question_id
+				vote["type"] = question_type
+				answer = ""
+				choices = []
+				columns = []
+				if not user.is_authenticated():
+					if 'email' in user_data:
+						votedCheck = VoteApi.objects.filter(question=vote["id"], email=user_data['email'])
+						if votedCheck:
+							errors["success"]="You have already voted on this survey"
+							errors["res"]={}
+							break
+				if question_type == "text":
+					answer = post_data.get("choice"+question_id_str,"").strip()
+				elif question_type == "rating":
+					answer = post_data.get("range"+question_id_str,"").strip()
+				elif question_type == "radio":
+					choice = post_data.get("choice"+question_id_str,"").strip()
+					choices.append(choice)
+					answer = post_data.get("choice"+question_id_str+"Comment","").strip()
+				elif question_type == "checkbox":
+					choice = post_data.getlist("choice"+question_id_str,[])
+					for v in choice:
+						choices.append(v)
+				elif question_type == "matrixrating":
+					for qchoice in question.choice_set.all():
+						choice = post_data.get(str(qchoice.id),[])
+						if choice:
+							choiceId = choice.split('---')[0]
+							columnId = choice.split('---')[1]
+							choices.append(choiceId)
+							columns.append(columnId)
 						else:
-							voted,created = Voted.objects.get_or_create(user=user, question=question)
-							if created:
-								subscribed, created = Subscriber.objects.get_or_create(user=user, question=question)
-								voteText = VoteText(question=question,user=user,answer_text=choice_list[0])
-								voteText.save()
-						survey_question_ids = [x.question.id for x in Survey_Question.objects.filter(survey_id=survey.id)]
-						survey_voted.user_answer_count = Voted.objects.filter(user=user, question_id__in=survey_question_ids).count()
-						survey_voted.save()
-				
-				if survey_voted.user_answer_count == survey_voted.survey_question_count:
-					success_msg_text = survey.thanks_msg
-				if survey_voted.user_answer_count == 0:
-					success_msg_text = "You have not answered any questions"
-					survey_voted.delete()
-				if data == {}:
-					data["success"]=success_msg_text
-					if saveRequired and survey_voted.user_answer_count == 1:
-						referral_user = request.POST.get("referral_id")
-						save_references(referral_user,survey=survey)
-				return HttpResponse(json.dumps(data),content_type='application/json')
-			else:
-				if request.is_ajax():
-					if data:
-						return HttpResponse(json.dumps(data),content_type='application/json')
-					else:
-						if saveRequired:
-							if 'email' in user_data:
-								votedCheck = VoteApi.objects.filter(question=question, email=user_data['email'])
-								if votedCheck:
-									data["success"]="You have already voted on this survey"
-									data["res"]={}
-									return HttpResponse(json.dumps(data),content_type='application/json')
-							answer_text = None
-							choiceId = None
-							res_data = None
-							votecolumn = None
-							if choice_list_comment:
-								answer_text = choice_list_comment[0]
-							if que_type == "rating" or que_type == "text":
-								answer_text = choice_list[0]
-							elif que_type == "matrixrating":
-								for columns in choice_list:
-									choiceId = columns.split('---')[0]
-									columnId = columns.split('---')[1]
-									choice = Choice.objects.get(pk=int(choiceId))
-									votecolumn = MatrixRatingColumnLabels.objects.get(pk=int(columnId))
-									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
-							else:
-								for choiceId in choice_list:
-									res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn, forced_add = True)
-									if que_type == "radio":
-										break
-							res_data = save_poll_vote_widget(request, questionId, choiceId, answer_text,user_data, unique_key, votecolumn)
-							data["res"] = res_data
-						data["success"]=success_msg_text
-						return HttpResponse(json.dumps(data),content_type='application/json')
-				next_url = request.path
-				extra_params = '?next=%s'%next_url
-				url = reverse('account_login')
-				full_url = '%s%s'%(url,extra_params)
-				if request.is_ajax():
-					return HttpResponse(json.dumps({}),content_type='application/json')
-				return HttpResponseRedirect(full_url)
-			return HttpResponseRedirect(url)
+							errors[question_id_str] = "All Rows Are Mandatory"
+							break
+				choices = list(filter(None, choices))
+				if mandatory:
+					if question_type in ["radio","checkbox"]:
+						if not choices:
+							errors[question_id_str] = "Select Choice"
+					elif not answer and question_type in ["text","rating"]:
+						errors[question_id_str] = "Enter Answer"
+				vote["answer"] = answer
+				vote["choices"] = choices
+				vote["columns"] =  columns
+				votes_list.append(vote)
+			if not errors:
+				errors["success"] = "Successfull"
+				errors = saveVotes(user,survey,votes_list,unique_key,user_data,request)
+			return HttpResponse(json.dumps(errors),content_type='application/json')
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -3907,3 +3841,71 @@ def get_user_data_from_api(vote,user_data={}):
 	user_data["state"] = vote.state
 	user_data["city"] = vote.city
 	return user_data
+
+def saveVotes(user,survey,votes_list,unique_key,user_data,request):
+	try:
+		user_voted = 0
+		is_authenticated = user.is_authenticated()
+		data = {}
+		res_data = {}
+		success_msg_text = survey.thanks_msg
+		for vote in votes_list:
+			if vote["type"] in ["text","rating"]:
+				if vote["answer"]:
+					user_voted += 1
+					if is_authenticated:
+						votetext = VoteText(user=user, question_id=vote["id"], answer_text=vote["answer"], user_data=user_data)
+						votetext.save()
+						voted = Voted(user=user, question_id=vote["id"])
+						voted.save()
+					else:
+						res_data = save_poll_vote_widget(request, vote["id"], None, vote["answer"],user_data, unique_key, None)
+			elif vote["type"] in ["radio","checkbox"]:
+				if vote["choices"]:
+					user_voted += 1
+					for choice_id in vote["choices"]:
+						if is_authenticated:
+							choice = Choice.objects.get(pk=int(choice_id))
+							uvote = Vote(user=user, choice=choice, user_data=user_data)
+							uvote.save()
+							voted,created = Voted.objects.get_or_create(user=user, question_id=vote["id"])
+						else:
+							answer_text = None
+							if vote["answer"]:
+								answer_text = vote["answer"]
+							res_data = save_poll_vote_widget(request, vote["id"], choice_id, answer_text,user_data, unique_key, None, forced_add = True)
+				if vote["answer"] and is_authenticated:
+					votetext = VoteText(user=user, question_id=vote["id"], answer_text=vote["answer"], user_data=user_data)
+					votetext.save()
+			elif vote["type"] in ["matrixrating"]:
+				if vote["choices"]:
+					user_voted += 1
+					for index,choiceId in enumerate(vote["choices"]):
+						votecolumn = MatrixRatingColumnLabels.objects.get(pk=int(vote["columns"][index]))
+						if is_authenticated:
+							uvote, created = Vote.objects.get_or_create(user=user, choice_id=choiceId, user_data=user_data)
+							if created:
+								votedcolumn = VoteColumn(user=user, question_id=vote["id"], choice_id=choiceId, column=votecolumn, vote=uvote)
+								votedcolumn.save()
+							voted,created = Voted.objects.get_or_create(user=user, question_id=vote["id"])
+						else:
+							res_data = save_poll_vote_widget(request, vote["id"], choiceId, None,user_data, unique_key, votecolumn, forced_add = True)
+		if is_authenticated:
+			survey_voted = SurveyVoted(user=user, survey=survey, survey_question_count=len(votes_list), user_answer_count=user_voted)
+			survey_voted.save()
+			if survey_voted.user_answer_count == 0:
+				success_msg_text = "You have not answered any questions"
+		data["res"] = res_data
+		data["success"]=success_msg_text
+		return data
+	except Exception as e:
+			exc_type, exc_obj, exc_tb = sys.exc_info()
+			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
