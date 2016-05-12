@@ -395,7 +395,9 @@
 		</div>
 	</section>
 	<script type="text/javascript">
-			
+		for(var tempque = 4186; tempque <= 4201; tempque++){
+			$('#survey-question'+tempque).css('display','none');
+		}
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
@@ -502,17 +504,18 @@
 				$(this).addClass("selectedOption");
 				
 				// Symphony summit changes
+
 				if(input.attr('id') === 'choice7858' || input.attr('id') === 'choice7859' || input.attr('id') === 'choice7860' || input.attr('id') === 'choice7861'){
 					if($('#choice7858').is(":checked")){
-						$('survey-question'+'4186').css('display:block');
-						$('survey-question'+'4187').css('display:block');
-						$('survey-question'+'4188').css('display:block');
-						$('survey-question'+'4189').css('display:block');
+						$('#survey-question'+'4186').css('display','block');
+						$('#survey-question'+'4187').css('display','block');
+						$('#survey-question'+'4188').css('display','block');
+						$('#survey-question'+'4189').css('display','block');
 					} else {
-						$('survey-question'+'4186').css('display:none');
-						$('survey-question'+'4187').css('display:none');
-						$('survey-question'+'4188').css('display:none');
-						$('survey-question'+'4189').css('display:none');
+						$('#survey-question'+'4186').css('display','none');
+						$('#survey-question'+'4187').css('display','none');
+						$('#survey-question'+'4188').css('display','none');
+						$('#survey-question'+'4189').css('display','none');
 						for(var temp=7862; temp<=7885; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
@@ -522,15 +525,15 @@
 					}
 					
 					if($('#choice7859').is(":checked")){
-						$('survey-question'+'4191').css('display:block');
-						$('survey-question'+'4192').css('display:block');
-						$('survey-question'+'4190').css('display:block');
-						$('survey-question'+'4193').css('display:block');
+						$('#survey-question'+'4191').css('display','block');
+						$('#survey-question'+'4192').css('display','block');
+						$('#survey-question'+'4190').css('display','block');
+						$('#survey-question'+'4193').css('display','block');
 					} else {
-						$('survey-question'+'4190').css('display:none');
-						$('survey-question'+'4191').css('display:none');
-						$('survey-question'+'4192').css('display:none');
-						$('survey-question'+'4193').css('display:none');
+						$('#survey-question'+'4190').css('display','none');
+						$('#survey-question'+'4191').css('display','none');
+						$('#survey-question'+'4192').css('display','none');
+						$('#survey-question'+'4193').css('display','none');
 						for(var temp=7886; temp<=7909; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
@@ -540,15 +543,15 @@
 					}
 					
 					if($('#choice7860').is(":checked")){
-						$('survey-question'+'4194').css('display:block');
-						$('survey-question'+'4195').css('display:block');
-						$('survey-question'+'4196').css('display:block');
-						$('survey-question'+'4197').css('display:block');
+						$('#survey-question'+'4194').css('display','block');
+						$('#survey-question'+'4195').css('display','block');
+						$('#survey-question'+'4196').css('display','block');
+						$('#survey-question'+'4197').css('display','block');
 					} else {
-						$('survey-question'+'4194').css('display:none');
-						$('survey-question'+'4195').css('display:none');
-						$('survey-question'+'4196').css('display:none');
-						$('survey-question'+'4197').css('display:none');
+						$('#survey-question'+'4194').css('display','none');
+						$('#survey-question'+'4195').css('display','none');
+						$('#survey-question'+'4196').css('display','none');
+						$('#survey-question'+'4197').css('display','none');
 						for(var temp=7910; temp<=7933; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
@@ -558,15 +561,15 @@
 					}
 					
 					if($('#choice7861').is(":checked")){
-						$('survey-question'+'4198').css('display:block');
-						$('survey-question'+'4199').css('display:block');
-						$('survey-question'+'4200').css('display:block');
-						$('survey-question'+'4201').css('display:block');
+						$('#survey-question'+'4198').css('display','block');
+						$('#survey-question'+'4199').css('display','block');
+						$('#survey-question'+'4200').css('display','block');
+						$('#survey-question'+'4201').css('display','block');
 					} else {
-						$('survey-question'+'4198').css('display:none');
-						$('survey-question'+'4199').css('display:none');
-						$('survey-question'+'4200').css('display:none');
-						$('survey-question'+'4201').css('display:none');
+						$('#survey-question'+'4198').css('display','none');
+						$('#survey-question'+'4199').css('display','none');
+						$('#survey-question'+'4200').css('display','none');
+						$('#survey-question'+'4201').css('display','none');
 						for(var temp=7934; temp<=7956; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7939 || temp === 7945 || temp == 7951 || temp === 7957){
