@@ -436,11 +436,32 @@
 			$(".vertical-options,.horizontal-options").click(function(event){
 				
 				var input = $(this).find('input').first();
+				var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
+				var index = mandatoryCommentsId.indexOf(questionDivId);
+				if (index > -1) {
+    					mandatoryCommentsId.splice(index, 1);
+				}
 				
 				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
-					toastr.options.closeButton = true;
-					toastr.info('Please provide additional feedback');
+					toastr.options = {
+ 						 "closeButton": true,
+  						 "debug": false,
+  						 "newestOnTop": false,
+  						"progressBar": false,
+  "positionClass": "toast-top-full-width",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "10000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
+					toastr.info('Please Provide Your Detailed Comments');
 					mandatoryCommentsId.push(questionDivId);
 				}
 				
@@ -475,7 +496,8 @@
 						for(var temp=7862; temp<=7885; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
-								$('#choice'+temp).attr('checked',true);
+								//$('#choice'+temp).attr('checked',true);
+								$('#choice'+temp).click();
 							}
 						}
 					}
@@ -493,7 +515,9 @@
 						for(var temp=7886; temp<=7909; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
-								$('#choice'+temp).attr('checked',true);
+								console.log('#choice'+temp);
+								//$('#choice'+temp).attr('checked',true);
+								$('#choice'+temp).click();
 							}
 						}
 					}
@@ -511,7 +535,8 @@
 						for(var temp=7910; temp<=7933; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
-								$('#choice'+temp).attr('checked',true);
+								//$('#choice'+temp).attr('checked',true);
+								$('#choice'+temp).click();
 							}
 						}
 					}
@@ -528,10 +553,13 @@
 						$('#survey-question'+'4201').css('display','none');
 						for(var temp=7934; temp<=7956; temp++){
 							$('#choice'+temp).attr('checked',false);
-							if(temp === 7939 || temp === 7945 || temp == 7951 || temp === 7957){
-								$('#choice'+temp).attr('checked',true);
+							if(temp === 7944 || temp === 7950 || temp === 7956){
+								//$('#choice'+temp).attr('checked',true);
+								$('#choice'+temp).click();
 							}
 						}
+						//$('#choice8065').attr('checked',true);
+						$('#choice8065').click();
 					}
 					
 				}
@@ -563,10 +591,11 @@
 			var question_covered = 0;
 			$('.surveySubmit').click(function(event)
 			{
+				event.preventDefault();
 				for(var i=0; i<mandatoryCommentsId.length; i++){
 					var commentDivId = "choiceText"+mandatoryCommentsId[i]+"Comment";
 					if($('#'+commentDivId).val() === ''){
-						$("#survey-question"+mandatoryCommentsId[i]).append('<span class="errorlist"><br> Please provide us additional feedback </span>');
+						$("#survey-question"+mandatoryCommentsId[i]).append('<span class="errorlist"><br> Please Provide Your Detailed Comments </span>');
 						$('html, body').animate({
 							scrollTop: $(".errorlist").offset().top-200
 						}, 1000);
