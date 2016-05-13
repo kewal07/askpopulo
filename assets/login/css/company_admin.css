@@ -343,6 +343,10 @@ span.cube-num{
     margin-top: 2rem;
     margin-left: 1rem;
 }
+.matrix-input{
+	width:49%;
+	display: inline-block;
+}
 .anonymous{
     text-align: center;
     display: block;

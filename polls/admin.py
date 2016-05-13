@@ -1,5 +1,5 @@
 from django.contrib import admin
-from polls.models import Choice, Question,Vote,Subscriber,QuestionWithCategory,Survey,Survey_Question,SurveyVoted,VoteText,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, VoteApi, VoteColumn, MatrixRatingColumnLabels,Voted
+from polls.models import Choice, Question,Vote,Subscriber,QuestionWithCategory,Survey,Survey_Question,SurveyVoted,VoteText,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, VoteApi, VoteColumn, MatrixRatingColumnLabels,Voted, SurveySection
 from django.conf import settings
 from categories.models import Category
 
@@ -35,3 +35,4 @@ admin.site.register(VoteApi)
 admin.site.register(VoteColumn)
 admin.site.register(MatrixRatingColumnLabels)
 admin.site.register(Voted)
+admin.site.register(SurveySection)

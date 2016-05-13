@@ -1469,6 +1469,7 @@ class CreateSurveyView(BaseViewList):
 					qExpiry = survey.expiry
 			user = request.user
 			post_data = request.POST
+			print(post_data)
 			errors = {}
 			survey_name = post_data.get("surveyName").strip()
 			survey_desc = post_data.get("surveyDescription")
@@ -1631,10 +1632,13 @@ class CreateSurveyView(BaseViewList):
 			if errors:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			else:
+				if edit:
+					for ssection in survey.surveysection_set.all():
+						ssection.delete()
 				survey = createSurvey(survey_id,survey_name,survey_desc,qExpiry,curtime,user,selectedCats,shareImage,thanks_msg,qExpectedTime,qSection)
 				for section in sectionList:
-					section = SurveySection(survey=survey, sectionName=section['sectionName'], sectionOrder=section['sectionOrder'])
-					section.save()
+					ssection = SurveySection(survey=survey, sectionName=section['sectionName'], sectionOrder=section['sectionOrder'])
+					ssection.save()
 				createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 				createDemographics(survey=survey,demographic_list=demo_list,user=user)
 				url = reverse('polls:survey_vote', kwargs={'pk':survey.id,'survey_slug':survey.survey_slug})
@@ -1662,6 +1666,13 @@ class CreateSurveyView(BaseViewList):
 			exc_type, exc_obj, exc_tb = sys.exc_info()
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
+			exc_type, exc_obj, tb = sys.exc_info()
+			f = tb.tb_frame
+			lineno = tb.tb_lineno
+			filename = f.f_code.co_filename
+			linecache.checkcache(filename)
+			line = linecache.getline(filename, lineno, f.f_globals)
+			print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
 def createDemographics(survey=None,demographic_list=None,user=None,question=None):
 	if demographic_list:
@@ -1734,6 +1745,8 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 							if os.path.isfile(choice.choice_image.path) and choice.choice_image.path not in imagePathList:
 								os.remove(choice.choice_image.path)
 						choice.delete()
+					for column in question.matrixratingcolumnlabels_set.all():
+						column.delete()
 				question.delete()
 		for poll in polls_list:
 			protectResult = 0
@@ -2043,6 +2056,7 @@ class SurveyEditView(BaseViewDetail):
 			surveyResultProtected = True
 			surveyAddComment = True
 			surveyMandatory = True
+			surveyHorizontalOptions = True
 			for x in Survey_Question.objects.filter(survey_id=survey.id):
 				if not x.question.protectResult:
 					surveyResultProtected = False
@@ -2050,7 +2064,12 @@ class SurveyEditView(BaseViewDetail):
 					surveyAddComment = False
 				if not x.mandatory:
 					surveyMandatory = False
-				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value}
+				if not x.question.horizontal_options:
+					surveyHorizontalOptions = False
+				sectionName = "undefined"
+				if x.section:
+					sectionName = x.section.sectionName
+				poll_dict = {"poll":x.question,"type":x.question_type, "addComment":x.add_comment, "mandatory":x.mandatory, "min_value":x.min_value, "max_value":x.max_value, "sectionName":sectionName}
 				context['polls'].append(poll_dict)
 			context["surveyResultProtected"] = surveyResultProtected
 			context["surveyAddComment"] = surveyAddComment

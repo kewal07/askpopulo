@@ -2033,6 +2033,7 @@
 
 				$("#surveys-content").on("change","select#qSection",function(){
 					// var noOfSections = +'$("select#qSection option:selected" ).val()';
+					$(".survey-sec").remove();
 					var noOfSections = $("select#qSection option:selected").val();
 					var i;
 					for (i = 1; i <= parseInt(noOfSections); i++) { 
