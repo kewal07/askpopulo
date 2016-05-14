@@ -1920,7 +1920,7 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
-			print(request.POST)
+			#print(request.POST)
 			path = request.path
 			user = request.user
 			post_data = request.POST
