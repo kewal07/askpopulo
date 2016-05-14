@@ -350,10 +350,6 @@ th.question-table-heading {
 	}
 }
 /*For Symphony*/
-	#survey-63 .survey-question{
-		padding:0;
-		margin:0;
-	}
 	#survey-63 .survey-question .que_text{
 		padding:0.5rem 0.5rem 0 0.5rem;
 		margin:0;
@@ -378,3 +374,4 @@ th.question-table-heading {
 	}
 /*End For Symphony*/
 
+ 	
