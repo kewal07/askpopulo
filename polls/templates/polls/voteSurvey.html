@@ -446,8 +446,8 @@
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
 					var labelText = $("label[for="+input.attr('id')+"]").text().trim();
 					
-					$("#"+questionDivId+"choicecomment").text("Please Provide additional comments since you have chosen "+labelText);
-					$("#"+questionDivId+"choicecomment").addClass("othercommentscolor");
+					$("#"+questionDivId+"othercomments").text("Please Provide additional comments since you have chosen "+labelText);
+					$("#"+questionDivId+"othercomments").addClass("othercommentscolor");
 					mandatoryCommentsId.push(questionDivId);
 				}
 				
