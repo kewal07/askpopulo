@@ -22,12 +22,11 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
-	<link rel="stylesheet" type="text/css" href="{% static 'css/toastr.min.css' %}"></script>
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" src="{% static 'js/ion.rangeSlider.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'js/toastr.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/bootbox.min.js' %}"></script>
 {% endblock %} 
 {% block content %}
 	<section id="content">
@@ -575,8 +574,20 @@
 				
 			 });
 
-			$(".next-section").click(function(){
+			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
+				
+				if({{ survey.id }} == 63 && elementId === 1){
+    				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
+    				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
+					if($('#choiceText4177').val() === '' && !validateEmail){
+						bootbox.alert("Please provide a valid email id to proceed.");
+						$('#choiceText4177').focus();
+						event.stopPropagation();
+						return;
+					}
+				}
+				
 				$(this).hide();
 				$(this).parent().next().toggle();
 				var newElem = (parseInt(elementId)+1).toString();
