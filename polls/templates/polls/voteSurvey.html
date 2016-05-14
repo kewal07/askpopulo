@@ -102,7 +102,7 @@
 					</p>
 					{% endif %}
 					
-					<div class="survey-questions">
+					<div class="survey-questions" id="survey-{{ survey.id }}">
 						<form id="survey-form" method="POST" enctype="multipart/form-data">
 						{% csrf_token %}
 						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
@@ -182,7 +182,8 @@
 										</p>
 										<p class="question_description">{{ question.poll.description|urlize|url_target_blank }}</p>
 									{% endif %}
-									<p>
+									<!-- <p> -->
+
 										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
 										{% if question.type == "text" %}
 											<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
@@ -320,7 +321,7 @@
 
 										{% endif %}
 										</div>
-									</p>
+									<!-- </p> -->
 									</div>
 								{%endfor%}
 								{% if polls_section_dict.items|length > forloop.counter %}

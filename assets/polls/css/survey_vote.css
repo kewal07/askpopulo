@@ -349,3 +349,29 @@ th.question-table-heading {
     		width: 100% !important
 	}
 }
+
+/*For Symphony*/
+	#survey-63 .survey-question{
+		padding:0;
+		margin:0;
+	}
+	#survey-63 .survey-question .que_text{
+		padding:0.5rem 0.5rem 0 0.5rem;
+		margin:0;
+	}
+	#survey-63 .optionsForm{
+		padding:0 !important;
+	}
+	#survey-63 .optionsForm .choice-text{
+		font-size: 14px !important;
+		padding:0 4px;
+	}
+	#survey-63 .optionsForm input[type=radio] {
+	    border: 0px;
+	   	height: 10px;
+	   	vertical-align: middle;
+	}
+	#survey-63 .optionsForm p.horizontal-options{
+		padding: 1rem 0;
+	}
+/*End For Symphony*/
