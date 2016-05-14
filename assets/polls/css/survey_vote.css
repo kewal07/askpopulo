@@ -301,6 +301,10 @@ th.question-table-heading {
 	max-height: 50vh;
 }
 
+p.special-userBrief-center{
+	display: none;
+	text-align: center;
+}
 @media only screen and (max-width: 768px){
     .questions{
     	padding:0;
@@ -345,6 +349,12 @@ th.question-table-heading {
     .optionsForm p.horizontal-options{
     	display: block;
     }
+    .special-case{
+    	display: none;
+    }
+    p.special-userBrief-center{
+    	display: block;
+    }
 }
 
 @media only screen and (max-width: 980px) and (min-width: 481px){
@@ -360,11 +370,14 @@ th.question-table-heading {
 	#survey-63 #section---8 .que_text{
 		margin-bottom: 1rem;
 	}
+	#survey-question4177 .que_text{
+		margin-bottom: 1rem !important;
+	}
 	#survey-63 .optionsForm{
 		padding:0 !important;
 	}
 	#survey-63 .optionsForm .choice-text{
-		font-size: 14px !important;
+		font-size: 1rem !important;
 		padding:0 4px;
 	}
 	#survey-63 .optionsForm input[type=radio] {

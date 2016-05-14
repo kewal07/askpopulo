@@ -66,12 +66,12 @@
 							</a>
 						</p> -->
 						<p>
-							Expected Time To Complete : About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
+							Time To Complete : About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
 						</p>
 					</div>
 				</div>
 				<div class="mainPoll">
-					<p class="que_text" id="survey-title">{{ survey.survey_name }}
+					<p class="que_text special-case" id="survey-title">{{ survey.survey_name }}
 						{% if user.is_authenticated %}
 							{% if user == survey.user or user.is_superuser %}
 							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
@@ -82,6 +82,7 @@
 							{% endif %}
 						{% endif %}
 					</p>
+					<p class="special-userBrief-center">Time to Complete: About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span></p>
 					{% if survey.description or survey.surveywithcategory_set.count > 0 %}
 					<p class="question_description_header">
 
