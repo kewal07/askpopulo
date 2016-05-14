@@ -444,10 +444,10 @@
 				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
 					
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
-					var labelText = $("label[for="+input.attr('id')+"]")
+					var labelText = $("label[for="+input.attr('id')+"]").text().trim();
 					
-					$("#"+questionDivId+"choicecomment").text("Please Provide additional comments since you have chosen "+labelText);
-					$("#"+questionDivId+"choicecomment").addClass("othercommentscolor");
+					$("#"+questionDivId+"othercomments").text("Please Provide additional comments since you have chosen "+labelText);
+					$("#"+questionDivId+"othercomments").addClass("othercommentscolor");
 					mandatoryCommentsId.push(questionDivId);
 				}
 				
@@ -626,7 +626,11 @@
 					{
 						console.log(response);
 						if("success" in response){
-							confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
+							var thankyou_url = "/thankyou";
+							{% if survey.id == 54 %}
+								thankyou_url = "/thankyou?a=cz";
+							{% endif %}
+							confirm_redirect_only('#overlay-inAbox6',response["success"],thankyou_url);
 						}else{
 							for(key in response){
 								if(key == "error"){

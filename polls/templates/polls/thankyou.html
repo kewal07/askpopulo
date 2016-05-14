@@ -41,7 +41,12 @@
 	<section id="content">
 		<div class="message">
 			<p class="thank-you">Thank You for Your Response !</p>
-			<p>We may contact you in future if required.</p>
+			{% if request.GET.a == 'cz' %}
+				<p>Insights of the survey will be soon shared on</p>
+				<a href="http://chennai.citizenmatters.in">chennai.citizenmatters.in</a>
+			{% else %}
+				<p>We may contact you in future if required.</p>
+			{% endif %}
 		</div>
 	</section>
 {% endblock %}
