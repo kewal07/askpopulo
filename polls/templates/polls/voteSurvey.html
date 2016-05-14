@@ -299,7 +299,7 @@
 												<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
 											{% endif %}
 											{% if question.addComment %}
-												<p>Any Other Comments</p>
+												<p id="{{ question.poll.id }}othercomments">Any Other Comments</p>
 												<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 											{% endif %}
 										{% endif %}
@@ -444,25 +444,12 @@
 				}
 				
 				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
+					
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
-					toastr.options = {
- 						 "closeButton": true,
-  						 "debug": false,
-  						 "newestOnTop": false,
-  						"progressBar": false,
-  "positionClass": "toast-top-full-width",
-  "preventDuplicates": false,
-  "onclick": null,
-  "showDuration": "300",
-  "hideDuration": "1000",
-  "timeOut": "10000",
-  "extendedTimeOut": "1000",
-  "showEasing": "swing",
-  "hideEasing": "linear",
-  "showMethod": "fadeIn",
-  "hideMethod": "fadeOut"
-}
-					toastr.info('Please Provide Your Detailed Comments');
+					var labelText = $("label[for="+input.attr('id')+"]")
+					
+					$("#"+questionDivId+"choicecomment").text("Please Provide additional comments since you have chosen "+labelText);
+					$("#"+questionDivId+"choicecomment").addClass("othercommentscolor");
 					mandatoryCommentsId.push(questionDivId);
 				}
 				

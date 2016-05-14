@@ -349,7 +349,6 @@ th.question-table-heading {
     		width: 100% !important
 	}
 }
-
 /*For Symphony*/
 	#survey-63 .survey-question{
 		padding:0;
@@ -374,4 +373,8 @@ th.question-table-heading {
 	#survey-63 .optionsForm p.horizontal-options{
 		padding: 1rem 0;
 	}
+	.othercommentscolor{
+		color:red;
+	}
 /*End For Symphony*/
+
