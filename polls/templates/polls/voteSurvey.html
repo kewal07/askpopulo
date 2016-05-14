@@ -495,10 +495,12 @@
 						$('#survey-question'+'4187').css('display','none');
 						$('#survey-question'+'4188').css('display','none');
 						$('#survey-question'+'4189').css('display','none');
-						for(var temp=7862; temp<=7885; temp++){
-							$('#choice'+temp).attr('checked',false);
-							if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
-								$('#choice'+temp).click();
+						if(!alreadyVoted7858){
+							for(var temp=7862; temp<=7885; temp++){
+								$('#choice'+temp).attr('checked',false);
+								if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
+									$('#choice'+temp).click();
+								}
 							}
 						}
 					}
@@ -522,11 +524,13 @@
 						$('#survey-question'+'4191').css('display','none');
 						$('#survey-question'+'4192').css('display','none');
 						$('#survey-question'+'4193').css('display','none');
+						if(!alreadyVoted7859){
 						for(var temp=7886; temp<=7909; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
 								$('#choice'+temp).click();
 							}
+						}
 						}
 					}
 					
@@ -549,11 +553,13 @@
 						$('#survey-question'+'4195').css('display','none');
 						$('#survey-question'+'4196').css('display','none');
 						$('#survey-question'+'4197').css('display','none');
+						if(!alreadyVoted7860){
 						for(var temp=7910; temp<=7933; temp++){
 							$('#choice'+temp).attr('checked',false);
 							if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
 								$('#choice'+temp).click();
 							}
+						}
 						}
 					}
 					
@@ -565,9 +571,9 @@
 									$('#choice'+temp).parent().removeClass('selectedOption');
 								}
 							}
+							$('#choice8065').attr('checked',false);
+							$('#choice8065').parent().removeClass('selectedOption');
 						}
-						$('#choice8065').attr('checked',false);
-						$('#choice8065').parent().removeClass('selectedOption');
 						$('#survey-question'+'4198').css('display','block');
 						$('#survey-question'+'4199').css('display','block');
 						$('#survey-question'+'4200').css('display','block');
@@ -578,13 +584,15 @@
 						$('#survey-question'+'4199').css('display','none');
 						$('#survey-question'+'4200').css('display','none');
 						$('#survey-question'+'4201').css('display','none');
-						for(var temp=7934; temp<=7956; temp++){
-							$('#choice'+temp).attr('checked',false);
-							if(temp === 7944 || temp === 7950 || temp === 7956){
-								$('#choice'+temp).click();
-							}
+						if(!alreadyVoted7861){
+							for(var temp=7934; temp<=7956; temp++){
+								$('#choice'+temp).attr('checked',false);
+								if(temp === 7944 || temp === 7950 || temp === 7956){
+									$('#choice'+temp).click();
+								}
+						}	
+							$('#choice8065').click();
 						}
-						$('#choice8065').click();
 					}
 				}
 				// Symphony summit changes end
