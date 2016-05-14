@@ -640,7 +640,12 @@
 					{
 						console.log(response);
 						if("success" in response){
-							confirm_redirect_only('#overlay-inAbox6',response["success"],'/thankyou');
+							var thankyou_url = "/thankyou";
+							{% if survey.id == 54 %}
+								thankyou_url = "/thankyou?a=cz";
+							{% endif %}
+							confirm_redirect_only('#overlay-inAbox6',response["success"],thankyou_url);
+							}
 						}else{
 							for(key in response){
 								if(key == "error"){
