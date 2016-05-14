@@ -301,6 +301,10 @@ th.question-table-heading {
 	max-height: 50vh;
 }
 
+p.special-userBrief-center{
+	display: none;
+	text-align: center;
+}
 @media only screen and (max-width: 768px){
     .questions{
     	padding:0;
@@ -343,6 +347,12 @@ th.question-table-heading {
         font-size:1rem;
     }
     .optionsForm p.horizontal-options{
+    	display: block;
+    }
+    .special-case{
+    	display: none;
+    }
+    p.special-userBrief-center{
     	display: block;
     }
 }
