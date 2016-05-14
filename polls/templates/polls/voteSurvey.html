@@ -439,6 +439,8 @@
 				var index = mandatoryCommentsId.indexOf(questionDivId);
 				if (index > -1) {
     					mandatoryCommentsId.splice(index, 1);
+						$("#"+questionDivId+"othercomments").text("Any Other Comments");
+						$("#"+questionDivId+"othercomments").removeClass("othercommentscolor");
 				}
 				
 				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
