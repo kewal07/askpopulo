@@ -369,7 +369,7 @@ th.question-table-heading {
 	}
 	#survey-63 .optionsForm input[type=radio] {
 	    border: 0px;
-	   	height: 10px;
+	   	height: 12px;
 	   	vertical-align: middle;
 	}
 	#survey-63 .optionsForm p.horizontal-options{
@@ -380,4 +380,9 @@ th.question-table-heading {
 	}
 /*End For Symphony*/
 
+@media only screen and (max-width: 1280px) and (min-width: 981px){
+	#search-980{
+		display: none;
+	}
+}
  	
