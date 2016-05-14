@@ -357,6 +357,9 @@ th.question-table-heading {
 		padding:0.5rem 0.5rem 0 0.5rem;
 		margin:0;
 	}
+	#survey-63 #section---8 .ques_text{
+		margin-bottom: 1rem;
+	}
 	#survey-63 .optionsForm{
 		padding:0 !important;
 	}
