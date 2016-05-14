@@ -371,7 +371,7 @@ p.special-userBrief-center{
 		margin-bottom: 1rem;
 	}
 	#survey-question4177 .que_text{
-		margin-bottom: 1rem;
+		margin-bottom: 1rem !important;
 	}
 	#survey-63 .optionsForm{
 		padding:0 !important;
