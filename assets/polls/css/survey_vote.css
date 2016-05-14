@@ -377,7 +377,7 @@ p.special-userBrief-center{
 		padding:0 !important;
 	}
 	#survey-63 .optionsForm .choice-text{
-		font-size: 14px !important;
+		font-size: 1rem !important;
 		padding:0 4px;
 	}
 	#survey-63 .optionsForm input[type=radio] {
