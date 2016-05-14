@@ -85,6 +85,7 @@
 					</p>
 					{% if survey.description or survey.surveywithcategory_set.count > 0 %}
 					<p class="question_description_header">
+
 							<span class="question_description_header_span">Description</span>
 					</p>
 					<p class="question_description">
@@ -98,6 +99,7 @@
 					
 					{% if demo_list|length > 0 and user.is_authenticated %}
 					<p class="question_description_header">
+
 						<span class="question_description_header_span">Demographics</span>
 					</p>
 					{% endif %}
@@ -107,9 +109,8 @@
 						{% csrf_token %}
 						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
 						{% if not survey.id = 54 and not survey.id = 63 and not user.is_authenticated %}
-							<div class="question_description" id="demographic-div">
-							<form class="" method="POST" id="demographic">
-								<select class="" id="age" name="demographic-age">
+						<div class="question_description" id="demographic-div">
+							<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
 									<option value="16"><19</option>
 									<option value="22">20-25</option>
@@ -117,27 +118,27 @@
 									<option value="33">31-35</option>
 									<option value="43">36-50</option>
 									<option value="55">>50</option>
-								</select>
-								<select class="" id="gender" name="demographic-gender">
-									<option value="">Gender</option>
-									<option value="Female">Female</option>
-									<option value="Male">Male</option>
-									<option value="D">Rather Not Say</option>
-								</select>
-								<select class="" id="profession" name="demographic-profession">
-									<option value="">Profession</option>
-									<option value="Student">Student</option>
-									<option value="Politics">Politics</option>
-									<option value="Education">Education</option>
-									<option value="Information Technology">Information Technology</option>
-									<option value="Public Sector">Public Sector</option>
-									<option value="Social Services">Social Services</option>
-									<option value="Medical">Medical</option>
-									<option value="Finance">Finance</option>
-									<option value="Manager">Manager</option>
-									<option value="Others">Others</option>
-								</select>
-								<input style="width: 20rem;" type="text" class="" id="email" placeholder="Enter Email for Authentication. No Spam Ever!" name="demographic-email">
+							</select>
+							<select class="" id="gender" name="demographic-gender">
+								<option value="">Gender</option>
+								<option value="Female">Female</option>
+								<option value="Male">Male</option>
+								<option value="D">Rather Not Say</option>
+							</select>
+							<select class="" id="profession" name="demographic-profession">
+								<option value="">Profession</option>
+								<option value="Student">Student</option>
+								<option value="Politics">Politics</option>
+								<option value="Education">Education</option>
+								<option value="Information Technology">Information Technology</option>
+								<option value="Public Sector">Public Sector</option>
+								<option value="Social Services">Social Services</option>
+								<option value="Medical">Medical</option>
+								<option value="Finance">Finance</option>
+								<option value="Manager">Manager</option>
+								<option value="Others">Others</option>
+							</select>
+							<input style="width: 20rem;" type="text" class="" id="email" placeholder="Enter Email for Authentication. No Spam Ever!" name="demographic-email">
 						{% elif demo_list|length > 0 %}
 							<div class="question_description" id="demographic-div">
 						{% endif %}
@@ -183,146 +184,143 @@
 										<p class="question_description">{{ question.poll.description|urlize|url_target_blank }}</p>
 									{% endif %}
 									<!-- <p> -->
-
 										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
-										{% if question.type == "text" %}
-											<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
-										{% elif question.type == "rating" %}
-											<div id="div-irs-{{ question.poll.id }}">
-										        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
-										        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
-										    </div>
-										    <script>
-										    	{% if question.user_already_voted or expired%}
-
-													$('#range{{ question.poll.id }}').ionRangeSlider({
-														keyboard: true,
-														min: {{ question.min_value }},
-														max: {{ question.max_value }},
-														from: {{ question.from_val }},
-														to: {{ question.to_val }},
-														type: 'double',
-														step: 1,
-														disable: true
-													});
-													$("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
-													$("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
-									    	{% else %}
-										    	 $('#range{{ question.poll.id }}').ionRangeSlider({
-										            keyboard: true,
-										            min: {{ question.min_value }},
-										            max: {{ question.max_value }},
-										            from: {{ question.min_value }},
-										            type: 'single',
-										            step: 1,
-										            onFinish: function (data) {
-														$('#choice{{ question.poll.id }}').val(data.from_percent);
-													}
-										        });
-											{% endif %}
-										</script>
-									{% elif question.type == "matrixrating" %}
-										<div class="table-container">
-											<div class="table-component">
-												<table>
-													<tr>
-														<th></th>
-														{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
-															<th> {{ columns.columnLabel }} </th>
-														{% endfor %}
-													</tr>
-													{% for choice in question.poll.choice_set.all %}
-														<tr>
-															<th> {{ choice.choice_text }} </th>
-															{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
-																<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ question.poll.id }}"> </td>
-															{% endfor %}
-														</tr>
-													{% endfor %}
-												</table>
-											</div>
-										</div>
-									{% else %}
-										{% if question.poll.id|stringformat:"s" == "4047" %}
-											<p class="question_description_header">
-												<span class="question_description_header_span">Chennai</span>
-											</p>
-											<p id="question_description_1" class="question_description"></p>
-											<br><br>
-											<p class="question_description_header">
-												<span class="question_description_header_span">Greater Chennai</span>
-											</p>
-											<p  id="question_description_2" class="question_description"></p>
-										{% endif %}
-										{% for choice in question.poll.choice_set.all %}
-											{% if question.horizontalOptions %}
-												<p class="horizontal-options">
-											{% else %}
-												{% if  forloop.counter0|divisibleby:2 %}
-													<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
-												{% else %}
-													<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
-												{% endif %}
-											{% endif %}
-												{% if question.poll.id|stringformat:"s" == "4047" %}
-													{% if choice.choice_text == "Dr.Radhakrishnan Nagar" or choice.choice_text == "Perambur" or choice.choice_text == "Kolathur" or choice.choice_text == "Villivakkam" or choice.choice_text == "Thiru. Vi. Ka. Nagar (SC)" or choice.choice_text == "Egmore (SC)" or choice.choice_text == "Royapuram" or choice.choice_text == "Harbour" or choice.choice_text == "Chepauk-Thiruvallikeni" or choice.choice_text == "Thousand Lights" or choice.choice_text == "Anna Nagar" or choice.choice_text == "Virugambakkam" or choice.choice_text == "Saidapet" or choice.choice_text == "T. Nagar" or choice.choice_text == "Mylapore" or choice.choice_text == "Velachery" %}
-														<script>
-															$('#question_description_1').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)"><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label></p>');
-														</script>
-													{% else %}
-														<script>
-															$('#question_description_2').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)" ><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}">{{ choice.choice_text }}</label></p>');
-														</script>
+											{% if question.type == "text" %}
+												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+											{% elif question.type == "rating" %}
+												<div id="div-irs-{{ question.poll.id }}">
+											        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+											        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
+											    </div>
+											    <script>
+											    	{% if question.user_already_voted or expired %}
+														$('#range{{ question.poll.id }}').ionRangeSlider({
+															keyboard: true,
+															min: {{ question.min_value }},
+															max: {{ question.max_value }},
+															from: {{ question.from_val }},
+															to: {{ question.to_val }},
+															type: 'double',
+															step: 1,
+															disable: true
+														});
+														$("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
+														$("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
+										    		{% else %}
+												    	 	$('#range{{ question.poll.id }}').ionRangeSlider({
+												            keyboard: true,
+												            min: {{ question.min_value }},
+												            max: {{ question.max_value }},
+												            from: {{ question.min_value }},
+												            type: 'single',
+												            step: 1,
+												            onFinish: function (data) {
+																$('#choice{{ question.poll.id }}').val(data.from_percent);
+																}
+												        	});
 													{% endif %}
-												{% else %}
-													<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
-													<label class="choice-text" for="choice{{ choice.id }}">
-														{% if choice.choice_image %}
-														<script>
-															$('.choice_image').css({"width":"120px","height":"120px"});
-															$("#choice{{ choice.id }}").hide();
-															var item = $("#choice{{ choice.id}}");
-															item.parent().css({"display":"inline-block"});
-															// console.log($this.parent().next().children().first().show());
-														</script>
-															<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-															<!-- {{ choice.choice_text }} -->
-														{% else %}
-															{{ choice.choice_text }}
-														{% endif %}
-													</label>
-													</p>
-												{% endif %}
-											{% endfor %}
-											{% if question.poll.protectResult and user != question.poll.user %}
+												</script>
+											{% elif question.type == "matrixrating" %}
+												<div class="table-container">
+													<div class="table-component">
+														<table>
+															<tr>
+																<th></th>
+																{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																	<th> {{ columns.columnLabel }} </th>
+																{% endfor %}
+															</tr>
+															{% for choice in question.poll.choice_set.all %}
+																<tr>
+																	<th> {{ choice.choice_text }} </th>
+																	{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																		<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ question.poll.id }}"> </td>
+																	{% endfor %}
+																</tr>
+															{% endfor %}
+														</table>
+													</div>
+												</div>
 											{% else %}
-												<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+												{% if question.poll.id|stringformat:"s" == "4047" %}
+													<p class="question_description_header">
+														<span class="question_description_header_span">Chennai</span>
+													</p>
+													<p id="question_description_1" class="question_description"></p>
+													<br><br>
+													<p class="question_description_header">
+														<span class="question_description_header_span">Greater Chennai</span>
+													</p>
+													<p  id="question_description_2" class="question_description"></p>
+												{% endif %}
+												{% for choice in question.poll.choice_set.all %}
+												{% if question.horizontalOptions %}
+													<p class="horizontal-options">
+												{% else %}
+													{% if  forloop.counter0|divisibleby:2 %}
+														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
+													{% else %}
+														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
+													{% endif %}
+												{% endif %}
+													{% if question.poll.id|stringformat:"s" == "4047" %}
+														{% if choice.choice_text == "Dr.Radhakrishnan Nagar" or choice.choice_text == "Perambur" or choice.choice_text == "Kolathur" or choice.choice_text == "Villivakkam" or choice.choice_text == "Thiru. Vi. Ka. Nagar (SC)" or choice.choice_text == "Egmore (SC)" or choice.choice_text == "Royapuram" or choice.choice_text == "Harbour" or choice.choice_text == "Chepauk-Thiruvallikeni" or choice.choice_text == "Thousand Lights" or choice.choice_text == "Anna Nagar" or choice.choice_text == "Virugambakkam" or choice.choice_text == "Saidapet" or choice.choice_text == "T. Nagar" or choice.choice_text == "Mylapore" or choice.choice_text == "Velachery" %}
+															<script>
+																$('#question_description_1').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)"><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label></p>');
+															</script>
+														{% else %}
+															<script>
+																$('#question_description_2').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)" ><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}">{{ choice.choice_text }}</label></p>');
+															</script>
+														{% endif %}
+													{% else %}
+														<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+														<label class="choice-text" for="choice{{ choice.id }}">
+															{% if choice.choice_image %}
+															<script>
+																$('.choice_image').css({"width":"120px","height":"120px"});
+																$("#choice{{ choice.id }}").hide();
+																var item = $("#choice{{ choice.id}}");
+																item.parent().css({"display":"inline-block"});
+																// console.log($this.parent().next().children().first().show());
+															</script>
+																<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+																<!-- {{ choice.choice_text }} -->
+															{% else %}
+																{{ choice.choice_text }}
+															{% endif %}
+														</label>
+														</p>
+													{% endif %}
+												{% endfor %}
+												{% if question.poll.protectResult and user != question.poll.user %}
+												{% else %}
+													<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+												{% endif %}
+												{% if question.addComment %}
+													<p id="{{ question.poll.id }}othercomments">Any Other Comments</p>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+												{% endif %}
 											{% endif %}
-											{% if question.addComment %}
-												<p id="{{ question.poll.id }}othercomments">Any Other Comments</p>
-												<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+											{% if question.user_already_voted or expired%}
+												<script type="text/javascript">
+												$(document).ready(function(){
+													if($("#pollsChart---"+{{ question.poll.id }}).length >0)
+														drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
+													else{
+														$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
+														if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
+															$("#pollsVoted---"+{{ question.poll.id }}).show();
+													}
+													if($("#choiceText"+{{ question.poll.id }}+"Comment").length >0)
+														$("#choiceText"+{{ question.poll.id }}+"Comment").attr('disabled','disabled');
+												});
+												</script>
+											{% else %}
 											{% endif %}
-										{% endif %}
-										{% if question.user_already_voted or expired%}
-											<script type="text/javascript">
-											$(document).ready(function(){
-												if($("#pollsChart---"+{{ question.poll.id }}).length >0)
-													drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
-												else{
-													$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
-													if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
-														$("#pollsVoted---"+{{ question.poll.id }}).show();
-												}
-												if($("#choiceText"+{{ question.poll.id }}+"Comment").length >0)
-													$("#choiceText"+{{ question.poll.id }}+"Comment").attr('disabled','disabled');
-											});
-											</script>
-										{% else %}
-
-										{% endif %}
 										</div>
 									<!-- </p> -->
-									</div>
+									<!-- </div> -->
 								{%endfor%}
 								{% if polls_section_dict.items|length > forloop.counter %}
 									<p class="btn next-section" id="next-section---{{ forloop.counter }}">Next</p>
@@ -616,9 +614,9 @@
 				subButElem.attr("disabled","disabled");
 				$(".errorlist").remove();
 				var form_data = $("#survey-form").serialize();
-				var demo_data = $("#demographic").serialize();
-				form_data += '&' + demo_data;
-				console.log(form_data,demo_data);
+				// var demo_data = $("#demographic").serialize();
+				// form_data += '&' + demo_data;
+				// console.log(form_data,demo_data);
 				$.ajax({
 					type: 'POST',
 					url:'',
