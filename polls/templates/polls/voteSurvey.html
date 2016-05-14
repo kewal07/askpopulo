@@ -447,7 +447,7 @@
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
 					var labelText = $("label[for="+input.attr('id')+"]").text().trim();
 					
-					$("#"+questionDivId+"othercomments").text("Please Provide additional comments since you have chosen "+labelText);
+					$("#"+questionDivId+"othercomments").text("Please provide additional comments since you have chosen "+labelText);
 					$("#"+questionDivId+"othercomments").addClass("othercommentscolor");
 					$("#choiceText"+questionDivId+"Comment").focus();
 					mandatoryCommentsId.push(questionDivId);
@@ -577,14 +577,14 @@
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
 				
-				if({{ survey.id }} == 63 && elementId === 1){
+				if({{ survey.id }} == 63 || elementId === 1){
+				$(".errorlist").remove();
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
-					if($('#choiceText4177').val() === '' && !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please provide email id to proceed </span>');
+					if($('#choiceText4177').val() === '' || !validateEmail){
+						$("#survey-question4177").append('<span class="errorlist"><br> Please provide a valid Email Id to proceed </span>');
 						$('#choiceText4177').focus();
-						event.preventDefault();
-       					event.stopPropagation();
+						return false;
 					}
 				}
 				
