@@ -582,10 +582,10 @@
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
 					if($('#choiceText4177').val() === '' && !validateEmail){
-						bootbox.alert("Please provide a valid email id to proceed.");
+						$("#survey-question4177").append('<span class="errorlist"><br> Please provide email id to proceed </span>');
 						$('#choiceText4177').focus();
-						event.stopPropagation();
-						return;
+						event.preventDefault();
+       					event.stopPropagation();
 					}
 				}
 				
