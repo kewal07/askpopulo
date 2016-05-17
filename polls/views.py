@@ -331,7 +331,7 @@ class VoteView(BaseViewDetail):
 		if not choiceId:
 			# error to show no choice selected
 			data={}
-			data['form_errors'] = "Please select a choice"
+			data['form_errors'] = "Please Select A Choice"
 			return HttpResponse(json.dumps(data), content_type='application/json')
 		elif user.is_authenticated():
 			if request.is_ajax():
@@ -1987,7 +1987,7 @@ class SurveyVoteView(BaseViewDetail):
 				if mandatory:
 					if question_type in ["radio","checkbox"]:
 						if not choices:
-							errors[question_id_str] = "Select Choice"
+							errors[question_id_str] = "Please Select A Choice"
 					elif not answer and question_type in ["text","rating"]:
 						errors[question_id_str] = "Enter Answer"
 				vote["answer"] = answer

@@ -602,12 +602,12 @@
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
 				
-				if({{ survey.id }} == 63 && elementId === 1){
+				if({{ survey.id }} === 63){
 				$(".errorlist").remove();
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
 					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please provide a valid Email Id to proceed </span>');
+						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
 						$('#choiceText4177').focus();
 						return false;
 					}
@@ -638,11 +638,11 @@
 				event.preventDefault();
 				$(".errorlist").remove();
 				
-				if({{ survey.id }} == 63 && elementId === 1){
+				if({{ survey.id }} === 63){
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
 					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please provide a valid Email Id to proceed </span>');
+						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
 						$('#choiceText4177').focus();
 						return false;
 					}
