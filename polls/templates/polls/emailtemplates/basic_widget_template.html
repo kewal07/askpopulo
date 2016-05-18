@@ -1,119 +1,33 @@
 <html>
 	<head>
-		<style>
-			.emailPollBodyDiv{
-				background: white;
-				width: 100%;
-				/*border-radius: 25px;*/
-				border-color: white;
-				/*padding-left: 3rem;*/
-				padding-top: 1rem;
-				padding-bottom: 1rem;
-				/*font-style: italic;
-				font-size: xx-large;*/
-			}
-			.askbypoll-email-common-footer a, .emailPollBodyDiv a{
-				color: blue;
-			}
-			.askbypoll-email-common{
-				margin: 0 auto;
-				text-align: center;
-			}
-			.body-image-email{
-				width: 80%;
-			    margin: 0 auto;
-			    display: block;
-			    padding: 2rem;
-			}
-			.emailPollBodyDiv p{
-				margin: 1rem;
-			}
-			.email-footer-img{
-				margin: 0 auto;
-			    display: block;
-			    width: 200px;
-			    padding-top: 1rem;
-			}
-			.email-footer-img-link{
-				width:50px;
-				height: 50px
-			}
-			.askbypoll-email-common-footer-link{
-				display: inline-block;
-			}
-			.askbypoll-email-common-footer-links{
-				text-align: center;
-    			padding: 1rem;
-			}
-			.askbypoll-header-img{
-			    width: 50%;
-			    margin-top: 1rem;
-			}
-			.poll-text{
-				font-size: 1.2rem;
-			}
-			.poll-choice{
-				font-size: 1rem;
-				margin-left: 2rem;
-				display: block;
-			}
-			.emailPollBodyDiv ul{
-				list-style: initial;
-    			margin-left: 4rem;
-			}
-			.email-choice-image{
-				width: 120px;
-				height: 120px;
-			}
-			.email-choice-image-div{
-				display: inline-block;
-			    position: relative;
-			    text-align: center;
-			    width: 120px;
-			}
-			.poll-choice-a{
-				display: inline-block;
-			}
-			.askbypoll-email-common-footer{
-				position: relative;
-			}
-			.footer-powered-by {
-			    padding-left: 1rem;
-    			padding-bottom: 1rem;
-			}
-			.footer-p-font{
-				font-size: 0.8rem;
-    			padding: 0.2rem;
-			}
-		</style>
 	</head>
 	<body>
 	<div style='width: 100%; margin:0 auto;background-color: #63c196;'>
-		<div class="askbypoll-email-common" id="askbypoll-email-common---{{ poll.id }}">
+		<div class="askbypoll-email-common" id="askbypoll-email-common---{{ poll.id }}" style="margin: 0 auto; text-align: center;">
 			<img style="margin-top: 1rem;width: 150px;" src="{{ domain_url }}{{ user.extendeduser.company.get_logo_url }}" />
 			<p>{{ user.extendeduser.company.description }}</p>
-			<img class="askbypoll-header-img" src="{{ domain_url }}/static/polls/images/email_common.png" />
+			<img class="askbypoll-header-img" src="{{ domain_url }}/static/polls/images/email_common.png" style="width: 50%; margin-top: 1rem;"/>
 		</div>
-		<div class='emailPollBodyDiv' id="emailPollBodyDiv---{{ poll.id }}" >
-			<img class="body-image-email" id="body-image-email" src="{{ domain_url }}/{{ body_file_path }}" />
-			<p>
+		<div class='emailPollBodyDiv' id="emailPollBodyDiv---{{ poll.id }}"  style="background: white; width: 100%; border-color: white; padding-left: 3rem; padding-top: 1rem; padding-bottom: 1rem; font-size: xx-large;">
+			<img class="body-image-email" id="body-image-email" src="{{ domain_url }}/{{ body_file_path }}" style="width: 80%; margin: 0 auto; display: block; padding: 2rem;"/>
+			<p style="margin:1rem;">
 				Dear User,
 			</p>
 			<div class="email-body1" id="email-body1---{{ poll.id }}">
 				{{ body1|linebreaks }}
 			</div>
-			<p class="poll-text">
+			<p class="poll-text" style="margin:1rem; font-size: 1.2rem;">
 				{{ poll.question_text }}
 			</p>
 			{% for choice in poll.choice_set.all %}
 				{% if choice.choice_image %}
-					<a class="poll-choice poll-choice-a" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}">
+					<a class="poll-choice poll-choice-a" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}" style="color:blue;font-size: 1rem;margin-left: 2rem;display:inline-block;">
 				{% else %}
-					<a class="poll-choice" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}">
+					<a class="poll-choice" href="{{ domain_url }}/emailresponse?responder={{ token }}&choice={{ choice.id }}" style="color:blue;font-size: 1rem;margin-left: 2rem;display: block;">
 				{% endif %}
 					{% if choice.choice_image %}
-						<div class="email-choice-image-div">
-						<img class="email-choice-image" id="email-choice-image{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}" />
+						<div class="email-choice-image-div" style="display: inline-block;position: relative;text-align: center;width: 120px;">
+						<img class="email-choice-image" id="email-choice-image{{ choice.id }}" src="{{ domain_url }}/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}" style="width: 120px;height: 120px;"/>
 						<!-- <p>{{ choice.choice_text }}</p> -->
 						<span class="email-choice-text">
 					{% else %}
@@ -131,28 +45,28 @@
 			{% endfor %}
 			</p>
 			<div class="email-body2" id="email-body2---{{ poll.id }}">{{ body2|linebreaks }}</div>
-			<p class="email-salutation" id="email-salutation---{{ poll.id }}">{{ salutation }}</p>
-			<p><a href="{{ domain_url }}/{{ user.extendeduser.company.company_slug }}">{{ user.extendeduser.company.name }}</a></p>
+			<p class="email-salutation" id="email-salutation---{{ poll.id }}" style="margin:1rem;">{{ salutation }}</p>
+			<p style="margin:1rem;"><a href="{{ domain_url }}/{{ user.extendeduser.company.company_slug }}">{{ user.extendeduser.company.name }}</a></p>
 		</div>
-		<div class="askbypoll-email-common-footer" id="askbypoll-email-common-footer---{{ poll.id }}">
-			<img class="email-footer-img" src="{{ domain_url }}/static/polls/images/email_footer_common.png" />
-			<div class="askbypoll-email-common-footer-links" id="askbypoll-email-common-footer-links---{{ poll.id }}">
-				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_facebook }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_fb.png" /></a>
+		<div class="askbypoll-email-common-footer" id="askbypoll-email-common-footer---{{ poll.id }}" style="position: relative;">
+			<img class="email-footer-img" src="{{ domain_url }}/static/polls/images/email_footer_common.png" style="margin: 0 auto; display: block; width: 200px; padding-top: 1rem;"/>
+			<div class="askbypoll-email-common-footer-links" id="askbypoll-email-common-footer-links---{{ poll.id }}" style="text-align: center; padding: 1rem;">
+				<div class="askbypoll-email-common-footer-link" style="display:inline-block;">
+					<a href="{{ abp.company_facebook }}" style="color:blue;"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_fb.png" style="width:50px;height: 50px;"/></a>
 				</div>
-				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_twitter }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_twitter.png" /></a>
+				<div class="askbypoll-email-common-footer-link" style="display:inline-block;">
+					<a href="{{ abp.company_twitter }}" style="color:blue;"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_twitter.png" style="width:50px;height: 50px;"/></a>
 				</div>
-				<div class="askbypoll-email-common-footer-link">
-					<a href="{{ abp.company_url }}"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_website.png" /></a>
+				<div class="askbypoll-email-common-footer-link" style="display:inline-block;">
+					<a href="{{ abp.company_url }}" style="color:blue;"><img class="email-footer-img-link" src="{{ domain_url }}/static/polls/images/email_website.png" style="width:50px;height: 50px;"/></a>
 				</div>
-				<p class="footer-p-font">
+				<p class="footer-p-font" style="font-size: 0.8rem;padding: 0.2rem;">
 					Copyright © OlliVander's Technologies Pvt. Ltd.
 				</p>
-				<p class="footer-p-font">
+				<p class="footer-p-font" style="font-size: 0.8rem;padding: 0.2rem;">
 					All rights reserved. For Details Contact : support@askbypoll.com
 				</p>
-				<p class="footer-p-font">
+				<p class="footer-p-font" style="font-size: 0.8rem;padding: 0.2rem;">
 					Powered By <a href="{{ abp.company_url }}">AskByPoll</a>
 				</p>
 			</div>
