@@ -11,7 +11,7 @@ App.prototype = {
 				$("#notification-container").html(data);
 			});
 		});
-        setTimeout(that.autofollow, 1000);
+        //setTimeout(that.autofollow, 1000);
 	},
     // autofollow: function() {
     //     $.ajax({
