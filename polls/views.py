@@ -2110,7 +2110,6 @@ class SurveyDeleteView(BaseViewDetail):
 
 def survey_mail(request):
 	try:
-		#print(request.POST)
 		errors = {}
 		url = reverse('polls:survey_vote', kwargs={'pk':int(request.POST.get('shareSurveyId','')),'survey_slug':request.POST.get('shareSurveySlug','')})
 		selectedGnames = request.POST.get('shareselectedGroups','').split(",")
@@ -2125,14 +2124,14 @@ def survey_mail(request):
 						group_user_email = group_user.email
 						#msg = EmailMessage(subject="Invitation", from_email=request.user.email,to=[group_user_email])
 						context = {
-		                    'inviter': request.user.first_name,
-		                    'companyname':request.user.extendeduser.company.name,
-		                    'questionUrl':settings.DOMAIN_URL+url,
-		                    'questionText':request.POST.get('shareSurveyName','')
-		                }
+		                    			'inviter': request.user.first_name,
+		                    			'companyname':request.user.extendeduser.company.name,
+		                    			'questionUrl':settings.DOMAIN_URL+url,
+		                    			'questionText':request.POST.get('shareSurveyName',''),
+							'domain_url':settings.DOMAIN_URL
+		                		}
 						html_message = render_to_string(template_name, context)
 						send_mail(mail_subject,"", 'support@askbypoll.com', [group_user_email],html_message=html_message)
-						msg.send()
 		return HttpResponse(json.dumps(errors), content_type='application/json')
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
