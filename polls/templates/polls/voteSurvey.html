@@ -654,8 +654,10 @@
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
 				
-				if({{ survey.id }} === 63){
-				$(".errorlist").remove();
+				//Symphony summit survey changes
+				if({{ survey.id }} === 63)
+				{
+					$(".errorlist").remove();
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
     				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
 					if($('#choiceText4177').val() === '' || !validateEmail){
@@ -663,7 +665,296 @@
 						$('#choiceText4177').focus();
 						return false;
 					}
+					
+					if(elementId === 2)
+					{
+						if (! $('input[name="choice4180"]:checked').length) {
+								$("#survey-question4180").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					} else {
+							  if($('#choice7831').is(":checked") || $('#choice7831').is(":checked")){
+								  if($('#choiceText4180Comment').val() === ""){
+									  $("#survey-question4180").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  return false;
+								  }
+							  }
+						}
+						
+						if (! $('input[name="choice4181"]:checked').length) {
+								$("#survey-question4181").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4182"]:checked').length) {
+								$("#survey-question4182").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4183"]:checked').length) {
+								$("#survey-question4183").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4184"]:checked').length) {
+								$("#survey-question4184").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+					} // sec 2 end
+					
+					if(elementId === 3)
+					{
+						if (! $('input[name="choice4185"]:checked').length) {
+								$("#survey-question4180").append('<span class="errorlist"><br> Select atleast one product line </span>');
+								return false;
+      					}
+						  
+						if($('#choice7858').is(":checked")){
+							if (! $('input[name="choice4186"]:checked').length) {
+								$("#survey-question4186").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							
+							if (! $('input[name="choice4187"]:checked').length) {
+								$("#survey-question4187").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4188"]:checked').length) {
+								$("#survey-question4188").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4189"]:checked').length) {
+								$("#survey-question4184").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						} else {
+								  if($('#choice7883').is(":checked") || $('#choice7884').is(":checked")){
+									if($('#choiceText4189Comment').val() === ""){
+										$("#survey-question4189").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+										return false;
+									}
+							  	  }
+							}
+						}
+						
+						if($('#choice7859').is(":checked")){
+							if (! $('input[name="choice4190"]:checked').length) {
+								$("#survey-question4190").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							
+							if (! $('input[name="choice4191"]:checked').length) {
+								$("#survey-question4191").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4192"]:checked').length) {
+								$("#survey-question4192").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4193"]:checked').length) {
+								$("#survey-question4193").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						} else {
+								  if($('#choice7907').is(":checked") || $('#choice7908').is(":checked")){
+									if($('#choiceText4193Comment').val() === ""){
+										$("#survey-question4193").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+										return false;
+									}
+							  	  }
+							}
+						}
+						
+						if($('#choice7860').is(":checked")){
+							if (! $('input[name="choice4194"]:checked').length) {
+								$("#survey-question4194").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							
+							if (! $('input[name="choice4195"]:checked').length) {
+								$("#survey-question4195").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4196"]:checked').length) {
+								$("#survey-question4196").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4197"]:checked').length) {
+								$("#survey-question4197").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						} else {
+								  if($('#choice7931').is(":checked") || $('#choice7932').is(":checked")){
+									if($('#choiceText4197Comment').val() === ""){
+										$("#survey-question4197").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+										return false;
+									}
+							  	  }
+							}
+						}
+						
+						if($('#choice7861').is(":checked")){
+							if (! $('input[name="choice4198"]:checked').length) {
+								$("#survey-question4198").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							
+							if (! $('input[name="choice4199"]:checked').length) {
+								$("#survey-question4199").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4200"]:checked').length) {
+								$("#survey-question4200").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4201"]:checked').length) {
+								$("#survey-question4201").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      						} else {
+								  if($('#choice7954').is(":checked") || $('#choice7955').is(":checked")){
+									if($('#choiceText4201Comment').val() === ""){
+										$("#survey-question4201").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+										return false;
+									}
+							  	  }
+							}
+						}
+						
+					} // next section 3
+					
+					if(elementId === 4){
+						if (! $('input[name="choice4202"]:checked').length) {
+								$("#survey-question4202").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4203"]:checked').length) {
+								$("#survey-question4203").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4204"]:checked').length) {
+								$("#survey-question4204").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4205"]:checked').length) {
+								$("#survey-question4205").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					} else {
+							  if($('#choice7978').is(":checked") || $('#choice7979').is(":checked")){
+								  if($('#choiceText4205Comment').val() === ""){
+									  $("#survey-question4205").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  return false;
+								  }
+							  }
+						}
+					} // Sec 4 end
+					
+					if(elementId === 5){
+						if (! $('input[name="choice4206"]:checked').length) {
+								$("#survey-question4206").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4207"]:checked').length) {
+								$("#survey-question4207").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4208"]:checked').length) {
+								$("#survey-question4208").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4209"]:checked').length) {
+								$("#survey-question4209").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					} else {
+							  if($('#choice8002').is(":checked") || $('#choice8003').is(":checked")){
+								  if($('#choiceText4209Comment').val() === ""){
+									  $("#survey-question4209").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  return false;
+								  }
+							  }
+						}
+					} // Sec 5 end
+					
+					if(elementId === 6){
+						if (! $('input[name="choice4210"]:checked').length) {
+								$("#survey-question4210").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4211"]:checked').length) {
+								$("#survey-question4211").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4212"]:checked').length) {
+								$("#survey-question4212").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4213"]:checked').length) {
+								$("#survey-question4213").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4214"]:checked').length) {
+								$("#survey-question4214").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					} else {
+							  if($('#choice8032').is(":checked") || $('#choice8033').is(":checked")){
+								  if($('#choiceText4214Comment').val() === ""){
+									  $("#survey-question4214").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  return false;
+								  }
+							  }
+						}
+					} // Sec 6 end
+					
+					if(elementId === 7){
+						if (! $('input[name="choice4215"]:checked').length) {
+								$("#survey-question4215").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4216"]:checked').length) {
+								$("#survey-question4216").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4217"]:checked').length) {
+								$("#survey-question4217").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4218"]:checked').length) {
+								$("#survey-question4218").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4219"]:checked').length) {
+								$("#survey-question4219").append('<span class="errorlist"><br> Enter your response </span>');
+								return false;
+      					} else {
+							  if($('#choice8062').is(":checked") || $('#choice8063').is(":checked")){
+								  if($('#choiceText4219Comment').val() === ""){
+									  $("#survey-question4219").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  return false;
+								  }
+							  }
+						}
+					} // Sec 7 end
+					
+					
 				}
+				// Symphony summit survey changes end
 				
 				$(this).hide();
 				$(this).parent().next().toggle();
