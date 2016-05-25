@@ -22,6 +22,19 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
+	<style>
+		{% if survey.id == 63 %}
+			.userImage{
+				display:none;
+			}
+			.userBrief-center{
+				margin-top:7rem;
+			}
+			img.survey-featured{
+				height: initial;
+			}
+		{% endif %}
+	</style>
 {% endblock %}
 {% block extra_js %}
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
