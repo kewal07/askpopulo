@@ -653,7 +653,6 @@
 
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
-				
 				//Symphony summit survey changes
 				if({{ survey.id }} === 63)
 				{
@@ -666,13 +665,13 @@
 						return false;
 					}
 					
-					if(elementId === 2)
+					if(elementId === "2")
 					{
 						if (! $('input[name="choice4180"]:checked').length) {
 								$("#survey-question4180").append('<span class="errorlist"><br> Enter your response </span>');
 								return false;
       					} else {
-							  if($('#choice7831').is(":checked") || $('#choice7831').is(":checked")){
+							  if($('#choice7831').is(":checked") || $('#choice7832').is(":checked")){
 								  if($('#choiceText4180Comment').val() === ""){
 									  $("#survey-question4180").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 									  return false;
@@ -701,7 +700,7 @@
       					}
 					} // sec 2 end
 					
-					if(elementId === 3)
+					if(elementId === "3")
 					{
 						if (! $('input[name="choice4185"]:checked').length) {
 								$("#survey-question4180").append('<span class="errorlist"><br> Select atleast one product line </span>');
@@ -826,7 +825,7 @@
 						
 					} // next section 3
 					
-					if(elementId === 4){
+					if(elementId === "4"){
 						if (! $('input[name="choice4202"]:checked').length) {
 								$("#survey-question4202").append('<span class="errorlist"><br> Enter your response </span>');
 								return false;
@@ -855,7 +854,7 @@
 						}
 					} // Sec 4 end
 					
-					if(elementId === 5){
+					if(elementId === "5"){
 						if (! $('input[name="choice4206"]:checked').length) {
 								$("#survey-question4206").append('<span class="errorlist"><br> Enter your response </span>');
 								return false;
@@ -884,7 +883,7 @@
 						}
 					} // Sec 5 end
 					
-					if(elementId === 6){
+					if(elementId === "6"){
 						if (! $('input[name="choice4210"]:checked').length) {
 								$("#survey-question4210").append('<span class="errorlist"><br> Enter your response </span>');
 								return false;
@@ -918,7 +917,7 @@
 						}
 					} // Sec 6 end
 					
-					if(elementId === 7){
+					if(elementId === "7"){
 						if (! $('input[name="choice4215"]:checked').length) {
 								$("#survey-question4215").append('<span class="errorlist"><br> Enter your response </span>');
 								return false;
