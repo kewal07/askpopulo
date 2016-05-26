@@ -1798,6 +1798,8 @@ class SurveyVoteView(BaseViewDetail):
 	def get_template_names(self):
 		template_name = 'polls/voteSurvey.html'
 		survey = self.get_object()
+		if survey.id == 64:
+			template_name = 'polls/symphonySummitVoteSurvey.html'
 		survey.numViews +=1
 		survey.save()
 		return [template_name]
