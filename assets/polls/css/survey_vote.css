@@ -363,29 +363,29 @@ p.special-userBrief-center{
 	}
 }
 /*For Symphony*/
-	#survey-63 .survey-question .que_text{
+	#survey-64 .survey-question .que_text{
 		padding:0.5rem 0.5rem 0 0.5rem;
 		margin:0;
 	}
-	#survey-63 #section---8 .que_text{
+	#survey-64 #section---8 .que_text{
 		margin-bottom: 1rem;
 	}
 	#survey-question4177 .que_text{
 		margin-bottom: 1rem !important;
 	}
-	#survey-63 .optionsForm{
+	#survey-64 .optionsForm{
 		padding:0 !important;
 	}
-	#survey-63 .optionsForm .choice-text{
+	#survey-64 .optionsForm .choice-text{
 		font-size: 1rem !important;
 		padding:0 4px;
 	}
-	#survey-63 .optionsForm input[type=radio] {
+	#survey-64 .optionsForm input[type=radio] {
 	    border: 0px;
 	   	height: 12px;
 	   	vertical-align: middle;
 	}
-	#survey-63 .optionsForm p.horizontal-options{
+	#survey-64 .optionsForm p.horizontal-options{
 		padding: 1rem 0;
 	}
 	.othercommentscolor{
