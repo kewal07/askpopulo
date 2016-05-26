@@ -409,7 +409,7 @@
 		</div>
 	</section>
 	<script type="text/javascript">
-		for(var tempque = 4186; tempque <= 4201; tempque++){
+		for(var tempque = 8279; tempque <= 8294; tempque++){
 			$('#survey-question'+tempque).css('display','none');
 		}
 		function handleRadioRow(el) {
@@ -439,10 +439,10 @@
 		$(document).ready(function()
 		{	
 			var mandatoryCommentsId = [];
-			var alreadyVoted7858 = false;
-			var alreadyVoted7859 = false;
-			var alreadyVoted7860 = false;
-			var alreadyVoted7861 = false;
+			var alreadyVoted8349 = false;
+			var alreadyVoted8350 = false;
+			var alreadyVoted8351 = false;
+			var alreadyVoted8352 = false;
 			
 			$(".choice-text").click(function(event){
 				event.preventDefault();
@@ -459,7 +459,7 @@
 						$("#"+questionDivId+"othercomments").removeClass("othercommentscolor");
 				}
 				
-				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
+				if(input.attr('id') === 'choice8356' || input.attr('id') === 'choice8357' || input.attr('id') === 'choice8380' || input.attr('id') === 'choice8381' || input.attr('id') === 'choice8404' || input.attr('id') === 'choice8405' || input.attr('id') === 'choice8428' || input.attr('id') === 'choice8429' || input.attr('id') === 'choice8476' || input.attr('id') === 'choice8477' || input.attr('id') === 'choice8506' || input.attr('id') === 'choice8507' || input.attr('id') === 'choice8536' || input.attr('id') === 'choice8537' || input.attr('id') === 'choice8572' || input.attr('id') === 'choice8573' || input.attr('id') === 'choice8578' || input.attr('id') === 'choice8579'){
 					
 					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
 					var labelText = $("label[for="+input.attr('id')+"]").text().trim();
@@ -487,181 +487,177 @@
 				
 				// Symphony summit changes
 
-				if(input.attr('id') === 'choice7858' || input.attr('id') === 'choice7859' || input.attr('id') === 'choice7860' || input.attr('id') === 'choice7861'){
+				if(input.attr('id') === 'choice8349' || input.attr('id') === 'choice8350' || input.attr('id') === 'choice8351' || input.attr('id') === 'choice8352'){
 					
-					if($('#choice7858').is(":checked")){
-						if(input.attr('id') === 'choice7858' && !alreadyVoted7858){
-							for(var temp=7862; temp<=7885; temp++){
+					if($('#choice8349').is(":checked")){
+						if(input.attr('id') === 'choice8349' && !alreadyVoted8349){
+							for(var temp=8353; temp<=8376; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
+								if(temp === 8358 || temp === 8364 || temp == 8370 || temp === 8376){
 									$('#choice'+temp).parent().removeClass('selectedOption');
 								}
 							}
 						}
-						$('#survey-question'+'4186').css('display','block');
-						$('#survey-question'+'4187').css('display','block');
-						$('#survey-question'+'4188').css('display','block');
-						$('#survey-question'+'4189').css('display','block');
+						$('#survey-question'+'4279').css('display','block');
+						$('#survey-question'+'4280').css('display','block');
+						$('#survey-question'+'4281').css('display','block');
+						$('#survey-question'+'4282').css('display','block');
 						alreadyVoted7858 = true;
 					} else {
-						$('#survey-question'+'4186').css('display','none');
-						$('#survey-question'+'4187').css('display','none');
-						$('#survey-question'+'4188').css('display','none');
-						$('#survey-question'+'4189').css('display','none');
-						if(!alreadyVoted7858){
-							for(var temp=7862; temp<=7885; temp++){
+						$('#survey-question'+'4279').css('display','none');
+						$('#survey-question'+'4280').css('display','none');
+						$('#survey-question'+'4281').css('display','none');
+						$('#survey-question'+'4282').css('display','none');
+						if(!alreadyVoted8349){
+							for(var temp=8353; temp<=8376; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
+								if(temp === 8358 || temp === 8364 || temp == 8370 || temp === 8376){
 									$('#choice'+temp).click();
 								}
 							}
 						} else {
-							if (! $('input[name="choice4186"]:checked').length) {
-								$('#choice7867').click();
+							if (! $('input[name="choice4279"]:checked').length) {
+								$('#choice8358').click();
       						}
-							if (! $('input[name="choice4187"]:checked').length) {
-								$('#choice7873').click();
+							if (! $('input[name="choice4280"]:checked').length) {
+								$('#choice8364').click();
       						}
-							if (! $('input[name="choice4188"]:checked').length) {
-								$('#choice7879').click();
+							if (! $('input[name="choice4281"]:checked').length) {
+								$('#choice8370').click();
       						}
-							if (! $('input[name="choice4189"]:checked').length) {
-								$('#choice7885').click();
+							if (! $('input[name="choice4282"]:checked').length) {
+								$('#choice8376').click();
       						}
 						}
 					}
 					
-					if($('#choice7859').is(":checked")){
-						if(input.attr('id') === 'choice7859'  && !alreadyVoted7859){
-							for(var temp=7886; temp<=7909; temp++){
+					if($('#choice8350').is(":checked")){
+						if(input.attr('id') === 'choice8350'  && !alreadyVoted8350){
+							for(var temp=8377; temp<=8400; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
+								if(temp === 8382 || temp === 8388 || temp == 8394 || temp === 8400){
 									$('#choice'+temp).parent().removeClass('selectedOption');
 								}
 							}
 						}
-						$('#survey-question'+'4191').css('display','block');
-						$('#survey-question'+'4192').css('display','block');
-						$('#survey-question'+'4190').css('display','block');
-						$('#survey-question'+'4193').css('display','block');
-						alreadyVoted7859 = true;
+						$('#survey-question'+'4283').css('display','block');
+						$('#survey-question'+'4284').css('display','block');
+						$('#survey-question'+'4285').css('display','block');
+						$('#survey-question'+'4286').css('display','block');
+						alreadyVoted8350 = true;
 					} else {
-						$('#survey-question'+'4190').css('display','none');
-						$('#survey-question'+'4191').css('display','none');
-						$('#survey-question'+'4192').css('display','none');
-						$('#survey-question'+'4193').css('display','none');
-						if(!alreadyVoted7859){
-							for(var temp=7886; temp<=7909; temp++){
+						$('#survey-question'+'4283').css('display','none');
+						$('#survey-question'+'4284').css('display','none');
+						$('#survey-question'+'4285').css('display','none');
+						$('#survey-question'+'4286').css('display','none');
+						if(!alreadyVoted8350){
+							for(var temp=8377; temp<=8400; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
+								if(temp === 8382 || temp === 8388 || temp == 8394 || temp === 8400){
 									$('#choice'+temp).click();
 								}
 							}
 						} else {
-							if (! $('input[name="choice4190"]:checked').length) {
-								$('#choice7891').click();
+							if (! $('input[name="choice4283"]:checked').length) {
+								$('#choice8382').click();
       						}
-							if (! $('input[name="choice4191"]:checked').length) {
-								$('#choice7897').click();
+							if (! $('input[name="choice4284"]:checked').length) {
+								$('#choice8388').click();
       						}
-							if (! $('input[name="choice4192"]:checked').length) {
-								$('#choice7903').click();
+							if (! $('input[name="choice4285"]:checked').length) {
+								$('#choice8394').click();
       						}
-							if (! $('input[name="choice4193"]:checked').length) {
-								$('#choice7909').click();
+							if (! $('input[name="choice4286"]:checked').length) {
+								$('#choice8400').click();
       						}
 						}
 					}
 					
-					if($('#choice7860').is(":checked")){
-						if(input.attr('id') === 'choice7860'  && !alreadyVoted7860){
-							for(var temp=7910; temp<=7933; temp++){
+					if($('#choice8351').is(":checked")){
+						if(input.attr('id') === 'choice8351'  && !alreadyVoted8351){
+							for(var temp=8401; temp<=8424; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
+								if(temp === 8406 || temp === 8412 || temp == 8418 || temp === 8424){
 									$('#choice'+temp).parent().removeClass('selectedOption');
 								}
 							}
 						}
-						$('#survey-question'+'4194').css('display','block');
-						$('#survey-question'+'4195').css('display','block');
-						$('#survey-question'+'4196').css('display','block');
-						$('#survey-question'+'4197').css('display','block');
-						alreadyVoted7860 = true;
+						$('#survey-question'+'4287').css('display','block');
+						$('#survey-question'+'4288').css('display','block');
+						$('#survey-question'+'4289').css('display','block');
+						$('#survey-question'+'4290').css('display','block');
+						alreadyVoted8351 = true;
 					} else {
-						$('#survey-question'+'4194').css('display','none');
-						$('#survey-question'+'4195').css('display','none');
-						$('#survey-question'+'4196').css('display','none');
-						$('#survey-question'+'4197').css('display','none');
-						if(!alreadyVoted7860){
-							for(var temp=7910; temp<=7933; temp++){
+						$('#survey-question'+'4287').css('display','none');
+						$('#survey-question'+'4288').css('display','none');
+						$('#survey-question'+'4289').css('display','none');
+						$('#survey-question'+'4290').css('display','none');
+						if(!alreadyVoted8351){
+							for(var temp=8401; temp<=8424; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
+								if(temp === 8406 || temp === 8412 || temp == 8418 || temp === 8424){
 									$('#choice'+temp).click();
 								}
 							}
 						} else {
-							if (! $('input[name="choice4194"]:checked').length) {
-								$('#choice7915').click();
+							if (! $('input[name="choice4287"]:checked').length) {
+								$('#choice8406').click();
       						}
-							if (! $('input[name="choice4195"]:checked').length) {
-								$('#choice7921').click();
+							if (! $('input[name="choice4288"]:checked').length) {
+								$('#choice8412').click();
       						}
-							if (! $('input[name="choice4196"]:checked').length) {
-								$('#choice7927').click();
+							if (! $('input[name="choice4289"]:checked').length) {
+								$('#choice8418').click();
       						}
-							if (! $('input[name="choice4197"]:checked').length) {
-								$('#choice7933').click();
+							if (! $('input[name="choice4290"]:checked').length) {
+								$('#choice8424').click();
       						}
 						}
 					}
 					
-					if($('#choice7861').is(":checked")){
-						if(input.attr('id') === 'choice7861'  && !alreadyVoted7861){
-							for(var temp=7934; temp<=7956; temp++){
+					if($('#choice8352').is(":checked")){
+						if(input.attr('id') === 'choice8352'  && !alreadyVoted8352){
+							for(var temp=8425; temp<=8448; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7944 || temp === 7950 || temp === 7956){
+								if(temp === 8430 || temp === 8436 || temp === 8442 || temp === 8448){
 									$('#choice'+temp).parent().removeClass('selectedOption');
 								}
 							}
-							$('#choice8065').attr('checked',false);
-							$('#choice8065').parent().removeClass('selectedOption');
 						}
-						$('#survey-question'+'4198').css('display','block');
-						$('#survey-question'+'4199').css('display','block');
-						$('#survey-question'+'4200').css('display','block');
-						$('#survey-question'+'4201').css('display','block');
-						alreadyVoted7861 = true;
+						$('#survey-question'+'4291').css('display','block');
+						$('#survey-question'+'4292').css('display','block');
+						$('#survey-question'+'4293').css('display','block');
+						$('#survey-question'+'4294').css('display','block');
+						alreadyVoted8352 = true;
 					} else {
-						$('#survey-question'+'4198').css('display','none');
-						$('#survey-question'+'4199').css('display','none');
-						$('#survey-question'+'4200').css('display','none');
-						$('#survey-question'+'4201').css('display','none');
-						if(!alreadyVoted7861){
-							for(var temp=7934; temp<=7956; temp++){
+						$('#survey-question'+'4291').css('display','none');
+						$('#survey-question'+'4292').css('display','none');
+						$('#survey-question'+'4293').css('display','none');
+						$('#survey-question'+'4294').css('display','none');
+						if(!alreadyVoted8352){
+							for(var temp=8425; temp<=8448; temp++){
 								$('#choice'+temp).attr('checked',false);
-								if(temp === 7944 || temp === 7950 || temp === 7956){
+								if(temp === 8430 || temp === 8436 || temp === 8442 || temp === 8448){
 									$('#choice'+temp).click();
 								}
-						}	
-							$('#choice8065').click();
+						    }	
 						} else {
-							if (! $('input[name="choice4198"]:checked').length) {
-								$('#choice7944').click();
+							if (! $('input[name="choice4291"]:checked').length) {
+								$('#choice8430').click();
       						}
-							if (! $('input[name="choice4199"]:checked').length) {
-								$('#choice7950').click();
+							if (! $('input[name="choice4292"]:checked').length) {
+								$('#choice8431').click();
       						}
-							if (! $('input[name="choice4200"]:checked').length) {
-								$('#choice7956').click();
+							if (! $('input[name="choice4293"]:checked').length) {
+								$('#choice8432').click();
       						}
-							if (! $('input[name="choice4201"]:checked').length) {
-								$('#choice8065').click();
+							if (! $('input[name="choice4294"]:checked').length) {
+								$('#choice8433').click();
       						}
 						}
 					}
 				}
 				// Symphony summit changes end
-				
 			 });
 
 			$(".next-section").click(function(event){
@@ -671,355 +667,374 @@
 				{
 					$(".errorlist").remove();
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
-    				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
-					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
-						$('#choiceText4177').focus();
+    				var validateEmail =  (regex.test($('#choiceText4275').val())) ? true : false;
+					if($('#choiceText4275').val() === '' || !validateEmail){
+						$("#survey-question4275").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
+						$('#choiceText4275').focus();
 						return false;
 					}
 					
-					if(elementId === "2")
+                    if(elementId === "2")
 					{
-						if (! $('input[name="choice4180"]:checked').length) {
-								$("#survey-question4180").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice7831').is(":checked") || $('#choice7832').is(":checked")){
-								  if($('#choiceText4180Comment').val() === ""){
-									  $("#survey-question4180").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4180Comment').focus();
-									  return false;
-								  }
-							  }
-						}
-						
-						if (! $('input[name="choice4181"]:checked').length) {
-								$("#survey-question4181").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4278"]:checked').length) {
+								$("#survey-question4278").append('<span class="errorlist"><br> Select Atleast One Product Line </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4182"]:checked').length) {
-								$("#survey-question4182").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4183"]:checked').length) {
-								$("#survey-question4183").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4184"]:checked').length) {
-								$("#survey-question4184").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-					} // sec 2 end
-					
-					if(elementId === "3")
-					{
-						if (! $('input[name="choice4185"]:checked').length) {
-								$("#survey-question4185").append('<span class="errorlist"><br> Select Atleast One Product Line </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if($('#choice7858').is(":checked")){
-							if (! $('input[name="choice4186"]:checked').length) {
+						if($('#choice8349').is(":checked")){
+							if (! $('input[name="choice4279"]:checked').length) {
 								$("#survey-question4186").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
-      						}
-							
-							if (! $('input[name="choice4187"]:checked').length) {
-								$("#survey-question4187").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4188"]:checked').length) {
-								$("#survey-question4188").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4189"]:checked').length) {
-								$("#survey-question4189").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
       						} else {
-								  if($('#choice7883').is(":checked") || $('#choice7884').is(":checked")){
-									if($('#choiceText4189Comment').val() === ""){
-										$("#survey-question4189").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+								  if($('#choice8356').is(":checked") || $('#choice8357').is(":checked")){
+									if($('#choiceText4279Comment').val() === ""){
+										$("#survey-question4279").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 										$('#choiceText4189Comment').focus();
 										return false;
 									}
 							  	  }
 							}
+							
+							if (! $('input[name="choice4280"]:checked').length) {
+								$("#survey-question4187").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4281"]:checked').length) {
+								$("#survey-question4188").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4282"]:checked').length) {
+								$("#survey-question4189").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						} 
 						}
 						
-						if($('#choice7859').is(":checked")){
-							if (! $('input[name="choice4190"]:checked').length) {
-								$("#survey-question4190").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4191"]:checked').length) {
-								$("#survey-question4191").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4192"]:checked').length) {
-								$("#survey-question4192").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4193"]:checked').length) {
-								$("#survey-question4193").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if($('#choice8350').is(":checked")){
+							if (! $('input[name="choice4283"]:checked').length) {
+								$("#survey-question4283").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       						} else {
-								  if($('#choice7907').is(":checked") || $('#choice7908').is(":checked")){
-									if($('#choiceText4193Comment').val() === ""){
-										$("#survey-question4193").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+								  if($('#choice8380').is(":checked") || $('#choice8381').is(":checked")){
+									if($('#choiceText4283Comment').val() === ""){
+										$("#survey-question4283").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4193Comment').focus();
+										$('#choiceText4283Comment').focus();
 										return false;
 									}
 							  	  }
 							}
+							
+							if (! $('input[name="choice4284"]:checked').length) {
+								$("#survey-question4284").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4285"]:checked').length) {
+								$("#survey-question4285").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4286"]:checked').length) {
+								$("#survey-question4286").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						} 
 						}
 						
-						if($('#choice7860').is(":checked")){
-							if (! $('input[name="choice4194"]:checked').length) {
-								$("#survey-question4194").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4195"]:checked').length) {
-								$("#survey-question4195").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4196"]:checked').length) {
-								$("#survey-question4196").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4197"]:checked').length) {
-								$("#survey-question4197").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if($('#choice8351').is(":checked")){
+							if (! $('input[name="choice4287"]:checked').length) {
+								$("#survey-question4287").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       						} else {
-								  if($('#choice7931').is(":checked") || $('#choice7932').is(":checked")){
-									if($('#choiceText4197Comment').val() === ""){
-										$("#survey-question4197").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+								  if($('#choice8404').is(":checked") || $('#choice8405').is(":checked")){
+									if($('#choiceText4287Comment').val() === ""){
+										$("#survey-question4287").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4197Comment').focus();
+										$('#choiceText4287Comment').focus();
 										return false;
 									}
 							  	  }
 							}
+							
+							if (! $('input[name="choice4288"]:checked').length) {
+								$("#survey-question4288").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4289"]:checked').length) {
+								$("#survey-question4289").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4290"]:checked').length) {
+								$("#survey-question4290").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						} 
 						}
 						
-						if($('#choice7861').is(":checked")){
-							if (! $('input[name="choice4198"]:checked').length) {
-								$("#survey-question4198").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4199"]:checked').length) {
-								$("#survey-question4199").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4200"]:checked').length) {
-								$("#survey-question4200").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4201"]:checked').length) {
-								$("#survey-question4201").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if($('#choice8352').is(":checked")){
+							if (! $('input[name="choice4291"]:checked').length) {
+								$("#survey-question4291").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       						} else {
-								  if($('#choice7954').is(":checked") || $('#choice7955').is(":checked")){
-									if($('#choiceText4201Comment').val() === ""){
-										$("#survey-question4201").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+								  if($('#choice8428').is(":checked") || $('#choice8429').is(":checked")){
+									if($('#choiceText4291Comment').val() === ""){
+										$("#survey-question4291").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 										$('#choiceText4201Comment').focus();
 										return false;
 									}
 							  	  }
 							}
+							
+							if (! $('input[name="choice4292"]:checked').length) {
+								$("#survey-question4292").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4293"]:checked').length) {
+								$("#survey-question4293").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
+							  
+							if (! $('input[name="choice4294"]:checked').length) {
+								$("#survey-question4294").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      						}
 						}
 						
-					} // next section 3
-					
-					if(elementId === "4"){
-						if (! $('input[name="choice4202"]:checked').length) {
-								$("#survey-question4202").append('<span class="errorlist"><br> Enter Your Response </span>');
+					} // next section 2
+                    
+                    if(elementId === "3"){
+						if (! $('input[name="choice4295"]:checked').length) {
+								$("#survey-question4295").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4203"]:checked').length) {
-								$("#survey-question4203").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4296"]:checked').length) {
+								$("#survey-question4296").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4204"]:checked').length) {
-								$("#survey-question4204").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4297"]:checked').length) {
+								$("#survey-question4297").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+                          
+                        if (! $('input[name="choice4298"]:checked').length) {
+								$("#survey-question4298").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  						  
-						if (! $('input[name="choice4205"]:checked').length) {
-								$("#survey-question4205").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4299"]:checked').length) {
+								$("#survey-question4299").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					} else {
-							  if($('#choice7978').is(":checked") || $('#choice7979').is(":checked")){
-								  if($('#choiceText4205Comment').val() === ""){
-									  $("#survey-question4205").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+							  if($('#choice8476').is(":checked") || $('#choice8477').is(":checked")){
+								  if($('#choiceText4299Comment').val() === ""){
+									  $("#survey-question4299").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4205Comment').focus();
+									  $('#choiceText4299Comment').focus();
+									  return false;
+								  }
+							  }
+						}
+					} // Sec 3 end
+                    
+                    if(elementId === "4"){
+						if (! $('input[name="choice4300"]:checked').length) {
+								$("#survey-question4300").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4301"]:checked').length) {
+								$("#survey-question4301").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4302"]:checked').length) {
+								$("#survey-question4302").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+                          
+                        if (! $('input[name="choice4303"]:checked').length) {
+								$("#survey-question4303").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4304"]:checked').length) {
+								$("#survey-question4304").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					} else {
+							  if($('#choice8506').is(":checked") || $('#choice8507').is(":checked")){
+								  if($('#choiceText4304Comment').val() === ""){
+									  $("#survey-question4304").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+									  $('#choiceText4304Comment').focus();
 									  return false;
 								  }
 							  }
 						}
 					} // Sec 4 end
-					
-					if(elementId === "5"){
-						if (! $('input[name="choice4206"]:checked').length) {
-								$("#survey-question4206").append('<span class="errorlist"><br> Enter Your Response </span>');
+                    
+                    if(elementId === "5"){
+						if (! $('input[name="choice4305"]:checked').length) {
+								$("#survey-question4305").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4207"]:checked').length) {
-								$("#survey-question4207").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4306"]:checked').length) {
+								$("#survey-question4306").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4208"]:checked').length) {
-								$("#survey-question4208").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4307"]:checked').length) {
+								$("#survey-question4307").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4308"]:checked').length) {
+								$("#survey-question4308").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  						  
-						if (! $('input[name="choice4209"]:checked').length) {
-								$("#survey-question4209").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4309"]:checked').length) {
+								$("#survey-question4309").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					} else {
-							  if($('#choice8002').is(":checked") || $('#choice8003').is(":checked")){
-								  if($('#choiceText4209Comment').val() === ""){
-									  $("#survey-question4209").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+							  if($('#choice8536').is(":checked") || $('#choice8537').is(":checked")){
+								  if($('#choiceText4309Comment').val() === ""){
+									  $("#survey-question4309").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  $('#choiceText4309Comment').focus();
 									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4209Comment').focus();
 									  return false;
 								  }
 							  }
 						}
 					} // Sec 5 end
-					
-					if(elementId === "6"){
-						if (! $('input[name="choice4210"]:checked').length) {
-								$("#survey-question4210").append('<span class="errorlist"><br> Enter Your Response </span>');
+                    
+                    
+					if(elementId === "6")
+					{
+						if (! $('input[name="choice4310"]:checked').length) {
+								$("#survey-question4310").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						
+						if (! $('input[name="choice4311"]:checked').length) {
+								$("#survey-question4311").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4211"]:checked').length) {
-								$("#survey-question4211").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4312"]:checked').length) {
+								$("#survey-question4312").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4212"]:checked').length) {
-								$("#survey-question4212").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4313"]:checked').length) {
+								$("#survey-question4313").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
 						  
-						if (! $('input[name="choice4213"]:checked').length) {
-								$("#survey-question4213").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4314"]:checked').length) {
+								$("#survey-question4314").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					}
-						  						  
-						if (! $('input[name="choice4214"]:checked').length) {
-								$("#survey-question4214").append('<span class="errorlist"><br> Enter Your Response </span>');
+                          
+                        if (! $('input[name="choice4315"]:checked').length) {
+								$("#survey-question4315").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					} else {
-							  if($('#choice8032').is(":checked") || $('#choice8033').is(":checked")){
-								  if($('#choiceText4214Comment').val() === ""){
-									  $("#survey-question4214").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('#choiceText4214Comment').focus();
+							  if($('#choice8572').is(":checked") || $('#choice8573').is(":checked")){
+								  if($('#choiceText4315Comment').val() === ""){
+									  $("#survey-question4315").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
 									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+									  $('#choiceText4315Comment').focus();
 									  return false;
 								  }
 							  }
 						}
-					} // Sec 6 end
+					} // sec 6 end
 					
 					if(elementId === "7"){
-						if (! $('input[name="choice4215"]:checked').length) {
-								$("#survey-question4215").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4216"]:checked').length) {
-								$("#survey-question4216").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4217"]:checked').length) {
-								$("#survey-question4217").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4218"]:checked').length) {
-								$("#survey-question4218").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  						  
-						if (! $('input[name="choice4219"]:checked').length) {
-								$("#survey-question4219").append('<span class="errorlist"><br> Enter Your Response </span>');
+						if (! $('input[name="choice4316"]:checked').length) {
+								$("#survey-question4316").append('<span class="errorlist"><br> Enter Your Response </span>');
 								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 								return false;
       					} else {
-							  if($('#choice8062').is(":checked") || $('#choice8063').is(":checked")){
-								  if($('#choiceText4219Comment').val() === ""){
-									  $("#survey-question4219").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('#choiceText4219Comment').focus();
+							  if($('#choice8578').is(":checked") || $('#choice8579').is(":checked")){
+								  if($('#choiceText4316Comment').val() === ""){
+									  $("#survey-question4316").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
+									  $('#choiceText4316Comment').focus();
 									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
 									  return false;
 								  }
 							  }
 						}
+						  
+						if (! $('input[name="choice4317"]:checked').length) {
+								$("#survey-question4317").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4318"]:checked').length) {
+								$("#survey-question4318").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  
+						if (! $('input[name="choice4319"]:checked').length) {
+								$("#survey-question4319").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
+						  						  
+						if (! $('input[name="choice4320"]:checked').length) {
+								$("#survey-question4320").append('<span class="errorlist"><br> Enter Your Response </span>');
+								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
+								return false;
+      					}
 					} // Sec 7 end
 					
 					
@@ -1053,10 +1068,10 @@
 				
 				if({{ survey.id }} === 64){
     				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
-    				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
-					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
-						$('#choiceText4177').focus();
+    				var validateEmail =  (regex.test($('#choiceText4275').val())) ? true : false;
+					if($('#choiceText4275').val() === '' || !validateEmail){
+						$("#survey-question4275").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
+						$('#choiceText4275').focus();
 						return false;
 					}
 				}
