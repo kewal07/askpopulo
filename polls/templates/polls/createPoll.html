@@ -1,5 +1,8 @@
 {% extends "polls/common.html" %}
 	{% load static %}
+	{% block extra_title %}
+		<title> Create-Poll-Question-Predict | AskByPoll</title>
+	{% endblock %}
 	{% block extra_css %}
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/jquery-ui.css' %}" />

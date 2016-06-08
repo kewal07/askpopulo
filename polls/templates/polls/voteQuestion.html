@@ -1,5 +1,8 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% block extra_title %}
+	<title> {{ question.que_slug }}</title>
+{% endblock %}
 {% block meta_data_extra %}
 	{% with question.has_image as has_image %}
 	{%if has_image|length > 0 %}

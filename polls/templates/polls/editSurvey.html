@@ -1,4 +1,7 @@
 {% extends "polls/common.html" %}
+	{% block extra_title %}
+		<title> {{ survey.survey_name }} | AskByPoll</title>
+	{% endblock %}
 	{% load static %}
 	{% load url_target_blank %}
 	{% block extra_css %}
