@@ -239,6 +239,13 @@
 	  </script> 
 	  <![endif]-->
     </div>
+
+    <div id="overlay-inAbox9" class="overlay">
+    	<div class="wrapper overlay-close" style="padding:0;">
+    	<i class="fa fa-close"></i>
+    	</div>
+	</div>
+
 		
 		{% if signup_part_form or data.signup_part_form %}
 			<script type="text/javascript">
@@ -335,6 +342,11 @@
 					fjs.parentNode.insertBefore(js,fjs);
 				}
 			}(document, 'script', 'twitter-wjs');
+
+			$('.overlay-close').on('click',function(){
+				$('#overlay-inAbox9').html('');
+				$('#overlay-inAbox9').css('display','none');
+			});
 
 			function timeSince(date) {
 				var currentDate = new Date();

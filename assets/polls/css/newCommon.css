@@ -289,7 +289,7 @@ ul.menu-ul img{
 .overlay{
 	display: none;
 }
-#overlay-inAbox8 {
+#overlay-inAbox8, #overlay-inAbox9 {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -301,6 +301,39 @@ ul.menu-ul img{
   height:230px;
   border-radius:25px;
   border: 2px solid #f96a0e;
+}
+
+#overlay-inAbox9 {
+  position: fixed;
+  top: 30%;
+  left: 30%;
+  margin-top: -50px;
+  margin-left: -100px;
+  display: none;
+  background: white;
+  text-align: center;
+  height:20rem;
+  border-radius:25px;
+  border: 2px solid #f96a0e;
+}
+
+#embed-textarea{
+    border: 1px solid #f96a0e;
+    border-radius: 4px;
+    font-size: 1.25rem;
+    width: 90%;
+    height: 5rem;
+}
+
+.overlay-close{
+	right: 2rem;
+    position: absolute;
+    top: 1rem;
+    color: white;
+    background: red;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 25px;
 }
 
 #loading-gif{

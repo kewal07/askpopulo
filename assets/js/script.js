@@ -10,6 +10,14 @@ $(document).ready(function(){
 	acnt_login_url = $("#acnt_login_url").val();
 	user_credits = parseInt($("#userCoins").val());
 
+	$('.embed-button').click(function(){
+		$('#overlay-inAbox9').html('');
+		$('#overlay-inAbox9').css('display','none');
+		var questionId = $(this).attr('id').split('---')[1];
+		$('#overlay-inAbox9').css('display','block');
+		$('#overlay-inAbox9').append('<div class="wrapper" style="padding:0;"><i class="fa fa-close overlay-close"></i></div><p> With Detailed Graphs</p><textarea id="embed-textarea" readonly>   <script type="text/javascript" src="https://www.askbypoll.com/static/js/widgetwithdatas.js"></script><div class="askbypoll-data-embed-poll" id="askbypoll-embed-poll---'+questionId+'"></div> </textarea> <br> <br> <p> Without Detailed Graphs</p><textarea id="embed-textarea" readonly> <script type="text/javascript" src="https://www.askbypoll.com/static/js/widgetwithdatas.js"></script><div class="askbypoll-embed-poll" id="askbypoll-embed-poll---'+questionId+'"></div> </textarea>');
+	});
+
 	$(".navbar-toggle").click(function(){
 		$(".logged-in-header").hide();
 		$(".navbar-top").toggle("slow");

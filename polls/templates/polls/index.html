@@ -105,6 +105,7 @@
 									{% endif %}
 						    		<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank" class="light-grey">Comment</a>
 						    		<a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
+						    		<a href="javascript:;" class="light-grey embed-button" id="embed---{{ question.question.id }}">Embed</a>
 						    	</div>
 							</div>
 							{% if not question.question.has_choice_image %}	
