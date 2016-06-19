@@ -317,7 +317,7 @@ ul.menu-ul img{
   border: 2px solid #f96a0e;
 }
 
-#embed-textarea{
+.embed-textarea{
     border: 1px solid #f96a0e;
     border-radius: 4px;
     font-size: 1.25rem;
@@ -325,15 +325,14 @@ ul.menu-ul img{
     height: 5rem;
 }
 
-.overlay-close{
+.close-overlay-9{
 	right: 2rem;
     position: absolute;
-    top: 1rem;
-    color: white;
     background: red;
-    cursor: pointer;
-    padding: 0.3rem;
+    color: white;
+    padding: 0.5rem;
     border-radius: 25px;
+    cursor: pointer;
 }
 
 #loading-gif{
