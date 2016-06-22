@@ -1,6 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
-{% load url_target_blank %}
+{% load polls_custom_tags %}
 {% block meta_data_extra %}
 	{% with survey.has_image as has_image %}
 	{%if has_image|length > 0 %}

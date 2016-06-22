@@ -241,6 +241,12 @@ class ExtendedUser(models.Model):
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 			print(exc_type, fname, exc_tb.tb_lineno)
 
+	def get_connections(self):
+		data = {}
+		followers = Follow.objects.filter(target_id=self.user_id,deleted_at__isnull=True).count()
+		following = Follow.objects.filter(user_id=self.user_id,deleted_at__isnull=True).count()
+		return followers + following
+
 
 class RedemptionScheme(models.Model):
 	schemeName = models.CharField(max_length=512,blank=True,null=True)

@@ -3,7 +3,7 @@
 		<title> {{ survey.survey_name }} | AskByPoll</title>
 	{% endblock %}
 	{% load static %}
-	{% load url_target_blank %}
+	{% load polls_custom_tags %}
 	{% block extra_css %}
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/jquery-ui.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'polls/css/createPoll.css' %}" />
