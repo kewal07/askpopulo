@@ -51,6 +51,7 @@ import re
 from random import shuffle
 from particle.models import Particle
 from collections import OrderedDict as SortedDict
+import polls.constants
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$")
 
 # Create your views here.
@@ -210,13 +211,13 @@ class IndexView(BaseViewList):
 		subscribed_questions = []
 		if user.is_authenticated():
 			subscribed_questions = Subscriber.objects.filter(user=request.user)
-		sub_que = []
-		for sub in subscribed_questions:
-			sub_que.append(sub.question.id)
+		# sub_que = []
+		# for sub in subscribed_questions:
+		# 	sub_que.append(sub.question.id)
 		if country_list:
 			latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
-		for mainquestion in latest_questions:
-			mainData.append(get_index_question_detail(self.request,mainquestion,user,sub_que,curtime))
+		# for mainquestion in latest_questions:
+		# 	mainData.append(get_index_question_detail(self.request,mainquestion,user,sub_que,curtime))
 		particleList = Particle.objects.order_by('-pub_date')
 		primer = Particle.objects.filter(is_prime=1)
 		if primer:
@@ -233,7 +234,7 @@ class IndexView(BaseViewList):
 		context['featuredParticles'] = featuredParticles
 		context['featuredParticles1'] = featuredParticles1
 		context['featuredParticles2'] = featuredParticles2
-		context['data'] = mainData
+		context['data'] = latest_questions
 		return context
 
 class VoteView(BaseViewDetail):
@@ -1118,18 +1119,6 @@ class CompanyIndexView(BaseViewList):
 		# print (mainData)
 		return mainData
 
-englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire","Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire","Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
-
-nothernIreLand = ['Antrim','Ards','Armagh','Ballymena','Ballymoney','Banbridge','Belfast','Carrickfergus','Castlereagh','Coleraine','Cookstown','Craigavon','Derry','Down','Dungannon and South Tyrone','Fermanagh','Larne','Limavady','Lisburn','Magherafelt','Moyle','Newry and Mourne District','Newtownabbey','North Down','Omagh','Strabane'];
-
-scotland = ["Aberdeen City","Aberdeenshire","Angus","Argyll and Bute","Clackmannanshire","Dumfries and Galloway","Dundee City","East Ayrshire","East Dunbartonshire","East Lothian","East Renfrewshire","Edinburgh, City of","Eilean Siar","Falkirk","Fife","Glasgow City","Highland","Inverclyde","Midlothian","Moray","North Ayrshire","North Lanarkshire","Orkney Islands","Perth and Kinross","Renfrewshire","Scottish Borders, The","Shetland Islands","South Ayrshire","South Lanarkshire","Stirling","West Dunbartonshire","West Lothian"];
-
-wales = ["Blaenau Gwent","Bridgend","Caerphilly","Cardiff","Carmarthenshire","Ceredigion","Conwy","Denbighshire","Flintshire","Gwynedd","Isle of Anglesey","Merthyr Tydfil","Monmouthshire","Neath Port Talbot","Newport","Pembrokeshire","Powys","Rhondda, Cynon, Taff","Swansea","Torfaen","Wrexham","Vale of Glamorgan, The"];
-
-regionDict = {
-	"IN":"India","AZ":"Azerbaijan","US":"USA","PK":"Pakistan","GB":"United Kingdom","AU":"Australia","CA":"Canada","PH":"Philippines","AQ":"Antartica","BB":"Barbados","DE":"Germany","SJ":"Svalbard","AF":"Afghanistan","DZ":"Algeria","AL":"Albania","AS":"American Samoa","AO":"Angola","AI":"Anguilla","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BR":"Brazil","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BA":"Bosnia and Herzegovina","CN":"China","DE":"Germany","DK":"Denmark","NL":"Netherlands","PK":"Pakistan","ZW":"Zimbabwe","ZM":"Zambia","ZA":"South Africa","CH":"Switzerland","TH":"Thailand","SG":"Singapore","SE":"Sweden","TR":"Turkey","QA":"Qatar","RE":"Reunion","RO":"Romania","SA":"Saudi Arabia","RW":"Rwanda","JP":"Japan","KE":"Kenya","NO":"Norway","NP":"Nepal","PL":"Poland","NZ":"New Zealand","GB-SCT":"Scotland","EG":"Egypt"
-}
-
 class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
@@ -1208,13 +1197,13 @@ class AccessDBView(BaseViewList):
 					state = user_data["state"]
 					if country == stateContry:
 						if country == 'United Kingdom':
-							if state in englandDict:
+							if state in constants.englandDict:
 								state_dic['England'] = state_dic.get('England',0) + 1
-							elif state in nothernIreLand:
+							elif state in constants.nothernIreLand:
 								state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
-							elif state in scotland:
+							elif state in constants.scotland:
 								state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
-							elif state in wales:
+							elif state in constants.wales:
 								state_dic['Wales'] = state_dic.get('Wales',0) + 1
 						else:
 							state_dic[state] = state_dic.get(state,0) + 1
@@ -1244,13 +1233,13 @@ class AccessDBView(BaseViewList):
 						state = vote.state
 						if country == stateContry:
 							if country == 'United Kingdom':
-								if state in englandDict:
+								if state in constants.englandDict:
 									state_dic['England'] = state_dic.get('England',0) + 1
-								elif state in nothernIreLand:
+								elif state in constants.nothernIreLand:
 									state_dic['Northern Ireland'] = state_dic.get('Northern Ireland',0) + 1
-								elif state in scotland:
+								elif state in constants.scotland:
 									state_dic['Scotland'] = state_dic.get('Scotland',0) + 1
-								elif state in wales:
+								elif state in constants.wales:
 									state_dic['Wales'] = state_dic.get('Wales',0) + 1
 							else:
 								state_dic[state] = state_dic.get(state,0) + 1
@@ -2225,7 +2214,7 @@ def vote_embed_poll(request):
 			dbIpResponse = requests.get(url)
 			locationData = dbIpResponse.json()
 			votedChoice = Choice.objects.get(pk=choiceId)
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=constants.regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src)
 			votedChoiceFromApi.save()
 			alreadyVoted = "true"
 			req['votedChoice'] = votedChoice.id
@@ -2529,47 +2518,6 @@ def getIpAddress(request):
 		ip = request.META.get('REMOTE_ADDR')    ### Real IP address of client Machine
 	return ip
 
-import xlwt
-gender_excel_dic = {
-	"M":1,
-	"F":2,
-	"D":3
-}
-prof_excel_dic = {
-	"Student":1,
-	"Politics":2,
-	"Education":3,
-	"Information Technology":4,
-	"Public Sector":5,
-	"Social Services":6,
-	"Medical":7,
-	"Finance":8,
-	"Manager":9,
-	"Others":10
-}
-age_excel_dic ={
-	1:"Upto 19",
-	2:"20 - 25",
-	3:"26 - 30",
-	4:"31 - 35",
-	5:"36 - 50",
-	6:"50+"
-}
-
-normal_style = xlwt.easyxf(
-	"""
-	font:name Verdana
-	"""
-)
-
-border_style = xlwt.easyxf(
-	"""
-	font:name Verdana;
-	border: top thin, right thin, bottom thin, left thin;
-	align: vert centre, horiz left;
-	"""
-)
-
 def excel_view(request):
 
 	survey_id = -1
@@ -2591,12 +2539,12 @@ def excel_view(request):
 		# write to the description sheet
 		write_to_description(ws0)
 		# description sheet end
-		ws1.write(0,0,"Country",normal_style)
-		ws1.write(0,1,"State",normal_style)
-		ws1.write(0,2,"City",normal_style)
-		ws1.write(0,3,"Gender",normal_style)
-		ws1.write(0,4,"Age Group",normal_style)
-		ws1.write(0,5,"Profession",normal_style)
+		ws1.write(0,0,"Country",constants.normal_style)
+		ws1.write(0,1,"State",constants.normal_style)
+		ws1.write(0,2,"City",constants.normal_style)
+		ws1.write(0,3,"Gender",constants.normal_style)
+		ws1.write(0,4,"Age Group",constants.normal_style)
+		ws1.write(0,5,"Profession",constants.normal_style)
 		i = 1
 		j = 1
 		survey_question_list = Survey_Question.objects.filter(survey_id = survey_id)
@@ -2774,13 +2722,13 @@ def excel_view(request):
 		# write to the description sheet
 		write_to_description(ws0,"poll")
 		# description sheet end
-		ws1.write(0,0,"Country",normal_style)
-		ws1.write(0,1,"State",normal_style)
-		ws1.write(0,2,"City",normal_style)
-		ws1.write(0,3,"Gender",normal_style)
-		ws1.write(0,4,"Age Group",normal_style)
-		ws1.write(0,5,"Profession",normal_style)
-		ws1.write(0,6,"Result",normal_style)
+		ws1.write(0,0,"Country",constants.normal_style)
+		ws1.write(0,1,"State",constants.normal_style)
+		ws1.write(0,2,"City",constants.normal_style)
+		ws1.write(0,3,"Gender",constants.normal_style)
+		ws1.write(0,4,"Age Group",constants.normal_style)
+		ws1.write(0,5,"Profession",constants.normal_style)
+		ws1.write(0,6,"Result",constants.normal_style)
 		i = 1
 		voted_list = Voted.objects.filter(question_id = question_id)
 		considered_email = []
@@ -2794,18 +2742,18 @@ def excel_view(request):
 				vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
 				if vote:
 					answer_text = c_index+1
-					ws1.write(i,j,answer_text,normal_style)
+					ws1.write(i,j,answer_text,constants.normal_style)
 					user_data = ast.literal_eval(vote[0].user_data)
 					j += 1
 			gender = user_data["gender"]
 			age = user_data["birthDay"]
 			profession = user_data["profession"]
-			ws1.write(i,0,user_data["country"],normal_style)
-			ws1.write(i,1,user_data["state"],normal_style)
-			ws1.write(i,2,user_data["city"],normal_style)
-			ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
-			ws1.write(i,4,get_age_group_excel(age),normal_style)
-			ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+			ws1.write(i,0,user_data["country"],constants.normal_style)
+			ws1.write(i,1,user_data["state"],constants.normal_style)
+			ws1.write(i,2,user_data["city"],constants.normal_style)
+			ws1.write(i,3,constants.gender_excel_dic.get(gender),constants.normal_style)
+			ws1.write(i,4,get_age_group_excel(age),constants.normal_style)
+			ws1.write(i,5,constants.prof_excel_dic.get(profession),constants.normal_style)
 			i += 1
 		voted_list = VoteApi.objects.filter(question_id = question_id)
 		for voted in voted_list:
@@ -2814,16 +2762,16 @@ def excel_view(request):
 				continue
 			# vote_user = voted.user
 			if voted.gender and voted.age and voted.profession:
-				ws1.write(i,0,voted.country,normal_style)
-				ws1.write(i,1,voted.state,normal_style)
-				ws1.write(i,2,voted.city,normal_style)
-				ws1.write(i,3,gender_excel_dic.get(voted.gender),normal_style)
-				ws1.write(i,4,get_age_group_excel(voted.age),normal_style)
-				ws1.write(i,5,prof_excel_dic.get(voted.profession),normal_style)
+				ws1.write(i,0,voted.country,constants.normal_style)
+				ws1.write(i,1,voted.state,constants.normal_style)
+				ws1.write(i,2,voted.city,constants.normal_style)
+				ws1.write(i,3,constants.gender_excel_dic.get(voted.gender),constants.normal_style)
+				ws1.write(i,4,get_age_group_excel(voted.age),constants.normal_style)
+				ws1.write(i,5,constants.prof_excel_dic.get(voted.profession),constants.normal_style)
 				for c_index,choice in enumerate(choice_list):
 					if voted.choice == choice:
 						answer_text = c_index+1
-						ws1.write(i,j,answer_text,normal_style)
+						ws1.write(i,j,answer_text,constants.normal_style)
 						j += 1
 				i += 1
 		wb.save(response)
@@ -2835,35 +2783,35 @@ def write_to_description(ws0, obj_type="survey"):
 	ws0.col(0).width = 25*256
 	i = 0
 	if obj_type == "survey":
-		ws0.write(i,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",normal_style)
+		ws0.write(i,0,"Single Select Questions Have 1 as lowest & 5 as highest Rating",constants.normal_style)
 		i += 1
-		ws0.write(i,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",normal_style)
+		ws0.write(i,0,"Multi Select Questions are displayed as Q_Choice No & its respective rating",constants.normal_style)
 		i += 2
-	ws0.write_merge(i,i,0,1,"Gender",border_style)
+	ws0.write_merge(i,i,0,1,"Gender",constants.border_style)
 	i += 1
-	ws0.write(i,0,"Male",border_style)
-	ws0.write(i,1,1,border_style)
+	ws0.write(i,0,"Male",constants.border_style)
+	ws0.write(i,1,1,constants.border_style)
 	i += 1
-	ws0.write(i,0,"Female",border_style)
-	ws0.write(i,1,2,border_style)
+	ws0.write(i,0,"Female",constants.border_style)
+	ws0.write(i,1,2,constants.border_style)
 	i += 1
-	ws0.write(i,0,"Not Disclosed",border_style)
-	ws0.write(i,1,3,border_style)
+	ws0.write(i,0,"Not Disclosed",constants.border_style)
+	ws0.write(i,1,3,constants.border_style)
 	i += 2
-	ws0.write_merge(i,i,0,1,"Age Group",border_style)
+	ws0.write_merge(i,i,0,1,"Age Group",constants.border_style)
 	x = i + 1
-	for key,val in age_excel_dic.items():
-		ws0.write(x,0,val,border_style)
-		ws0.write(x,1,key,border_style)
+	for key,val in constants.age_excel_dic.items():
+		ws0.write(x,0,val,constants.border_style)
+		ws0.write(x,1,key,constants.border_style)
 		x += 1
 	x += 1
-	ws0.write_merge(x,x,0,1,"Profession",border_style)
+	ws0.write_merge(x,x,0,1,"Profession",constants.border_style)
 	x += 1
-	sorted_prof_excel_dic = sorted(prof_excel_dic.items(), key=operator.itemgetter(1))
+	sorted_prof_excel_dic = sorted(constants.prof_excel_dic.items(), key=operator.itemgetter(1))
 	# print(sorted_prof_excel_dic)
 	for key_val in sorted_prof_excel_dic:
-		ws0.write(x,0,key_val[0],border_style)
-		ws0.write(x,1,key_val[1],border_style)
+		ws0.write(x,0,key_val[0],constants.border_style)
+		ws0.write(x,1,key_val[1],constants.border_style)
 		x += 1
 
 def get_age_group_excel(age):
@@ -3165,7 +3113,6 @@ class PDFPollView(generic.DetailView):
 		# print(context)
 		return context
 
-
 def get_age_data(user_age,age_dic):
 	age_dic['over_50'] = age_dic.get('over_50',0)
 	age_dic['bet_36_50'] = age_dic.get('bet_36_50',0)
@@ -3451,7 +3398,7 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 
 		giveData = {}				
 		if not alreadyVoted or forced_add:
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=constants.regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
@@ -3478,7 +3425,6 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
-
 
 def save_poll_vote(user,question,choice,queBet=None):
 	try:
@@ -3838,22 +3784,22 @@ def write_demographics_into_excel(ws1,user_data,demo_list,i):
 	gender = user_data.get("gender","")
 	age = user_data.get("birthDay")
 	profession = user_data.get("profession","")
-	ws1.write(i,0,user_data.get("country"),normal_style)
-	ws1.write(i,1,user_data.get("state"),normal_style)
-	ws1.write(i,2,user_data.get("city"),normal_style)
-	ws1.write(i,3,gender_excel_dic.get(gender),normal_style)
-	ws1.write(i,4,get_age_group_excel(age),normal_style)
-	ws1.write(i,5,prof_excel_dic.get(profession),normal_style)
+	ws1.write(i,0,user_data.get("country"),constants.normal_style)
+	ws1.write(i,1,user_data.get("state"),constants.normal_style)
+	ws1.write(i,2,user_data.get("city"),constants.normal_style)
+	ws1.write(i,3,constants.gender_excel_dic.get(gender),constants.normal_style)
+	ws1.write(i,4,get_age_group_excel(age),constants.normal_style)
+	ws1.write(i,5,constants.prof_excel_dic.get(profession),constants.normal_style)
 	j = 6
 	for key in demo_list:
-		ws1.write(0,j,key,normal_style)
-		ws1.write(i,j,user_data.get(key),normal_style)
+		ws1.write(0,j,key,constants.normal_style)
+		ws1.write(i,j,user_data.get(key),constants.normal_style)
 		j += 1
 	return i,j
 
 def write_result_into_excel(ws1,excel_text,answer_text,i,j):
-	ws1.write(0,j,excel_text,normal_style)
-	ws1.write(i,j,answer_text,normal_style)
+	ws1.write(0,j,excel_text,constants.normal_style)
+	ws1.write(i,j,answer_text,constants.normal_style)
 	return i,j
 
 def get_user_data_from_api(vote,user_data={}):

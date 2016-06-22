@@ -1,5 +1,6 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% load polls_custom_tags %}
 {% block extra_css %}
 {% endblock %}
 {% block content %}
@@ -126,37 +127,37 @@
 						<div id="container-mix"  class="row _post-container_">
 							{% for question in data.data %}
 								<div class="category-1 mix custom-column-5">
-									<div class="be-post" id="question---{{ question.question.id }}">
-										<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" class="be-img-block">
-											{% if question.question.featured_image %}
-												<img src="{{ question.question.get_featured_image_url }}" alt="{{question.question.question_text}}">
+									<div class="be-post" id="question---{{ question.id }}">
+										<a href="{% url 'polls:polls_vote' question.id question.que_slug %}" class="be-img-block">
+											{% if question.featured_image %}
+												<img src="{{ question.get_featured_image_url }}" alt="{{question.question_text}}">
 											{% else %}
-												<img src="{% static 'images/defaultBG.jpg' %}" alt="{{question.question.question_text}}">
+												<img src="{% static 'images/defaultBG.jpg' %}" alt="{{question.question_text}}">
 											{% endif %}
 										</a>
-										<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" class="be-post-title">T{{question.question.question_text}}</a>
+										<a href="{% url 'polls:polls_vote' question.id question.que_slug %}" class="be-post-title">{{question.question_text}}</a>
 										<span>
-											{% for cat in question.questionwithcategory_set.all %}
+											{% for cat in questionwithcategory_set.all %}
 												<a href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}" class="be-post-tag">{{ cat.category.category_title }} </a>
 											{% endfor %}
 										</span>
 										<div class="author-post">
 											<img src="{{ question.get_user_details.pic_url }}" alt="SomeUser" class="ava-author">
 											<span>by <a href="{{ question.get_user_details.user_url }}">{{ question.get_user_details.user_name }}</a></span>
-											{% if question.user_already_voted %}
-												<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Results</a>
+											{% if question|get_user_already_voted:user %}
+												<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.id question.que_slug %}" target="_blank">Results</a>
 											{% else %}
-												{% if question.expired %}
-													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Timed Out</a>
+												{% if question.get_expired %}
+													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.id question.que_slug %}" target="_blank">Timed Out</a>
 												{% else %}
-													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Vote</a>
+													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.id question.que_slug %}" target="_blank">Vote</a>
 												{% endif %}
 											{% endif %}
 										</div>
 										<div class="info-block">
-											<span><i class="fa fa-check"></i> {{ question.votes }}</span>
+											<span><i class="fa fa-check"></i> {{ question.get_number_votes }}</span>
 											<span><i class="fa fa-thumbs-o-up"></i> {{ question.upvoteCount }}</span>
-											<span><i class="fa fa-user"></i> {{ question.subscribers }}</span>
+											<span><i class="fa fa-user"></i> {{ question.get_subscribers }}</span>
 											<span><i class="fa fa-eye"></i> {{ question.numViews }}</span>
 										</div>
 									</div>

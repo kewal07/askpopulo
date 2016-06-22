@@ -71,7 +71,6 @@ class Question(models.Model):
 		return editable
 	def save(self, *args, **kwargs):
 		qText = self.question_text
-		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
 		if not self.que_slug:
 			short_q_text = qText[:50]
 			if not short_q_text.strip():
@@ -84,7 +83,6 @@ class Question(models.Model):
 		msg = ("%s %s %s"%(self.question_text,self.pub_date,self.user.username)).encode('utf-8')
 		sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
 		self.que_pk = sig
-		# self.numViews = 0
 		self.last_accessed = datetime.datetime.now()
 		super(Question, self).save(*args, **kwargs)
 	def __str__(self):
@@ -126,8 +124,6 @@ class Question(models.Model):
 		elif self.user.extendeduser.company_id > 1:
 			pic_url = self.user.extendeduser.get_profile_pic_url()
 			user_url = reverse('company_page', kwargs={'company_name':self.user.extendeduser.company.company_slug})
-			# user_alt = "User %s"%(self.user.extendeduser.company.name)
-			# user_name = self.user.extendeduser.company.name
 			user_alt = "User %s"%(self.user.first_name)
 			user_name = self.user.first_name
 		else:
@@ -153,6 +149,25 @@ class Question(models.Model):
 		return self.get_folder_day()+"/"+self.featured_image.path.split(os.sep)[-1]
 	def get_featured_image_url(self):
 		return "/media/featuredimages/"+self.get_file_name()
+	def get_expired(self):
+		exp = False
+		if self.expiry and self.expiry < timezone.now:
+			exp = True
+		return exp
+	def get_number_votes(self):
+		numVotes = self.voted_set.count()
+		considered_email = []
+		for voted in Voted.objects.filter(question=self):
+			considered_email.append(voted.user.email)
+		numVotes += VoteApi.objects.filter(question=self).exclude(email__in=considered_email).count()
+		if self.id == 3051:
+			numVotes += 100
+		return numVotes
+	def get_subscribers(self):
+		subs = self.subscriber_set.count()
+		if self.id == 3051:
+			subs += 100
+		return subs
 
 class Survey(models.Model):
 	survey_pk = models.CharField(max_length=255)
