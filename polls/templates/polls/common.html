@@ -367,27 +367,32 @@
 				<div class="row">
 					<div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3  large-popup-content">
 						<div class="row">
-							<form action="./" class="popup-input-search">
+							<form method="POST" action="{% url 'account_login' %}" class="popup-input-search" id="sign-in-form">
+							{% csrf_token %}
+							{{ form }}
+							{% if redirect_field_value %}
+								<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+							{% endif %}
 							<div class="col-md-6">
-								<input class="input-signtype" type="email" required="" placeholder="Your email">
+								<input class="input-signtype" id="login" name="login" type="email" required placeholder="Your email">
 							</div>
 							<div class="col-md-6">
-								<input class="input-signtype" type="password" required="" placeholder="Password">
+								<input class="input-signtype" id="password" name="password" type="password" required placeholder="Password">
 							</div>
 							<div class="col-xs-6">
 								<div class="be-checkbox">
 								<label class="check-box">
-									    <input class="checkbox-input" type="checkbox" /> <span class="check-box-sign"></span>
+									    <input class="checkbox-input" name="remember" type="checkbox" /> <span class="check-box-sign"></span>
 									</label>
 									<span class="large-popup-text">
 										Stay signed in
 									</span>
 								</div>
 								
-								<a href="blog-detail-2.html" class="link-large-popup">Forgot password?</a>
+								<a href="{% url 'account_reset_password' %}" class="link-large-popup">Forgot password?</a>
 							</div>
 							<div class="col-xs-6 for-signin">
-								<input type="submit" class="be-popup-sign-button" value="SIGN IN">
+								<input type="submit" class="be-popup-sign-button sign-in-button" value="SIGN IN">
 							</div>
 							</form>
 						</div>

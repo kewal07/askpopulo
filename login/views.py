@@ -637,11 +637,22 @@ class AdminDashboard(BaseViewDetail):
 			following = [ x.target for x in Follow.objects.filter(user_id=user.id,deleted_at__isnull=True) ]
 			activeUsers = getAllLoggedInUsers()
 			credits = user.extendeduser.credits
-			feed = feed_manager.get_user_feed(user.id)
-			activities = feed.get(limit=25)['results']
+			activities = []
+			feed_activities = []
+			try:
+				feed = feed_manager.get_user_feed(user.id)
+				activities = feed.get(limit=25)['results']
+				flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
+				feed_activities = flat_feed.get(limit=25)['results']
+			except Exception as e:
+				exc_type, exc_obj, tb = sys.exc_info()
+				f = tb.tb_frame
+				lineno = tb.tb_lineno
+				filename = f.f_code.co_filename
+				linecache.checkcache(filename)
+				line = linecache.getline(filename, lineno, f.f_globals)
+				print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 			data["activities"] = activities
-			flat_feed = feed_manager.get_news_feeds(user.id)['flat'] 
-			feed_activities = flat_feed.get(limit=25)['results']
 			data['flat_feed_activities'] = feed_activities
 			data["followers"] = followers
 			data["following"] = following

@@ -15,6 +15,39 @@ $(document).ready(function(){
 	acnt_login_url = $("#acnt_login_url").val();
 	user_credits = parseInt($("#userCoins").val());
 
+	$('.sign-in-button').bind('click', function(e)
+	{
+		console.log("LOGIN");
+		e.preventDefault();
+		var login_sub_but = $(this);
+		var form_id = "#sign-in-form";
+		var login_url = $(form_id).attr("action");
+		console.log("LOGIN");
+		login_sub_but.attr("disabled","disabled");
+		$.ajax(
+		{
+			type: 'POST',
+			url:login_url,
+			data:$(form_id).serialize(),
+			success:function(response)
+			{
+				console.log("success");
+				console.log(response);
+				login_sub_but.removeAttr("disabled","disabled");
+				location.href = response.location;
+		
+			},
+			error:function(response)
+			{
+				console.log("error");
+				console.log(response,response.responseJSON.form_errors);
+				login_sub_but.removeAttr("disabled","disabled");
+		
+			}
+		});   
+		return false;
+	});
+
 	$('.embed-button').click(function(){
 		$('#overlay-inAbox9').css('display','none');
 		var questionId = $(this).attr('id').split('---')[1];
