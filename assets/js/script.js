@@ -5,6 +5,11 @@ var user_credits;
 var cookie_prepend = "ABP_OWN_";
 $(document).ready(function(){
 
+	function tick(){
+    	$('#ticker li:first').slideUp( function () { $(this).appendTo($('#ticker')).slideDown(); });
+	}
+	setInterval(function(){ tick () }, 4000);
+
 	user_authenticated = $("#if_user_authenticated").val() === "True";
 	csrfmiddlewaretoken = $("#mycsrfmiddlewaretoken").val();
 	acnt_login_url = $("#acnt_login_url").val();
