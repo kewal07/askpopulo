@@ -35,20 +35,7 @@ $(document).ready(function(){
 		for (i = 1; i <= parseInt(noOfSections); i++) { 
 			var element = '<input type="text" class="survey-sec" id="sectionName---'+i+'" name="sectionName---'+i+'" placeholder="Section '+i+'" maxlength="64">';
 			$(".survey-sections").append(element);
-			// remove all section otions
-			$(".qSectOption---"+i).remove();
-			$(".qSect").append('<option value="'+$("#sectionName---"+i).val()+'" class="qSectOption---'+i+'">'+$("#sectionName---"+i).val()+'</option>');
-		} 
-	});
-
-	$("#surveys-content").on("change",".survey-sec",function(){
-		console.log("input changed");
-		var sectionNme = $(this).val();
-		var loopIndex = $(this)[0].id.split("---")[1];
-		console.log(sectionNme,loopIndex,$(".qSectOption---"+loopIndex));
-		$(".qSectOption---"+loopIndex).text(sectionNme);
-		$(".qSectOption---"+loopIndex).val(sectionNme);
-		console.log(sectionNme,loopIndex,$(".qSectOption---"+loopIndex));
+		}
 	});
 
 	$("#surveys-content").on("click",".add-q",function(){
@@ -87,11 +74,10 @@ $(document).ready(function(){
   		else
   			question_elem += '<p class="anonymous" style="margin-top:1rem"><input id="horizontalOptions' +question_count_str+ '" name="horizontalOptions' +question_count_str+ '" type="checkbox"><label for="horizontalOptions' +question_count_str+ '">Arrange Options Horizontaly </label></p>';
   		question_elem += '<p class="form-p"><label for="qSect---'+question_count_str+'">Section</label><select class="qSect" id="qSect---'+question_count_str+'" name="qSect---'+question_count_str+'">';
-  		question_elem += '<option value="undefined">undefined</option>';
   		var noOfSections = $("select#qSection option:selected").val();
   		var i;
   		for (i = 0; i <= parseInt(noOfSections); i++) { 
-  			question_elem += '<option value="'+$("#sectionName---"+i).val()+'" class="qSectOption---'+i+'">'+$("#sectionName---"+i).val()+'</option>';
+  			question_elem += '<option value="'+$("#sectionName---"+i).val()+'">'+$("#sectionName---"+i).val()+'</option>';
   		}
   		question_elem += '</select></p>';
   		question_elem += '<p class="form-p"><label for="qType';

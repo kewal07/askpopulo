@@ -401,7 +401,7 @@
 									<select class="qSect" id="qSect---{{ forloop.counter }}" name="qSect---{{ forloop.counter }}">
 									<option value="undefined" {{ "undefined"|get_selected:question.sectionName }}>undefined</option>
 									{% for section in survey.surveysection_set.all %}
-							  			<option value="{{ section.sectionName }}" {{ section.sectionName|get_selected:question.sectionName }} class="qSectOption---{{ forloop.counter }}">{{ section.sectionName }}</option>
+							  			<option value="{{ section.sectionName }}" {{ section.sectionName|get_selected:question.sectionName }}>{{ section.sectionName }}</option>
 							  		{% endfor %}
 			  						</select>
 			  					</p>

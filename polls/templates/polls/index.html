@@ -1,284 +1,219 @@
 {% extends "polls/common.html" %}
 {% load static %}
+{% block extra_title %}
+	<title> Login-Survey-Polls-CSAT | AskByPoll</title>
+{% endblock %}
 {% block extra_css %}
+	<!-- <link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" /> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'trivia/css/trivia.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'particle/css/particle.css' %}" />
+	<style type="text/css">
+		.col1{
+		background: url('{{ data.primer.get_img_url }}');
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		background-position: left top;
+		border: 2px solid #f96a0e;
+	}
+	</style>
 {% endblock %}
 {% block content %}
-	<div id="content-block">
-		{% if not user.is_authenticated %}
-			<div class="head-bg">
-				<div class="head-bg-img"></div>
-				<div class="head-bg-content">
-					<h1>Social Polling Was Never This <ul id="ticker">
-						<li class="blue">
-					        Informative!
-					    </li>
-					    <li class="green">
-					        Engaging!
-					    </li>
-					    <li class="yellow">
-					        Personalised!
-					    </li>
-					    <li class="red">
-					        Rewarding!
-					    </li>
-					</ul></h1>
-					<p>Polls. Votes. Comments. Particles. Trivia. Predictions. Gift Vouchers.</p>
-					<a class="btn color-1 size-1 hover-1" href="#"><i class="fa fa-facebook"></i>Log in via facebook</a>
-					<a class="be-register btn color-3 size-1 hover-6"><i class="fa fa-lock"></i>Sign up now</a>
-				</div>	
-			</div>
-		{% endif %}
-		<div class="container-fluid custom-container">
-			<div class="row">
-				<div class="col-md-2 left-feild">
-					<form action="./" class="input-search">
-						<input type="text" required placeholder="Enter keyword">
-							<i class="fa fa-search"></i>
-							<input type="submit" value="">
-					</form>				
-				</div>
-				<div class="col-md-10 ">
-					<div class="for-be-dropdowns">
-						<div class="be-drop-down">
-							<i class="icon-creative"></i>
-							<span class="be-dropdown-content">All Creative Fields
-							</span>
-							<ul class="drop-down-list">
-								<li class="filter" data-filter=".category-4"><a>Polls</a></li>
-								<li class="filter" data-filter=".category-5"><a>pArticles</a></li>
-								<li class="filter" data-filter=".category-1"><a>Trivia</a></li>
-							</ul>
-						</div>
-						<div class="be-drop-down">
-							<i class="icon-features"></i>
-							<span class="be-dropdown-content">Features
-							</span>
-							<ul class="drop-down-list">
-								<li class="filter" data-filter=".category-2"><a>Featured</a></li>
-								<li class="filter" data-filter=".category-3"><a>Most Voted</a></li>
-								<li class="filter" data-filter=".category-4"><a>Least Voted</a></li>
-								<li class="filter" data-filter=".category-5"><a>Most Discussed</a></li>
-								<li class="filter" data-filter=".category-1"><a>Most Recent</a></li>
-							</ul>
-						</div>
-						<div class="be-drop-down">
-							<i class="icon-worldwide"></i>
-							<span class="be-dropdown-content">Worldwide
-							</span>
-							<ul class="drop-down-list">
-								<li class="filter" data-filter=".category-2"><a>WorldWide</a></li>
-								<li class="filter" data-filter=".category-3"><a>Asia</a></li>
-								<li class="filter" data-filter=".category-4"><a>Americas</a></li>
-								<li class="filter" data-filter=".category-5"><a>Europe</a></li>
-								<li class="filter" data-filter=".category-1"><a>Australia</a></li>
-								<li class="filter" data-filter=".category-6"><a>Africa</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="container-fluid custom-container">
-			<div class="row">
-				<div class="col-md-2 left-feild">
-					<div class="be-vidget">
-						<h3 class="letf-menu-article">
-							Popular Categories
-						</h3>
-						<div class="creative_filds_block">
-							<div class="ul">
-								<a  data-filter=".category-1" class="filter">Graphic Design		</a>
-								<a data-filter=".category-2" class="filter">Photography			</a>
-								<a data-filter=".category-3" class="filter">Interaction Design	</a>
-								<a data-filter=".category-4" class="filter">Art Direction		</a>
-								<a data-filter=".category-5" class="filter">Illustration		</a>
-								<a  data-filter=".category-1" class="filter">Graphic Design		</a>
-								<a data-filter=".category-2" class="filter">Photography			</a>
-								<a data-filter=".category-3" class="filter">Interaction Design	</a>
-								<a data-filter=".category-4" class="filter">Art Direction		</a>
-								<a data-filter=".category-5" class="filter">Illustration		</a>
+	<section id="content">
+		<div id="featured-partciles">
+			<div class="container-primer">
+				{% if data.primer %}
+					<a href="{% url 'particle:particle_detail' data.primer.id data.primer.particle_slug %}">
+						<div class="featured-col col1">
+							<div class="particle-feature-detail primer-detail">
+								<p class="primer-title" id="primer-featured-title">
+									{{ data.primer.particle_title }}
+								</p>
+								<p class="primer-summary" id="primer-featured-summary">
+									{{ data.primer.particle_summary }}
+								</p>
 							</div>
 						</div>
-					</div>
-					<div class="be-vidget">
-						<h3 class="letf-menu-article">
-							Filter By
-						</h3>
-						<div class="filter-block">
-							<ul>
-								<li><a><i class="fa fa-wrench"></i>Categories</a>
-									<div class="be-popup">
-										<h3 class="letf-menu-article">
-											Category
-										</h3>
-										<form action="./" class="input-search">
-											<input class="filters-input" type="text" required placeholder="Start typing to see list">
-										</form>
-										<i class="fa fa-times"></i>
-									</div>
-								</li>
-							</ul>
+					</a>
+				{% endif %}
+			</div>
+			<div class="featured-col col2">
+				{% for featured in data.featuredParticles1 %}
+					<a href="{% url 'particle:particle_detail' featured.id featured.particle_slug %}">
+						<div class="featured-col-row" style="background: url('{{ featured.get_img_url }}');background-size: 100% 100%;background-repeat: no-repeat;background-position: left top;">
+							<div class="particle-feature-detail">
+								<p class="primer-title">
+									{{ featured.particle_title }}
+								</p>
+							</div>
 						</div>
-					</div>
-				</div>
-				<div class="col-md-10">
-					{% if data %}
-						<div id="container-mix"  class="row _post-container_">
-							{% for question in data.data %}
-								<div class="category-1 mix custom-column-5">
-									<div class="be-post" id="question---{{ question.question.id }}">
-										<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" class="be-img-block">
-											{% if question.question.featured_image %}
-												<img src="{{ question.question.get_featured_image_url }}" alt="{{question.question.question_text}}">
-											{% else %}
-												<img src="{% static 'images/defaultBG.jpg' %}" alt="{{question.question.question_text}}">
-											{% endif %}
+					</a>
+				{% endfor %}
+			</div>
+			<div class="featured-col col3">
+				{% for featured in data.featuredParticles2 %}
+					<a href="{% url 'particle:particle_detail' featured.id featured.particle_slug %}">
+						<div class="featured-col-row" style="background: url('{{ featured.get_img_url }}');background-size: 100% 100%;background-repeat: no-repeat;background-position: left top;">
+							<div class="particle-feature-detail">
+								<p class="primer-title">
+									{{ featured.particle_title }}
+								</p>
+							</div>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
+		</div>
+		{% if data %}
+			<div class="masonry">
+				{% for question in data.data %}
+					{% if question.question.user.extendeduser.company.id > 1 %}
+			   			<div class="item featured">
+			   		{% else %}
+			   			<div class="item">
+			   		{% endif %}
+				   			<div class="trivia-title">
+								<a id="question---{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" >{{question.question.question_text}}</a>
+								<div class="poll-info">
+									{% if not user.is_authenticated %}
+                                                				{% include 'polls/snippets/overlay-get-data.html' with poll=question.question %}
+                                        				{% endif %}
+									{% if question.user_already_voted %}
+										<a href="javascript:;" class="light-grey">Voted 
+									{% else %}
+										<a href="javascript:;" class="light-grey">Vote 
+									{% endif %}
+											<span class="q-det-num">{{ question.votes }}</span>
 										</a>
-										<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" class="be-post-title">T{{question.question.question_text}}</a>
-										<span>
-											{% for cat in question.questionwithcategory_set.all %}
-												<a href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}" class="be-post-tag">{{ cat.category.category_title }} </a>
-											{% endfor %}
-										</span>
-										<div class="author-post">
-											<img src="{{ question.get_user_details.pic_url }}" alt="SomeUser" class="ava-author">
-											<span>by <a href="{{ question.get_user_details.user_url }}">{{ question.get_user_details.user_name }}</a></span>
-											{% if question.user_already_voted %}
-												<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Results</a>
+									{% if question.subscribed %}
+										<a href="javascript:;" class="light-grey followButton following" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Unfollow">Followed 
+									{% else %}
+										<a href="javascript:;" class="light-grey followButton" id="follow{{ question.question.id }}---{{ question.question.que_slug }}" title="Follow">Follow 
+									{% endif %}
+											<span class="q-det-num" id="sub_num{{ question.question.id }}">{{ question.subscribers }}</span>
+										</a>
+									{% if user in question.upvotedusers %}
+										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvoted 
+									{% else %}
+										<a href="javascript:;" class="light-grey updownvote" id="upvote---{{ question.question.id }}---{{ question.question.que_slug }}">Upvote 
+									{% endif %}
+						    				<span class="q-det-num" id="upvotenum{{ question.question.id }}">{{ question.upvoteCount }}</span>
+						    			</a>
+						    		{% if user in question.downvotedusers %}
+										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvoted </a>
+									{% else %}
+										<a href="javascript:;" class="light-grey updownvote" id="downvote---{{ question.question.id }}---{{ question.question.que_slug }}">Downvote </a>
+									{% endif %}
+						    		<a href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank" class="light-grey">Comment</a>
+						    		<a href="javascript:;" class="light-grey spam-question" id="ban{{ question.question.id }}---{{ question.question.que_slug }}">Spam</a>
+						    		<a href="javascript:;" class="light-grey embed-button" id="embed---{{ question.question.id }}">Embed</a>
+						    	</div>
+							</div>
+							{% if not question.question.has_choice_image %}	
+								{% if question.question.featured_image %}
+									<img class="trivia-image" src="{{ question.question.get_featured_image_url }}">
+								{% endif %}
+							{% endif %}
+							<div class="trivia-description">
+								<form class="optionsForm" action="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?{{ request.GET.urlencode }}" method="POST" id="optionsForm{{ question.question.id }}" >
+									{% csrf_token %}
+									<div class="cta">
+										<input type="hidden" name="question" value="{{ question.question.id }}" />
+										<input type="hidden" name="betAmountHidden" id="betAmountHidden" value="" />
+										{% for choice in question.question.choice_set.all %}
+											<p>
+												<input class="choices" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+												<label for="choice{{ choice.id }}">
+													{% if choice.choice_image %}
+														<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+													{% else %}
+														{{ choice.choice_text }}
+													{% endif %}
+												</label>
+											</p>
+										{% endfor %}
+										<p class="last-p">
+										{% if question.user_already_voted %}
+											{% if user.is_authenticated %}
+												<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
 											{% else %}
-												{% if question.expired %}
-													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Timed Out</a>
-												{% else %}
-													<a class="btn color-1 vote-btn-redirect" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}" target="_blank">Vote</a>
+												<a class="btn resultsButton submit anchor_submit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												{% if not question.dataProvided and not question.expired %}
+													<a class="btn voteResultSubmit open-overlay-data" id="open-overlay-data---{{ question.question.id }}---{{ question.question.que_slug }}" href="javascript:;"> Show Graphs</a>
 												{% endif %}
 											{% endif %}
-										</div>
-										<div class="info-block">
-											<span><i class="fa fa-check"></i> {{ question.votes }}</span>
-											<span><i class="fa fa-thumbs-o-up"></i> {{ question.upvoteCount }}</span>
-											<span><i class="fa fa-user"></i> {{ question.subscribers }}</span>
-											<span><i class="fa fa-eye"></i> {{ question.numViews }}</span>
-										</div>
+										{% else %}
+											{% if question.expired %}
+												<input class="btn submit" type="submit" value="Timed Out" id="{{ question.question.id }}---{{ question.question.que_slug }}" disabled="disabled"/>
+											{% else %}
+												<input class="btn submit voteSubmit" type="submit" value={% if question.question.isBet %}"Predict"{% else %}"Vote"{% endif %} id="vote{{ question.question.id }}---{{ question.question.que_slug }}---{{ question.question.isBet }}"/>
+											{% endif %}
+											{% if user.is_authenticated and user.id == question.question.user.id or question.expired %}
+												{% if user.is_authenticated %}
+												<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												{% else %}
+												<a class="btn submit anchor_submit voteResultSubmit" id="voteResultButtonLink{{ question.question.id }}" href="{% url 'account_login' %}?next={% url 'polls:polls_vote' question.question.id question.question.que_slug %}">Results</a>
+												{% endif %}
+											{% endif %}
+										{% endif %}
+										</p>
 									</div>
-								</div>
-							{% endfor %}
-							<div class="category-2 mix custom-column-5">
-								<div class="be-post">
-									<a href="#" class="be-img-block">
-										<img src="{% static 'images/f2.jpg' %}" alt="SomeName">
-									</a>
-									<a href="#" class="be-post-title">The kitsch destruction of our world</a>
-									<span>
-										<a href="#" class="be-post-tag">Category 1</a>,
-										<a href="#" class="be-post-tag">Category 2</a>,
-										<a href="#" class="be-post-tag">Category 3</a>
-									</span>
-									<div class="author-post">
-										<img src="{% static 'images/f9.jpg' %}" alt="SomeUser" class="ava-author">
-										<span>by <a href="#">Kewal Krishna</a></span>
-									</div>
-									<div class="info-block">
-										<span><i class="fa fa-thumbs-o-up"></i> 360</span>
-										<span><i class="fa fa-eye"></i> 789</span>
-										<span><i class="fa fa-comment-o"></i> 20</span>
-									</div>
-								</div>
+								</form>
 							</div>
-							<div class="category-3 mix custom-column-5">
-								<div class="be-post">
-									<a href="#" class="be-img-block">
-										<img src="{% static 'images/f6.jpg' %}" alt="SomeName">
-									</a>
-									<a href="#" class="be-post-title">The kitsch destruction of our world</a>
-									<span>
-										<a href="#" class="be-post-tag">Category 1</a>,
-										<a href="#" class="be-post-tag">Category 2</a>,
-										<a href="#" class="be-post-tag">Category 3</a>
-									</span>
-									<div class="author-post">
-										<img src="{% static 'images/f9.jpg' %}" alt="SomeUser" class="ava-author">
-										<span>by <a href="#">Kewal Krishna</a></span>
-									</div>
-									<div class="info-block">
-										<span><i class="fa fa-thumbs-o-up"></i> 360</span>
-										<span><i class="fa fa-eye"></i> 789</span>
-										<span><i class="fa fa-comment-o"></i> 20</span>
-									</div>
-								</div>
-							</div>
-							<div class="category-4 mix custom-column-5">
-								<div class="be-post">
-									<a href="#" class="be-img-block">
-										<img src="{% static 'images/f8.jpg' %}" alt="SomeName">
-									</a>
-									<a href="#" class="be-post-title">The kitsch destruction of our world</a>
-									<span>
-										<a href="#" class="be-post-tag">Category 1</a>,
-										<a href="#" class="be-post-tag">Category 2</a>,
-										<a href="#" class="be-post-tag">Category 3</a>
-									</span>
-									<div class="author-post">
-										<img src="{% static 'images/f9.jpg' %}" alt="SomeUser" class="ava-author">
-										<span>by <a href="#">Kewal Krishna</a></span>
-									</div>
-									<div class="info-block">
-										<span><i class="fa fa-thumbs-o-up"></i> 360</span>
-										<span><i class="fa fa-eye"></i> 789</span>
-										<span><i class="fa fa-comment-o"></i> 20</span>
-									</div>
-								</div>
-							</div>
-							<div class="category-5 mix custom-column-5">
-								<div class="be-post">
-									<a href="#" class="be-img-block">
-										<img src="{% static 'images/f4.jpg' %}" alt="SomeName">
-									</a>
-									<a href="#" class="be-post-title">The kitsch destruction of our world</a>
-									<span>
-										<a href="#" class="be-post-tag">Category 1</a>,
-										<a href="#" class="be-post-tag">Category 2</a>,
-										<a href="#" class="be-post-tag">Category 3</a>
-									</span>
-									<div class="author-post">
-										<img src="{% static 'images/f9.jpg' %}" alt="SomeUser" class="ava-author">
-										<span>by <a href="#">Kewal Krishna</a></span>
-									</div>
-									<div class="info-block">
-										<span><i class="fa fa-thumbs-o-up"></i> 360</span>
-										<span><i class="fa fa-eye"></i> 789</span>
-										<span><i class="fa fa-comment-o"></i> 20</span>
-									</div>
-								</div>
-							</div>
-							<div class="category-6 mix custom-column-5">
-								<div class="be-post">
-									<a href="#" class="be-img-block">
-										<img src="{% static 'images/f4.jpg' %}" alt="SomeName">
-									</a>
-									<a href="#" class="be-post-title">The kitsch destruction of our world</a>
-									<span>
-										<a href="#" class="be-post-tag">Category 1</a>,
-										<a href="#" class="be-post-tag">Category 2</a>,
-										<a href="#" class="be-post-tag">Category 3</a>
-									</span>
-									<div class="author-post">
-										<img src="{% static 'images/f9.jpg' %}" alt="SomeUser" class="ava-author">
-										<span>by <a href="#">Kewal Krishna</a></span>
-									</div>
-									<div class="info-block">
-										<span><i class="fa fa-thumbs-o-up"></i> 360</span>
-										<span><i class="fa fa-eye"></i> 789</span>
-										<span><i class="fa fa-comment-o"></i> 20</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					{% else %}
-						<p> Nothing to Discover. Go ahead and create something.</p>
-					{% endif %}
-				</div>
+			   			</div>
+			   	{% endfor %}
 			</div>
-		</div>
-	</div>
-	{% include "polls/snippets/signup-form.html" %}
+			{% if is_paginated %}
+		        <div class="pagination">
+		            <span class="page-links">
+		                {% if page_obj.has_previous %}
+		                	{% if "tab" in request.GET %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% else %}
+		                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% endif %}
+		                	{% else %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&page={{ page_obj.previous_page_number }}">previous</a>
+		                		{% else %}
+		                    	<a href="?page={{ page_obj.previous_page_number }}">previous</a>
+		                    	{% endif %}
+		                    {% endif %}
+		                {% endif %}
+		                <span class="page-current">
+		                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+		                </span>
+		                {% if page_obj.has_next %}
+		                	{% if "tab" in request.GET %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% else %}
+		                		<a href="?tab={{ request.GET.tab }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% endif %}
+		                	{% else %}
+		                		{% if "category" in request.GET %}
+		                		<a href="?category={{ request.GET.category }}&page={{ page_obj.next_page_number }}">next</a>
+		                		{% else %}
+		                    	<a href="?page={{ page_obj.next_page_number }}">next</a>
+		                    	{% endif %}
+		                    {% endif %}
+		                {% endif %}
+		            </span>
+		        </div>
+			{% endif %}
+		{% else %}
+			<p>No polls are available</p>
+		{% endif %}		
+		<script>
+			$(document).ready(function(){
+				$(".choices").click(function(){
+					$(this).parent().parent().children('p').css({"background":"rgb(250, 251, 252)"});
+					$(this).parent().parent().children().each(function(){
+						$(this).children("label").css({"background":"#fafbfc"});
+					})
+					$(this).parent().css({"background":"#f96a0e"});
+				});
+			});
+		</script>
+	</section>
 {% endblock %}
