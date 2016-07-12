@@ -187,8 +187,11 @@ class Survey(models.Model):
 			digestmod = hashlib.sha1
 			msg = ("%s %s %s"%(self.survey_name,self.pub_date,self.user.username)).encode('utf-8')
 			sig = hmac.HMAC(shakey, msg, digestmod).hexdigest()
+			if not self.expected_time:
+				self.expected_time = 3
+			else:
+				self.expected_time = int(self.expected_time)
 			self.survey_pk = sig
-			# self.numViews = 0
 			self.last_accessed = datetime.datetime.now()
 			super(Survey, self).save(*args, **kwargs)
 		except Exception as e:
