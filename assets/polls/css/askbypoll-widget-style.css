@@ -76,7 +76,7 @@ a.askbypoll-embed-poll-icon{
 img.askbypoll-embed-poll-logo{
 	width: 100px;
     height: 100px;
-    display: inline-block !important;
+    display: inline-block;
 }
 
 .askbypoll-embed-poll-question-text:first-letter,.askbypoll-embed-poll-question-choice-text:first-letter{
