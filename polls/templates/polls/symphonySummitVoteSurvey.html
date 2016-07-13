@@ -62,21 +62,11 @@
 					</div>
 					<p class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
 					<div class="userBrief">
-						<!-- <p>
-							<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
-									{{ survey.user.first_name }}
-							</a>
-						</p> -->
 						<p>
 							Survey Valid till : <span id="{{ survey.id }}expirydate"></span>
 						</p>
 					</div>
 					<div class="userBrief-right">
-						<!-- <p>
-							<a href="javascript:;">
-									{{ survey.user.extendeduser.company.description }}
-							</a>
-						</p> -->
 						<p>
 							Time To Complete : About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
 						</p>
@@ -333,7 +323,7 @@
 										</div>
 									<!-- </p> -->
 									</div>
-								{%endfor%}
+								{% endfor %}
 								{% if polls_section_dict.items|length > forloop.counter %}
 									<p class="btn next-section" id="next-section---{{ forloop.counter }}">Next</p>
 								{% else %}

@@ -71,7 +71,6 @@ class Question(models.Model):
 		return editable
 	def save(self, *args, **kwargs):
 		qText = self.question_text
-		# qText = ''.join(e for e in qText if e.isalnum() or e == " ")
 		if not self.que_slug:
 			short_q_text = qText[:50]
 			if not short_q_text.strip():
@@ -126,8 +125,6 @@ class Question(models.Model):
 		elif self.user.extendeduser.company_id > 1:
 			pic_url = self.user.extendeduser.get_profile_pic_url()
 			user_url = reverse('company_page', kwargs={'company_name':self.user.extendeduser.company.company_slug})
-			# user_alt = "User %s"%(self.user.extendeduser.company.name)
-			# user_name = self.user.extendeduser.company.name
 			user_alt = "User %s"%(self.user.first_name)
 			user_name = self.user.first_name
 		else:
@@ -285,8 +282,6 @@ class Choice(models.Model):
 		folder_day = ""
 		try:
 			day = self.choice_image.path.split(os.sep)[-2]
-			# print(day.split("-"))
-			# print(day,int(day.split("-")[0]),int(day.split("-")[2]),int(day.split("-")[3]))
 			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
 		except:
 			pass
@@ -319,9 +314,8 @@ class VoteText(models.Model):
 		user_data = {}
 		if self.user_data:
 			user_data = self.user_data
-		# if not self.user_data:
+
 		for field in self.user.extendeduser._meta.get_fields():
-			# print(dir(field))
 			if not field.is_relation and field.name != "imageUrl":
 				if field.name == "birthDay":
 					age = self.user.extendeduser.calculate_age()
@@ -357,17 +351,15 @@ class Vote(models.Model):
 			user_data = {}
 			if self.user_data:
 				user_data = self.user_data
-			# if not self.user_data:
+
 			for field in self.user.extendeduser._meta.get_fields():
-				# print(dir(field))
 				if not field.is_relation and field.name != "imageUrl":
 					if field.name == "birthDay":
 						age = self.user.extendeduser.calculate_age()
 						user_data[field.name] = age
 					else:
 						user_data[field.name] = getattr(self.user.extendeduser, field.name)
-			self.user_data = str(user_data)
-			# print("-------------",self.user_data)		
+			self.user_data = str(user_data)	
 			super(Vote, self).save(*args, **kwargs)
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -392,12 +384,6 @@ class Voted(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
 	created_at = models.DateTimeField(auto_now_add=True)
-	# @property
-	# def extra_activity_data(self):
-	# 	return {'question_text': self.question.question_text,'question_url': "/polls/"+str(self.question.id)+"/"+self.question.que_slug,'question_desc': self.question.description,'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug,'target_user_name':self.question.user.username,'target_user_pic':self.question.user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(self.question.user.id)+"/"+self.question.user.extendeduser.user_slug }
-	# @property
-	# def activity_object_attr(self):
-	# 	return self.user.username
 	def __str__(self):
 		return self.question.question_text+" : "+self.user.username
 	def save(self, *args, **kwargs):
@@ -450,6 +436,7 @@ class VoteApi(models.Model):
 	src = models.CharField(max_length=512,blank=True,null=True)
 	answer_text = models.CharField(max_length=512,blank=True,null=True)
 	votecolumn = models.ForeignKey(MatrixRatingColumnLabels, null=True)
+	voteRankOrValue = models.CharField(max_length=512,blank=True,null=True)
 	user_data = models.TextField()
 	unique_key = models.CharField(max_length=512,blank=True,null=True)
 	def save(self, *args, **kwargs):
@@ -490,8 +477,6 @@ class EmailTemplates(models.Model):
 		prepend_path = "media/emailimages/"
 		try:
 			day = pathlist[-2]
-			# print(day.split("-"))
-			# print(day,int(day.split("-")[0]),int(day.split("-")[2]),int(day.split("-")[3]))
 			folder_day = str(date(int(day.split("-")[0]),int(day.split("-")[1]),int(day.split("-")[2])))
 		except:
 			pass
@@ -535,3 +520,12 @@ class VoteColumn(models.Model):
 	def __str__(self):
 		return self.question.question_text+"__"+self.choice.choice_text+"__"+self.column.columnLabel
 
+class VoteRankAndValue(models.Model):
+	timestamp = models.DateTimeField(auto_now_add=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	question = models.ForeignKey(Question)
+	vote = models.ForeignKey(Vote)
+	choice = models.ForeignKey(Choice)
+	rankandvalue = models.CharField(max_length=512,blank=True, null= True)
+	def __str__(self):
+		return self.question.question_text+"__"+self.choice.choice_text+"__"+self.rankandvalue

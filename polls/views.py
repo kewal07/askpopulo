@@ -8,7 +8,7 @@ from django.core.urlresolvers import resolve,reverse
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 from django.views import generic
 from django.core.mail import send_mail
-from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels, SurveySection
+from polls.models import VoteColumn, Question,Choice,Vote,Subscriber,Voted,QuestionWithCategory,QuestionUpvotes,Survey,Survey_Question,SurveyWithCategory,SurveyVoted,VoteText,VoteApi,PollTokens,EmailTemplates, PollsReferred, SurveysReferred, UsersReferred, Demographics, MatrixRatingColumnLabels, SurveySection, VoteRankAndValue
 #from polls.models import PollTokens
 import polls.continent_country_dict
 from categories.models import Category
@@ -110,8 +110,6 @@ class IndexView(BaseViewList):
 		mainData = []
 		latest_questions = []
 		curtime = timezone.now()
-		# if user.is_authenticated():
-		# 	print(reverse('polls:mypolls', kwargs={'pk':user.id,'user_name':user.extendeduser.user_slug}),request.path, user.is_authenticated() and request.path == reverse('polls:mypolls', kwargs={'pk': user.id, 'user_name':user.extendeduser.user_slug}))
 		global_location = ""
 		country_list =[]
 		if request.COOKIES.get("location","global").lower() != "global":
@@ -352,7 +350,6 @@ class VoteView(BaseViewDetail):
 				giveData = {}
 				if not question.authenticate:
 					giveData = save_poll_vote_widget(request, question.id, choiceId)
-					# print(giveData)
 				return HttpResponse(json.dumps(giveData),content_type='application/json')
 			next_url = reverse('polls:polls_vote', kwargs={'pk':questionId,'que_slug':queSlug})
 			extra_params = '?next=%s?referral=%s'%(next_url,request.GET.get("referral",""))
@@ -1559,7 +1556,6 @@ class CreateSurveyView(BaseViewList):
 				poll['mandatory'] = mandatory
 				poll['horizontalOptions'] = horizontalOptions
 				# Not taking id now but ideally should take some id maybe ?
-				# poll['sectionId'] = post_data.get("sectionId")
 				poll['sectionName'] = post_data.get("qSect---"+str(que_index)).strip()
 				columns = []
 				choices = []
@@ -1569,7 +1565,6 @@ class CreateSurveyView(BaseViewList):
 				if not que_text:
 					queError += "Question is required.<br>"
 				if que_type == "rating":
-					# print(que_index+"---rating---Min")
 					min_value = post_data.get(que_index+"---rating---Min",0)
 					max_value = post_data.get(que_index+"---rating---Max",10)
 					if min_value:
@@ -1735,9 +1730,7 @@ def createSurveyPolls(survey,polls_list,curtime,user,qExpiry,edit,imagePathList)
 	try:
 		if edit:
 			survey_polls = Survey_Question.objects.filter(survey=survey)
-			#print(survey_polls)
 			for poll in survey_polls:
-				#print(poll)
 				question = poll.question
 				if poll.question_type != "text":
 					for choice in question.choice_set.all():
@@ -1922,7 +1915,6 @@ class SurveyVoteView(BaseViewDetail):
 
 	def post(self, request, *args, **kwargs):
 		try:
-			#print(request.POST)
 			path = request.path
 			user = request.user
 			post_data = request.POST
@@ -1955,6 +1947,7 @@ class SurveyVoteView(BaseViewDetail):
 				answer = ""
 				choices = []
 				columns = []
+				ranks = []
 				if not user.is_authenticated():
 					if 'email' in user_data:
 						votedCheck = VoteApi.objects.filter(question=vote["id"], email=user_data['email'])
@@ -1985,6 +1978,14 @@ class SurveyVoteView(BaseViewDetail):
 						else:
 							errors[question_id_str] = "All Rows Are Mandatory"
 							break
+				elif question_type == "rank":
+					for qchoice in question.choice_set.all():
+						choice = post_data.get(str(qchoice.id),[])
+						if choice:
+							choices.append(qchoice.id)
+							ranks.append(choice[0])
+						else:
+							ranks.append(choice[0])
 				choices = list(filter(None, choices))
 				if mandatory:
 					if question_type in ["radio","checkbox"]:
@@ -1995,6 +1996,7 @@ class SurveyVoteView(BaseViewDetail):
 				vote["answer"] = answer
 				vote["choices"] = choices
 				vote["columns"] =  columns
+				vote["ranks"] = ranks
 				votes_list.append(vote)
 			if not errors:
 				errors["success"] = "Successfull"
@@ -2202,15 +2204,10 @@ def vote_embed_poll(request):
 		divClass = request.GET.get('divClass','basic').replace('askbypoll-embed-poll','').replace(' ','').replace('-','')
 		if not divClass:
 			divClass = "basic"
-		# print(divClass,request.GET.get('divClass','basic'))
 		ipAddress = getIpAddress(request)
-		# ipAddress = '139.130.4.22'
-		# sessionKey = request.session.session_key
-		# print(sessionKey)
 		if not request.session.exists(request.session.session_key):
 			request.session.create()
 		sessionKey = request.session.session_key
-		#print(sessionKey)
 
 		question = Question.objects.get(pk=pollId)
 		req = {}
@@ -2219,7 +2216,6 @@ def vote_embed_poll(request):
 		elif poll.protectResult == 1:
 			req['protect'] = 1
 
-		#if((not existingVotes or timeDifference.total_seconds()>86400) and not(choiceId == 0)):
 		if((not alreadyVoted == 'true') and not(choiceId == 0)):
 			url = "http://api.db-ip.com/addrinfo?addr="+ipAddress+"&api_key=ab6c13881f0376231da7575d775f7a0d3c29c2d5"
 			dbIpResponse = requests.get(url)
@@ -2229,11 +2225,7 @@ def vote_embed_poll(request):
 			votedChoiceFromApi.save()
 			alreadyVoted = "true"
 			req['votedChoice'] = votedChoice.id
-			# req ['result'] = result
-			# response = json.dumps(req)
-			# response = callback + '(' + response + ');'
 		if alreadyVoted == 'true':
-			# totalVotes = VoteApi.objects.filter(question=question).count()
 			email_list_voted = []
 			choice_dic = {}
 			totalVotes = 0
@@ -2243,12 +2235,10 @@ def vote_embed_poll(request):
 				choice_dic[voteUser.choice.id] = choice_dic.get(voteUser.choice.id,0) + 1
 			choices = VoteApi.objects.filter(question=question).exclude(email__in=email_list_voted).values('choice').annotate(choiceCount=Count('choice'))
 			result = {}
-			#print(totalVotes,choices,email_list_voted)
 			choice_count_dic = {}
 			for i in choices:
 				choice_count_dic[i.get('choice')] = i.get('choiceCount')
 				totalVotes += i.get('choiceCount')
-			#print(totalVotes,choices)
 			percent_ratio = 1.39
 			if divClass in ["mu"]:
 				percent_ratio = 1
@@ -2266,7 +2256,6 @@ def vote_embed_poll(request):
 							width = 15
 				result[choice.id]["percent"] = percent
 				result[choice.id]["width"] = width
-			# print(result)
 			req ['result'] = result
 		else:
 			req = {}
@@ -2601,7 +2590,7 @@ def excel_view(request):
 		j = 1
 		survey_question_list = Survey_Question.objects.filter(survey_id = survey_id)
 		survey_questions = survey_question_list.values_list('question', flat=True)
-		# print(survey_questions)
+
 		voted_list = SurveyVoted.objects.filter(survey_id = survey_id)
 		demo_list = get_demographic_list(survey_id=survey_id)
 		for voted in voted_list:
@@ -3423,7 +3412,7 @@ def save_user_vote_data(user_data,alreadyVoted):
 			alreadyVoted.user_data = str(extra_data)
 		alreadyVoted.save()
 
-def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, forced_add = False):
+def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data=None, unique_key=None, votecolumn=None, voteRank=None, forced_add = False):
 	try:
 		ipAddress = getIpAddress(request)
 		if not request.session.exists(request.session.session_key):
@@ -3442,16 +3431,16 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 		
 		alreadyVoted = VoteApi.objects.filter(question=question, choice_id=choiceId, ipAddress=ipAddress, session=sessionKey, src=src)
 		
-		if unique_key and isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating'):
+		if unique_key and isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating' and not isSurveyQuestion[0].question_type == 'rank'):
 			alreadyVoted = VoteApi.objects.filter(question=question,ipAddress=ipAddress, session=sessionKey, src=src, unique_key=unique_key)
 			
-		if(isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating')):
+		if(isSurveyQuestion and (not isSurveyQuestion[0].question_type == 'checkbox' and not isSurveyQuestion[0].question_type == 'matrixrating' and not isSurveyQuestion[0].question_type == 'matrixrating')):
 			if(user_data.get('email','')):
 				alreadyVoted = VoteApi.objects.filter(question=question,email=user_data['email'])
 
 		giveData = {}				
 		if not alreadyVoted or forced_add:
-			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn)
+			votedChoiceFromApi = VoteApi(choice=votedChoice,question=question,country=regionDict[locationData['country']] ,city=locationData['city'],state=locationData['stateprov'],ipAddress=ipAddress, session=sessionKey, src=src, answer_text=answer_text, unique_key=unique_key, votecolumn=votecolumn, voteRankOrValue=voteRank)
 			votedChoiceFromApi.save()
 			alreadyVoted = votedChoiceFromApi
 			giveData["noData"] = True
@@ -3478,7 +3467,6 @@ def save_poll_vote_widget(request, pollId, choiceId, answer_text=None, user_data
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		print(' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj))
-
 
 def save_poll_vote(user,question,choice,queBet=None):
 	try:
@@ -3913,6 +3901,19 @@ def saveVotes(user,survey,votes_list,unique_key,user_data,request):
 							voted,created = Voted.objects.get_or_create(user=user, question_id=vote["id"])
 						else:
 							res_data = save_poll_vote_widget(request, vote["id"], choiceId, None,user_data, unique_key, votecolumn, forced_add = True)
+			elif vote["type"] in ["rank"]:
+				if vote["choices"]:
+					user_voted += 1
+					for index,choiceId in enumerate(vote["choices"]):
+						rank = vote["ranks"][index]
+						if is_authenticated:
+							uvote, created = Vote.objects.get_or_create(user=user, choice_id=choiceId, user_data=user_data)
+							if created:
+								voteRank = VoteRankAndValue(user=user, question_id=vote["id"], choice_id=choiceId, rankandvalue=rank, vote=uvote)
+								voteRank.save()
+							voted,created = Voted.objects.get_or_create(user=user, question_id=vote["id"])
+						else:
+							res_data = save_poll_vote_widget(request, vote["id"], choiceId, None,user_data, unique_key, voteRank=rank, forced_add = True)
 		if is_authenticated:
 			survey_voted = SurveyVoted(user=user, survey=survey, survey_question_count=len(votes_list), user_answer_count=user_voted)
 			survey_voted.save()

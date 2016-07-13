@@ -1251,14 +1251,14 @@
     			return true;
 			}
 
-			 // Method that checks that the browser supports the HTML5 File API
-	    function browserSupportFileUpload() {
-	        var isCompatible = false;
-	        if (window.File && window.FileReader && window.FileList && window.Blob) {
-	        isCompatible = true;
-	        }
-	        return isCompatible;
-	    }
+			// Method that checks that the browser supports the HTML5 File API
+		    function browserSupportFileUpload() {
+		        var isCompatible = false;
+		        if (window.File && window.FileReader && window.FileList && window.Blob) {
+		        isCompatible = true;
+		        }
+		        return isCompatible;
+		    }
 
 			function createGroup(){
 				if(!editGroupFlag){
@@ -1351,6 +1351,8 @@
 			var addCommentSurvey = false;
 			var horizontalOptions = false;
 			var uploaded_mails_from_csv = {};
+
+
 			function createSurvey(){
 				$(".create-survey").toggle("slow");
 				$( "#categories" ).autocomplete({
@@ -1359,48 +1361,46 @@
 					maxselection: 5,
 					elemId: "selectedCategories"
 				});
+
 				$( "#groups" ).autocomplete({
 					source: availableGroupTags,
 					multiselect: true,
 					maxselection: 5,
 					elemId: "selectedGroups"
 				});
+
 				$('#id_categories').hide();
 				$('#id_categories').prev().append("<span id='cats'>Please Click here to expand and select your categories</span>");
 				$('#id_categories').prev().on('click', '#cats', function() {
 			    	$('#id_categories').toggle();
 			  	});
+
 			  	$("#category_tooltip_fa").hover(function(e){
-			  		// console.log($(this));
 			  		var elem_pos = $(this).offset();
-			  		// console.log(elem_pos.top,elem_pos.left);
 			  		$("#category_tooltip").css({
 			  			"top":elem_pos.top-100,
 			  			"left":elem_pos.left-60,
 			  		});
 			  		$("#category_tooltip").toggle();
 			  	});
+
 			  	$("#featuredimage_tooltip_fa").hover(function(e){
-			  		// console.log($(this));
 			  		var elem_pos = $(this).offset();
-			  		// console.log(elem_pos.top,elem_pos.left);
 			  		$("#featuredimage_tooltip").css({
 			  			"top":elem_pos.top-100,
 			  			"left":elem_pos.left-60,
 			  		});
 			  		$("#featuredimage_tooltip").toggle();
 			  	});
+
 			  	if(!featureImageWrapped){
 			  		featureImageWrapped = true;
 				  	/*For file browse */
 					var invisible = $('<div/>').css({height:0,width:0,'overflow':'hidden','display':'inline-block'});
 					var label = $('<div class="fileLabel btn"><img class="upImg" style="display:none;"><span id="upImgText">Upload Image</span></div>');
-					// var upImg = $('<img id="upImg" width=>')
 					var fileInput = $("#shareImage").after(label).wrap(invisible);
-					// $("#"+choice_file_id).hide();
 
 					fileInput.change(function(){
-						// $('#upImgText').hide();
 					    $this = $(this);
 					    var fileVal = $this.val();
 				    	var fileNameIndex = fileVal.lastIndexOf("\\") + 1;
@@ -1410,16 +1410,12 @@
 
 				            reader.onload = function (e) {
 				                imgSrc = e.target.result;
-								console.log($this.parent().children().first());
-								// $(".upImg").attr('src', e.target.result);
 								$this.parent().next().children().first().attr('src', e.target.result);
-								// $(".upImg").show();
 								$this.parent().next().children().first().show();
 				            }
 
 				            reader.readAsDataURL(this.files[0]);
 				        }
-						// $("#upImgText").text(fileName);
 						$this.parent().next().children().first().next().hide();
 				    	$this.parent().parent().children().first().next().attr("placeholder", "Describe your image");
 					})
@@ -1438,9 +1434,7 @@
 					var choice_file_id = question_div+'choice'+question_choice_count+'file';
 					var font_awesome_str = "";
 					var choice_elem = "";
-					if(selectedType === "radio"){
-						font_awesome_str = "";
-					} else if(selectedType === "checkbox"){
+					if(selectedType === "radio" || selectedType === "checkbox"){
 						font_awesome_str = "";
 					}
 
@@ -1456,7 +1450,6 @@
 						choice_elem += '" class="createPollText" type="text" name="'+choice_elem_id+'" placeholder="Enter Choice" maxlength="200">';
 						choice_elem += '<input id="'+choice_file_id+'" class="fileButtonClass" type="file" name="'+choice_elem_id+'" accept="image/*">';
 						choice_elem += '<i id="' +question_count_select+'---'+ question_choice_count+'---'+selectedType+ '" class="fa fa-times-circle remove-choice"> Remove</i></p></div>';
-						// console.log($("#"+choice_elem_div),choice_elem);
 						$("#"+choice_elem_div).append(choice_elem);
 					}
 					choice_count[question_count_select]+=1;
@@ -1502,7 +1495,7 @@
 						location.reload();
 			    }
 					else{
-						console.log("{{ request.path }}");
+						
 						$.ajax({
 					        url: "{{ request.path }}",
 					        type: 'GET',
@@ -1599,7 +1592,7 @@
 					$('#'+mailPollDivId).toggle('slow');
 					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
 					form_data = { questionId: mailPollId, gethtml: true, widgetType: selectedWidgetType, csrfmiddlewaretoken: "{{ csrf_token }}" };
-					// console.log(form_data);
+					
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -1611,8 +1604,6 @@
 					        timeout: 30000,
 							success:function(response)
 							{
-								// console.log(response);
-								// console.log($("#askbypoll-email-preview---"+mailPollId));
 								$("#askbypoll-email-preview---"+mailPollId)[0].innerHTML = '<p class="askbypoll-email-preview-sub" id="askbypoll-email-preview-sub---'+mailPollId+'"></p>';
 								$("#askbypoll-email-preview---"+mailPollId).append(response.success);
 								$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML = 'Subject : <p class="askbypoll-email-preview-sub">' + response.mail_subject + "</p>";
@@ -1629,13 +1620,11 @@
 				$('#polls-content').on("click",'.email-preview', function(){
 					var mailPollId = $(this).attr('id').split('---')[1];
 					var selectedWidgetType = $("#mail-poll-widget-type---"+mailPollId).val();
-					// console.log($("#askbypoll-email-preview-sub---"+mailPollId),$("#askbypoll-email-preview-sub---"+mailPollId)[0].innerHTML);
 					var subject = $("#askbypoll-email-preview-sub-form-text---"+mailPollId).val();
 					var body1 = $("#email-body1-textarea---"+mailPollId).val();
 					var body2 = $("#email-body2-textarea---"+mailPollId).val();
 					var salutation = $("#email-salutation-textarea---"+mailPollId).val();
 					form_data = { questionId: mailPollId, gethtml: true, widgetType: selectedWidgetType, subject: subject, body1: body1, body2: body2, salutation: salutation, csrfmiddlewaretoken: "{{ csrf_token }}" };
-					// console.log(form_data);
 					{% if user.is_authenticated %}
 						$.ajax(
 						{
@@ -2087,7 +2076,7 @@
 			  		question_elem += '<p class="form-p"><label for="qType';
 			  		question_elem += question_count_str;
 			  		// change for radio default start
-			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="rating">Rating</option><option value="text">Text</option><option value="matrixrating">Matrix / Rating Scale</option></select></p>';
+			  		question_elem += '">Question Type</label><select class="question-type-select" id="question-type-select'+question_count_str+'" name="qType'+question_count_str+'"><option value="radio">Single Select</option><option value="checkbox">Multi Select</option><option value="rating">Rating</option><option value="text">Text</option><option value="matrixrating">Matrix / Rating Scale</option><option value="rank">Ranking</option></select></p>';
 			  		question_elem += '<div id="question'+question_count_str+'choiceDiv"><i id="' +question_count_str+'---radio" class="fa fa-plus-circle add-choice"> Add Another</i></div>'
 			  		// change for radio default end
 			  		question_elem += '</div>';
@@ -2162,7 +2151,6 @@
 							add_another_choice(question_count_select,selectedType);
 							$("#"+column_elem_div).append('<p> Columns </p>');
 							$("#"+column_elem_div).append('<i id="' +question_count_select+'---'+selectedType + '" class="fa fa-plus-circle add-column"> Add Another</i>');
-							//add_another_choice(question_count_select,selectedType);
 						} else if(selectedType != "text" && selectedType != "rating") {
 							var add_another_choice_elem = '<div id="'+choice_elem_div+'"></div>';
 							$("#"+question_div).append(add_another_choice_elem);
