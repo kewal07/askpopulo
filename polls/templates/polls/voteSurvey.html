@@ -62,21 +62,11 @@
 					</div>
 					<p class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
 					<div class="userBrief">
-						<!-- <p>
-							<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
-									{{ survey.user.first_name }}
-							</a>
-						</p> -->
 						<p>
 							Survey Valid till : <span id="{{ survey.id }}expirydate"></span>
 						</p>
 					</div>
 					<div class="userBrief-right">
-						<!-- <p>
-							<a href="javascript:;">
-									{{ survey.user.extendeduser.company.description }}
-							</a>
-						</p> -->
 						<p>
 							Time To Complete : About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
 						</p>
@@ -110,10 +100,10 @@
 					{% endif %}
 					
 					{% if demo_list|length > 0 and user.is_authenticated %}
-					<p class="question_description_header">
+						<p class="question_description_header">
 
-						<span class="question_description_header_span">Demographics</span>
-					</p>
+							<span class="question_description_header_span">Demographics</span>
+						</p>
 					{% endif %}
 					
 					<div class="survey-questions" id="survey-{{ survey.id }}">
@@ -253,39 +243,48 @@
 														</table>
 													</div>
 												</div>
-											{% else %}
-												{% if question.poll.id|stringformat:"s" == "4047" %}
-													<p class="question_description_header">
-														<span class="question_description_header_span">Chennai</span>
-													</p>
-													<p id="question_description_1" class="question_description"></p>
-													<br><br>
-													<p class="question_description_header">
-														<span class="question_description_header_span">Greater Chennai</span>
-													</p>
-													<p  id="question_description_2" class="question_description"></p>
-												{% endif %}
+											{% elif question.type == "rank" %}
 												{% for choice in question.poll.choice_set.all %}
-												{% if question.horizontalOptions %}
-													<p class="horizontal-options">
-												{% else %}
-													{% if  forloop.counter0|divisibleby:2 %}
-														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.2);">
+													{% if question.horizontalOptions %}
+														<p class="horizontal-options">
 													{% else %}
-														<p class="vertical-options" style="    background-color: rgba(192,192,192,0.5);">
-													{% endif %}
-												{% endif %}
-													{% if question.poll.id|stringformat:"s" == "4047" %}
-														{% if choice.choice_text == "Dr.Radhakrishnan Nagar" or choice.choice_text == "Perambur" or choice.choice_text == "Kolathur" or choice.choice_text == "Villivakkam" or choice.choice_text == "Thiru. Vi. Ka. Nagar (SC)" or choice.choice_text == "Egmore (SC)" or choice.choice_text == "Royapuram" or choice.choice_text == "Harbour" or choice.choice_text == "Chepauk-Thiruvallikeni" or choice.choice_text == "Thousand Lights" or choice.choice_text == "Anna Nagar" or choice.choice_text == "Virugambakkam" or choice.choice_text == "Saidapet" or choice.choice_text == "T. Nagar" or choice.choice_text == "Mylapore" or choice.choice_text == "Velachery" %}
-															<script>
-																$('#question_description_1').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)"><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}"> {{ choice.choice_text }}</label></p>');
-															</script>
+														{% if  forloop.counter0|divisibleby:2 %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.2);">
 														{% else %}
-															<script>
-																$('#question_description_2').append('<p id="{{ choice.id  }}---chennaiSurvey" onclick="handleRadioP(this)" ><input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" /><label class="choice-text" for="choice{{ choice.id }}">{{ choice.choice_text }}</label></p>');
-															</script>
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.5);">
 														{% endif %}
+													{% endif %}
+														<select class="rankingSelect" name="{{ choice.id }}" id="choice{{ choice.id }}">
+															{% for item in question.poll.choice_set.all %}
+																<option value="{{ forloop.counter }}"> {{ forloop.counter }} </option>
+															{% endfor %}
+														</select>
+														<label class="choice-text" for="choice{{ choice.id }}">
+															{% if choice.choice_image %}
+																<script>
+																	$('.choice_image').css({"width":"120px","height":"120px"});
+																	$("#choice{{ choice.id }}").hide();
+																	var item = $("#choice{{ choice.id}}");
+																	item.parent().css({"display":"inline-block"});
+																</script>
+																	<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+															{% else %}
+																{{ choice.choice_text }}
+															{% endif %}
+														</label>
+														</p>
+												{% endfor %}
+											{% else %}
+												{% for choice in question.poll.choice_set.all %}
+													{% if question.horizontalOptions %}
+														<p class="horizontal-options">
 													{% else %}
+														{% if  forloop.counter0|divisibleby:2 %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.2);">
+														{% else %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.5);">
+														{% endif %}
+													{% endif %}
 														<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
 														<label class="choice-text" for="choice{{ choice.id }}">
 															{% if choice.choice_image %}
@@ -294,17 +293,15 @@
 																$("#choice{{ choice.id }}").hide();
 																var item = $("#choice{{ choice.id}}");
 																item.parent().css({"display":"inline-block"});
-																// console.log($this.parent().next().children().first().show());
 															</script>
 																<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
-																<!-- {{ choice.choice_text }} -->
 															{% else %}
 																{{ choice.choice_text }}
 															{% endif %}
 														</label>
-													{% endif %}
-													</p>
+														</p>
 												{% endfor %}
+
 												{% if question.poll.protectResult and user != question.poll.user %}
 												{% else %}
 													<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
@@ -331,7 +328,6 @@
 											{% else %}
 											{% endif %}
 										</div>
-									<!-- </p> -->
 									</div>
 								{%endfor%}
 								{% if polls_section_dict.items|length > forloop.counter %}
@@ -343,9 +339,6 @@
 						{% endfor %}
 						</form>
 					</div>
-					<!-- {% if not user_already_voted and not expired %}
-						<input class="submit btn voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
-					{% endif %} -->
 				</div>
 			</div>
 			<div class="pollInfo  pollsInfoVotePage clearfix">
@@ -354,7 +347,6 @@
 						<li><span class="pollInfoNum">{{ survey.surveyvoted_set.count }}</span> <i title="opinions" class="fa fa-check-circle"></i> Opinions</li>
 						<li>
 							{% if survey.expiry and not expired %}
-								<!-- Time Left:<br> -->
 								<div id="{{ survey.id }}timer" class="timerClass"></div>
 							{% endif %}
 							<script>
@@ -363,23 +355,18 @@
 
 								var utcDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }} - 1, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}, {{ survey.pub_date.second }});
 
-								// var publicationDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }}, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}-offset, {{ survey.pub_date.second }});
-								// var pubDateString = publicationDate.getFullYear()+'/'+publicationDate.getMonth()+'/'+publicationDate.getDate()+' '+publicationDate.getHours()+':'+publicationDate.getMinutes();
-								// document.getElementById('{{ survey.id }}pubdate').innerHTML = pubDateString;
-
 								{% if survey.expiry and not expired %}
-
-								var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
-								var ampm = expiryDate.getHours() > 12 ? 'pm' : 'am';
-								var hours = expiryDate.getHours()%12;
-								var minutes = expiryDate.getMinutes();
-								hours = hours ? hours : 12;
-								minutes = minutes < 10 ? '0'+minutes : minutes;
-								
-								var month = expiryDate.getMonth()+1;
-								var expiryDateString = expiryDate.getDate()+'/'+month+'/'+expiryDate.getFullYear()+' '+hours+':'+minutes+' '+ampm;
-								document.getElementById('{{ survey.id }}expirydate').innerHTML = expiryDateString;
-								$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+									var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
+									var ampm = expiryDate.getHours() > 12 ? 'pm' : 'am';
+									var hours = expiryDate.getHours()%12;
+									var minutes = expiryDate.getMinutes();
+									hours = hours ? hours : 12;
+									minutes = minutes < 10 ? '0'+minutes : minutes;
+									
+									var month = expiryDate.getMonth()+1;
+									var expiryDateString = expiryDate.getDate()+'/'+month+'/'+expiryDate.getFullYear()+' '+hours+':'+minutes+' '+ampm;
+									document.getElementById('{{ survey.id }}expirydate').innerHTML = expiryDateString;
+									$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
 								{% else %}
 									document.getElementById('{{ survey.id }}expirydate').innerHTML = "Till The End Of Time";
 								{% endif %}
@@ -409,9 +396,6 @@
 		</div>
 	</section>
 	<script type="text/javascript">
-		for(var tempque = 4186; tempque <= 4201; tempque++){
-			$('#survey-question'+tempque).css('display','none');
-		}
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
@@ -422,9 +406,9 @@
 	                radioBtn.prop('checked',true);
 		}
 		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
+
 		{% if user.is_authenticated %}
 			var disqus_shortname = 'askbypoll';
-
 			/* * * DON'T EDIT BELOW THIS LINE * * */
 			(function() {
 			    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -436,13 +420,9 @@
 				this.page.api_key = "{{ ssoData.pub_key }}";
 				};
 		{% endif %}
+
 		$(document).ready(function()
 		{	
-			var mandatoryCommentsId = [];
-			var alreadyVoted7858 = false;
-			var alreadyVoted7859 = false;
-			var alreadyVoted7860 = false;
-			var alreadyVoted7861 = false;
 			
 			$(".choice-text").click(function(event){
 				event.preventDefault();
@@ -459,17 +439,6 @@
 						$("#"+questionDivId+"othercomments").removeClass("othercommentscolor");
 				}
 				
-				if(input.attr('id') === 'choice8062' || input.attr('id') === 'choice8063' || input.attr('id') === 'choice8056' || input.attr('id') === 'choice8057' || input.attr('id') === 'choice8032' || input.attr('id') === 'choice8033' || input.attr('id') === 'choice8002' || input.attr('id') === 'choice8003' || input.attr('id') === 'choice7978' || input.attr('id') === 'choice7979' || input.attr('id') === 'choice7954' || input.attr('id') === 'choice7955' || input.attr('id') === 'choice7931' || input.attr('id') === 'choice7932' || input.attr('id') === 'choice7907' || input.attr('id') === 'choice7908' || input.attr('id') === 'choice7883' || input.attr('id') === 'choice7884' || input.attr('id') === 'choice7831' || input.attr('id') === 'choice7832'){
-					
-					var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
-					var labelText = $("label[for="+input.attr('id')+"]").text().trim();
-					
-					$("#"+questionDivId+"othercomments").text("Please Provide Additional Comments Since You Have Chosen "+labelText);
-					$("#"+questionDivId+"othercomments").addClass("othercommentscolor");
-					$("#choiceText"+questionDivId+"Comment").focus();
-					mandatoryCommentsId.push(questionDivId);
-				}
-				
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
 						input.prop('checked', false);
@@ -480,552 +449,16 @@
 				
 				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
 					input.prop('checked', true);
-				}				
+				}
+
 				var optionsFormId = $(this).parent().attr("id");
 				$("#"+optionsFormId+" p").removeClass("selectedOption");
 				$(this).addClass("selectedOption");
-				
-				// Symphony summit changes
-
-				if(input.attr('id') === 'choice7858' || input.attr('id') === 'choice7859' || input.attr('id') === 'choice7860' || input.attr('id') === 'choice7861'){
-					
-					if($('#choice7858').is(":checked")){
-						if(input.attr('id') === 'choice7858' && !alreadyVoted7858){
-							for(var temp=7862; temp<=7885; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
-									$('#choice'+temp).parent().removeClass('selectedOption');
-								}
-							}
-						}
-						$('#survey-question'+'4186').css('display','block');
-						$('#survey-question'+'4187').css('display','block');
-						$('#survey-question'+'4188').css('display','block');
-						$('#survey-question'+'4189').css('display','block');
-						alreadyVoted7858 = true;
-					} else {
-						$('#survey-question'+'4186').css('display','none');
-						$('#survey-question'+'4187').css('display','none');
-						$('#survey-question'+'4188').css('display','none');
-						$('#survey-question'+'4189').css('display','none');
-						if(!alreadyVoted7858){
-							for(var temp=7862; temp<=7885; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7867 || temp === 7873 || temp == 7879 || temp === 7885){
-									$('#choice'+temp).click();
-								}
-							}
-						} else {
-							if (! $('input[name="choice4186"]:checked').length) {
-								$('#choice7867').click();
-      						}
-							if (! $('input[name="choice4187"]:checked').length) {
-								$('#choice7873').click();
-      						}
-							if (! $('input[name="choice4188"]:checked').length) {
-								$('#choice7879').click();
-      						}
-							if (! $('input[name="choice4189"]:checked').length) {
-								$('#choice7885').click();
-      						}
-						}
-					}
-					
-					if($('#choice7859').is(":checked")){
-						if(input.attr('id') === 'choice7859'  && !alreadyVoted7859){
-							for(var temp=7886; temp<=7909; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
-									$('#choice'+temp).parent().removeClass('selectedOption');
-								}
-							}
-						}
-						$('#survey-question'+'4191').css('display','block');
-						$('#survey-question'+'4192').css('display','block');
-						$('#survey-question'+'4190').css('display','block');
-						$('#survey-question'+'4193').css('display','block');
-						alreadyVoted7859 = true;
-					} else {
-						$('#survey-question'+'4190').css('display','none');
-						$('#survey-question'+'4191').css('display','none');
-						$('#survey-question'+'4192').css('display','none');
-						$('#survey-question'+'4193').css('display','none');
-						if(!alreadyVoted7859){
-							for(var temp=7886; temp<=7909; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7891 || temp === 7897 || temp == 7903 || temp === 7909){
-									$('#choice'+temp).click();
-								}
-							}
-						} else {
-							if (! $('input[name="choice4190"]:checked').length) {
-								$('#choice7891').click();
-      						}
-							if (! $('input[name="choice4191"]:checked').length) {
-								$('#choice7897').click();
-      						}
-							if (! $('input[name="choice4192"]:checked').length) {
-								$('#choice7903').click();
-      						}
-							if (! $('input[name="choice4193"]:checked').length) {
-								$('#choice7909').click();
-      						}
-						}
-					}
-					
-					if($('#choice7860').is(":checked")){
-						if(input.attr('id') === 'choice7860'  && !alreadyVoted7860){
-							for(var temp=7910; temp<=7933; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
-									$('#choice'+temp).parent().removeClass('selectedOption');
-								}
-							}
-						}
-						$('#survey-question'+'4194').css('display','block');
-						$('#survey-question'+'4195').css('display','block');
-						$('#survey-question'+'4196').css('display','block');
-						$('#survey-question'+'4197').css('display','block');
-						alreadyVoted7860 = true;
-					} else {
-						$('#survey-question'+'4194').css('display','none');
-						$('#survey-question'+'4195').css('display','none');
-						$('#survey-question'+'4196').css('display','none');
-						$('#survey-question'+'4197').css('display','none');
-						if(!alreadyVoted7860){
-							for(var temp=7910; temp<=7933; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7915 || temp === 7921 || temp == 7927 || temp === 7933){
-									$('#choice'+temp).click();
-								}
-							}
-						} else {
-							if (! $('input[name="choice4194"]:checked').length) {
-								$('#choice7915').click();
-      						}
-							if (! $('input[name="choice4195"]:checked').length) {
-								$('#choice7921').click();
-      						}
-							if (! $('input[name="choice4196"]:checked').length) {
-								$('#choice7927').click();
-      						}
-							if (! $('input[name="choice4197"]:checked').length) {
-								$('#choice7933').click();
-      						}
-						}
-					}
-					
-					if($('#choice7861').is(":checked")){
-						if(input.attr('id') === 'choice7861'  && !alreadyVoted7861){
-							for(var temp=7934; temp<=7956; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7944 || temp === 7950 || temp === 7956){
-									$('#choice'+temp).parent().removeClass('selectedOption');
-								}
-							}
-							$('#choice8065').attr('checked',false);
-							$('#choice8065').parent().removeClass('selectedOption');
-						}
-						$('#survey-question'+'4198').css('display','block');
-						$('#survey-question'+'4199').css('display','block');
-						$('#survey-question'+'4200').css('display','block');
-						$('#survey-question'+'4201').css('display','block');
-						alreadyVoted7861 = true;
-					} else {
-						$('#survey-question'+'4198').css('display','none');
-						$('#survey-question'+'4199').css('display','none');
-						$('#survey-question'+'4200').css('display','none');
-						$('#survey-question'+'4201').css('display','none');
-						if(!alreadyVoted7861){
-							for(var temp=7934; temp<=7956; temp++){
-								$('#choice'+temp).attr('checked',false);
-								if(temp === 7944 || temp === 7950 || temp === 7956){
-									$('#choice'+temp).click();
-								}
-						}	
-							$('#choice8065').click();
-						} else {
-							if (! $('input[name="choice4198"]:checked').length) {
-								$('#choice7944').click();
-      						}
-							if (! $('input[name="choice4199"]:checked').length) {
-								$('#choice7950').click();
-      						}
-							if (! $('input[name="choice4200"]:checked').length) {
-								$('#choice7956').click();
-      						}
-							if (! $('input[name="choice4201"]:checked').length) {
-								$('#choice8065').click();
-      						}
-						}
-					}
-				}
-				// Symphony summit changes end
-				
-			 });
+								
+			});
 
 			$(".next-section").click(function(event){
-				var elementId = $(this).attr("id").split("---")[1];
-				//Symphony summit survey changes
-				if({{ survey.id }} === 63)
-				{
-					$(".errorlist").remove();
-    				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
-    				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
-					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
-						$('#choiceText4177').focus();
-						return false;
-					}
-					
-					if(elementId === "2")
-					{
-						if (! $('input[name="choice4180"]:checked').length) {
-								$("#survey-question4180").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice7831').is(":checked") || $('#choice7832').is(":checked")){
-								  if($('#choiceText4180Comment').val() === ""){
-									  $("#survey-question4180").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4180Comment').focus();
-									  return false;
-								  }
-							  }
-						}
-						
-						if (! $('input[name="choice4181"]:checked').length) {
-								$("#survey-question4181").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4182"]:checked').length) {
-								$("#survey-question4182").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4183"]:checked').length) {
-								$("#survey-question4183").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4184"]:checked').length) {
-								$("#survey-question4184").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-					} // sec 2 end
-					
-					if(elementId === "3")
-					{
-						if (! $('input[name="choice4185"]:checked').length) {
-								$("#survey-question4185").append('<span class="errorlist"><br> Select Atleast One Product Line </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if($('#choice7858').is(":checked")){
-							if (! $('input[name="choice4186"]:checked').length) {
-								$("#survey-question4186").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4187"]:checked').length) {
-								$("#survey-question4187").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4188"]:checked').length) {
-								$("#survey-question4188").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4189"]:checked').length) {
-								$("#survey-question4189").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						} else {
-								  if($('#choice7883').is(":checked") || $('#choice7884').is(":checked")){
-									if($('#choiceText4189Comment').val() === ""){
-										$("#survey-question4189").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4189Comment').focus();
-										return false;
-									}
-							  	  }
-							}
-						}
-						
-						if($('#choice7859').is(":checked")){
-							if (! $('input[name="choice4190"]:checked').length) {
-								$("#survey-question4190").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4191"]:checked').length) {
-								$("#survey-question4191").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4192"]:checked').length) {
-								$("#survey-question4192").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4193"]:checked').length) {
-								$("#survey-question4193").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						} else {
-								  if($('#choice7907').is(":checked") || $('#choice7908').is(":checked")){
-									if($('#choiceText4193Comment').val() === ""){
-										$("#survey-question4193").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4193Comment').focus();
-										return false;
-									}
-							  	  }
-							}
-						}
-						
-						if($('#choice7860').is(":checked")){
-							if (! $('input[name="choice4194"]:checked').length) {
-								$("#survey-question4194").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4195"]:checked').length) {
-								$("#survey-question4195").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4196"]:checked').length) {
-								$("#survey-question4196").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4197"]:checked').length) {
-								$("#survey-question4197").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						} else {
-								  if($('#choice7931').is(":checked") || $('#choice7932').is(":checked")){
-									if($('#choiceText4197Comment').val() === ""){
-										$("#survey-question4197").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4197Comment').focus();
-										return false;
-									}
-							  	  }
-							}
-						}
-						
-						if($('#choice7861').is(":checked")){
-							if (! $('input[name="choice4198"]:checked').length) {
-								$("#survey-question4198").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							
-							if (! $('input[name="choice4199"]:checked').length) {
-								$("#survey-question4199").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4200"]:checked').length) {
-								$("#survey-question4200").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						}
-							  
-							if (! $('input[name="choice4201"]:checked').length) {
-								$("#survey-question4201").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      						} else {
-								  if($('#choice7954').is(":checked") || $('#choice7955').is(":checked")){
-									if($('#choiceText4201Comment').val() === ""){
-										$("#survey-question4201").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-										$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-										$('#choiceText4201Comment').focus();
-										return false;
-									}
-							  	  }
-							}
-						}
-						
-					} // next section 3
-					
-					if(elementId === "4"){
-						if (! $('input[name="choice4202"]:checked').length) {
-								$("#survey-question4202").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4203"]:checked').length) {
-								$("#survey-question4203").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4204"]:checked').length) {
-								$("#survey-question4204").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  						  
-						if (! $('input[name="choice4205"]:checked').length) {
-								$("#survey-question4205").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice7978').is(":checked") || $('#choice7979').is(":checked")){
-								  if($('#choiceText4205Comment').val() === ""){
-									  $("#survey-question4205").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4205Comment').focus();
-									  return false;
-								  }
-							  }
-						}
-					} // Sec 4 end
-					
-					if(elementId === "5"){
-						if (! $('input[name="choice4206"]:checked').length) {
-								$("#survey-question4206").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4207"]:checked').length) {
-								$("#survey-question4207").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4208"]:checked').length) {
-								$("#survey-question4208").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  						  
-						if (! $('input[name="choice4209"]:checked').length) {
-								$("#survey-question4209").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice8002').is(":checked") || $('#choice8003').is(":checked")){
-								  if($('#choiceText4209Comment').val() === ""){
-									  $("#survey-question4209").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  $('#choiceText4209Comment').focus();
-									  return false;
-								  }
-							  }
-						}
-					} // Sec 5 end
-					
-					if(elementId === "6"){
-						if (! $('input[name="choice4210"]:checked').length) {
-								$("#survey-question4210").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4211"]:checked').length) {
-								$("#survey-question4211").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4212"]:checked').length) {
-								$("#survey-question4212").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4213"]:checked').length) {
-								$("#survey-question4213").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  						  
-						if (! $('input[name="choice4214"]:checked').length) {
-								$("#survey-question4214").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice8032').is(":checked") || $('#choice8033').is(":checked")){
-								  if($('#choiceText4214Comment').val() === ""){
-									  $("#survey-question4214").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('#choiceText4214Comment').focus();
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  return false;
-								  }
-							  }
-						}
-					} // Sec 6 end
-					
-					if(elementId === "7"){
-						if (! $('input[name="choice4215"]:checked').length) {
-								$("#survey-question4215").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4216"]:checked').length) {
-								$("#survey-question4216").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4217"]:checked').length) {
-								$("#survey-question4217").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  
-						if (! $('input[name="choice4218"]:checked').length) {
-								$("#survey-question4218").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					}
-						  						  
-						if (! $('input[name="choice4219"]:checked').length) {
-								$("#survey-question4219").append('<span class="errorlist"><br> Enter Your Response </span>');
-								$('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-								return false;
-      					} else {
-							  if($('#choice8062').is(":checked") || $('#choice8063').is(":checked")){
-								  if($('#choiceText4219Comment').val() === ""){
-									  $("#survey-question4219").append('<span class="errorlist"><br> Please Provide Feedback Before Proceeding </span>');
-									  $('#choiceText4219Comment').focus();
-									  $('html, body').animate({ scrollTop: $(".errorlist").offset().top-200	}, 1000);
-									  return false;
-								  }
-							  }
-						}
-					} // Sec 7 end
-					
-					
-				}
-				// Symphony summit survey changes end
-				
+				var elementId = $(this).attr("id").split("---")[1];				
 				$(this).hide();
 				$(this).parent().next().toggle();
 				var newElem = (parseInt(elementId)+1).toString();
@@ -1049,37 +482,12 @@
 			$('.surveySubmit').click(function(event)
 			{
 				event.preventDefault();
-				$(".errorlist").remove();
-				
-				if({{ survey.id }} === 63){
-    				var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/;
-    				var validateEmail =  (regex.test($('#choiceText4177').val())) ? true : false;
-					if($('#choiceText4177').val() === '' || !validateEmail){
-						$("#survey-question4177").append('<span class="errorlist"><br> Please Provide A Valid Email Id To Proceed </span>');
-						$('#choiceText4177').focus();
-						return false;
-					}
-				}
-				
-				for(var i=0; i<mandatoryCommentsId.length; i++){
-					var commentDivId = "choiceText"+mandatoryCommentsId[i]+"Comment";
-					if($('#'+commentDivId).val() === ''){
-						$("#survey-question"+mandatoryCommentsId[i]).append('<span class="errorlist"><br> Please Provide Your Detailed Comments </span>');
-						$('html, body').animate({
-							scrollTop: $(".errorlist").offset().top-200
-						}, 1000);
-						return;
-					}
-				}
-				
+				$(".errorlist").remove();				
 				$('#overlay-inAbox8').css('display','block');
 				var subButElem = $(this);
 				subButElem.attr("disabled","disabled");
 				$(".errorlist").remove();
 				var form_data = $("#survey-form").serialize();
-				// var demo_data = $("#demographic").serialize();
-				// form_data += '&' + demo_data;
-				// console.log(form_data,demo_data);
 				$.ajax({
 					type: 'POST',
 					url:'',
