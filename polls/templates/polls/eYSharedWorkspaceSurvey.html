@@ -508,7 +508,7 @@
                 function adjustRank(choice, val){
                     for(var i = 8934; i<=8939; i++){
                         if(i !== choice){
-                            if($('"#choice'+i+' option:selected"' ).text() == val){
+                            if($('#choice'+i+' option:selected' ).text() == val){
                                 $('#choice'+i+' option[value='+eval(i).toString()+']').attr('selected','selected');
                             }
                         }
