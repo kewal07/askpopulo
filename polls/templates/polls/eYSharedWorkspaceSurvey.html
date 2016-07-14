@@ -515,7 +515,8 @@
                     for(var i = 8934; i<=8939; i++){
                         if(i !== choice){
                             if($('#choice'+i+' option:selected' ).text() == val){
-                                $('#choice'+i+' option[value='+eval("choice"+choice.toString())+']').attr('selected','selected');
+                                $('#choice'+i.toString()).val(eval("choice"+choice.toString()));
+                                //$('#choice'+i+' option[value='+eval("choice"+choice.toString())+']').attr('selected','selected');
 
                                 if(i===8934){
                                     choice8934 = eval("choice"+choice.toString());
