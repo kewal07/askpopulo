@@ -509,7 +509,7 @@
                     for(var i = 8934; i<=8939; i++){
                         if(i !== choice){
                             if($('#choice'+i+' option:selected' ).text() == val){
-                                $('#choice'+i+' option[value='+eval(i).toString()+']').attr('selected','selected');
+                                $('#choice'+i+' option[value='+eval("choice"+i.toString()).toString()+']').attr('selected','selected');
                             }
                         }
                     }
