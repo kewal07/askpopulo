@@ -423,22 +423,13 @@
 
 		$(document).ready(function()
 		{	
-			
 			$(".choice-text").click(function(event){
 				event.preventDefault();
 			})
 
 			$(".vertical-options,.horizontal-options").click(function(event){
-				
 				var input = $(this).find('input').first();
-				var questionDivId = input.parent().parent().parent().attr('id').split('-')[1].replace('question','');
-				var index = mandatoryCommentsId.indexOf(questionDivId);
-				if (index > -1) {
-    					mandatoryCommentsId.splice(index, 1);
-						$("#"+questionDivId+"othercomments").text("Any Other Comments");
-						$("#"+questionDivId+"othercomments").removeClass("othercommentscolor");
-				}
-				
+
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
 						input.prop('checked', false);
@@ -453,8 +444,7 @@
 
 				var optionsFormId = $(this).parent().attr("id");
 				$("#"+optionsFormId+" p").removeClass("selectedOption");
-				$(this).addClass("selectedOption");
-								
+				$(this).addClass("selectedOption");				
 			});
 
 			$(".next-section").click(function(event){
