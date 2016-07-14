@@ -413,6 +413,13 @@
         $('#choice8938 option[value=5]').attr('selected','selected');
         $('#choice8939 option[value=6]').attr('selected','selected');
 
+        var choice8934 = '1';
+        var choice8935 = '2';
+        var choice8936 = '3';
+        var choice8937 = '4';
+        var choice8938 = '5';
+        var choice8939 = '6';
+
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
@@ -472,7 +479,42 @@
                             $('#survey-question4391').css('display','none');
                             $('#survey-question4392').css('display','none');
                             $('#survey-question4393').css('display','none');
-                } 
+                }
+
+                $("#choice8934").change(function() {
+                    adjustRank(8934,$("#choice8934 option:selected" ).text());
+                });
+
+                $("#choice8935").change(function() {
+                    adjustRank(8935,$("#choice8935 option:selected" ).text());
+                });
+
+                $("#choice8936").change(function() {
+                    adjustRank(8936,$("#choice8936 option:selected" ).text());
+                });
+
+                $("#choice8937").change(function() {
+                    adjustRank(8937,$("#choice8937 option:selected" ).text());
+                });
+
+                $("#choice8938").change(function() {
+                    adjustRank(8938,$("#choice8938 option:selected" ).text());
+                });
+
+                $("#choice8939").change(function() {
+                    adjustRank(8939,$("#choice8939 option:selected" ).text());
+                });
+
+                function adjustRank(choice, val){
+                    for(var i = 8934; i<=8939; i++){
+                        if(i !== choice){
+                            if($('"#choice'+i+'option:selected"' ).text() == val){
+                                $('#choice'+i+' option[value='+eval(i).toString()+']').attr('selected','selected');
+                            }
+                        }
+                    }
+                }
+
 
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
