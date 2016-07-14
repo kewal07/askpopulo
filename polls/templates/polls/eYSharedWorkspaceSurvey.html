@@ -413,12 +413,12 @@
         $('#choice8938 option[value=5]').attr('selected','selected');
         $('#choice8939 option[value=6]').attr('selected','selected');
 
-        var choice8934 = '1';
-        var choice8935 = '2';
-        var choice8936 = '3';
-        var choice8937 = '4';
-        var choice8938 = '5';
-        var choice8939 = '6';
+        var choice8934 = 1;
+        var choice8935 = 2;
+        var choice8936 = 3;
+        var choice8937 = 4;
+        var choice8938 = 5;
+        var choice8939 = 6;
 
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
@@ -509,7 +509,35 @@
                     for(var i = 8934; i<=8939; i++){
                         if(i !== choice){
                             if($('#choice'+i+' option:selected' ).text() == val){
-                                $('#choice'+i+' option[value='+eval("choice"+i.toString()).toString()+']').attr('selected','selected');
+                                $('#choice'+i+' option[value='+eval("choice"+choice.toString())+']').attr('selected','selected');
+
+                                if(i===8934){
+                                    choice8934 = eval("choice"+choice.toString());
+                                }else if(i===8935){
+                                    choice8935 = eval("choice"+choice.toString());
+                                }else if(i===8936){
+                                    choice8936 = eval("choice"+choice.toString());
+                                }else if(i===8937){
+                                    choice8937 = eval("choice"+choice.toString());
+                                }else if(i===8938){
+                                    choice8938 = eval("choice"+choice.toString());
+                                }else if(i===8939){
+                                    choice8939 = eval("choice"+choice.toString());
+                                }
+
+                                if(choice===8934){
+                                    choice8934 = val;
+                                }else if(choice===8935){
+                                    choice8935 = val;
+                                }else if(choice===8936){
+                                    choice8936 = val;
+                                }else if(choice===8937){
+                                    choice8937 = val;
+                                }else if(choice===8938){
+                                    choice8938 = val;
+                                }else if(choice===8939){
+                                    choice8939 = val;
+                                }
                             }
                         }
                     }
