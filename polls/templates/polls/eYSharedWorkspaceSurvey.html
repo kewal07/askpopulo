@@ -568,9 +568,26 @@
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
+
+            function giveDefaultValue(){
+                if($('#choice8917').is(':checked') || $('#choice8918').is(':checked')){
+                    $('#choiceText4384').text(' ');
+                    $('#choiceText4385').text(' ');
+                    $('#choiceText4386').text(' ');
+                    $('#choiceText4387').text(' ');
+                }
+
+                if($('#choice8921').is(':checked')){
+                    $('#choiceText4389').text(' ');
+                    $('#choiceText4390').text(' ');
+                    $('#choiceText4391').text(' ');
+                    $('#choiceText4392').text(' ');
+                }
+            }
 			$('.surveySubmit').click(function(event)
 			{
 				event.preventDefault();
+                giveDefaultValue();
 				$(".errorlist").remove();				
 				$('#overlay-inAbox8').css('display','block');
 				var subButElem = $(this);
