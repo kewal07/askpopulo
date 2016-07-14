@@ -483,26 +483,32 @@
 
                 $("#choice8934").change(function() {
                     adjustRank(8934,$("#choice8934 option:selected" ).text());
+                    choice8934 = $("#choice8934 option:selected" ).text();
                 });
 
                 $("#choice8935").change(function() {
                     adjustRank(8935,$("#choice8935 option:selected" ).text());
+                    choice8935 = $("#choice8935 option:selected" ).text();
                 });
 
                 $("#choice8936").change(function() {
                     adjustRank(8936,$("#choice8936 option:selected" ).text());
+                    choice8936 = $("#choice8936 option:selected" ).text();
                 });
 
                 $("#choice8937").change(function() {
                     adjustRank(8937,$("#choice8937 option:selected" ).text());
+                    choice8937 = $("#choice8937 option:selected" ).text();
                 });
 
                 $("#choice8938").change(function() {
                     adjustRank(8938,$("#choice8938 option:selected" ).text());
+                    choice8938 = $("#choice8938 option:selected" ).text();
                 });
 
                 $("#choice8939").change(function() {
                     adjustRank(8939,$("#choice8939 option:selected" ).text());
+                    choice8939 = $("#choice8939 option:selected" ).text();
                 });
 
                 function adjustRank(choice, val){
@@ -523,20 +529,6 @@
                                     choice8938 = eval("choice"+choice.toString());
                                 }else if(i===8939){
                                     choice8939 = eval("choice"+choice.toString());
-                                }
-
-                                if(choice===8934){
-                                    choice8934 = val;
-                                }else if(choice===8935){
-                                    choice8935 = val;
-                                }else if(choice===8936){
-                                    choice8936 = val;
-                                }else if(choice===8937){
-                                    choice8937 = val;
-                                }else if(choice===8938){
-                                    choice8938 = val;
-                                }else if(choice===8939){
-                                    choice8939 = val;
                                 }
                             }
                         }
