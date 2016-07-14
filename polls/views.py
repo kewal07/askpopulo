@@ -1792,7 +1792,9 @@ class SurveyVoteView(BaseViewDetail):
 		template_name = 'polls/voteSurvey.html'
 		survey = self.get_object()
 		if survey.id == 64:
-			template_name = 'polls/surveyExpiredMessage.html'
+			template_name = 'polls/symphonySummitVoteSurvey.html'
+		elif survey.id == 67:
+			template_name = 'polls/eYSharedWorkspaceSurvey.html'
 		survey.numViews +=1
 		survey.save()
 		return [template_name]
