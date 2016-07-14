@@ -396,6 +396,10 @@
 		</div>
 	</section>
 	<script type="text/javascript">
+        $('#survey-question4384').css('display','none');
+        $('#survey-question4385').css('display','none');
+        $('#survey-question4386').css('display','none');
+        $('#survey-question4387').css('display','none');
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
     		radioBtn.prop('checked',true);
@@ -405,6 +409,7 @@
 			var radioBtn = $(el).find('input').first();
 	                radioBtn.prop('checked',true);
 		}
+        
 		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
 
 		{% if user.is_authenticated %}
@@ -429,6 +434,18 @@
 
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
+
+                if(input.attr('id') === 'choice8916'){
+                            $('#survey-question4385').css('display','block');
+                            $('#survey-question4384').css('display','block');
+                            $('#survey-question4386').css('display','block');
+                            $('#survey-question4387').css('display','block');
+                } else if (input.attr('id') === 'choice8916' || input.attr('id') === 'choice8916' || input.attr('id') === 'choice8916'){
+                            $('#survey-question4384').css('display','none');
+                            $('#survey-question4385').css('display','none');
+                            $('#survey-question4386').css('display','none');
+                            $('#survey-question4387').css('display','none');
+                } 
 
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
@@ -457,15 +474,6 @@
 				    }, 1000);
 			});
 
-			if({{ survey.id }} == 30){
-				{% if not user.is_authenticated %}
-					location.href = "{% url 'account_login' %}?next={{ request.path }}?{{ request.GET.urlencode }}";
-				{% endif %}
-				$(".userInfo").hide();
-				$("#survey-title").css("text-align","center");
-				$("#survey-title").css("font-weight","bolder");
-				$("#wrapper").css("max-width","1220px");
-			}
 			$('.choice_image').css({"width":"120px","height":"120px"});
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
