@@ -488,6 +488,14 @@
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
 
+				if(input.attr('id') === 'choice8929'){
+					$('#survey-question4395').css('display','none');
+                    $('#survey-question4396').css('display','none');
+				} else if(input.attr('id') === 'choice8930' || input.attr('id') === 'choice8931' || input.attr('id') === 'choice8932' || input.attr('id') === 'choice8933'){
+					$('#survey-question4395').css('display','block');
+                    $('#survey-question4396').css('display','block');
+				}
+
                 if(input.attr('id') === 'choice8916'){
                             $('#survey-question4385').css('display','block');
                             $('#survey-question4384').css('display','block');
