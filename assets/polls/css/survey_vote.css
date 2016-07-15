@@ -312,6 +312,10 @@ p.special-userBrief-center{
     border-radius: 10px;
     border-color: blue;
 }
+
+.extraComments{
+	padding:1rem;
+}
 @media only screen and (max-width: 768px){
     .questions{
     	padding:0;

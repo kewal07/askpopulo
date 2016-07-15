@@ -340,7 +340,7 @@
 													<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
 												{% endif %}
 												{% if question.addComment %}
-													<p id="{{ question.poll.id }}othercomments">Any Other Comments</p>
+													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
 													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
 												{% endif %}
 											{% endif %}
