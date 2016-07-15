@@ -23,9 +23,6 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 	<style>
-		#4394othercomments{
-			padding:1rem !important;
-		}
 		th{
 			font-size: 0.9rem;
     		font-weight: bolder;
@@ -676,6 +673,7 @@
 				});
 			});
             $("#4394othercomments").text("How much would you pay for the chosen model of the shared workspace? (Ex: INR 7500 per seat per month)");
+            $("#4394othercomments").css("padding","1rem !important");
 		});
 	</script>
 {% endblock %}
