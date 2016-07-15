@@ -216,7 +216,7 @@ img.survey-featured{
 .table-component {
 	margin: 0 auto;
 	max-width: 1000px;
-	overflow: hidden;
+	overflow: scroll;
 }
 .table-component .filler {
 	font-family: "Blokk", Arial, sans-serif;
