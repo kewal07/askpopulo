@@ -23,6 +23,11 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 	<style>
+
+		.extraComments{
+			padding:1rem !important;
+		}
+
 		th{
 			font-size: 0.9rem;
     		font-weight: bolder;
@@ -274,7 +279,7 @@
 																<tr>
 																	<th> {{ choice.choice_text }} </th>
 																	{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
-																		<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="choice{{ question.poll.id }}"> </td>
+																		<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="{{ choice.id }}---{{ columns.id }}"> </td>
 																	{% endfor %}
 																</tr>
 															{% endfor %}
@@ -496,9 +501,11 @@
 				if(input.attr('id') === 'choice8929'){
 					$('#survey-question4395').css('display','none');
                     $('#survey-question4396').css('display','none');
+                    $('#survey-question4397').css('display','none');
 				} else if(input.attr('id') === 'choice8930' || input.attr('id') === 'choice8931' || input.attr('id') === 'choice8932' || input.attr('id') === 'choice8933'){
 					$('#survey-question4395').css('display','block');
                     $('#survey-question4396').css('display','block');
+                    $('#survey-question4397').css('display','block');
 				}
 
                 if(input.attr('id') === 'choice8916'){
@@ -580,7 +587,6 @@
                             }
                         }
                     }
-		console.log(choice8934, choice8935, choice8936, choice8937, choice8938, choice8939);
                 }
 
 
@@ -628,6 +634,20 @@
                     $('#choiceText4390').text('N/A');
                     $('#choiceText4391').text('N/A');
                     $('#choiceText4392').text('N/A');
+                }
+
+                if($('choice8929').is(':checked')){
+                	$('#8940---98').attr('checked',true);
+                	$('#8941---98').attr('checked',true);
+                	$('#8942---98').attr('checked',true);
+                	$('#8943---98').attr('checked',true);
+                	$('#8944---98').attr('checked',true);
+                	$('#8945---98').attr('checked',true);
+                	$('#8946---98').attr('checked',true);
+                	$('#8947---98').attr('checked',true);
+                	$('#8948---98').attr('checked',true);
+                	$('#8949---98').attr('checked',true);
+                	$('#8950---98').attr('checked',true);
                 }
             }
 			$('.surveySubmit').click(function(event)
