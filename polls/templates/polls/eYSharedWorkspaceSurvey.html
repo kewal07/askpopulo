@@ -23,6 +23,14 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 	<style>
+		#4394othercomments{
+			padding:1rem;
+		}
+		th{
+			font-size: 0.9rem;
+    		font-weight: bolder;
+		}
+
 		{% if survey.id == 63 %}
 			.userImage{
 				display:none;
@@ -77,7 +85,7 @@
 	<section id="content">
 		<div class="questions">
 			<div class="questionContent">
-				<p class="que_text que_text_header">{{ survey.survey_name }}</p>
+				<p style="margin-bottom:1rem;" class="que_text que_text_header">{{ survey.survey_name }}</p>
 				{% if survey.has_image %}
 					<img src="{{ survey.get_featured_image_url }}" class="survey-featured" alt="{{ survey.survey_name }}">
 				{% else %}
