@@ -251,12 +251,10 @@ class VoteView(BaseViewDetail):
 		elif user.is_authenticated():
 			voted = Voted.objects.filter(question = question, user=user)
 			subscribed = Subscriber.objects.filter(user=user, question=question)
-			# print(subscribed)
 			if voted or user.id == question.user.id or ( question.expiry and question.expiry < timezone.now() ) or (self.request.path.endswith('result') and subscribed):
 				template_name = 'polls/questionDetail.html'
 		elif alreadyVoted:
 			template_name = 'polls/questionDetail.html'
-		#print(template_name)
 		return [template_name]
 
 	def get_context_data(self, **kwargs):
@@ -322,9 +320,6 @@ class VoteView(BaseViewDetail):
 		queBet = request.POST.get('betAmountHidden')
 		if queBet:
 			queBet = int(queBet)
-		# print(request.is_ajax())
-		# queSlug = "None"
-		# print(user,user.is_authenticated())
 		choiceId = request.POST.get('choice','')
 		if not choiceId:
 			# error to show no choice selected
@@ -445,13 +440,11 @@ class CreatePollView(BaseViewList):
 		featuredpoll = 0
 		if user.extendeduser.company_id > 1:
 			home_visible=0
-		# print(request.POST)
 		queBetAmount = request.POST.get("betAmount")
 		if queBetAmount:
 			queBetAmount = int(queBetAmount)
 		queBetChoiceText = request.POST.get("betChoice")
 		queBetChoice = None
-		# print("BET AMOUNT",queBetAmount)
 		if request.is_ajax():
 			ajax = True
 		if request.GET.get("qid"):
@@ -478,14 +471,12 @@ class CreatePollView(BaseViewList):
 			qehr = int(request.POST.getlist('qExpiry_hr')[0])
 			qemin = int(request.POST.getlist('qExpiry_min')[0])
 			qeap = request.POST.getlist('qExpiry_ap')[0]
-			# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+
 			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1:
 				if qeap.lower() == 'pm' and qehr != 12:
 					qehr = qehr + 12
 				elif qeap.lower() == 'am' and qehr == 12:
 					qehr = 0
-				# qExpiry = request.POST.get('qExpiry')
-				#print(qeyear, qemonth, qeday, qehr, qemin, qeap)
 				try:
 					curtime = datetime.datetime.now();
 					qExpiry = datetime.datetime(qeyear, qemonth, qeday,hour=qehr,minute=qemin)
@@ -493,9 +484,7 @@ class CreatePollView(BaseViewList):
 						raise Exception
 				except:
 					errors['expiryError'] = "Invalid date time"
-			# print(qExpiry)
-			# if not qExpiry:
-			# 	qExpiry = None
+
 			choice1 = ""
 			choice2 = ""
 			choice3 = ""
@@ -514,7 +503,7 @@ class CreatePollView(BaseViewList):
 			images = []
 			choices = []
 			shareImage = request.FILES.get('shareImage')
-			# print(request.POST,request.FILES)
+
 			if edit:
 				if request.POST.get('imagetextshareImage',""):
 					shareImage = question.featured_image
@@ -640,9 +629,6 @@ class CreatePollView(BaseViewList):
 				makeFeaturedError += "Featured Poll cannot be private.<br>"
 			if makeFeaturedError:
 				errors['makeFeaturedError'] = makeFeaturedError
-			# if qExpiry:
-			# 	print((qExpiry - curtime).days, curtime, qExpiry)
-			# print("0000000000000000000000000",queBetAmount)
 			if queBetAmount and (queBetAmount < 10 or queBetAmount > user.extendeduser.credits):
 				betError += "Prediction Poll credits between 10 and %s"%(user.extendeduser.credits)
 			if betError:
@@ -666,14 +652,12 @@ class CreatePollView(BaseViewList):
 				if 'duplicateImage' in errors:
 					break
 			"""
-			# print("--------------------------------",errors or ajax,errors,ajax)
 			if errors or ajax:
 				return HttpResponse(json.dumps(errors), content_type='application/json')
 			# mark bet poll as private untill verified by admin
 			if bet and not user.is_superuser:
 				private = 1
 			if edit:
-				# question = Question.objects.get(pk=request.GET.get("qid"))
 				question.question_text=qText
 				question.description=qDesc
 				question.expiry=qExpiry
@@ -698,7 +682,6 @@ class CreatePollView(BaseViewList):
 					choice.delete()
 				for que_cat in question.questionwithcategory_set.all():
 					que_cat.delete()
-			# print("selectedcates",selectedCats,list(filter(bool, selectedCats)))
 			if list(filter(bool, selectedCats)):
 				for cat in selectedCats:
 					if cat:
@@ -857,7 +840,6 @@ def createExtendedUser(user):
 		pass
 	elif user.socialaccount_set.all():
 		social_set = user.socialaccount_set.all()[0]
-		# print((social_set.extra_data))
 		if not (ExtendedUser.objects.filter(user_id = user.id)):
 			if social_set.provider == 'facebook':
 				facebook_data = social_set.extra_data
@@ -1055,15 +1037,12 @@ class CompanyIndexView(BaseViewList):
 		mainData = []
 		latest_questions = []
 		curtime = timezone.now()
-		# print(request.path.replace("/",""))
 		company_name = request.path.replace("/","")
 		company_obj = Company.objects.filter(company_slug=company_name)
 		if company_obj:
 			company_obj = company_obj[0]
 		else:
-			# print("zzdswds sf df sdfdf cds ")
 			base_url = reverse("polls:index")
-			# print(base_url)
 			return HttpResponseRedirect(reverse("polls:index")) #this should be a 404 page
 		company_user_list = ExtendedUser.objects.filter(company_id=company_obj.id)
 		company_user_list = [x.user_id for x in company_user_list]
@@ -1099,20 +1078,14 @@ class CompanyIndexView(BaseViewList):
 		sub_que = []
 		for sub in subscribed_questions:
 			sub_que.append(sub.question.id)
-		# if country_list:
-		# 	latest_questions = [x for x in latest_questions if x.user.extendeduser and x.user.extendeduser.country in country_list ]
 		data = {}
 		data['company_obj'] = company_obj
 		data['followed'] = followed
-		#print(company_user_list)
 		company_admin_list_str = str(';'.join(company_admin_list))
 		data['companyAdmins'] = str(';'.join(company_admin_list))
-		# mainData.append(data)
 		for mainquestion in latest_questions:
 			mainData.append(get_index_question_detail(self.request,mainquestion,user,sub_que,curtime,data))
 		context['data'] = mainData
-		# dir(context)
-		# print (mainData)
 		return mainData
 
 englandDict = ["Buckinghamshire","Cambridgeshire","Cumbria","Derbyshire","Devon","Dorset","East Sussex","Essex","Gloucestershire","Hampshire","Hertfordshire","Kent","Lancashire","Leicestershire","Lincolnshire","Norfolk","North Yorkshire","Northamptonshire","Nottinghamshire","Oxfordshire","Somerset","Staffordshire","Suffolk","Surrey","Warwickshire","West Sussex","Worcestershire","London, City of","Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster","Barnsley","Birmingham","Bolton","Bradford","Bury","Calderdale","Coventry","Doncaster","Dudley","Gateshead","Kirklees","Knowsley","Leeds","Liverpool","Manchester","Newcastle upon Tyne","North Tyneside","Oldham","Rochdale","Rotherham","St. Helens","Salford","Sandwell","Sefton","Sheffield","Solihull","South Tyneside","Stockport","Sunderland","Tameside","Trafford","Wakefield","Walsall","Wigan","Wirral","Wolverhampton","Bath and North East Somerset","Bedford","Blackburn with Darwen","Blackpool","Bournemouth","Bracknell Forest","Brighton and Hove","Bristol, City of","Central Bedfordshire","Cheshire East","Cheshire West and Chester","Cornwall","Darlington","Derby","Durham","East Riding of Yorkshire","Halton","Hartlepool","Herefordshire","Isle of Wight","Isles of Scilly","Kingston upon Hull","Leicester","Luton","Medway","Middlesbrough","Milton Keynes","North East Lincolnshire","North Lincolnshire","North Somerset","Northumberland","Nottingham","Peterborough","Plymouth","Poole","Portsmouth","Reading","Redcar and Cleveland","Rutland","Shropshire","Slough","South Gloucestershire","Southampton","Southend-on-Sea","Stockton-on-Tees","Stoke-on-Trent","Swindon","Telford and Wrekin","Thurrock","Torbay","Warrington","West Berkshire","Wiltshire","Windsor and Maidenhead","Wokingham","York"];
@@ -1131,7 +1104,6 @@ class AccessDBView(BaseViewList):
 
 	def post(self,request,*args,**kwargs):
 		try:
-			# print(request.path,request.POST)
 			if request.path == "/advanced_analyse_choice":
 				pollId = request.POST.get("question")
 				choiceId = request.POST.get("choice")
@@ -1445,8 +1417,6 @@ class TriviaPView(BaseViewList):
 	def get_queryset(self):
 		context = {}
 		triviaList = Trivia.objects.order_by('-pub_date')
-		#for trivia in triviaList:
-			#print(trivia.trivia_body)
 		context['trivias'] = triviaList
 		return triviaList
 
@@ -1466,7 +1436,6 @@ class CreateSurveyView(BaseViewList):
 					qExpiry = survey.expiry
 			user = request.user
 			post_data = request.POST
-			print(post_data)
 			errors = {}
 			survey_name = post_data.get("surveyName").strip()
 			survey_desc = post_data.get("surveyDescription")
@@ -1485,7 +1454,7 @@ class CreateSurveyView(BaseViewList):
 			surveyError = ""
 			if not survey_name:
 				surveyError += "Survey Name is Required<br>"
-			# print(qeyear, qemonth, qeday, qehr, qemin, qeap)
+
 			if qeyear != 0 or qemonth != 0 or qeday != 0 or qehr != 0 or qemin != -1:
 				if qeap.lower() == 'pm' and qehr != 12:
 					qehr = qehr + 12
@@ -1505,28 +1474,27 @@ class CreateSurveyView(BaseViewList):
 			question_count = json.loads(post_data.get("question_count"))
 			polls_list = []
 			demo_list = {}
-			#print(question_count)
+
 			if len(question_count) < 1:
 				surveyError += "Atleast 1 question is required<br>"
 			if surveyError:
 				errors['surveyError'] = surveyError
 			imagePathList = []
 			shareImage = request.FILES.get('shareImage')
-			# print(request.POST,request.FILES)
+
 			if edit:
 				if request.POST.get('imagetextshareImage',""):
 					shareImage = survey.featured_image
 				elif survey.featured_image:
 					if os.path.isfile(survey.featured_image.path):
 							os.remove(survey.featured_image.path)
-					# imagePathList.append(shareImage.path)
+
 			demo_error = ""
 			dup_name = []
 			demographic_count = []
 			if post_data.get("demographic_count"):
 				demographic_count = json.loads(post_data.get("demographic_count"))
 			for demographic_index in demographic_count:
-				# print(post_data)
 				name = post_data.get("demographic_name"+str(demographic_index),"").strip()
 				if not name:
 					demo_error += "Demographic Name is required"
@@ -2028,7 +1996,6 @@ class SurveyEditView(BaseViewDetail):
 		context = super(SurveyEditView, self).get_context_data(object=self.object)
 		survey = context['survey']
 		context["clone"] = False
-		# print(request.path)
 		if request.path.startswith("/clonesurvey"):
 			context["clone"] = True
 		canEdit = True
@@ -2042,8 +2009,7 @@ class SurveyEditView(BaseViewDetail):
 		else:
 			context["data"] = Category.objects.all()
 			if survey.expiry:
-				tim = survey.expiry#.strftime("%Y-%m-%d %H:%M:%S")
-				# context["expiry_date"] = datetime.datetime.strptime(tim, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+				tim = survey.expiry
 				context["qExpiry_year"]= tim.year
 				context["qExpiry_month"]= tim.month
 				context["qExpiry_day"]= tim.day
@@ -2327,7 +2293,6 @@ def results_embed_poll(request):
 				new_extended_user.country = existingVote.country
 				new_extended_user.state = existingVote.state
 				new_extended_user.city = existingVote.city
-				#print(type(datetime.date.today().year - user_age), type(new_extended_user.gender),type(gender),type(new_extended_user.country), type(existingVote.country), type(new_extended_user.state), type(existingVote.state), type(new_extended_user.city), type(existingVote.city),type(email))
 				new_extended_user.save()
 				subscribed, created = Subscriber.objects.get_or_create(user=new_user, question=poll)
 				voted, created = Voted.objects.get_or_create(user=new_user, question=poll)
@@ -2379,13 +2344,8 @@ def results_embed_poll(request):
 		for voteUser in Vote.objects.filter(choice__in=choices):
 			email_list_voted.append(voteUser.user.email)
 			totalVotes += 1
-			# percent[choice_data[voteUser.choice_id]] = percent.get(choice_data[voteUser.choice_id],0) + 1
 			percent[voteUser.choice_id] = percent.get(voteUser.choice_id,0) + 1
 			voteApi = voteUser.user.extendeduser
-			# gender = voteApi.gender
-			# user_age = voteApi.calculate_age()
-			# profession = voteApi.profession
-			# country = voteApi.country
 			user_data = ast.literal_eval(voteUser.user_data)
 			gender = user_data["gender"]
 			user_age = user_data["birthDay"]
@@ -2393,7 +2353,6 @@ def results_embed_poll(request):
 			country = user_data["country"]
 			if not gender:
 				gender = 'D'
-			#print(gender)
 			gender_dic[gender] += 1
 			if user_age > 50:
 				age_dic['over_50'] += 1
@@ -2416,7 +2375,6 @@ def results_embed_poll(request):
 				pass
 			else:
 				totalVotes += 1
-				# percent[choice_data[voteApi.choice_id]] = percent.get(choice_data[voteApi.choice_id],0) + 1
 				percent[voteApi.choice_id] = percent.get(voteApi.choice_id,0) + 1
 				gender = voteApi.gender
 				user_age = voteApi.age
@@ -2437,17 +2395,13 @@ def results_embed_poll(request):
 					elif user_age > 0:
 						age_dic['under_19'] += 1
 					prof_dic[profession] = prof_dic.get(profession,0) + 1
-					# if country == 'United Kingdom' or country=='Scotland' or country=='Wales' or country=='Northern Ireland':
-					# 	country = 'United Kingdom'
 					country_dic[country] = country_dic.get(country,0) + 1
-		# choice_details_list =[]
 		percent_ratio = 1.39
 		if divClass in ["mu"]:
 			percent_ratio = 1
 		result = {}
 		for choice,choice_vote_count in percent.items():
 			result[choice] = {}
-			# choice_vote_count = percent[choice]
 			f_percent = 0
 			width = 0
 			if totalVotes > 0:
@@ -2459,25 +2413,6 @@ def results_embed_poll(request):
 						width = 15
 			result[choice]["percent"] = f_percent
 			result[choice]["width"] = width
-			# print(result)
-		# for index,choice in enumerate(choices):
-		# 	choice_text = "Option "+str(index)
-		# 	# print(percent[choice_data[choice.id]])
-		# 	# print(percent[choice_data[choice.id]]/totalVotes)
-		# 	choice_percent = (percent[choice_data[choice.id]]/totalVotes) * 100
-		# 	if choice.choice_text:
-		# 		choice_text = choice.choice_text
-		# 	choice_details = {}
-		# 	choice_details["choice"] = choice
-		# 	choice_details["text"] = choice_text
-		# 	choice_details["percent"] = round(choice_percent)
-		# 	width = choice_details["percent"]
-		# 	if not choice.choice_image:
-		# 		width = choice_percent/1.39
-		# 		if width == 0:
-		# 			width = 15
-		# 	choice_details["width"] = round(width)
-		# 	choice_details_list.append(choice_details)
 		req = {}
 		req["choice"] = result
 		if poll.protectResult == 1:
@@ -2485,7 +2420,6 @@ def results_embed_poll(request):
 		elif poll.protectResult == 0:
 			req['protect'] = 0
 		extra_context_data = {}
-		# extra_context_data["choice_details"] = choice_details_list
 		poll_template_name = "polls/webtemplates/"+divClass+"_widget_template.html"
 		extra_context_data["poll_template_name"] = poll_template_name
 		html = get_widget_html(poll,widgetType="demographic_result",extra_context_data=extra_context_data)
@@ -2650,7 +2584,22 @@ def excel_view(request):
 							user_data = ast.literal_eval(vote[0].user_data)
 						else:
 							answer_text = 'N/A'
-							#user_data = ast.literal_eval(vote[0].user_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				elif question_type == "rank":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = Vote.objects.filter(user_id=vote_user.id,choice=choice)
+						try:
+							rank = VoteRankAndValue.objects.get(user_id=vote_user.id,vote=vote,choice=choice)
+						except:
+							rank = None
+						if rank:
+							answer_text = rank.rankandvalue
+							user_data = ast.literal_eval(vote[0].user_data)
+						else:
+							answer_text = 'N/A'
 						answer_texts.append(answer_text)
 						excel_texts.append(excel_text)
 				if survey_question.add_comment:
@@ -2669,7 +2618,6 @@ def excel_view(request):
 					write_result_into_excel(ws1,excel_text,answer_text,i,j+index+addVal)
 			i += 1
 		unique_keys = VoteApi.objects.filter(question_id__in=survey_questions).values_list('unique_key', flat=True).distinct()
-		# print(unique_keys)
 		for unique_key in unique_keys:
 			addVal = 0 
 			for index,survey_question in enumerate(survey_question_list):
@@ -2726,6 +2674,20 @@ def excel_view(request):
 						if vote:
 							column = vote[0].votecolumn_id
 							answer_text = MatrixRatingColumnLabels.objects.get(pk=column).columnLabel
+							user_data = get_user_data_from_api(vote[0])
+							if vote[0].user_data:
+								extra_data = ast.literal_eval(vote[0].user_data)
+								user_data.update(extra_data)
+						answer_texts.append(answer_text)
+						excel_texts.append(excel_text)
+				elif question_type == "rank":
+					for c_index,choice in enumerate(choice_list):
+						excel_text = "Q"+str(index+1)+"_"+str(c_index+1)
+						answer_text = 0
+						vote = VoteApi.objects.filter(unique_key=unique_key,choice=choice)
+						if vote:
+							rank = vote[0].voteRankOrValue
+							answer_text = rank
 							user_data = get_user_data_from_api(vote[0])
 							if vote[0].user_data:
 								extra_data = ast.literal_eval(vote[0].user_data)
@@ -2803,7 +2765,6 @@ def excel_view(request):
 			j = 6
 			if voted.email and voted.email in considered_email:
 				continue
-			# vote_user = voted.user
 			if voted.gender and voted.age and voted.profession:
 				ws1.write(i,0,voted.country,normal_style)
 				ws1.write(i,1,voted.state,normal_style)
@@ -2851,7 +2812,6 @@ def write_to_description(ws0, obj_type="survey"):
 	ws0.write_merge(x,x,0,1,"Profession",border_style)
 	x += 1
 	sorted_prof_excel_dic = sorted(prof_excel_dic.items(), key=operator.itemgetter(1))
-	# print(sorted_prof_excel_dic)
 	for key_val in sorted_prof_excel_dic:
 		ws0.write(x,0,key_val[0],border_style)
 		ws0.write(x,1,key_val[1],border_style)
@@ -2896,7 +2856,6 @@ class PDFView(generic.DetailView):
 			if voted.survey_question_count != voted.user_answer_count:
 				incompleteResponses += 1
 		completeRate = 0
-		# print(surveytotalResponses,incompleteResponses,int((surveytotalResponses-incompleteResponses)/surveytotalResponses))
 		if surveytotalResponses > 0:
 			completeRate = int(((surveytotalResponses-incompleteResponses)/surveytotalResponses)*100)
 		survey_polls = []
@@ -2943,7 +2902,6 @@ class PDFView(generic.DetailView):
 					choice_vote_count_filter["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0)
 					vote_set = choice.vote_set
 					numVotes = vote_set.count()
-					# print(numVotes,choice_dict,choice.choice_text + " : " + str(numVotes))
 					if not choice_dict.get(numVotes):
 						choice_dict[numVotes] = []
 					choice_dict[numVotes].append("Choice " + str(index+1)) # + " : " + str(numVotes))
@@ -2953,8 +2911,6 @@ class PDFView(generic.DetailView):
 						maxVotedChoiceStr = "Choice"+str(index+1)
 					if(numVotes <= minVotedCount):
 						minVotedCount = numVotes
-					# print(Vote.objects.filter(choice_id = choice.id))
-					# print(VoteApi.objects.filter(choice_id = choice.id))
 					for vote in Vote.objects.filter(choice_id = choice.id):
 						choice_vote_count["choice"+str(index+1)] = choice_vote_count.get("choice"+str(index+1),0) + 1
 						total_choice_vote += 1
@@ -3152,8 +3108,6 @@ class PDFPollView(generic.DetailView):
 		context["prof_graph_filter"] = prof_dict_filter
 		context["country_graph_filter"] = country_dict_filter
 		context["maxVotedChoiceStr"] = maxVotedChoiceStr
-
-		# print(context)
 		return context
 
 
