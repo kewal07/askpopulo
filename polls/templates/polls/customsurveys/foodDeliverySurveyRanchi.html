@@ -444,6 +444,8 @@
 	<script type="text/javascript">
         $('#survey-question4428').css('display','none');
         $('#survey-question4429').css('display','none');
+        $('#survey-question4430').css('display','none');
+        $('#survey-question4431').css('display','none');
 
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
@@ -483,9 +485,13 @@
 				if(input.attr('id') === 'choice9064'){
 					$('#survey-question4428').css('display','block');
         			$('#survey-question4429').css('display','none');
+        			$('#survey-question4430').css('display','none');
+        			$('#survey-question4431').css('display','none');
 				} else if(input.attr('id') === 'choice9065'){
 					$('#survey-question4428').css('display','none');
         			$('#survey-question4429').css('display','block');
+        			$('#survey-question4430').css('display','block');
+        			$('#survey-question4431').css('display','block');
 				}
 
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
@@ -529,6 +535,8 @@
                     $('#9079---114').attr('checked',true);
                     $('#9080---114').attr('checked',true);
                     $('#9081---114').attr('checked',true);
+                    $('#9083').attr('checked',true);
+                    $('#9085').attr('checked',true);
                 }
 
                 if($('#choice9065').is(':checked')){
