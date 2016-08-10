@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 import django.views.defaults
 
 urlpatterns = patterns('',
-	url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+	url(r'^grappelli/', include('grappelli.urls')),
     url(r'^user/',include('login.urls',namespace="login")),
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^accounts/', include('allauth.urls')),
@@ -25,6 +25,7 @@ urlpatterns = patterns('',
 	(r'^ckeditor/', include('ckeditor_uploader.urls')),
 	url(r'^404/$',django.views.defaults.page_not_found, ),
 	url(r'^admin/django-ses/', include('django_ses.urls')),
+	url(r'^api/', include('api.urls', namespace="api")),
 )
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

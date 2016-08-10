@@ -1,20 +1,20 @@
 from django.contrib.auth.models import User, Group
+from polls.models import Survey
 from rest_framework import serializers
 from login.models import ExtendedUser
 
 
 class ExtendedUserSerializer(serializers.ModelSerializer):
-    imageUrl = serializers.SerializerMethodField()
     class Meta:
         model = ExtendedUser
-        fields = ('id','imageUrl', 'city', 'state', 'country', 'address')
+        fields = ('id','imageUrl', 'city', 'state', 'country')
 
 
 class UserSerializer(serializers.ModelSerializer):
     extendeduser = ExtendedUserSerializer()
     class Meta:
         model = User
-        fields = ('id','username', 'email', 'first_name', 'last_name', 'password', 'extendeduser')
+        fields = ('id','username', 'email', 'first_name', 'last_name', 'extendeduser')
         
     def create(self, validated_data):
         print(validated_data)

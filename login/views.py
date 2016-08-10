@@ -484,11 +484,6 @@ class AdminDashboard(BaseViewDetail):
 			polls_vote_list = []
 			survey_list = Survey.objects.filter(user_id=user.id).order_by('-pub_date')
 			polls = Question.objects.filter(user_id = user.id, is_survey = 0, is_feedback = 0).order_by('-pub_date')
-			# s_polls = []
-			# s_polls = Question.objects.filter(user_id = user.id, is_survey = 1).order_by('-pub_date')
-			# for survey in survey_list:
-			# 	s_polls.extend([ x.question for x in Survey_Question.objects.filter(survey_id=survey.id)])
-			# polls = [item for item in polls if item not in s_polls]
 			total_views = 0
 			dash_graph = []
 			cur_time = datetime.datetime.now()
@@ -663,8 +658,6 @@ class AdminDashboard(BaseViewDetail):
 			data['choice_id_text_data'] = choice_id_text_data
 			data["feedback_polls"] = Question.objects.filter(user_id=4,is_feedback=1)
 			data["demographics_captured"] = ["Age","Gender","Location","Profession"]
-			# print(data)
-			# return data
 			return self.render_to_response(data)
 		except Exception as e:
 			exc_type, exc_obj, exc_tb = sys.exc_info()
