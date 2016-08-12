@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect,HttpResponse, HttpResponseNotFound
 
-from api.serializers import UserSerializer
+from api.serializers import UserSerializer, SurveySerializer
 
 import simplejson as json
 
@@ -27,6 +27,10 @@ class JSONResponse(HttpResponse):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
+
+class SurveyDetail(generics.RetrieveUpdateDestroyAPIView):
+	queryset = Survey.objects.all()
+	serializer_class = SurveySerializer
 
 
 @api_view(['GET'])

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group
-from polls.models import Survey, Survey_Question, Question
+from polls.models import Survey, Survey_Question, Question, SurveySection
 from rest_framework import serializers
 from login.models import ExtendedUser
 
@@ -33,11 +33,21 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question()
         fields = ('question_text', 'pub_date', 'expiry', 'description', 'que_slug')
 
+class SurveySectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SurveySection()
+        fields = ('sectionName', 'sectionOrder')
+
 class SurveyQuestionSerializer(serializers.ModelSerializer):
     question = QuestionSerializer()
+    section = SurveySectionSerializer()
     class Meta:
         model = Survey_Question
         fields = ('id', 'question', 'question_type', 'add_comment', 'mandatory', 'max_value', 'min_value', 'section')
 
 class SurveySerializer(serializers.ModelSerializer):
-    surveyQuestions = SurveyQuestionSerializer()
+    #survey_question = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    survey_question = SurveyQuestionSerializer(many=True, read_only=True)
+    class Meta:
+        model = Survey
+        fields = ('id', 'survey_name', 'user', 'pub_date', 'expiry', 'description', 'number_sections', 'survey_question')

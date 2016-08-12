@@ -8,5 +8,5 @@ urlpatterns = [
 	url(r'^gettoken$',rest_framework.authtoken.views.obtain_auth_token,name='gettoken'),
 	url(r'^user_detail/(?P<pk>[0-9]+)$', views.UserDetail.as_view(), name='userdetail'),
 	url(r'^survey_list/(?P<user>[0-9]+)', views.getSurveyList, name='getsurveylist'),
-	url(r'^survey_detail/(?P<pk>[0-9]+)', views.getSurveyList, name='getsurveydetail'),
+	url(r'^survey_detail/(?P<pk>[0-9]+)', views.SurveyDetail.as_view(), name='getsurveydetail'),
 ]

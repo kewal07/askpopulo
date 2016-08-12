@@ -249,7 +249,7 @@ class SurveySection(models.Model):
 		return self.sectionName+"---"+str(self.sectionOrder)
 
 class Survey_Question(models.Model):
-	survey = models.ForeignKey(Survey)
+	survey = models.ForeignKey(Survey, related_name='survey_question')
 	question = models.ForeignKey(Question)
 	question_type = models.CharField(max_length=20)
 	add_comment = models.BooleanField(default=0)
