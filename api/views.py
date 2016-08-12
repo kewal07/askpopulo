@@ -49,7 +49,7 @@ def getSurveyList(request, user, format=None):
 				temp["expiry"] = survey.expiry
 				temp["number_sections"] = survey.number_sections
 				temp["expected_time"] = survey.expected_time
-			response_dict["survey"].append(temp)
+				response_dict["survey"].append(temp)
 		else:
 			response_dict["error"] = "No Survey Created by user"
 			return JSONResponse(json.dumps(response_dict), status=400)
