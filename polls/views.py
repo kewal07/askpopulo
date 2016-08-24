@@ -1963,6 +1963,7 @@ class SurveyVoteView(BaseViewDetail):
 							ranks.append(choice[0])
 						else:
 							ranks.append(choice[0])
+					answer = post_data.get("choice"+question_id_str+"Comment","").strip()
 				choices = list(filter(None, choices))
 				if mandatory:
 					if question_type in ["radio","checkbox"]:
