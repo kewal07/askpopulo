@@ -442,25 +442,25 @@
 		</div>
 	</section>
 	<script type="text/javascript">
-        $('#choice9107 option[value=1]').attr('selected','selected');
-        $('#choice9108 option[value=2]').attr('selected','selected');
-        $('#choice9109 option[value=3]').attr('selected','selected');
-        $('#choice9110 option[value=4]').attr('selected','selected');
-        $('#choice9111 option[value=5]').attr('selected','selected');
+        $('#choice9292 option[value=1]').attr('selected','selected');
+        $('#choice9293 option[value=2]').attr('selected','selected');
+        $('#choice9294 option[value=3]').attr('selected','selected');
+        $('#choice9295 option[value=4]').attr('selected','selected');
+        $('#choice9296 option[value=5]').attr('selected','selected');
 
-        $('#choice9116 option[value=5]').attr('selected','selected');
-        $('#choice9117 option[value=5]').attr('selected','selected');
-        $('#choice9118 option[value=5]').attr('selected','selected');
+        $('#choice9297 option[value=1]').attr('selected','selected');
+        $('#choice9298 option[value=2]').attr('selected','selected');
+        $('#choice9299 option[value=3]').attr('selected','selected');
 
-        var choice9107 = 1;
-        var choice9108 = 2;
-        var choice9109 = 3;
-        var choice9110 = 4;
-        var choice9111 = 5;
+        var choice9292 = 1;
+        var choice9293 = 2;
+        var choice9294 = 3;
+        var choice9295 = 4;
+        var choice9296 = 5;
         
-        var choice9116 = 1;
-        var choice9117 = 2;
-        var choice9118 = 3;
+        var choice9297 = 1;
+        var choice9298 = 2;
+        var choice9299 = 3;
 
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
@@ -497,78 +497,80 @@
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
 
-                $("#choice9107").change(function() {
-                    adjustRank(9107,$("#choice9107 option:selected" ).text());
-                    choice9107 = parseInt($("#choice9107 option:selected" ).text());
+                $("#choice9292").change(function() {
+                    adjustRank(9292,$("#choice9292 option:selected" ).text());
+                    choice9292 = parseInt($("#choice9292 option:selected" ).text());
                 });
 
-                $("#choice9108").change(function() {
-                    adjustRank(9108,$("#choice9108 option:selected" ).text());
-                    choice9108 = parseInt($("#choice9108 option:selected" ).text());
+                $("#choice9293").change(function() {
+                    adjustRank(9293,$("#choice9293 option:selected" ).text());
+                    choice9293 = parseInt($("#choice9293 option:selected" ).text());
                 });
 
-                $("#choice9109").change(function() {
-                    adjustRank(9109,$("#choice9109 option:selected" ).text());
-                    choice9109 = parseInt($("#choice9109 option:selected" ).text());
+                $("#choice9294").change(function() {
+                    adjustRank(9294,$("#choice9294 option:selected" ).text());
+                    choice9294 = parseInt($("#choice9294 option:selected" ).text());
                 });
 
-                $("#choice9110").change(function() {
-                    adjustRank(9110,$("#choice9110 option:selected" ).text());
-                    choice9110 = parseInt($("#choice9110 option:selected" ).text());
+                $("#choice9295").change(function() {
+                    adjustRank(9295,$("#choice9295 option:selected" ).text());
+                    choice9295 = parseInt($("#choice9295 option:selected" ).text());
                 });
 
-                $("#choice9111").change(function() {
-                    adjustRank(9111,$("#choice9111 option:selected" ).text());
-                    choice9111 = parseInt($("#choice9111 option:selected" ).text());
+                $("#choice9296").change(function() {
+                    adjustRank(9296,$("#choice9296 option:selected" ).text());
+                    choice9296 = parseInt($("#choice9296 option:selected" ).text());
                 });
 
-                $("#choice9116").change(function() {
-                    adjustRank(9116,$("#choice9116 option:selected" ).text());
-                    choice9116 = parseInt($("#choice9116 option:selected" ).text());
+                $("#choice9297").change(function() {
+                    adjustRank(9297,$("#choice9297 option:selected" ).text());
+                    choice9297 = parseInt($("#choice9297 option:selected" ).text());
                 });
 
-                $("#choice9117").change(function() {
-                    adjustRank(9117,$("#choice9117 option:selected" ).text());
-                    choice9117 = parseInt($("#choice9117 option:selected" ).text());
+                $("#choice9298").change(function() {
+                    adjustRank(9298,$("#choice9298 option:selected" ).text());
+                    choice9298 = parseInt($("#choice9298 option:selected" ).text());
                 });
 
-                $("#choice9118").change(function() {
-                    adjustRank(9118,$("#choice9118 option:selected" ).text());
-                    choice9118 = parseInt($("#choice9118 option:selected" ).text());
+                $("#choice9299").change(function() {
+                    adjustRank(9299,$("#choice9299 option:selected" ).text());
+                    choice9299 = parseInt($("#choice9299 option:selected" ).text());
                 });
 
                 function adjustRank(choice, val){
 
-                	if(choice >= 9107 && choice <= 9111){
-	                    for(var i = 9107; i<=9111; i++){
+                	if(choice >= 9292 && choice <= 9296){
+	                    for(var i = 9292; i<=9296; i++){
 	                        if(i !== choice){
 	                            if($('#choice'+i+' option:selected' ).text() == val){
 	                                $('#choice'+i.toString()).val(eval("choice"+choice.toString()));
 	                                //$('#choice'+i+' option[value='+eval("choice"+choice.toString())+']').attr('selected','selected');
 
-	                                if(i===9107){
-	                                    choice9107 = eval("choice"+choice.toString());
-	                                }else if(i===9108){
-	                                    choice9108 = eval("choice"+choice.toString());
-	                                }else if(i===9109){
-	                                    choice9109 = eval("choice"+choice.toString());
-	                                }else if(i===9110){
-	                                    choice9110 = eval("choice"+choice.toString());
-	                                }else if(i===9111){
-	                                    choice9111 = eval("choice"+choice.toString());
+	                                if(i===9292){
+	                                    choice9292 = eval("choice"+choice.toString());
+	                                }else if(i===9293){
+	                                    choice9293 = eval("choice"+choice.toString());
+	                                }else if(i===9294){
+	                                    choice9294 = eval("choice"+choice.toString());
+	                                }else if(i===9295){
+	                                    choice9295 = eval("choice"+choice.toString());
+	                                }else if(i===9296){
+	                                    choice9296 = eval("choice"+choice.toString());
 	                                }
 	                            }
 	                        }
 	                    }
-                	} else if(choice >= 9116 && choice <= 9118){
-	                    for(var i = 9116; i<=9118; i++){
+                	} else if(choice >= 9297 && choice <= 9299){
+	                    for(var i = 9297; i<=9299; i++){
 	                        if(i !== choice){
 	                            if($('#choice'+i+' option:selected' ).text() == val){
 	                                $('#choice'+i.toString()).val(eval("choice"+choice.toString()));
-	                                if(i===9116){
-	                                    choice9116 = eval("choice"+choice.toString());
-	                                }else if(i===9118){
-	                                    choice9118 = eval("choice"+choice.toString());
+	                                if(i===9297){
+	                                    choice9297 = eval("choice"+choice.toString());
+	                                }else if(i===9298){
+	                                    choice9298 = eval("choice"+choice.toString());
+	                                }else if(i===9299){
+	                                    choice9299 = eval("choice"+choice.toString());
 	                                }
 	                            }
 	                        }
