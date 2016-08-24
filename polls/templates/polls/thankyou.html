@@ -1,52 +1,150 @@
-{% extends "polls/common.html" %}
 {% load static %}
-{% block extra_css %}
-	<style>
-		html{
-			background:url('/static/thankyou.jpg') no-repeat center center fixed;
-			background-size:cover;
-		}
-		#header-wrapper,#footer{
-			display: none
-		}
-		#content{
-			    padding: 7rem 0 3rem 0;
-		}
-		.message {
-		    width: 90%;
-		    height: 100px;
-		    position: absolute;
-		    top: 70%;
-		    bottom: 0;
-		    left: 0;
-		    right: 0;
-		    margin: 0 auto;
-		    display: block;
-		    text-align: center;
-		}
-		.thank-you{
-			font-size:1.5rem;
-		}
-		@media only screen and (max-width: 768px){
-			html{
-				background-position-x:30%; 
-			}
-			.message p{
-				text-align: center;	
-			}
-		}
-	</style>
-{% endblock %}
-{% block content %}
-	<section id="content">
-		<div class="message">
-			<p class="thank-you">Thank You for Your Response !</p>
-			{% if request.GET.a == 'cz' %}
-				<p>Insights of the survey will be soon shared on</p>
-				<a href="http://chennai.citizenmatters.in">chennai.citizenmatters.in</a>
-			{% else %}
-				<p>We may contact you in future if required.</p>
-			{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>InsightsIO : Consumer Insights, Business Analytics, Deployable Smart Systems</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="HandheldFriendly" content="true">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<!-- Import CSS -->
+	<link rel="stylesheet" href="{% static 'thankyou/css/main.css' %}">
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	<script src="{% static 'thankyou/js/jquery.min.js' %}"></script>
+	<script src="{% static 'thankyou/js/jquery.easing.min.js' %}"></script>
+	<script src="{% static 'thankyou/js/jquery.scrollto.min.js' %}"></script>
+	<script src="{% static 'thankyou/js/slabtext.min.js' %}"></script>
+	<script src="{% static 'thankyou/js/jquery.nav.js' %}"></script>
+	<script src="{% static 'thankyou/js/main.js' %}"></script>
+</head>
+
+<body class="home color-1">
+	<div id="header">
+		<div class="container">
+
+			<div class="row">
+
+					<i id="nav-button" class="icon-circle-arrow-down"></i>
+					<h2 id="logo"><a href="http://www.insightsio.com">Insights <span class="highlight">IO</span></a></h2>
+				
+
+				<div id="top-nav" class="">
+					<ul id="fixed-nav">
+						<li class="current"><a href="#home">Home</a></li>
+						<li><a href="#services">What We Do</a></li>
+						<li><a href="#contact">Contact Us</a></li>
+					</ul>
+				</div>
+
+			</div>
 		</div>
-	</section>
-{% endblock %}
+	</div><!-- End Header -->
+	<!-- Big Full screen Banner -->
+	<div class="hero bg-fixed bg-color" id="home">
+
+		<div class="slogan">
+			<div  class="vcenter container">
+
+				<div class="row">
+
+					<div class="span12">
+						<h1>Thank You For Your Response.</h1>
+						<h3>To Have Your Custom Survey Created, Write to Us At <a href="maito:sandeep@insightsio.com"><span class="highlight-white">sandeep@insightsio.com</span></a></h3>
+						<h3>To Know More About The Awesome Work We Do, Scroll Down</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Full screen banner  -->
+	<!-- Services Section -->
+	<!-- class section-alt is to give a different color please edit css/style.css to change the color -->
+	<div class="section section-alt" id="services">
+		<div class="container">
+			<div class="content">
+				<div class="row" >
+					<div class="title">
+						<h2>What We Do</h2>
+						<div class="hr hr-small hr-center"><span class="hr-inner"></span></div>
+						<p>Consumer Insights, Business Analytics, Deployable Smart Systems</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="span4 i-block">
+						<h3>Research Design</h3>
+						<p>We provide expert advise via our in house research consultants on how to properly design a research study to maximize you responses and ROI.</p>
+					</div>
+					<div class="span4 i-block">
+						<h3>Data Collection</h3>
+						<p>We provide unique and effective polls & survey tools like <a href="https://www.askbypoll.com">AskByPoll</a> and smarter data collection apps like <a href="http://www.insightsio.com">ioCollect</a> to help you collect data quickly and seamlessly.</p>
+					</div>
+					<div class="span4 i-block">
+						<h3>Data Analytics</h3>
+						<p>The analytics tools we provide along with the in-house analysts help analyze the data and convert them into meaningful & actionable insights.</p>
+					</div>
+				</div>
+				<div class="hr hr-invisible"></div>
+				<div class="row">
+					<div class="span4 i-block">
+						<h3>Data Visulaization</h3>
+						<p>We help you understand the significance of data by placing it in a visual context via Interactive Charts & Graphs, Dynamic Real Time Dashboards.</p>
+					</div>
+					<div class="span4 i-block">
+						<h3>Deployable Systems</h3>
+						<p>Our Smart Systems can perform Context Specific Surveys & Feedback Tools,Customized Dashboards & CRM Analytics, Integrated, Automated and Custom Trigger Points.</p>
+					</div>
+					<div class="span4 i-block">
+						<h3>Cloud Based</h3>
+						<p>All of your tools are hosted online and always available. With almost 0 setup, we can help you get started on your new research study in a minute.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Services Section -->
+	<!-- Contact Section -->
+	<div class="section" id="contact" >
+		<div class="container">
+			<div class="content">
+				<div class="row">
+					<div class="span12">
+						<div class="title">
+							<h2>Contact Us</h2>
+							<div class="hr hr-small hr-center"><span class="hr-inner"></span></div>
+							<p>We bring a personal and effective approach to every project we work on.</p>
+
+						</div>
+					</div>
+					<div class="span8">
+						<iframe width="100%" height="317" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.965260741921!2d77.60413511488271!3d12.909954319720905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae151d40024e8f%3A0xed7cde282be0b4af!2sComfort+Enclave!5e0!3m2!1sen!2sin!4v1472051371624"></iframe>
+					</div>
+					<div class="span4">
+						<h4>Our Location</h4>
+						<p>#301, Comfort Enclave, 17th Corss, 7th Main, BTM 2nd Stage, Near Home Needs, Bangalore</p>
+						<hr class="grey"/>
+						<h4>Email &amp; Phone</h4>
+						<p>sandeep@insightsio.com</p>
+						<p>07829716024</p>
+						<hr class="grey"/>
+						<h4>Socialize With Us</h4>
+						<div class="social">
+							<a href="https://www.facebook.com/askbypoll"><i class="icon-facebook-sign"></i></a>
+							<a href="https://twitter.com/AskByPoll"><i class="icon-twitter-sign"></i></a>
+							<a href="https://plus.google.com/113335732600662381275"><i class="icon-google-plus-sign"></i></a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div> 
+
+	</div>
+	<!-- End Contact Section -->
+	<div id="footer">
+		&copy; InsightsIO<a id="attribution" href="http://www.insightsio.com"> Know More</a>.
+	</div>
+</body>
+</html>
