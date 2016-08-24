@@ -1943,6 +1943,7 @@ class SurveyVoteView(BaseViewDetail):
 					choice = post_data.getlist("choice"+question_id_str,[])
 					for v in choice:
 						choices.append(v)
+					answer = post_data.get("choice"+question_id_str+"Comment","").strip()
 				elif question_type == "matrixrating":
 					for qchoice in question.choice_set.all():
 						choice = post_data.get(str(qchoice.id),[])
