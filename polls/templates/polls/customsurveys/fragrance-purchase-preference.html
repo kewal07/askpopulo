@@ -320,6 +320,10 @@
 														</label>
 														</p>
 												{% endfor %}
+												{% if question.addComment %}
+													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+												{% endif %}
 											{% else %}
 												{% for choice in question.poll.choice_set.all %}
 													{% if question.horizontalOptions %}
