@@ -3878,6 +3878,9 @@ def saveVotes(user,survey,votes_list,unique_key,user_data,request):
 							voted,created = Voted.objects.get_or_create(user=user, question_id=vote["id"])
 						else:
 							res_data = save_poll_vote_widget(request, vote["id"], choiceId, None,user_data, unique_key, voteRank=rank, forced_add = True)
+				if vote["answer"] and is_authenticated:
+					votetext = VoteText(user=user, question_id=vote["id"], answer_text=vote["answer"], user_data=user_data)
+					votetext.save()
 		if is_authenticated:
 			survey_voted = SurveyVoted(user=user, survey=survey, survey_question_count=len(votes_list), user_answer_count=user_voted)
 			survey_voted.save()
