@@ -290,7 +290,7 @@
 									<!-- <p> -->
 										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
 											{% if question.type == "text" %}
-												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 1024 characters" maxlength="1024">{{ question.answer }}</textarea>
 											{% elif question.type == "rating" %}
 												<div id="div-irs-{{ question.poll.id }}">
 											        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />

@@ -157,7 +157,7 @@ class Survey(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	pub_date = models.DateTimeField('Date Published')
 	expiry =  models.DateTimeField(null=True,blank=True)
-	description = models.CharField(max_length=400,null=True,blank=True)
+	description = models.CharField(max_length=2000,null=True,blank=True)
 	survey_slug = models.SlugField(null=True,blank=True)
 	created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
 	numViews = models.IntegerField(blank=True,null=True,default=0)
@@ -305,7 +305,7 @@ class Choice(models.Model):
 class VoteText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	question = models.ForeignKey(Question)
-	answer_text = models.CharField(max_length=255)
+	answer_text = models.CharField(max_length=1024)
 	created_at = models.DateTimeField(auto_now_add=True,null=True)
 	user_data = models.TextField()
 	def __str__(self):
