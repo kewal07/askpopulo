@@ -193,7 +193,11 @@
 							<span class="question_description_header_span">Description</span>
 					</p>
 					<p class="question_description">
-						{{ survey.description|urlize|url_target_blank }}
+						Note to the respondents:-<br>
+						• The following Questionnaire is designed as above and the responses would be strictly used for academic purpose only. We request your few minutes from busy schedule as this would help in projecting true situation of women in business for a chapter on women entrepreneurs in India<br>
+						• Kindly respond in the given pattern and stick to word limits wherever it applies 
+						• If you wish to know the results please write back to us on our mail separately at- <a href="mailto:rajeshwari.narendran@gmail.com">, <a href="mailto:anjana@venturebean.com">
+
 						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 						{% for cat in survey.questionwithcategory_set.all %}
 							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
@@ -290,7 +294,7 @@
 									<!-- <p> -->
 										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
 											{% if question.type == "text" %}
-												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 1024 characters" maxlength="1024">{{ question.answer }}</textarea>
+												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="" maxlength="1024">{{ question.answer }}</textarea>
 											{% elif question.type == "rating" %}
 												<div id="div-irs-{{ question.poll.id }}">
 											        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
@@ -378,7 +382,7 @@
 												{% endfor %}
 												{% if question.addComment %}
 													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
-													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="" maxlength="255">{{ question.answer }}</textarea>
 												{% endif %}
 											{% else %}
 												{% for choice in question.poll.choice_set.all %}
@@ -414,7 +418,7 @@
 												{% endif %}
 												{% if question.addComment %}
 													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
-													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="" maxlength="255">{{ question.answer }}</textarea>
 												{% endif %}
 											{% endif %}
 											{% if question.user_already_voted or expired%}
