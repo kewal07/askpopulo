@@ -77,9 +77,15 @@
         #section---2 .optionsForm{
             padding-top: 26px !important;
         }
-	.extraComments{
-		padding-top:1rem !important;
-	}
+		.extraComments{
+			padding-top:1rem !important;
+		}
+		.text-ans {
+		    height: 3rem;
+		}
+		textarea{
+			font-size: 1rem;
+		}
 	</style>
 {% endblock %}
 {% block extra_js %}
@@ -239,7 +245,7 @@
 									<!-- <p> -->
 										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
 											{% if question.type == "text" %}
-												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="Additional Comment">{{ question.answer }}</textarea>
 											{% elif question.type == "rating" %}
 												<div id="div-irs-{{ question.poll.id }}">
 											        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
@@ -359,7 +365,7 @@
 												{% endif %}
 												{% if question.addComment %}
 													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
-													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Enter Your Response in max 255 characters" maxlength="255">{{ question.answer }}</textarea>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="Additional Comment" maxlength="255">{{ question.answer }}</textarea>
 												{% endif %}
 											{% endif %}
 											{% if question.user_already_voted or expired%}
@@ -531,29 +537,7 @@
 			var question_covered = 0;
 
             function giveDefaultValue(){
-                if($('#choice9064').is(':checked')){
-                    $('#9074---114').attr('checked',true);
-                    $('#9075---114').attr('checked',true);
-                    $('#9076---114').attr('checked',true);
-                    $('#9077---114').attr('checked',true);
-                    $('#9078---114').attr('checked',true);
-                    $('#9079---114').attr('checked',true);
-                    $('#9080---114').attr('checked',true);
-                    $('#9081---114').attr('checked',true);
-                    $('#choice9083').attr('checked',true);
-                    $('#choice9085').attr('checked',true);
-                }
-
-                if($('#choice9065').is(':checked')){
-                    $('#9066---109').attr('checked',true);
-                    $('#9067---109').attr('checked',true);
-                    $('#9068---109').attr('checked',true);
-                    $('#9069---109').attr('checked',true);
-                    $('#9070---109').attr('checked',true);
-                    $('#9071---109').attr('checked',true);
-                    $('#9072---109').attr('checked',true);
-                    $('#9073---109').attr('checked',true);
-                }
+                
             }
 
 			$('.surveySubmit').click(function(event)
