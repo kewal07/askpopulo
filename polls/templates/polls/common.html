@@ -74,7 +74,7 @@
 							<li><a href="{% url 'polls:polls_create' %}">Ask</a></li>
 							<li><a href="{% url 'polls:abp_business' %}">Business</a></li>
 			    			<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
-			    			<li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
+			    			<!-- <li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>-->
 							{% if not user.is_authenticated %}
 								{% if request.path == "/accounts/login/" %}
 									<li><a href="{% url 'account_login' %}?{{ request.GET.urlencode }}">Login</a></li>
@@ -296,8 +296,8 @@
 				</div>
 				<div class="menuF">
 					<ul class="menuF-nav">
-						<li><a href="{% url 'polls:index' %}">Home</a></li>
-            <li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>
+			<!--			<li><a href="{% url 'polls:index' %}">Home</a></li>
+            <li><a href="{% url 'polls:abp_about_us' %}" target="_top">About Us</a></li>-->
 						<li><a href="{% url 'polls:abp_business' %}">Industries</a></li>
 			    		<li><a href="{% url 'polls:abp_case_study' %}">Case Studies</a></li>
 			    		<li><a href="javascript:;" target="_top" class="open-contact-overlay">Request Demo</a></li>
