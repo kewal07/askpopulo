@@ -426,6 +426,7 @@
 											{% endif %}
 											{% if question.user_already_voted or expired%}
 												<script type="text/javascript">
+												console.log("{{ question.user_already_voted  }}", "{{ expired  }}");
 												$(document).ready(function(){
 													if($("#pollsChart---"+{{ question.poll.id }}).length >0)
 														drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
@@ -563,88 +564,6 @@
 
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
-
-                $("#choice9292").change(function() {
-                    adjustRank(9292,$("#choice9292 option:selected" ).text());
-                    choice9292 = parseInt($("#choice9292 option:selected" ).text());
-                });
-
-                $("#choice9293").change(function() {
-                    adjustRank(9293,$("#choice9293 option:selected" ).text());
-                    choice9293 = parseInt($("#choice9293 option:selected" ).text());
-                });
-
-                $("#choice9294").change(function() {
-                    adjustRank(9294,$("#choice9294 option:selected" ).text());
-                    choice9294 = parseInt($("#choice9294 option:selected" ).text());
-                });
-
-                $("#choice9295").change(function() {
-                    adjustRank(9295,$("#choice9295 option:selected" ).text());
-                    choice9295 = parseInt($("#choice9295 option:selected" ).text());
-                });
-
-                $("#choice9296").change(function() {
-                    adjustRank(9296,$("#choice9296 option:selected" ).text());
-                    choice9296 = parseInt($("#choice9296 option:selected" ).text());
-                });
-
-                $("#choice9297").change(function() {
-                    adjustRank(9297,$("#choice9297 option:selected" ).text());
-                    choice9297 = parseInt($("#choice9297 option:selected" ).text());
-                });
-
-                $("#choice9298").change(function() {
-                    adjustRank(9298,$("#choice9298 option:selected" ).text());
-                    choice9298 = parseInt($("#choice9298 option:selected" ).text());
-                });
-
-                $("#choice9299").change(function() {
-                    adjustRank(9299,$("#choice9299 option:selected" ).text());
-                    choice9299 = parseInt($("#choice9299 option:selected" ).text());
-                });
-
-                function adjustRank(choice, val){
-
-                	if(choice >= 9292 && choice <= 9296){
-	                    for(var i = 9292; i<=9296; i++){
-	                        if(i !== choice){
-	                            if($('#choice'+i+' option:selected' ).text() == val){
-	                                $('#choice'+i.toString()).val(eval("choice"+choice.toString()));
-	                                //$('#choice'+i+' option[value='+eval("choice"+choice.toString())+']').attr('selected','selected');
-
-	                                if(i===9292){
-	                                    choice9292 = eval("choice"+choice.toString());
-	                                }else if(i===9293){
-	                                    choice9293 = eval("choice"+choice.toString());
-	                                }else if(i===9294){
-	                                    choice9294 = eval("choice"+choice.toString());
-	                                }else if(i===9295){
-	                                    choice9295 = eval("choice"+choice.toString());
-	                                }else if(i===9296){
-	                                    choice9296 = eval("choice"+choice.toString());
-	                                }
-	                            }
-	                        }
-	                    }
-                	} else if(choice >= 9297 && choice <= 9299){
-	                    for(var i = 9297; i<=9299; i++){
-	                        if(i !== choice){
-	                            if($('#choice'+i+' option:selected' ).text() == val){
-	                                $('#choice'+i.toString()).val(eval("choice"+choice.toString()));
-	                                if(i===9297){
-	                                    choice9297 = eval("choice"+choice.toString());
-	                                }else if(i===9298){
-	                                    choice9298 = eval("choice"+choice.toString());
-	                                }else if(i===9299){
-	                                    choice9299 = eval("choice"+choice.toString());
-	                                }
-	                            }
-	                        }
-	                    }
-                	}
-                }
-
 
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
