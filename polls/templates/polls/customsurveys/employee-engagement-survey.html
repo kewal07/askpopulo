@@ -156,7 +156,7 @@
 						<form id="survey-form" method="POST" enctype="multipart/form-data">
 						{% csrf_token %}
 						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
-						{% if not survey.id = 73 and not user.is_authenticated %}
+						{% if not survey.id = 74 and not user.is_authenticated %}
 						<div class="question_description" id="demographic-div">
 							<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
@@ -442,22 +442,21 @@
 		</div>
 	</section>
 	<script type="text/javascript">
-        $('#survey-question4567').css('display','none');
-        $('#survey-question4568').css('display','none');
-        $('#survey-question4569').css('display','none');
-        $('#survey-question4570').css('display','none');
-        $('#survey-question4571').css('display','none');
-        $('#survey-question4572').css('display','none');
-        $('#survey-question4573').css('display','none');
-        $('#survey-question4574').css('display','none');
-        $('#survey-question4575').css('display','none');
-        $('#survey-question4576').css('display','none');
-        $('#survey-question4577').css('display','none');
-        $('#survey-question4578').css('display','none');
-        $('#survey-question4579').css('display','none');
-        $('#survey-question4580').css('display','none');
-        $('#survey-question4581').css('display','none');
-        $('#survey-question4583').css('display','none');
+		$('#survey-question4592').css('display','none');
+        $('#survey-question4593').css('display','none');
+        $('#survey-question4594').css('display','none');
+        $('#survey-question4595').css('display','none');
+        $('#survey-question4596').css('display','none');
+        $('#survey-question4597').css('display','none');
+        $('#survey-question4598').css('display','none');
+        $('#survey-question4599').css('display','none');
+        $('#survey-question4600').css('display','none');
+        $('#survey-question4601').css('display','none');
+        $('#survey-question4602').css('display','none');
+        $('#survey-question4603').css('display','none');
+        $('#survey-question4604').css('display','none');
+        $('#survey-question4605').css('display','none');
+        $('#survey-question4606').css('display','none');
 
 		function handleRadioRow(el) {
     		var radioBtn = $(el).find('input').first();
@@ -494,53 +493,53 @@
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
 
-				if(input.attr('id') === 'choice9548'){
-					$('#survey-question4567').css('display','block');
-					$('#survey-question4583').css('display','none');
-				} else if(input.attr('id') === 'choice9549'){
-					$('#choice9551').click();
-					$('#survey-question4567').css('display','none');
-					$('#survey-question4576').css('display','none');
-					$('#survey-question4577').css('display','none');
-					$('#survey-question4578').css('display','none');
-					$('#survey-question4579').css('display','none');
-					$('#survey-question4580').css('display','none');
-					$('#survey-question4581').css('display','none');
-					$('#survey-question4583').css('display','block');
+				if(input.attr('id') === 'choice9656'){
+					$('#survey-question4592').css('display','block');
+					$('#survey-question4604').css('display','none');
+			        $('#survey-question4605').css('display','none');
+			        $('#survey-question4606').css('display','none');
+				} else if(input.attr('id') === 'choice9657'){
+					$('#survey-question4604').css('display','block');
+			        $('#survey-question4605').css('display','block');
+			        $('#survey-question4606').css('display','block');
+			        $('#survey-question4592').css('display','none');
+			        $('#survey-question4593').css('display','none');
+			        $('#survey-question4594').css('display','none');
+			        $('#survey-question4595').css('display','none');
+			        $('#survey-question4596').css('display','none');
+			        $('#survey-question4597').css('display','none');
+			        $('#survey-question4598').css('display','none');
+			        $('#survey-question4599').css('display','none');
+			        $('#survey-question4600').css('display','none');
+			        $('#survey-question4601').css('display','none');
+			        $('#survey-question4602').css('display','none');
+			        $('#survey-question4603').css('display','none');
 				}
 
-				if(input.attr('id') === 'choice9550'){
-			        $('#survey-question4568').css('display','block');
-			        $('#survey-question4569').css('display','block');
-			        $('#survey-question4570').css('display','block');
-			        $('#survey-question4571').css('display','block');
-			        $('#survey-question4572').css('display','block');
-			        $('#survey-question4573').css('display','block');
-			        $('#survey-question4574').css('display','block');
-			        $('#survey-question4575').css('display','block');
-
-			        $('#survey-question4576').css('display','none');
-					$('#survey-question4577').css('display','none');
-					$('#survey-question4578').css('display','none');
-					$('#survey-question4579').css('display','none');
-					$('#survey-question4580').css('display','none');
-					$('#survey-question4581').css('display','none');
-				} else if(input.attr('id') === 'choice9551'){
-					$('#survey-question4568').css('display','none');
-			        $('#survey-question4569').css('display','none');
-			        $('#survey-question4570').css('display','none');
-			        $('#survey-question4571').css('display','none');
-			        $('#survey-question4572').css('display','none');
-			        $('#survey-question4573').css('display','none');
-			        $('#survey-question4574').css('display','none');
-			        $('#survey-question4575').css('display','none');
-
-					$('#survey-question4576').css('display','block');
-					$('#survey-question4577').css('display','block');
-					$('#survey-question4578').css('display','block');
-					$('#survey-question4579').css('display','block');
-					$('#survey-question4580').css('display','block');
-					$('#survey-question4581').css('display','block');
+				if(input.attr('id') === 'choice9658'){
+					$('#survey-question4593').css('display','block');
+			        $('#survey-question4594').css('display','block');
+			        $('#survey-question4595').css('display','block');
+			        $('#survey-question4596').css('display','block');
+			        $('#survey-question4597').css('display','block');
+			        $('#survey-question4598').css('display','block');
+			        $('#survey-question4599').css('display','none');
+			        $('#survey-question4600').css('display','none');
+			        $('#survey-question4601').css('display','none');
+			        $('#survey-question4602').css('display','none');
+			        $('#survey-question4603').css('display','none');
+				} else if(input.attr('id') === 'choice9659'){
+					$('#survey-question4599').css('display','block');
+			        $('#survey-question4600').css('display','block');
+			        $('#survey-question4601').css('display','block');
+			        $('#survey-question4602').css('display','block');
+			        $('#survey-question4603').css('display','block');
+			        $('#survey-question4593').css('display','none');
+			        $('#survey-question4594').css('display','none');
+			        $('#survey-question4595').css('display','none');
+			        $('#survey-question4596').css('display','none');
+			        $('#survey-question4597').css('display','none');
+			        $('#survey-question4598').css('display','none');
 				}
 
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
