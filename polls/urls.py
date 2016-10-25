@@ -4,12 +4,9 @@ from django.views.generic import TemplateView
 from polls import views
 
 urlpatterns = [
-	# r'',
-    # Examples:
-    # url(r'^$', 'askpopulo.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    #url(r'^', views.index),
+	url(r'^register', views.send, name='register'),
+	url(r'^saveFile', views.saveFile, name='saveFile'),
+	url(r'^screen', views.screen, name='screen'),
 	url(r'^$',views.IndexView.as_view(),name='index'),
 	url(r'^mypolls/(?P<pk>\d+)/(?P<user_name>[\w\-]+)$',login_required(views.IndexView.as_view()),name='mypolls'),
 	url(r'^category$',login_required(views.IndexView.as_view()),name='polls_category'),
