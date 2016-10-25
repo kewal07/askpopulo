@@ -137,7 +137,12 @@
 							<span class="question_description_header_span">Description</span>
 					</p>
 					<p class="question_description">
-						{{ survey.description|urlize|url_target_blank }}
+						<b> Note to the respondents: </b> <br><br>
+						• The intent of the Survey is to assess the need for Retention Management Solutions in India.<br><br>
+						• The Survey is being conducted by <a href="www.insightsio.com"> InsightsIO</a>, 	<a href="http://axilor.com/blog/meet-the-10-startups-from-axilors-winter-2016-4th-accelerator-batch/">an Axilor incubated</a> start-up in the Consumer Insights &amp; Business Analytics Space.<br><br>
+						• We request your few minutes, as this would help us in projecting the true need for Retention Management solutions in India.<br><br>
+						• We promise confidentiality of your data. For any details regarding the survey kindly write back to us at <a href="mailto:sandeep@insightsio.com"> sandeep@insightsio.com </a><br><br>
+						
 						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 						{% for cat in survey.questionwithcategory_set.all %}
 							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
@@ -598,6 +603,21 @@
                 	$('#choice9672').attr('checked',true);
                 	$('#choice9678').attr('checked',true);
                 	$('#choice9684').attr('checked',true);
+                }
+
+                if($('#choice9658').is(':checked')){
+                	$('#choice9688').attr('checked',true);
+                	$('#choice9693').attr('checked',true);
+                	$('#choice9697').attr('checked',true);
+                	$('#9698---131').attr('checked',true);
+                	$('#9699---131').attr('checked',true);
+                	$('#9700---131').attr('checked',true);
+                	$('#9701---131').attr('checked',true);
+                	$('#9702---131').attr('checked',true);
+                	$('#9703---131').attr('checked',true);
+                	$('#9704---131').attr('checked',true);
+                	$('#9705---131').attr('checked',true);
+                	$('#choice9706').attr('checked',true);
                 }
             }
 
