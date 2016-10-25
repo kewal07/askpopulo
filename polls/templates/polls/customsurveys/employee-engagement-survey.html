@@ -494,11 +494,15 @@
 				var input = $(this).find('input').first();
 
 				if(input.attr('id') === 'choice9656'){
+					$('#choice9658')[0].checked = false;
+					$('#choice9659')[0].checked = false;
 					$('#survey-question4592').css('display','block');
 					$('#survey-question4604').css('display','none');
 			        $('#survey-question4605').css('display','none');
 			        $('#survey-question4606').css('display','none');
 				} else if(input.attr('id') === 'choice9657'){
+					$('#choice9658')[0].checked = false;
+					$('#choice9659')[0].checked = false;
 					$('#survey-question4604').css('display','block');
 			        $('#survey-question4605').css('display','block');
 			        $('#survey-question4606').css('display','block');
@@ -574,19 +578,26 @@
 			var question_covered = 0;
 
             function giveDefaultValue(){
-                if($('#choice9549').is(':checked')){
-                    $('#choice9551').attr('checked',true);
+                if($('#choice9656').is(':checked')){
+                    $('#9714---136').attr('checked',true);
+                    $('#9715---136').attr('checked',true);
+                    $('#9716---136').attr('checked',true);
+                    $('#9717---136').attr('checked',true);
+                    $('#9718---136').attr('checked',true);
+                    $('#9719---136').attr('checked',true);
+                    $('#9720---136').attr('checked',true);
+                    $('#9721---136').attr('checked',true);
+                    $('#choice9713').attr('checked',true);
+                    $('#choice9722').attr('checked',true);
                 }
 
-                if($('#choice9065').is(':checked')){
-                    $('#9066---109').attr('checked',true);
-                    $('#9067---109').attr('checked',true);
-                    $('#9068---109').attr('checked',true);
-                    $('#9069---109').attr('checked',true);
-                    $('#9070---109').attr('checked',true);
-                    $('#9071---109').attr('checked',true);
-                    $('#9072---109').attr('checked',true);
-                    $('#9073---109').attr('checked',true);
+                if($('#choice9657').is(':checked')){
+                	$('#choice9658').attr('checked',true);
+                	$('#choice9663').attr('checked',true);
+                	$('#choice9667').attr('checked',true);
+                	$('#choice9672').attr('checked',true);
+                	$('#choice9678').attr('checked',true);
+                	$('#choice9684').attr('checked',true);
                 }
             }
 
