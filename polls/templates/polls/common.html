@@ -241,8 +241,12 @@
     </div>
 
     <div id="overlay-inAbox9" class="overlay">
-    	<div class="wrapper overlay-close" style="padding:0;">
-    	<i class="fa fa-close"></i>
+	<div class="wrapper">
+    		<i class="fa fa-close close-overlay-9"></i>
+    		<p> With Detailed Graphs</p>
+    		<textarea class="embed-textarea" id="embed-textarea-graph" readonly>   </textarea>
+    		<p> Without Detailed Graphs</p>
+    		<textarea class="embed-textarea" id="embed-textarea-nograph" readonly>  </textarea>
     	</div>
 	</div>
 
@@ -343,10 +347,6 @@
 				}
 			}(document, 'script', 'twitter-wjs');
 
-			$('.overlay-close').on('click',function(){
-				$('#overlay-inAbox9').html('');
-				$('#overlay-inAbox9').css('display','none');
-			});
 
 			function timeSince(date) {
 				var currentDate = new Date();
