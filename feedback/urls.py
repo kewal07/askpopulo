@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from feedback import views
 
-urlpatterns = (
+urlpatterns = [
 		url(r'^$',views.IndexView.as_view(),name='index'),
-	)
+	]

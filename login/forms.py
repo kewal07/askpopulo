@@ -49,27 +49,22 @@ class MySignupForm(forms.Form):
 
 	def clean_birthday(self):
 		birthDay = self.cleaned_data['birthday']
-		# print("&&&&&&&&&&&&&&&&&&&& clean bday",birthDay)
 		birthDay = date(birthDay)
 		age = self.calculate_age(birthDay)
 		print(birthDay,age)
 		if age < 1:
-			# print(self.errors)
 			raise forms.ValidationError("Age should be greater than 13 years")
 		return birthDay
 
 	def calculate_age(self,born):
 		today = date.today()
-		# born = self.birthDay
 		try: 
 			birthday = born.replace(year=today.year)
 		except ValueError: # raised when birth date is February 29 and the current year is not a leap year
 			birthday = born.replace(year=today.year, month=born.month+1, day=1)
 		if birthday > today:
-			# print(today.year - born.year - 1)
 			return today.year - born.year - 1
 		else:
-			# print(today.year - born.year)
 			return today.year - born.year
 
 	def __init__(self,*args,**kwargs):
@@ -95,7 +90,6 @@ class MySignupForm(forms.Form):
 		categories=request.POST.getlist('categories','')
 		categories_list = Category.objects.values_list('id', flat=True).filter(category_title__in=categories)
 		user_categories = ",".join(str(x) for x in categories_list)
-		# print(request.POST)
 		bday_day = int(request.POST.getlist('birthDay_day')[0])
 		bday_month = int(request.POST.getlist('birthDay_month')[0])
 		bday_year = int(request.POST.getlist('birthDay_year')[0])
@@ -162,8 +156,6 @@ class FollowForm(forms.Form):
 				follow.deleted_at = None
 				follow.save()
 			target_user.extendeduser.credits += 20
-			# print(target_user)
-			# object will have 
 			activity = {'actor': self.user.username, 'verb': 'followed', 'object': target_user.id,'target_user_name':target_user.username,'target_user_pic':target_user.extendeduser.get_profile_pic_url(),'target_user_url':'/user/'+str(target_user.id)+"/"+target_user.extendeduser.user_slug, 'actor_user_name':self.user.username,'actor_user_pic':self.user.extendeduser.get_profile_pic_url(),'actor_user_url':'/user/'+str(self.user.id)+"/"+self.user.extendeduser.user_slug }
 			feed = client.feed('notification', target)
 			feed.add_activity(activity)

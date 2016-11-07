@@ -110,7 +110,7 @@
 						<form id="survey-form" method="POST" enctype="multipart/form-data">
 						{% csrf_token %}
 						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
-						{% if not survey.id = 54 and not survey.id = 63 and not user.is_authenticated %}
+						{% if not survey.id == 54 and not survey.id == 63 and not user.is_authenticated %}
 						<div class="question_description" id="demographic-div">
 							<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
@@ -156,7 +156,7 @@
 								<input type="text" id="{{ demo.name }}" value="" placeholder="{{ demo.name }}" name="demographic-{{ demo.name }}" />
 							{% endif %}
 						{% endfor %}
-						{% if not survey.id = 54 and not survey.id = 63 and not user.is_authenticated %}
+						{% if not survey.id == 54 and not survey.id == 63 and not user.is_authenticated %}
 							</div>
 						{% elif demo_list|length > 0 %}
 							</div>

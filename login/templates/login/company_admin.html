@@ -370,7 +370,7 @@
 									</p>
 									<div class="analysis" id="advanced-analyse---{{ poll.question.id }}Div">
 									{% if poll.q_type != "text" %}
-										{% if poll.q_type = "matrixrating" %}
+										{% if poll.q_type == "matrixrating" %}
 											<div class="choices clearfix">
 												<div class="table-container">
 													<div class="table-component">
@@ -463,7 +463,7 @@
 													{% endfor %}
 												</div>
 												
-												{% if poll.q_type = 'matrixrating' %}
+												{% if poll.q_type == 'matrixrating' %}
 													<div class="table-container">
 														<div class="table-component">
 															<table>
@@ -526,7 +526,7 @@
 														{% endif %}
 													{% endfor %}
 												</div>
-												{% if poll.q_type = 'matrixrating' %}
+												{% if poll.q_type == 'matrixrating' %}
 													<div class="table-container">
 														<div class="table-component">
 															<table>
@@ -552,7 +552,7 @@
 													</div>
 												{% endif %}
 											</div>
-											{% if not poll.q_type = 'matrixrating'  %}
+											{% if not poll.q_type == 'matrixrating'  %}
 											<div class="advancedAnaCmp">
 												<p style="margin-bottom:1rem;text-align:center;"> Or</p>
 												<select class="analyseSelect advancedanalyseSelectChoiceCmp" id="advanced-analyse---{{ poll.question.id }}Select---1">

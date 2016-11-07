@@ -22,7 +22,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from polls.models import Survey
+from polls.models import Survey, SurveySection, Survey_Question, Choice
 
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
@@ -34,10 +34,54 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
 
-class SurveyDetail(generics.RetrieveUpdateDestroyAPIView):
-	queryset = Survey.objects.all()
-	serializer_class = SurveySerializer
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))		
+@csrf_exempt
+def getSurveyDetail(request, pk, format=None):
+	response_dict = {}
+	survey = Survey.objects.get(pk=pk)
+	response_dict['id'] = pk
+	response_dict['survey_name'] = survey.survey_name
+	response_dict['user'] = survey.user.id
+	response_dict['pub_date'] = survey.pub_date
+	response_dict['expiry_date'] = survey.expiry
+	response_dict['description'] = survey.description
+	response_dict['number_sections'] = survey.number_sections
+	response_dict['survey_sections'] = []
 
+
+	surveySection = SurveySection.objects.filter(survey=survey).order_by('sectionOrder')
+
+	for section in surveySection:
+		tempSection = {}
+		tempSection['name'] = section.sectionName
+		tempSection['questions'] = []
+		surveyQuestions = Survey_Question.objects.filter(survey=survey).filter(section=section)
+		for question in surveyQuestions:
+			tempQuestion = {}
+			tempQuestion['id'] = question.question.id
+			tempQuestion['text'] = question.question.question_text
+			tempQuestion['type'] = question.question_type
+			tempQuestion['description'] = question.question.description
+			tempQuestion['addComment'] = question.add_comment
+			tempQuestion['mandatory'] = question.mandatory
+
+			if question.question_type == 'radio' or question.question_type == 'checkbox':
+				choices = []
+				questionChoices = Choice.objects.filter(question=question.question)
+				for choice in questionChoices:
+					tempChoice = {}
+					tempChoice['text'] = choice.choice_text
+					if choice.choice_image:
+						tempChoice['image'] = str(choice.choice_image)
+					else:
+						tempChoice['image'] = None
+					choices.append(tempChoice)
+			tempQuestion['choices'] = choices
+		tempSection['questions'].append(tempQuestion) 
+		response_dict['survey_sections'].append(tempSection)
+	return JSONResponse(response_dict)
 
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))
