@@ -67,7 +67,8 @@ def getSurveyDetail(request, pk, format=None):
 			tempQuestion['addComment'] = question.add_comment
 			tempQuestion['mandatory'] = question.mandatory
 
-			if question.question_type == 'radio' or question.question_type == 'checkbox':
+			question_type = question.question_type
+			if question_type == 'radio' or question_type == 'checkbox' or question_type == 'matrix':
 				choices = []
 				questionChoices = Choice.objects.filter(question=question.question)
 				for choice in questionChoices:
@@ -78,7 +79,19 @@ def getSurveyDetail(request, pk, format=None):
 					else:
 						tempChoice['image'] = None
 					choices.append(tempChoice)
-			tempQuestion['choices'] = choices
+				tempQuestion['choices'] = choices
+			""" Getting Columns name for marix type Questions """
+			if question.question_type == 'matrix':
+				columns = []
+				questionColumns = MatrixRatingColumnLabels.objects.filter(question=question.question)
+
+				for column in questionColumns:
+					tempColumn = {}
+					tempColumn['label']  = column.columnLabel
+					tempColumn['weight'] = column.columnWeight
+					columns.append(tempColumn)
+				tempQuestion['columns'] = columns
+
 		tempSection['questions'].append(tempQuestion) 
 		response_dict['survey_sections'].append(tempSection)
 	return JSONResponse(response_dict)
