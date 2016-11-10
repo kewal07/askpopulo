@@ -23,63 +23,6 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 	<style>
-		#survey-question4516 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4517 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4518 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4519 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4520 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4521 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4522 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4523 .que_text{
-                        margin-top:0;
-                }
-
-		#survey-question4524 .que_text{
-                        margin-top:0;
-                }
-		#survey-question4528 .que_text{
-			margin-top:0;
-		}
-		#survey-question4529 .que_text{
-			margin-top:0;
-		}
-		
-		#survey-question4516, #survey-question4517, #survey-question4518, #survey-question4519, #survey-question4520, #survey-question4521, #survey-question4522, #survey-question4523, #survey-question4528 {
-			border-bottom: 0 !important;
-    			margin-bottom: 0 !important;
-			border-top:0 !important;
-		}
-
-		#survey-question4527, #survey-question4515{
-			border-bottom: 0 !important;
-                        margin-bottom: 0 !important;
-		}
-		
-		#survey-question4528, #survey-question4529, #survey-question4524{
-			border-top: 0;
-		}
-
 		.extraComments{
 			padding:1rem !important;
 		}
@@ -219,7 +162,7 @@
 						<form id="survey-form" method="POST" enctype="multipart/form-data">
 						{% csrf_token %}
 						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
-						{% if not survey.id = 71 and not user.is_authenticated %}
+						{% if not survey.id = 78 and not user.is_authenticated %}
 						<div class="question_description" id="demographic-div">
 							<select class="" id="age" name="demographic-age">
 									<option value="">Age Group</option>
@@ -265,7 +208,7 @@
 								<input type="text" id="{{ demo.name }}" value="" placeholder="{{ demo.name }}" name="demographic-{{ demo.name }}" />
 							{% endif %}
 						{% endfor %}
-						{% if not survey.id = 71 and not user.is_authenticated %}
+						{% if not survey.id = 78 and not user.is_authenticated %}
 							</div>
 						{% elif demo_list|length > 0 %}
 							</div>
