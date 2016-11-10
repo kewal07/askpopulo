@@ -285,7 +285,7 @@
 																{% endfor %}
 															</tr>
 															{% for choice in question.poll.choice_set.all %}
-																<tr>
+																<tr id="tr---{{ choice.id }}">
 																	<th> {{ choice.choice_text }} </th>
 																	{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
 																		<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="{{ choice.id }}---{{ columns.id }}"> </td>
@@ -490,6 +490,17 @@
 
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
+
+				if(input.attr('id') === 'choice9805'){
+					if($('#choice9788').is(':checked')){
+						$('#survey-question4629').css('display','block');
+					} else {
+						$('#survey-question4629').css('display','none');
+					}
+					if(!$('#choice9789').is(':checked')){
+						$('#survey-question4630').css('display','none');
+					}
+				} 
 
 				if(input.attr('id') === 'choice9788'){
 					if($('#choice9788').is(':checked')){
