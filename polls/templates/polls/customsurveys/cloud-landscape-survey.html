@@ -494,6 +494,8 @@
 				if(input.attr('id') === 'choice9788'){
 					if($('#choice9788').is(':checked')){
 						$('#survey-question4629').css('display','block');
+					} else {
+						$('#survey-question4629').css('display','none');
 					}
 					if(!$('#choice9789').is(':checked')){
 						$('#survey-question4630').css('display','none');
@@ -506,6 +508,8 @@
 					}
 					if($('#choice9789').is(':checked')){
 						$('#survey-question4630').css('display','block');
+					} else {
+						$('#survey-question4630').css('display','none');
 					}
 				}
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
