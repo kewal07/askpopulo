@@ -492,7 +492,9 @@
 				var input = $(this).find('input').first();
 
 				if(input.attr('id') === 'choice9788'){
-					$('#survey-question4629').css('display','block');
+					if($('#choice9788').is(':checked')){
+						$('#survey-question4629').css('display','block');
+					}
 					if(!$('#choice9789').is(':checked')){
 						$('#survey-question4630').css('display','none');
 					}
@@ -502,7 +504,9 @@
 					if(!$('#choice9788').is(':checked')){
 						$('#survey-question4629').css('display','none');
 					}
-					$('#survey-question4630').css('display','block');
+					if($('#choice9789').is(':checked')){
+						$('#survey-question4630').css('display','block');
+					}
 				}
 				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
 					if(input.is(':checked')){
