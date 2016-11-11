@@ -230,7 +230,7 @@
 								{% endif %}
 								{% for question in value %}
 									<div class="survey-question" id="survey-question{{ question.poll.id }}">
-									<p id="p---{{ question.question.id }}" class="que_text {{ question.mandatory|get_required }}">{{ question.poll.question_text }}</p>
+									<p id="p---{{ question.poll.id }}" class="que_text {{ question.mandatory|get_required }}">{{ question.poll.question_text }}</p>
 									{% if question.poll.description %}
 										<p class="question_description_header">
 											<span class="question_description_header_span">Description</span>
