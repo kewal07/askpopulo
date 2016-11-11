@@ -491,6 +491,22 @@
 			$(".vertical-options,.horizontal-options").click(function(event){
 				var input = $(this).find('input').first();
 
+				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
+					if(input.is(':checked')){
+						input.prop('checked', false);
+					} else {
+						input.prop('checked', true);
+					}
+				} 
+				
+				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
+					input.prop('checked', true);
+				}
+
+				var optionsFormId = $(this).parent().attr("id");
+				$("#"+optionsFormId+" p").removeClass("selectedOption");
+				$(this).addClass("selectedOption");
+
 				if(input.attr('id') === 'choice9805'){
 					if($('#choice9805').is(':checked')){
 						$('#tr---9815').css('display','none');
@@ -584,21 +600,7 @@
 						$('#survey-question4630').css('display','none');
 					}
 				}
-				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
-					if(input.is(':checked')){
-						input.prop('checked', false);
-					} else {
-						input.prop('checked', true);
-					}
-				} 
-				
-				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
-					input.prop('checked', true);
-				}
-
-				var optionsFormId = $(this).parent().attr("id");
-				$("#"+optionsFormId+" p").removeClass("selectedOption");
-				$(this).addClass("selectedOption");				
+								
 			});
 
 			$(".next-section").click(function(event){
