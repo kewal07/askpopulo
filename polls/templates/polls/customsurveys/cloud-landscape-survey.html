@@ -486,19 +486,127 @@
 	</section>
 	<script type="text/javascript">
 
-		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='emailChoice' value='emailChoice'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
+		$('#emailQuestion').css('display','none');
+		$('#choiceText4633').css('display','none');
+		$('#survey-question4634').css('display','none');
+		$('#collabQuestion').css('display','none');
+		$('#choiceText4635').css('display','none');
+		$('#survey-question4636').css('display','none');
+		$('#contentQuestion').css('display','none');
+		$('#choiceText4637').css('display','none');
+		$('#survey-question4638').css('display','none');
+		$('#crmQuestion').css('display','none');
+		$('#choiceText4639').css('display','none');
+		$('#survey-question4640').css('display','none');
+		$('#hrQuestion').css('display','none');
+		$('#choiceText4641').css('display','none');
+		$('#survey-question4642').css('display','none');
+		$('#erpQuestion').css('display','none');
+		$('#choiceText4643').css('display','none');
+		$('#survey-question4644').css('display','none');
+		$('#otherQuestion').css('display','none');
+		$('#choiceText4645').css('display','none');
+		$('#survey-question4646').css('display','none');
 
-		$('#p---4635').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='collaboration' value='collaboration'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)<span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
+		$('#emailChoice').click(function(){
+			if($('#emailChoice').is(':checked')){
+				$('#emailQuestion').css('display','block');
+				$('#choiceText4633').css('display','block');
+				$('#survey-question4634').css('display','block');
+			} else {
+				$('#emailQuestion').css('display','none');
+				$('#choiceText4633').css('display','none');
+				$('#survey-question4634').css('display','none');
+			}
+		});
 
-		$('#p---4637').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='content' value='content'> Content Management (DropBox for Business, Box, Microsoft SharePoint)<span> <br><br><span id='contentQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?</span>");
+		$('#collaboration').click(function(){
+			if($('#collaboration').is(':checked')){
+				$('#collabQuestion').css('display','block');
+				$('#choiceText4635').css('display','block');
+				$('#survey-question4636').css('display','block');
+			} else {
+				$('#collabQuestion').css('display','none');
+				$('#choiceText4635').css('display','none');
+				$('#survey-question4636').css('display','none');
+			}
+		});
 
-		$('#p---4639').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='crm' value='crm'> CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)<span><br><br><span id='crmQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?</span>");
+		$('#content').click(function(){
+			if($('#content').is(':checked')){
+				$('#contentQuestion').css('display','block');
+				$('#choiceText4637').css('display','block');
+				$('#survey-question4638').css('display','block');
+			} else {
+				$('#contentQuestion').css('display','none');
+				$('#choiceText4637').css('display','none');
+				$('#survey-question4638').css('display','none');
+			}
+		});
 
-		$('#p---4641').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='hr' value='hr'> HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)<span><br><br><span id='hrQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?</span>");
+		$('#crm').click(function(){
+			if($('#crm').is(':checked')){
+				$('#crmQuestion').css('display','block');
+				$('#choiceText4639').css('display','block');
+				$('#survey-question4640').css('display','block');
+			} else {
+				$('#crmQuestion').css('display','none');
+				$('#choiceText4639').css('display','none');
+				$('#survey-question4640').css('display','none');
+			}
+		});
 
-		$('#p---4643').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='erp' value='erp'> ERP (SAP, Oracle, NetSuite, etc.)<span><br><br><span id='erpQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?</span>");
+		$('#hr').click(function(){
+			if($('#hr').is(':checked')){
+				$('#hrQuestion').css('display','block');
+				$('#choiceText4641').css('display','block');
+				$('#survey-question4642').css('display','block');
+			} else {
+				$('#hrQuestion').css('display','none');
+				$('#choiceText4641').css('display','none');
+				$('#survey-question4642').css('display','none');
+			}
+		});
 
-		$('#p---4645').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='other' value='other'> Any Other [Please Specify]<span> <br><br><span id='otherQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?</span>");
+		$('#erp').click(function(){
+			if($('#erp').is(':checked')){
+				$('#erpQuestion').css('display','block');
+				$('#choiceText4643').css('display','block');
+				$('#survey-question4644').css('display','block');
+			} else {
+				$('#erpQuestion').css('display','none');
+				$('#choiceText4643').css('display','none');
+				$('#survey-question4644').css('display','none');
+			}
+		});
+
+		$('#other').click(function(){
+			if($('#other').is(':checked')){
+				$('#otherQuestion').css('display','block');
+				$('#choiceText4645').css('display','block');
+				$('#survey-question4646').css('display','block');
+			} else {
+				$('#otherQuestion').css('display','none');
+				$('#choiceText4645').css('display','none');
+				$('#survey-question4646').css('display','none');
+			}
+		});
+
+
+
+		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='emailChoice' name='emailChoice' value='emailChoice'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
+
+		$('#p---4635').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='collaboration'  name='collaboration' value='collaboration'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)<span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
+
+		$('#p---4637').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='content' name='content' value='content'> Content Management (DropBox for Business, Box, Microsoft SharePoint)<span> <br><br><span id='contentQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?</span>");
+
+		$('#p---4639').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='crm' name='crm' value='crm'> CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)<span><br><br><span id='crmQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?</span>");
+
+		$('#p---4641').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='hr' name='hr' value='hr'> HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)<span><br><br><span id='hrQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?</span>");
+
+		$('#p---4643').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='erp' name='erp' value='erp'> ERP (SAP, Oracle, NetSuite, etc.)<span><br><br><span id='erpQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?</span>");
+
+		$('#p---4645').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='other' name='other' value='other'> Any Other [Please Specify]<span> <br><br><span id='otherQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?</span>");
 
 		$('#survey-question4629').css('display','none');
 		$('#survey-question4630').css('display','none');
