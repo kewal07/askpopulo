@@ -99,6 +99,7 @@
 			margin-top: 0rem;
 			margin-bottom: 0rem;
 			height:2rem;
+			width:90% !important;
 		}
 
 		#choiceText4634, #choiceText4636, #choiceText4638, #choiceText4640, #choiceText4642, #choiceText4644,  #choiceText4646{
@@ -485,19 +486,19 @@
 	</section>
 	<script type="text/javascript">
 
-		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span> &nbsp &nbsp &nbsp &nbsp Email & Productivity </span> <br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?");
+		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='emailChoice' value='emailChoice'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
 
-		$('#p---4635').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp Collaboration Tools (Slack, Skype for Business, WebEx, etc.)<span> <br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?");
+		$('#p---4635').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='collaboration' value='collaboration'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)<span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
 
-		$('#p---4637').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp Content Management (DropBox for Business, Box, Microsoft SharePoint)<span> <br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?");
+		$('#p---4637').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='content' value='content'> Content Management (DropBox for Business, Box, Microsoft SharePoint)<span> <br><br><span id='contentQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?</span>");
 
-		$('#p---4639').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)<span><br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?");
+		$('#p---4639').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='crm' value='crm'> CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)<span><br><br><span id='crmQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?</span>");
 
-		$('#p---4641').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)<span><br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?");
+		$('#p---4641').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='hr' value='hr'> HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)<span><br><br><span id='hrQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?</span>");
 
-		$('#p---4643').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp ERP (SAP, Oracle, NetSuite, etc.)<span><br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?");
+		$('#p---4643').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='erp' value='erp'> ERP (SAP, Oracle, NetSuite, etc.)<span><br><br><span id='erpQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?</span>");
 
-		$('#p---4645').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp Any Other [Please Specify]<span> <br><br>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?");
+		$('#p---4645').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' name='other' value='other'> Any Other [Please Specify]<span> <br><br><span id='otherQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?</span>");
 
 		$('#survey-question4629').css('display','none');
 		$('#survey-question4630').css('display','none');
