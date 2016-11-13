@@ -28,8 +28,8 @@
 		}
 
 		th{
-			font-size: 0.9rem;
-    		font-weight: bolder;
+			font-size: 1.1rem;
+    		font-weight: 100;
 		}
 
 		{% if survey.id == 78 %}
@@ -1255,7 +1255,51 @@
 			var question_count = $('.optionsForm').length;
 			var question_covered = 0;
 
-            function giveDefaultValue(){ }
+            function giveDefaultValue(){ 
+            	// if($('#choice9788').is(':checked') && !$('#choice9789').is(':checked')){
+            	// 	$('#choice9804').prop('checked', true);
+            	// 	$('#choice9828').prop('checked', true);
+            	// 	$('#choice9830').prop('checked', true);
+            	// 	$('#choice9838').prop('checked', true);
+            	// }
+
+            	if(!$('#9815---152').is(':checked') && !$('#9815---153').is(':checked') && !$('#9815---154').is(':checked')){
+            		$('#9815---154').prop('checked', true);
+            	}
+
+            	if(!$('#9816---152').is(':checked') && !$('#9816---153').is(':checked') && !$('#9816---154').is(':checked')){
+            		$('#9816---154').prop('checked', true);
+            	}
+
+            	if(!$('#9817---152').is(':checked') && !$('#9817---153').is(':checked') && !$('#9817---154').is(':checked')){
+            		$('#9817---154').prop('checked', true);
+            	}
+
+            	if(!$('#9818---152').is(':checked') && !$('#9818---153').is(':checked') && !$('#9818---154').is(':checked')){
+            		$('#9818---154').prop('checked', true);
+            	}
+
+            	if(!$('#9819---152').is(':checked') && !$('#9819---153').is(':checked') && !$('#9819---154').is(':checked')){
+            		$('#9819---154').prop('checked', true);
+            	}
+
+            	if(!$('#9820---152').is(':checked') && !$('#9820---153').is(':checked') && !$('#9820---154').is(':checked')){
+            		$('#9820---154').prop('checked', true);
+            	}
+
+            	if(!$('#9821---152').is(':checked') && !$('#9821---153').is(':checked') && !$('#9821---154').is(':checked')){
+            		$('#9821---154').prop('checked', true);
+            	}
+
+            	if(!$('#9822---152').is(':checked') && !$('#9822---153').is(':checked') && !$('#9822---154').is(':checked')){
+            		$('#9822---154').prop('checked', true);
+            	}
+
+            	if(!$('#9823---152').is(':checked') && !$('#9823---153').is(':checked') && !$('#9823---154').is(':checked')){
+            		$('#9823---154').prop('checked', true);
+            	}
+
+            }
 
 			$('.surveySubmit').click(function(event)
 			{
