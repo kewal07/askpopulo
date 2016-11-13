@@ -32,7 +32,7 @@
     		font-weight: bolder;
 		}
 
-		{% if survey.id == 63 %}
+		{% if survey.id == 78 %}
 			.userImage{
 				display:none;
 			}
@@ -179,11 +179,10 @@
 
 					<p class="question_description" style="font-size:1rem !important; text-align:justify;">
 						<b> Note to the respondents: </b> <br><br>
-						• Thank you for sparing a few minutes of your time from your busy schedules. We value and appreciate this.<br><br>
-						• Responses to the Questionnaire will be strictly used for academic purpose only <br><br>
-						• Responses will provide inputs for a Book Chapter on Women Entrepreneurs in India<br><br>
+						• Thank you for sparing a few minutes of your time. We value and appreciate this. <br><br>
+						• The Survey is being conducted by the Cloud Computing Council of India (CCICI). Website: <a href="www.ccici.in">www.ccici.in</a> <br><br>
+						• For any details regarding the survey write to us at <a href="mailto:cloud-survey@ccici.in">cloud-survey@ccici.in</a><br><br>
 						• Kindly respond in the given pattern and adhere to the word limits wherever applicable<br><br>
-						• If you wish to know the results please write back to us on our mail separately at- <a href="mailto:rajeshwari.narendran@gmail.com">rajeshwari.narendran@gmail.com</a>, <a href="mailto:beanie@venturebean.com">beanie@venturebean.com</a> <br>
 
 						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
 						{% for cat in survey.questionwithcategory_set.all %}
