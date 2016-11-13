@@ -517,19 +517,47 @@
 		$('#choiceText4645').css('display','none');
 		$('#survey-question4646').css('display','none');
 
-		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='emailChoice' name='emailChoice' value='emailChoice'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
+		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br><span id='emailSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='emailChoice' name='emailChoice' value='emailChoice'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
 
-		$('#p---4635').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='collaboration'  name='collaboration' value='collaboration'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)</span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
+		$('#p---4635').html("<span style='margin-top:1rem;' id='collabSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='collaboration'  name='collaboration' value='collaboration'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)</span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
 
-		$('#p---4637').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='contentq' name='contentq' value='contentq'> Content Management (DropBox for Business, Box, Microsoft SharePoint)</span> <br><br><span id='contentQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?</span>");
+		$('#p---4637').html("<span style='margin-top:1rem;' id='contentSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='contentq' name='contentq' value='contentq'> Content Management (DropBox for Business, Box, Microsoft SharePoint)</span> <br><br><span id='contentQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which content management application does your organization use?</span>");
 
-		$('#p---4639').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='crm' name='crm' value='crm'> CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)</span><br><br><span id='crmQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?</span>");
+		$('#p---4639').html("<span style='margin-top:1rem;' id='crmSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='crm' name='crm' value='crm'> CRM Solutions (Salesforce, MS Dynamics CRM, ZenDesk etc.)</span><br><br><span id='crmQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which CRM solution does your organization use?</span>");
 
-		$('#p---4641').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='hr' name='hr' value='hr'> HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)</span><br><br><span id='hrQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?</span>");
+		$('#p---4641').html("<span style='margin-top:1rem;'  id='hrSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='hr' name='hr' value='hr'> HR Management Solutions (ADP, SAP SuccessFactors, Workday, etc)</span><br><br><span id='hrQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which HR management solution does your organization use?</span>");
 
-		$('#p---4643').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='erp' name='erp' value='erp'> ERP (SAP, Oracle, NetSuite, etc.)</span><br><br><span id='erpQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?</span>");
+		$('#p---4643').html("<span style='margin-top:1rem;'  id='erpSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='erp' name='erp' value='erp'> ERP (SAP, Oracle, NetSuite, etc.)</span><br><br><span id='erpQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which ERP solution does your organization use?</span>");
 
-		$('#p---4645').html("<span style='margin-top:1rem;'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='other' name='other' value='other'> Any Other [Please Specify]</span> <br><br><span id='otherQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?</span>");
+		$('#p---4645').html("<span style='margin-top:1rem;'  id='otherSpan'> &nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='other' name='other' value='other'> Any Other [Please Specify]</span> <br><br><span id='otherQuestion'>&nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which SaaS application(s) does your organization use?</span>");
+
+		$('#emailSpan').click(function(){
+			$('#emailChoice').prop('checked', true);
+		});
+
+		$('#collabSpan').click(function(){
+			$('#collaboration').prop('checked', true);
+		});
+
+		$('#contentSpan').click(function(){
+			$('#contentq').prop('checked', true);
+		});
+
+		$('#crmSpan').click(function(){
+			$('#crm').prop('checked', true);
+		});
+
+		$('#hrSpan').click(function(){
+			$('#hr').prop('checked', true);
+		});
+
+		$('#erpSpan').click(function(){
+			$('#erp').prop('checked', true);
+		});
+
+		$('#otherSpan').click(function(){
+			$('#other').prop('checked', true);
+		});
 
 		$('#survey-question4629').css('display','none');
 		$('#survey-question4630').css('display','none');
@@ -746,7 +774,7 @@
 					if($('#choice9805').is(':checked')){
 						$('#tr---9815').css('display','none');
 					} else {
-						$('#tr---9815').css('display','block');
+						$('#tr---9815').css('display','table-row');
 					}
 				}
 
@@ -754,7 +782,7 @@
 					if($('#choice9806').is(':checked')){
 						$('#tr---9816').css('display','none');
 					} else {
-						$('#tr---9816').css('display','block');
+						$('#tr---9816').css('display','table-row');
 					}
 				}
 
@@ -762,7 +790,7 @@
 					if($('#choice9807').is(':checked')){
 						$('#tr---9817').css('display','none');
 					} else {
-						$('#tr---9817').css('display','block');
+						$('#tr---9817').css('display','table-row');
 					}
 				}
 
@@ -770,7 +798,7 @@
 					if($('#choice9808').is(':checked')){
 						$('#tr---9818').css('display','none');
 					} else {
-						$('#tr---9818').css('display','block');
+						$('#tr---9818').css('display','table-row');
 					}
 				}
 
@@ -778,7 +806,7 @@
 					if($('#choice9809').is(':checked')){
 						$('#tr---9819').css('display','none');
 					} else {
-						$('#tr---9819').css('display','block');
+						$('#tr---9819').css('display','table-row');
 					}
 				}
 
@@ -786,7 +814,7 @@
 					if($('#choice9810').is(':checked')){
 						$('#tr---9820').css('display','none');
 					} else {
-						$('#tr---9820').css('display','block');
+						$('#tr---9820').css('display','table-row');
 					}
 				}
 
@@ -794,7 +822,7 @@
 					if($('#choice9811').is(':checked')){
 						$('#tr---9821').css('display','none');
 					} else {
-						$('#tr---9821').css('display','block');
+						$('#tr---9821').css('display','table-row');
 					}
 				}
 
@@ -802,7 +830,7 @@
 					if($('#choice9812').is(':checked')){
 						$('#tr---9822').css('display','none');
 					} else {
-						$('#tr---9822').css('display','block');
+						$('#tr---9822').css('display','table-row');
 					}
 				}
 
@@ -810,7 +838,7 @@
 					if($('#choice9813').is(':checked')){
 						$('#tr---9823').css('display','none');
 					} else {
-						$('#tr---9823').css('display','block');
+						$('#tr---9823').css('display','table-row');
 					}
 				}
 
