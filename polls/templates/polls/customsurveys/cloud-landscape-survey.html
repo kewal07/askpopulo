@@ -1207,7 +1207,7 @@
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];				
 				$(this).hide();
-				//$(this).parent().next().toggle();
+				$(this).parent().next().css('display','block');
 				var newElem = (parseInt(elementId)+1).toString();
 				$('html, body').animate({
 				        scrollTop: $("#section---"+newElem).offset().top-200
