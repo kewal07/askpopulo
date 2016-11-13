@@ -525,6 +525,44 @@
 		$('#survey-question4629').css('display','none');
 		$('#survey-question4630').css('display','none');
 
+		$('#survey-question4647').css('display','none');
+		$('#survey-question4648').css('display','none');
+		$('#survey-question4649').css('display','none');
+		$('#survey-question4650').css('display','none');
+		$('#survey-question4651').css('display','none');
+		$('#survey-question4652').css('display','none');
+		$('#survey-question4653').css('display','none');
+
+		$('#survey-question4656').css('display','none');
+		$('#survey-question4657').css('display','none');
+		$('#survey-question4658').css('display','none');
+
+		$('#survey-question4661').css('display','none');
+		$('#survey-question4662').css('display','none');
+		$('#survey-question4663').css('display','none');
+		$('#survey-question4664').css('display','none');
+		$('#survey-question4665').css('display','none');
+		$('#survey-question4666').css('display','none');
+		$('#survey-question4667').css('display','none');
+		$('#survey-question4668').css('display','none');
+		$('#survey-question4669').css('display','none');
+		$('#survey-question4670').css('display','none');
+		$('#survey-question4671').css('display','none');
+		$('#survey-question4672').css('display','none');
+		$('#survey-question4673').css('display','none');
+		$('#survey-question4674').css('display','none');
+		$('#survey-question4675').css('display','none');
+		$('#survey-question4676').css('display','none');
+		$('#survey-question4677').css('display','none');
+		$('#survey-question4678').css('display','none');
+		$('#survey-question4679').css('display','none');
+		$('#survey-question4680').css('display','none');
+		$('#survey-question4681').css('display','none');
+		$('#survey-question4682').css('display','none');
+		$('#survey-question4683').css('display','none');
+		$('#survey-question4684').css('display','none');
+		$('#survey-question4685').css('display','none');
+
 		$('#emailQuestion').css('display','none');
 		$('#choiceText4633').css('display','none');
 		$('#survey-question4634').css('display','none');
@@ -571,7 +609,7 @@
 			}
 		});
 
-		$('#content').click(function(){
+		$('#contentq').click(function(){
 			if($('#content').is(':checked')){
 				$('#contentQuestion').css('display','block');
 				$('#choiceText4637').css('display','block');
@@ -758,13 +796,29 @@
 				if(input.attr('id') === 'choice9788'){
 					if($('#choice9788').is(':checked')){
 						$('#survey-question4629').css('display','block');
+						$('#survey-question4649').css('display','block');
+						$('#survey-question4650').css('display','block');
 					} else {
 						$('#survey-question4629').css('display','none');
+						if(!$('#choice9789').is(':checked')){
+							$('#survey-question4649').css('display','none');
+							$('#survey-question4650').css('display','none');
+						}
 					}
 					if(!$('#choice9789').is(':checked')){
 						$('#survey-question4630').css('display','none');
 					}
-				} 
+				}
+
+				if(input.attr('id') === 'choice9790') {
+					if(!$('#choice9790').is(':checked')){
+						if(!$('#choice9789').is(':checked') && !$('#choice9788').is(':checked')){
+							$('#survey-question4650').css('display','none');
+						}
+					} else {
+							$('#survey-question4650').css('display','block');
+					}
+				}
 
 				if(input.attr('id') === 'choice9789') {
 					if(!$('#choice9788').is(':checked')){
@@ -772,10 +826,122 @@
 					}
 					if($('#choice9789').is(':checked')){
 						$('#survey-question4630').css('display','block');
+						$('#survey-question4649').css('display','block');
+						$('#survey-question4650').css('display','block');
 					} else {
 						$('#survey-question4630').css('display','none');
+						if(!$('#choice9788').is(':checked')){
+							$('#survey-question4649').css('display','none');
+							$('#survey-question4650').css('display','none');
+						}
 					}
 				}
+
+				if(input.attr('id') === 'choice9791') {
+					if(!$('#choice9791').is(':checked')){
+						$('#survey-question4647').css('display','none');
+						$('#survey-question4648').css('display','none');
+						$('#survey-question4651').css('display','none');
+						$('#survey-question4652').css('display','none');
+						$('#survey-question4653').css('display','none');
+					} else {
+						$('#survey-question4647').css('display','block');
+						$('#survey-question4648').css('display','block');
+						$('#survey-question4651').css('display','block');
+						$('#survey-question4652').css('display','block');
+						$('#survey-question4653').css('display','block');
+					}
+				}
+
+				if(input.attr('id') === 'choice9837') {
+					$('#survey-question4652').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9838') {
+					$('#survey-question4652').css('display','none');
+				}
+
+				if(input.attr('id') === 'choice9844') {
+					$('#survey-question4656').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9845' || input.attr('id') === 'choice9846') {
+					$('#survey-question4657').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9875') {
+					$('#survey-question4663').css('display','none');
+					$('#survey-question4664').css('display','none');
+					$('#survey-question4665').css('display','none');
+					$('#survey-question4666').css('display','none');
+					$('#survey-question4667').css('display','none');
+					$('#survey-question4668').css('display','none');
+					$('#survey-question4669').css('display','none');
+					$('#survey-question4670').css('display','none');
+					$('#survey-question4661').css('display','block');
+					$('#survey-question4662').css('display','block');
+					$('#survey-question4685').css('display','block');
+				} else if(input.attr('id') === 'choice9876') {
+					$('#survey-question4661').css('display','none');
+					$('#survey-question4662').css('display','none');
+					$('#survey-question4665').css('display','none');
+					$('#survey-question4666').css('display','none');
+					$('#survey-question4667').css('display','none');
+					$('#survey-question4668').css('display','none');
+					$('#survey-question4669').css('display','none');
+					$('#survey-question4670').css('display','none');
+					$('#survey-question4663').css('display','block');
+					$('#survey-question4664').css('display','block');
+					$('#survey-question4685').css('display','block');
+				} else if(input.attr('id') === 'choice9877'){
+					$('#survey-question4661').css('display','none');
+					$('#survey-question4662').css('display','none');
+					$('#survey-question4663').css('display','none');
+					$('#survey-question4664').css('display','none');
+					$('#survey-question4667').css('display','none');
+					$('#survey-question4668').css('display','none');
+					$('#survey-question4669').css('display','none');
+					$('#survey-question4670').css('display','none');
+					$('#survey-question4665').css('display','block');
+					$('#survey-question4666').css('display','block');
+					$('#survey-question4685').css('display','block');
+				} else if(input.attr('id') === 'choice9878'){
+					$('#survey-question4661').css('display','none');
+					$('#survey-question4662').css('display','none');
+					$('#survey-question4663').css('display','none');
+					$('#survey-question4664').css('display','none');
+					$('#survey-question4665').css('display','none');
+					$('#survey-question4666').css('display','none');
+					$('#survey-question4667').css('display','block');
+					$('#survey-question4668').css('display','block');
+					$('#survey-question4685').css('display','block');
+				} else if(input.attr('id') === 'choice9879'){
+					$('#survey-question4661').css('display','none');
+					$('#survey-question4662').css('display','none');
+					$('#survey-question4663').css('display','none');
+					$('#survey-question4664').css('display','none');
+					$('#survey-question4665').css('display','none');
+					$('#survey-question4666').css('display','none');
+					$('#survey-question4667').css('display','none');
+					$('#survey-question4668').css('display','none');
+					$('#survey-question4669').css('display','block');
+					$('#survey-question4685').css('display','block');
+				} else if(input.attr('id') === 'choice9879'){
+					$('#survey-question4661').css('display','none');
+					$('#survey-question4662').css('display','none');
+					$('#survey-question4663').css('display','none');
+					$('#survey-question4664').css('display','none');
+					$('#survey-question4665').css('display','none');
+					$('#survey-question4666').css('display','none');
+					$('#survey-question4667').css('display','none');
+					$('#survey-question4668').css('display','none');
+					$('#survey-question4669').css('display','none');
+					$('#survey-question4670').css('display','block');
+					$('#survey-question4671').css('display','block');
+					$('#survey-question4672').css('display','block');
+					$('#survey-question4685').css('display','block');
+				}
+
 								
 			});
 
