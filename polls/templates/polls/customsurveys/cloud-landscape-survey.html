@@ -494,6 +494,9 @@
 		</div>
 	</section>
 	<script type="text/javascript">
+		$('#survey-question4628').before($('#survey-question4703'));
+
+		$('#survey-question4628').css('display','none');
 		$('#4628othercomments').css('display','none');
 		$('#choiceText4628Comment').css('display','none');
 		$('#emailQuestion').css('display','none');
@@ -971,10 +974,14 @@
 						}
 					}
 				}
-			
-				if(input.attr('id') === 'choice9792') {
+
+				if(input.attr('id') === 'choice9974') {
 					$('#next-section---1').click();
 				}
+			
+				// if(input.attr('id') === 'choice9792') {
+				// 	$('#next-section---1').click();
+				// }
 				
 				if(input.attr('id') === 'choice9793'){
 					if($('#choice9793').is(':checked')){
@@ -1238,6 +1245,10 @@
 					$('#survey-question4684').css('display','none');
 					$('#survey-question4685').css('display','none');
 					$('#next-section---3').click();
+				}
+
+				if(input.attr('id') === 'choice9973'){
+					$('#survey-question4628').css('display','block')
 				}				
 			});
 
@@ -1256,12 +1267,6 @@
 			var question_covered = 0;
 
             function giveDefaultValue(){ 
-            	// if($('#choice9788').is(':checked') && !$('#choice9789').is(':checked')){
-            	// 	$('#choice9804').prop('checked', true);
-            	// 	$('#choice9828').prop('checked', true);
-            	// 	$('#choice9830').prop('checked', true);
-            	// 	$('#choice9838').prop('checked', true);
-            	// }
 
             	if(!$('#9815---152').is(':checked') && !$('#9815---153').is(':checked') && !$('#9815---154').is(':checked')){
             		$('#9815---154').prop('checked', true);
