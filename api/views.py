@@ -73,6 +73,7 @@ def getSurveyDetail(request, pk, format=None):
 				questionChoices = Choice.objects.filter(question=question.question)
 				for choice in questionChoices:
 					tempChoice = {}
+					tempChoice['id'] = choice.id
 					tempChoice['text'] = choice.choice_text
 					if choice.choice_image:
 						tempChoice['image'] = str(choice.choice_image)
