@@ -497,6 +497,9 @@
 		$('#survey-question4628').before($('#survey-question4703'));
 
 		$('#survey-question4628').css('display','none');
+		$('#4703othercomments').css('display','none');
+		$('#choiceText4703Comment').css('display','none');
+
 		$('#4628othercomments').css('display','none');
 		$('#choiceText4628Comment').css('display','none');
 		$('#emailQuestion').css('display','none');
@@ -976,6 +979,8 @@
 				}
 
 				if(input.attr('id') === 'choice9974') {
+					$('#4703othercomments').css('display','none');
+			        $('#choiceText4703Comment').css('display','none');
 					$('#next-section---1').click();
 				}
 			
@@ -991,6 +996,11 @@
 						$('#4628othercomments').css('display','none');
                                                 $('#choiceText4628Comment').css('display','none');
 					}
+				}
+
+				if(input.attr('id') === 'choice9975'){
+					$('#4703othercomments').css('display','block');
+			        $('#choiceText4703Comment').css('display','block');
 				}
 
 				if(input.attr('id') === 'choice9837') {
@@ -1249,6 +1259,8 @@
 
 				if(input.attr('id') === 'choice9973'){
 					$('#survey-question4628').css('display','block')
+					$('#4703othercomments').css('display','none');
+			        $('#choiceText4703Comment').css('display','none');
 				}				
 			});
 
@@ -1353,6 +1365,7 @@
 	    $("#choiceText4515").css('display','none');
 	    $("#choiceText4527").css('display','none');
 		$('#4628othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
+		$('#4703othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 		});
 	</script>
 {% endblock %}
