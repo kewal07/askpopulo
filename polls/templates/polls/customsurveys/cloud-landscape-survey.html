@@ -1078,7 +1078,7 @@
 					$('#survey-question4685').css('display','none');
 					$('#survey-question4686').css('display','none');
 					$('#survey-question4677').css('display','none');
-                                }
+                }
 
 				if(input.attr('id') === 'choice9875' || input.attr('id') === 'choice9876' || input.attr('id') === 'choice9877' || input.attr('id') === 'choice9878' || input.attr('id') === 'choice9879' || input.attr('id') === 'choice9880' || input.attr('id') === 'choice9881') {
                     $('#survey-question4661').css('display','block');
@@ -1140,6 +1140,14 @@
 					} else {
 						$('#choiceText4689Comment').css('display','none');
 					}
+				}
+
+				if(input.attr('id') === 'choice9966'){
+					$('#choiceText4699Comment').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9954' || input.attr('id') === 'choice9955' || input.attr('id') === 'choice9956' || input.attr('id') === 'choice9957' || input.attr('id') === 'choice9958' || input.attr('id') === 'choice9959' || input.attr('id') === 'choice9960' || input.attr('id') === 'choice9961' || input.attr('id') === 'choice9962' || input.attr('id') === 'choice9963'|| input.attr('id') === 'choice9964'|| input.attr('id') === 'choice9965' || input.attr('id') === 'choice9966'){
+					$('#choiceText4699Comment').css('display','none');
 				}
 
 				if(input.attr('id') === 'choice9969'){
@@ -1308,6 +1316,7 @@
 		$('#choiceText4701Comment').css('display','none');
 		$('#choiceText4700Comment').css('display','none');
 		$('#choiceText4658Comment').css('display','none');
+		$('#choiceText4699Comment').css('display','none');
 		$('#4628othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 		$('#4703othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 		});
