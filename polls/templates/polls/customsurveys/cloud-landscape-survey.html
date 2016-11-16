@@ -542,7 +542,7 @@
 		$('#choiceText4645').css('display','none');
 		$('#survey-question4646').css('display','none');
 
-		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br>&nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='emailChoice' name='emailChoice' value='emailChoice'> <span id='emailSpan' style='cursor:pointer;'> Email & Productivity </span> <br><br><span id='emailQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
+		$('#p---4633').html("Are you using any of the following Software as a Service (SaaS) applications categories/solution as part of your cloud strategy?<br><br>&nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='emailChoice' name='emailChoice' value='emailChoice'> <span id='emailSpan' style='cursor:pointer; font-size:1.1rem !important;'> Email & Productivity </span> <br><br><span id='emailQuestion' style='font-size:1.1rem !important;'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which email and/or productivity suite does your organization use?</span>");
 
 		$('#p---4635').html("&nbsp &nbsp &nbsp &nbsp <input type='checkbox' id='collaboration'  name='collaboration' value='collaboration'> <span style='margin-top:1rem;' id='collabSpan' style='cursor:pointer;'> Collaboration Tools (Slack, Skype for Business, WebEx, etc.)</span> <br><br><span id='collabQuestion'> &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp Which collaboration tool does your organization use?</span>");
 
@@ -1011,11 +1011,7 @@
 					$('#next-section---2').css('display','block');
 					$('#next-section---1').click();
 				}
-			
-				// if(input.attr('id') === 'choice9792') {
-				// 	$('#next-section---1').click();
-				// }
-				
+							
 				if(input.attr('id') === 'choice9793'){
 					if($('#choice9793').is(':checked')){
 						$('#4628othercomments').css('display','block');
@@ -1026,15 +1022,28 @@
 					}
 				}
 
-				if(input.attr('id') === 'choice9975'){
-					$('#survey-question4628').css('display','none');
-					$('#4703othercomments').css('display','none');
-			        	$('#choiceText4703Comment').css('display','none');
-			        	$('#next-section---1').css('display','none');
-					$('#section---2').css('display','none');
-					$('#section---3').css('display','none');
-					$('#section---4').css('display','none');
-			        	$('#section---5').css('display','block');
+				if(input.attr('id') === 'choice9799') {
+					if($('#choice9799').is(':checked')){
+						$('#choiceText4629Comment').css('display','block');
+					} else {
+						$('#choiceText4629Comment').css('display','none');
+					}
+				}
+
+				if(input.attr('id') === 'choice9804') {
+					if($('#choice9804').is(':checked')){
+						$('#choiceText4630Comment').css('display','block');
+					} else {
+						$('#choiceText4630Comment').css('display','none');
+					}
+				}
+
+				if(input.attr('id') === 'choice9829') {
+					$('#choiceText4648Comment').css('display','none');
+				}
+
+				if(input.attr('id') === 'choice9830') {
+					$('#choiceText4648Comment').css('display','block');
 				}
 
 				if(input.attr('id') === 'choice9837') {
@@ -1208,7 +1217,7 @@
 				if(input.attr('id') === 'choice9973'){
 					$('#survey-question4628').css('display','block')
 					$('#4703othercomments').css('display','none');
-			        	$('#choiceText4703Comment').css('display','none');
+			        $('#choiceText4703Comment').css('display','none');
 					$('#next-section---2').css('display','block');
 					$('#next-section---3').css('display','block');
 					$('#next-section---4').css('display','block');
@@ -1216,9 +1225,28 @@
 					$('#section---2').css('display','none');
 					$('#section---3').css('display','none');
 					$('#section---4').css('display','none');
-			        	$('#section---5').css('display','none');
+			        $('#section---5').css('display','none');
 					$('#section---6').css('display','none');
-			        	$('#next-section---1').css('display','block');
+			        $('#next-section---1').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9975'){
+					$('#survey-question4628').css('display','none');
+					$('#4703othercomments').css('display','none');
+		        	$('#choiceText4703Comment').css('display','none');
+		        	$('#next-section---1').css('display','none');
+					$('#section---2').css('display','none');
+					$('#section---3').css('display','none');
+					$('#section---4').css('display','none');
+			        $('#section---5').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9978') {
+					if($('#choice9978').is(':checked')){
+						$('#choiceText4631Comment').css('display','block');
+					} else {
+						$('#choiceText4631Comment').css('display','none');
+					}
 				}
 
 				if(input.attr('id') === 'choice9983'){
@@ -1336,6 +1364,11 @@
 					}
 				});
 			});
+
+		$('#choiceText4629Comment').css('display','none');
+		$('#choiceText4630Comment').css('display','none');
+		$('#choiceText4648Comment').css('display','none');
+		$('#choiceText4631Comment').css('display','none');
 		$('#choiceText4705Comment').css('display','none');
 		$('#choiceText4666Comment').css('display','none');
 		$('#choiceText4683Comment').css('display','none');
