@@ -23,6 +23,19 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
 	<style>
+
+		::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+			color: pink;
+		}
+		::-moz-placeholder { /* Firefox 19+ */
+			color: pink;
+		}
+		:-ms-input-placeholder { /* IE 10+ */
+			color: pink;
+		}
+		:-moz-placeholder { /* Firefox 18- */
+			color: pink;
+		}
 		.extraComments{
 			padding:1rem !important;
 		}
@@ -1059,6 +1072,22 @@
 					$('#survey-question4657').css('display','block');
 				}
 
+				if(input.attr('id') === 'choice9851') {
+					if($('#choice9851').is(':checked')){
+						$('#choiceText4656Comment').css('display','block');
+					} else {
+						$('#choiceText4656Comment').css('display','none');
+					}
+				}
+
+				if(input.attr('id') === 'choice9856') {
+					if($('#choice9856').is(':checked')){
+						$('#choiceText4657Comment').css('display','block');
+					} else {
+						$('#choiceText4657Comment').css('display','none');
+					}
+				}
+
 				if(input.attr('id') === 'choice9873'){
 					if($('#choice9873').is(':checked')){
 						$('#choiceText4659Comment').css('display','block');
@@ -1319,6 +1348,12 @@
 		$('#choiceText4699Comment').css('display','none');
 		$('#4628othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 		$('#4703othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
+
+		$('#choiceText4689Comment').attr('placeholder','Please list the issues or challenges that you are facing');
+		$('#choiceText4656Comment').attr('placeholder','Please list the platform or vendor you plan to use');
+		$('#choiceText4657Comment').attr('placeholder','Please list the cloudservice provider you plan to use');
+		$('#choiceText4658Comment').attr('placeholder','Please specify the area where you would use a cloud solution');
+		$('#choiceText4659Comment').attr('placeholder','Please specify the SAAS application you would use in your cloud strategy');
 		});
 	</script>
 {% endblock %}
