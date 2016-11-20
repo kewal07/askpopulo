@@ -1257,13 +1257,21 @@
 					}
 				}
 
+				if(input.attr('id') === 'choice10003') {
+					if($('#choice10003').is(':checked')){
+						$('#choiceText4706Comment').css('display','block');
+					} else {
+						$('#choiceText4706Comment').css('display','none');
+					}
+				}
+
 				if(input.attr('id') === 'choice9983'){
 					$('#choiceText4705Comment').css('display','block');
 				}
 
 				if(input.attr('id') === 'choice9984'){
-                                        $('#choiceText4705Comment').css('display','none');
-                                }
+                    $('#choiceText4705Comment').css('display','none');
+                }
 								
 			});
 
@@ -1393,6 +1401,7 @@
 		$('#choiceText4659Comment').css('display','none');
 		$('#choiceText4666Comment').css('display','none');
 		$('#choiceText4699Comment').css('display','none');
+		$('#choiceText4706Comment').css('display','none');
 		$('#4628othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 		$('#4703othercomments').text('Please Specify Why Does Your Organization Has A "No Cloud Strategy"');
 
@@ -1409,6 +1418,7 @@
 		$('#choiceText4648Comment').attr('placeholder','Please specify the name of the Indian company providing the SaaS solution');
 		$('#choiceText4686Comment').attr('placeholder','Please provide details of your offering');
 		$('#choiceText4651Comment').attr('placeholder','Please specify the programming language used');
+		$('#choiceText4706Comment').attr('placeholder','Please specify benifits you forsee');
 		});
 	</script>
 {% endblock %}
