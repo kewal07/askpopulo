@@ -1030,12 +1030,20 @@
 					}
 				}
 
-				if(input.attr('id') === 'choice9804') {
-					if($('#choice9804').is(':checked')){
+				if(input.attr('id') === 'choice9990') {
+					if($('#choice9990').is(':checked')){
 						$('#choiceText4630Comment').css('display','block');
 					} else {
 						$('#choiceText4630Comment').css('display','none');
 					}
+				}
+
+				if(input.attr('id') === 'choice9837') {
+					$('#choiceText4651Comment').css('display','block');
+				}
+
+				if(input.attr('id') === 'choice9838' || input.attr('id') === 'choice9985') {
+					$('#choiceText4651Comment').css('display','none');
 				}
 
 				if(input.attr('id') === 'choice9829') {
@@ -1367,6 +1375,7 @@
 
 		$('#choiceText4629Comment').css('display','none');
 		$('#choiceText4630Comment').css('display','none');
+		$('#choiceText4651Comment').css('display','none');
 		$('#choiceText4648Comment').css('display','none');
 		$('#choiceText4631Comment').css('display','none');
 		$('#choiceText4705Comment').css('display','none');
@@ -1399,6 +1408,7 @@
 		$('#choiceText4629Comment').attr('placeholder','Please specify the private cloud platform / vendor you use');
 		$('#choiceText4648Comment').attr('placeholder','Please specify the name of the Indian company providing the SaaS solution');
 		$('#choiceText4686Comment').attr('placeholder','Please provide details of your offering');
+		$('#choiceText4651Comment').attr('placeholder','Please specify the programming language used');
 		});
 	</script>
 {% endblock %}
