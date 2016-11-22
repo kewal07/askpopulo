@@ -640,6 +640,7 @@
 		$('#survey-question4684').css('display','none');
 		$('#survey-question4685').css('display','none');
 		$('#survey-question4686').css('display','none');
+		$('#survey-question4699').css('display','none');
 
 		$('#emailQuestion').css('display','none');
 		$('#choiceText4633').css('display','none');
@@ -1195,11 +1196,19 @@
 					}
 				}
 
+				if(input.attr('id') === 'choice9949' || input.attr('id') === 'choice9950'){
+					$('#survey-question4677').css('display','none');
+				}
+
+				if(input.attr('id') === 'choice9951' || input.attr('id') === 'choice9952' || input.attr('id') === 'choice9953'){
+					$('#survey-question4677').css('display','block');
+				}
+
 				if(input.attr('id') === 'choice9966'){
 					$('#choiceText4699Comment').css('display','block');
 				}
 
-				if(input.attr('id') === 'choice9954' || input.attr('id') === 'choice9955' || input.attr('id') === 'choice9956' || input.attr('id') === 'choice9957' || input.attr('id') === 'choice9958' || input.attr('id') === 'choice9959' || input.attr('id') === 'choice9960' || input.attr('id') === 'choice9961' || input.attr('id') === 'choice9962' || input.attr('id') === 'choice9963'|| input.attr('id') === 'choice9964'|| input.attr('id') === 'choice9965' || input.attr('id') === 'choice9966'){
+				if(input.attr('id') === 'choice9954' || input.attr('id') === 'choice9955' || input.attr('id') === 'choice9956' || input.attr('id') === 'choice9957' || input.attr('id') === 'choice9958' || input.attr('id') === 'choice9959' || input.attr('id') === 'choice9960' || input.attr('id') === 'choice9961' || input.attr('id') === 'choice9962' || input.attr('id') === 'choice9963'|| input.attr('id') === 'choice9964'|| input.attr('id') === 'choice9965'){
 					$('#choiceText4699Comment').css('display','none');
 				}
 
