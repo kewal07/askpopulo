@@ -164,7 +164,7 @@
 								<img src="{{ survey.user.extendeduser.get_profile_pic_url }}"  alt="User {{ survey.user.first_name }}">
 						</a>
 					</div>
-					<p class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
+					<p style="display:none;" class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
 					<div class="userBrief">
 						<p>
 							Survey Valid till : <span id="{{ survey.id }}expirydate"></span>
