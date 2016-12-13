@@ -1781,6 +1781,8 @@ class SurveyVoteView(BaseViewDetail):
 			template_name = 'polls/customsurveys/collateral-review-feedback-survey.html'
 		elif survey.id == 78:
 			template_name = 'polls/customsurveys/cloud-landscape-survey.html'
+		elif survey.id == 80:
+			template_name = 'polls/customsurveys/demonetisation-effect.html'
 		survey.numViews +=1
 		survey.save()
 		return [template_name]

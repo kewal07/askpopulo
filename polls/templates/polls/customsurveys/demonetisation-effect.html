@@ -1,0 +1,603 @@
+{% extends "polls/common.html" %}
+{% load static %}
+{% load url_target_blank %}
+{% block meta_data_extra %}
+	{% with survey.has_image as has_image %}
+	{%if has_image|length > 0 %}
+	{% for share_image in has_image %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}{{ share_image }}"/>
+	{% endfor %}
+		<meta property="og:image:width" content="300" />
+		<meta property="og:image:height" content="300" />
+	{% else %}
+		<meta property="og:image" content="http://{{ request.META.HTTP_HOST }}/static/pollsLogoShareNew.png"/>
+	{% endif %}
+	{% endwith %}
+	<meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{{ request.path }}"/>
+	<meta property="og:title" content="{{ survey.survey_name  }}"/>
+	<meta property="og:description" content="{{ survey.description  }}" />
+{% endblock %}
+{% block extra_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/survey_vote.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'css/ion.rangeSlider.skinFlat.css' %}" />
+	<style>
+
+		input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+			color: pink;
+		}
+		input::-moz-placeholder { /* Firefox 19+ */
+			color: pink;
+		}
+		input:-ms-input-placeholder { /* IE 10+ */
+			color: pink;
+		}
+		input:-moz-placeholder { /* Firefox 18- */
+			color: pink;
+		}
+		.extraComments{
+			padding:1rem !important;
+		}
+
+		th{
+			font-size: 1.1rem;
+    		font-weight: 100;
+		}
+
+		{% if survey.id == 80 %}
+			.userImage{
+				display:none;
+			}
+			.userBrief-center{
+				margin-top:7rem;
+			}
+			img.survey-featured{
+				height: initial;
+			}
+		{% endif %}
+        .survey-question{
+            padding:0;
+        }
+        .que_text{
+            margin-bottom:0;
+            margin-top:14px;
+        }
+        .mainPoll .optionsForm{
+               padding-top: 8px;
+                padding-bottom: 8px;
+                padding-left: 8px;
+        }
+        .optionsForm p.horizontal-options{
+            padding:14px 0;
+        }
+        .optionsForm p{
+            padding:0;
+        }
+        .text-ans{
+            width:99%;
+            height:2rem !important;
+        }
+        .table-component{
+            width:98%;
+            max-width:initial;
+        }
+        .vertical-options{
+            padding-bottom:3px !important;
+            padding-top:3px !important;
+        }
+		.extraComments{
+			padding-top:1rem !important;
+		}
+
+		input[type="checkbox"]{
+		  width: 30px; /*Desired width*/
+		  height: 30px; /*Desired height*/
+		  cursor: pointer;
+		  vertical-align: middle;
+		}
+
+		input[type="radio"]{
+		  width: 30px; /*Desired width*/
+		  height: 30px; /*Desired height*/
+		  cursor: pointer;
+		  vertical-align: middle;
+		}
+	</style>
+{% endblock %}
+{% block extra_js %}
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="{% static 'js/ion.rangeSlider.min.js' %}"></script>
+{% endblock %} 
+{% block content %}
+	<section id="content">
+		<div class="questions">
+			<div class="questionContent">
+				<p style="margin-bottom:1rem;" class="que_text que_text_header">{{ survey.survey_name }}</p>
+				{% if survey.has_image %}
+					<img src="{{ survey.get_featured_image_url }}" class="survey-featured" alt="{{ survey.survey_name }}">
+				{% else %}
+					<style type="text/css">
+						.userInfo{
+							margin-top: -3%;
+						}
+					</style>
+				{% endif %}
+				<div class="userInfo">
+					<div class="userImage">
+						<a href="{% url 'login:loggedIn' survey.user.id survey.user.extendeduser.user_slug %}">
+								<img src="{{ survey.user.extendeduser.get_profile_pic_url }}"  alt="User {{ survey.user.first_name }}">
+						</a>
+					</div>
+					<p style="display:none;" class="userBrief-center">{{ survey.user.extendeduser.company.description }}</p>
+					<div class="userBrief">
+						<p>
+							Survey Valid till : <span id="{{ survey.id }}expirydate"></span>
+						</p>
+					</div>
+					<div class="userBrief-right">
+						<p>
+							Time To Complete : About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span>
+						</p>
+					</div>
+				</div>
+				<div class="mainPoll">
+					<p class="que_text special-case" id="survey-title">{{ survey.survey_name }}
+						{% if user.is_authenticated %}
+							{% if user == survey.user or user.is_superuser %}
+							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
+							<a href="{% url 'polls:survey_edit' survey.id survey.survey_slug %}"><i class="fa fa-pencil-square-o"></i></a>
+							{% endif %}
+							<a href="{% url 'polls:survey_clone' survey.id survey.survey_slug %}"><i class="fa fa-files-o"></i></a>
+							<a href="{% url 'polls:survey_delete' survey.id survey.survey_slug %}"><i class="fa fa-trash-o" onclick="if(confirm_redirect('#overlay-inAbox2','delete_survey','{% url 'polls:survey_delete' survey.id survey.survey_slug %}')) return true; else return false;"></i></a>
+							{% endif %}
+						{% endif %}
+					</p>
+					<p class="special-userBrief-center">Time to Complete: About <span id="{{ survey.id }}expectedtime">{{ survey.expected_time }} Minutes</span></p>
+					{% if survey.description or survey.surveywithcategory_set.count > 0 %}
+					<p class="question_description_header">
+
+							<span class="question_description_header_span">Description</span>
+					</p>
+
+					<p class="question_description" style="font-size:1rem !important; text-align:justify;">
+						<b> Note to the respondents: </b> <br><br>
+						• Intent of the Survey is to assess the effect of demonetisation on SMEs & Traders<br><br>
+						• Thank you for sparing a few minutes of your time from your busy schedules. We value and appreciate this.<br><br>
+						• If you wish to know the results please write back to us on our mail separately at- <a href="mailto:beanie@venturebean.com">beanie@venturebean.com</a> <br>
+
+						{% if survey.description and survey.questionwithcategory_set.count > 0 %}<br><br>{% endif %}
+						{% for cat in survey.questionwithcategory_set.all %}
+							<a class="que_desc_cat_span" href="{% url 'polls:polls_category' %}?category={{ cat.category.category_title }}">{{ cat.category.category_title }}</a>
+						{% endfor %}
+					</p>
+					{% endif %}
+					
+					{% if demo_list|length > 0 and user.is_authenticated %}
+						<p class="question_description_header">
+
+							<span class="question_description_header_span">Demographics</span>
+						</p>
+					{% endif %}
+					
+					<div class="survey-questions" id="survey-{{ survey.id }}">
+						<form id="survey-form" method="POST" enctype="multipart/form-data">
+						{% csrf_token %}
+						<input type="hidden" name="unique_key" value="{{ unique_key }}" />
+						{% if not survey.id = 80 and not user.is_authenticated %}
+						<div class="question_description" id="demographic-div">
+							<select class="" id="age" name="demographic-age">
+									<option value="">Age Group</option>
+									<option value="16"><19</option>
+									<option value="22">20-25</option>
+									<option value="28">26-30</option>
+									<option value="33">31-35</option>
+									<option value="43">36-50</option>
+									<option value="55">>50</option>
+							</select>
+							<select class="" id="gender" name="demographic-gender">
+								<option value="">Gender</option>
+								<option value="Female">Female</option>
+								<option value="Male">Male</option>
+								<option value="D">Rather Not Say</option>
+							</select>
+							<select class="" id="profession" name="demographic-profession">
+								<option value="">Profession</option>
+								<option value="Student">Student</option>
+								<option value="Politics">Politics</option>
+								<option value="Education">Education</option>
+								<option value="Information Technology">Information Technology</option>
+								<option value="Public Sector">Public Sector</option>
+								<option value="Social Services">Social Services</option>
+								<option value="Medical">Medical</option>
+								<option value="Finance">Finance</option>
+								<option value="Manager">Manager</option>
+								<option value="Others">Others</option>
+							</select>
+							<input style="width: 20rem;" type="text" class="" id="email" placeholder="Enter Email for Authentication. No Spam Ever!" name="demographic-email">
+						{% elif demo_list|length > 0 %}
+							<div class="question_description" id="demographic-div">
+						{% endif %}
+						{% for demo in demo_list %}
+							{% if demo.values|length > 0 %}
+								<select class="question-type-select" id="{{ demo.name }}" name="demographic-{{ demo.name }}">
+								<option value="">{{ demo.name }}</option>
+									{% for value in demo.values %}
+										<option value="{{ value }}">{{ value }}</option>
+									{% endfor %}
+								</select>
+							{% else %}
+								<input type="text" id="{{ demo.name }}" value="" placeholder="{{ demo.name }}" name="demographic-{{ demo.name }}" />
+							{% endif %}
+						{% endfor %}
+						{% if not survey.id = 80 and not user.is_authenticated %}
+							</div>
+						{% elif demo_list|length > 0 %}
+							</div>
+						{% endif %}
+						{% for key,value in polls_section_dict.items %}
+							{% if key == 'NULL' %}
+								<style type="text/css">
+									.survey-sections{
+										padding:0;
+										margin: 0;
+										border:0;
+										display: block;
+									}
+								</style>
+							{% endif %}
+							<div class="survey-sections" id="section---{{ forloop.counter }}">
+								{% if key != 'NULL' %}
+									<div class="section-name-div"><span class="section-name">Section : {{ key|title }}</span></div>
+								{% endif %}
+								{% for question in value %}
+									<div class="survey-question" id="survey-question{{ question.poll.id }}">
+									<p id="p---{{ question.poll.id }}" class="que_text {{ question.mandatory|get_required }}">{{ question.poll.question_text }}</p>
+									{% if question.poll.description %}
+										<p class="question_description_header">
+											<span class="question_description_header_span">Description</span>
+										</p>
+										<p class="question_description">{{ question.poll.description|urlize|url_target_blank }}</p>
+									{% endif %}
+									<!-- <p> -->
+										<div class="optionsForm" id="optionsForm{{ question.poll.id }}">
+											{% if question.type == "text" %}
+												<textarea id ="choiceText{{ question.poll.id }}" class="text-ans" name="choice{{ question.poll.id }}" placeholder="" maxlength="1024">{{ question.answer }}</textarea>
+											{% elif question.type == "rating" %}
+												<div id="div-irs-{{ question.poll.id }}">
+											        <input type="text" id="range{{ question.poll.id }}" value="" name="choice{{ question.poll.id }}" />
+											        <input type="hidden" id="choice{{ question.poll.id }}" value="" name="range{{ question.poll.id }}" />
+											    </div>
+											    <script>
+											    	{% if question.user_already_voted or expired %}
+														$('#range{{ question.poll.id }}').ionRangeSlider({
+															keyboard: true,
+															min: {{ question.min_value }},
+															max: {{ question.max_value }},
+															from: {{ question.from_val }},
+															to: {{ question.to_val }},
+															type: 'double',
+															step: 1,
+															disable: true
+														});
+														$("#div-irs-{{ question.poll.id }} span.irs-from").text("{{ question.from_str }}");
+														$("#div-irs-{{ question.poll.id }} span.irs-to").text("{{ question.to_str }}");
+										    		{% else %}
+												    	 	$('#range{{ question.poll.id }}').ionRangeSlider({
+												            keyboard: true,
+												            min: {{ question.min_value }},
+												            max: {{ question.max_value }},
+												            from: {{ question.min_value }},
+												            type: 'single',
+												            step: 1,
+												            onFinish: function (data) {
+																$('#choice{{ question.poll.id }}').val(data.from_percent);
+																}
+												        	});
+													{% endif %}
+												</script>
+											{% elif question.type == "matrixrating" %}
+												<div class="table-container">
+													<div class="table-component">
+														<table>
+															<tr>
+																<th></th>
+																{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																	<th> {{ columns.columnLabel }} </th>
+																{% endfor %}
+															</tr>
+															{% for choice in question.poll.choice_set.all %}
+																<tr id="tr---{{ choice.id }}">
+																	<th> {{ choice.choice_text }} </th>
+																	{% for columns in question.poll.matrixratingcolumnlabels_set.all %}
+																		<td onclick="handleRadioRow(this)"> <input type="radio" value="{{ choice.id }}---{{ columns.id }}" name="{{ choice.id }}" id="{{ choice.id }}---{{ columns.id }}"> </td>
+																	{% endfor %}
+																</tr>
+															{% endfor %}
+														</table>
+													</div>
+												</div>
+											{% elif question.type == "rank" %}
+												{% for choice in question.poll.choice_set.all %}
+													{% if question.horizontalOptions %}
+														<p class="horizontal-options">
+													{% else %}
+														{% if  forloop.counter0|divisibleby:2 %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.2);">
+														{% else %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.5);">
+														{% endif %}
+													{% endif %}
+														<select class="rankingSelect" name="{{ choice.id }}" id="choice{{ choice.id }}">
+															{% for item in question.poll.choice_set.all %}
+																<option value="{{ forloop.counter }}"> {{ forloop.counter }} </option>
+															{% endfor %}
+														</select>
+														<label class="choice-text" for="choice{{ choice.id }}">
+															{% if choice.choice_image %}
+																<script>
+																	$('.choice_image').css({"width":"120px","height":"120px"});
+																	$("#choice{{ choice.id }}").hide();
+																	var item = $("#choice{{ choice.id}}");
+																	item.parent().css({"display":"inline-block"});
+																</script>
+																	<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+															{% else %}
+																{{ choice.choice_text }}
+															{% endif %}
+														</label>
+														</p>
+												{% endfor %}
+												{% if question.addComment %}
+													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="" maxlength="255">{{ question.answer }}</textarea>
+												{% endif %}
+											{% else %}
+												{% for choice in question.poll.choice_set.all %}
+													{% if question.horizontalOptions %}
+														<p class="horizontal-options">
+													{% else %}
+														{% if  forloop.counter0|divisibleby:2 %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.2);">
+														{% else %}
+															<p class="vertical-options" style=" background-color: rgba(192,192,192,0.5);">
+														{% endif %}
+													{% endif %}
+														<input class="choices" type="{{ question.type }}" name="choice{{ question.poll.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}" />
+														<label class="choice-text" for="choice{{ choice.id }}">
+															{% if choice.choice_image %}
+															<script>
+																$('.choice_image').css({"width":"120px","height":"120px"});
+																$("#choice{{ choice.id }}").hide();
+																var item = $("#choice{{ choice.id}}");
+																item.parent().css({"display":"inline-block"});
+															</script>
+																<img class="choices choice_image" id="choice{{ choice.id }}" src="/media/choices/{{ choice.get_file_name }}" title="{{ choice.choice_text }}" alt="{{ choice.choice_text }}">
+															{% else %}
+																{{ choice.choice_text }}
+															{% endif %}
+														</label>
+														</p>
+												{% endfor %}
+
+												{% if question.poll.protectResult and user != question.poll.user %}
+												{% else %}
+													<div id="pollsChart---{{ question.poll.id }}" class="pollsChartClass"></div>
+												{% endif %}
+												{% if question.addComment %}
+													<p class="extraComments" id="{{ question.poll.id }}othercomments">Any Other Comments</p>
+													<textarea id ="choiceText{{ question.poll.id }}Comment" class="text-ans" name="choice{{ question.poll.id }}Comment" placeholder="" maxlength="255">{{ question.answer }}</textarea>
+												{% endif %}
+											{% endif %}
+											{% if question.user_already_voted or expired%}
+												<script type="text/javascript">
+												console.log("{{ question.user_already_voted  }}", "{{ expired  }}");
+												$(document).ready(function(){
+													if($("#pollsChart---"+{{ question.poll.id }}).length >0)
+														drawPollsChart("{{ csrf_token }}","",{{ question.poll.id }});
+													else{
+														$("#choiceText"+{{ question.poll.id }}).attr('disabled','disabled');
+														if($("#pollsVoted---"+{{ question.poll.id }}).length >0)
+															$("#pollsVoted---"+{{ question.poll.id }}).show();
+													}
+													if($("#choiceText"+{{ question.poll.id }}+"Comment").length >0)
+														$("#choiceText"+{{ question.poll.id }}+"Comment").attr('disabled','disabled');
+												});
+												</script>
+											{% else %}
+											{% endif %}
+										</div>
+									</div>
+								{%endfor%}
+								{% if polls_section_dict.items|length > forloop.counter %}
+									<p class="btn next-section" id="next-section---{{ forloop.counter }}">Next</p>
+								{% else %}
+									<input class="submit btn voteSubmit surveySubmit" type="submit" value="Submit" id="vote{{ survey.id }}"/>
+								{% endif %}
+							</div>
+						{% endfor %}
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="pollInfo  pollsInfoVotePage clearfix">
+				<div class="pollInfoDataDetail clearfix">
+					<ul class="pollInfoUl clearfix">
+						<li><span class="pollInfoNum">{{ survey.surveyvoted_set.count }}</span> <i title="opinions" class="fa fa-check-circle"></i> Opinions</li>
+						<li>
+							{% if survey.expiry and not expired %}
+								<div id="{{ survey.id }}timer" class="timerClass"></div>
+							{% endif %}
+							<script>
+								var currentDate = new Date();
+								var offset = currentDate.getTimezoneOffset();
+
+								var utcDate = new Date({{ survey.pub_date.year }}, {{ survey.pub_date.month }} - 1, {{ survey.pub_date.day }}, {{ survey.pub_date.hour }}, {{ survey.pub_date.minute }}, {{ survey.pub_date.second }});
+
+								{% if survey.expiry and not expired %}
+									var expiryDate = new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }});
+									var ampm = expiryDate.getHours() > 12 ? 'pm' : 'am';
+									var hours = expiryDate.getHours()%12;
+									var minutes = expiryDate.getMinutes();
+									hours = hours ? hours : 12;
+									minutes = minutes < 10 ? '0'+minutes : minutes;
+									
+									var month = expiryDate.getMonth()+1;
+									var expiryDateString = expiryDate.getDate()+'/'+month+'/'+expiryDate.getFullYear()+' '+hours+':'+minutes+' '+ampm;
+									document.getElementById('{{ survey.id }}expirydate').innerHTML = expiryDateString;
+									$("#{{ survey.id }}timer").countdown({until: new Date({{ survey.expiry.year }}, {{ survey.expiry.month }} - 1, {{ survey.expiry.day }}, {{ survey.expiry.hour }}, {{ survey.expiry.minute }}-offset, {{ survey.expiry.second }}),compact: true, onExpiry:disableVoteButton});
+								{% else %}
+									document.getElementById('{{ survey.id }}expirydate').innerHTML = "Till The End Of Time";
+								{% endif %}
+
+								function disableVoteButton(){
+									$('#vote{{ survey.id }}').attr('disabled','disabled');
+									$('#vote{{ survey.id }}').attr('value','Expired');
+								}
+							</script>
+						</li>
+						<ul class="pollInfoUl clearfix share-buttons">
+							{% if user.is_authenticated %}
+							<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}?referral={{ referral_code }}"></div></li>
+							{% else %}
+							<li ><div class="fb-share-button" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-layout="button_count"></div></li>&nbsp&nbsp&nbsp
+							<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-via="askbypoll" data-count="horizontal" data-counturl="https://{{ request.META.HTTP_HOST }}{% url 'polls:survey_vote' survey.id survey.survey_slug %}" data-hashtags="AskByPoll">Tweet</a></li>&nbsp&nbsp&nbsp
+							<li><div class="g-plus" data-action="share" data-annotation="bubble" data-href="http://{{ request.META.HTTP_HOST  }}/{% url 'polls:survey_vote' survey.id survey.survey_slug %}"></div></li>
+							{% endif %}
+						</ul>
+					</ul>
+				</div>
+			</div>
+			<div id="disqus_thread">
+			</div>
+		</div>
+	</section>
+	<script type="text/javascript">
+		$('.extraComments').css('display','none');
+		$('.text-ans').css('margin-top','1rem');
+
+
+		function handleRadioRow(el) {
+    		var radioBtn = $(el).find('input').first();
+    		radioBtn.prop('checked',true);
+  		}
+
+		function handleRadioP(el){
+			var radioBtn = $(el).find('input').first();
+	                radioBtn.prop('checked',true);
+		}
+        
+		google.load('visualization', '1', {packages: ['corechart', 'bar','geochart']});
+
+		{% if user.is_authenticated %}
+			var disqus_shortname = 'askbypoll';
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+			    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+			var disqus_config = function() {
+				this.page.remote_auth_s3 = "{{ ssoData.message }} {{ ssoData.sig }} {{ ssoData.timestamp }}";
+				this.page.api_key = "{{ ssoData.pub_key }}";
+				};
+		{% endif %}
+
+		$(document).ready(function()
+		{	
+			$(".choice-text").click(function(event){
+				event.preventDefault();
+			})
+
+			$(".vertical-options,.horizontal-options").click(function(event){
+				var input = $(this).find('input').first();
+
+				if((event.target.type !== 'checkbox') && (input.attr('type') === 'checkbox')) {
+					if(input.is(':checked')){
+						input.prop('checked', false);
+					} else {
+						input.prop('checked', true);
+					}
+				} 
+				
+				if((event.target.type !== 'radio') && ( input.attr('type') === 'radio')) {
+					input.prop('checked', true);
+				}
+
+				var optionsFormId = $(this).parent().attr("id");
+				$("#"+optionsFormId+" p").removeClass("selectedOption");
+				$(this).addClass("selectedOption");
+								
+			});
+
+			$(".next-section").click(function(event){
+				var elementId = $(this).attr("id").split("---")[1];
+				console.log(elementId, typeof elementId);
+				if(elementId === '1' && $('#choice9973').is(':checked')){
+					$('#section---3').css('display','block');
+					$('#next-section---1').css('display','none');
+				} else if(elementId === '2' && $('#choice9974').is(':checked')){
+					$('#section---5').css('display','block');
+                                        $('#next-section---2').css('display','none');
+				} else{				
+					$(this).hide();
+					$(this).parent().next().css('display','block');
+					var newElem = (parseInt(elementId)+1).toString();
+					$('html, body').animate({
+				        	scrollTop: $("#section---"+newElem).offset().top-200
+				    	}, 1000);
+				}
+			});
+
+			$('.choice_image').css({"width":"120px","height":"120px"});
+			var question_count = $('.optionsForm').length;
+			var question_covered = 0;
+
+            function giveDefaultValue(){ 
+
+            }
+
+			$('.surveySubmit').click(function(event)
+			{
+				event.preventDefault();
+                giveDefaultValue();
+				$(".errorlist").remove();				
+				$('#overlay-inAbox8').css('display','block');
+				var subButElem = $(this);
+				subButElem.attr("disabled","disabled");
+				$(".errorlist").remove();
+				var form_data = $("#survey-form").serialize();
+				$.ajax({
+					type: 'POST',
+					url:'',
+					async: true,
+					data:form_data,
+					success:function(response)
+					{
+						if("success" in response){
+							var thankyou_url = "/thankyou";
+							confirm_redirect_only('#overlay-inAbox6',response["success"],thankyou_url);
+						}else{
+							for(key in response){
+								if(key == "error"){
+									if(!$(".demographic-error").length > 0)
+										$("#demographic-div").append('<span class="errorlist demographic-error"><br>'+response[key]+'</span>');
+								}
+								else{
+									$("#survey-question"+key).append('<span class="errorlist"><br>'+response[key]+'</span>');
+								}
+							}
+							$('html, body').animate({
+								scrollTop: $(".errorlist").offset().top-200
+							}, 1000);
+						}
+						subButElem.removeAttr("disabled");
+						$('#overlay-inAbox8').css('display','none');
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}
