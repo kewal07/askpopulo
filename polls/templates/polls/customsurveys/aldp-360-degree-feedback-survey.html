@@ -508,6 +508,47 @@
 
 		$(document).ready(function()
 		{	
+			var sectionToHide = 0;
+			$('#next-section---1').click(function(event){
+				if($('#choiceText4767').val() === '484832b6'){
+					sectionToHide = 2;
+	            } else if($('#choiceText4767').val() === '4848350e'){
+					sectionToHide = 3;
+	            } else if($('#choiceText4767').val() === '48483612'){
+					sectionToHide = 4;
+	            } else if($('#choiceText4767').val() === '484836ee'){
+					sectionToHide = 5;
+	            } else if($('#choiceText4767').val() === '484837b6'){
+					sectionToHide = 6;
+	            } else if($('#choiceText4767').val() === '48483c7a'){
+					sectionToHide = 7;
+	            } else if($('#choiceText4767').val() === '48483f00'){
+					sectionToHide = 8;
+	            } else if($('#choiceText4767').val() === '48483f04'){
+					sectionToHide = 9;
+	            } else if($('#choiceText4767').val() === '48483fd6'){
+					sectionToHide = 10;
+	            } else if($('#choiceText4767').val() === '4848409e'){
+					sectionToHide = 11;
+	            } else if($('#choiceText4767').val() === '48484166'){
+					sectionToHide = 12;
+	            } else if($('#choiceText4767').val() === '48484558'){
+					sectionToHide = 13;
+	            } else if($('#choiceText4767').val() === '48484634'){
+					sectionToHide = 14;
+	            } else if($('#choiceText4767').val() === '484846fc'){
+					sectionToHide = 15;
+	            } else if($('#choiceText4767').val() === '484847ce'){
+					sectionToHide = 16;
+	            } else if($('#choiceText4767').val() === '484848a0'){
+					sectionToHide = 17;
+	            } else if($('#choiceText4767').val() === '48484968'){
+					sectionToHide = 18;
+	            } else if($('#choiceText4767').val() === '48484a3a'){
+					sectionToHide = 19;
+	            }
+			});
+
 			$(".choice-text").click(function(event){
 				event.preventDefault();
 			})
@@ -536,47 +577,13 @@
 				var elementId = $(this).attr("id").split("---")[1];
 				$(this).hide();
 
-				if(elementId === 1){
-					if($('#choiceText4767').val() === '484832b6'){
-						newElem = 2;
-		            } else if($('#choiceText4767').val() === '4848350e'){
-						newElem = 3;
-		            } else if($('#choiceText4767').val() === '48483612'){
-						newElem = 4;
-		            } else if($('#choiceText4767').val() === '484836ee'){
-						newElem = 5;
-		            } else if($('#choiceText4767').val() === '484837b6'){
-						newElem = 6;
-		            } else if($('#choiceText4767').val() === '48483c7a'){
-						newElem = 7;
-		            } else if($('#choiceText4767').val() === '48483f00'){
-						newElem = 8;
-		            } else if($('#choiceText4767').val() === '48483f04'){
-						newElem = 9;
-		            } else if($('#choiceText4767').val() === '48483fd6'){
-						newElem = 10;
-		            } else if($('#choiceText4767').val() === '4848409e'){
-						newElem = 11;
-		            } else if($('#choiceText4767').val() === '48484166'){
-						newElem = 12;
-		            } else if($('#choiceText4767').val() === '48484558'){
-						newElem = 13;
-		            } else if($('#choiceText4767').val() === '48484634'){
-						newElem = 14;
-		            } else if($('#choiceText4767').val() === '484846fc'){
-						newElem = 15;
-		            } else if($('#choiceText4767').val() === '484847ce'){
-						newElem = 16;
-		            } else if($('#choiceText4767').val() === '484848a0'){
-						newElem = 17;
-		            } else if($('#choiceText4767').val() === '48484968'){
-						newElem = 18;
-		            } else if($('#choiceText4767').val() === '48484a3a'){
-						newElem = 19;
-		            }
+				if(elementId === sectionToHide){
+					$(this).parent().next().next().css('display','block');
+					newElem = elementId + 1;
+				} else {
+					$(this).parent().next().css('display','block');
+					var newElem = (parseInt(elementId)+1).toString();
 				}
-				//$(this).parent().next().css('display','block');
-				//var newElem = (parseInt(elementId)+1).toString();
 				$('html, body').animate({
 		        	scrollTop: $("#section---"+newElem).offset().top-200
 		    	}, 1000);
