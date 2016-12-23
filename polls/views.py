@@ -1783,6 +1783,8 @@ class SurveyVoteView(BaseViewDetail):
 			template_name = 'polls/customsurveys/cloud-landscape-survey.html'
 		elif survey.id == 80:
 			template_name = 'polls/customsurveys/demonetisation-effect.html'
+		elif survey.id == 81:
+			template_name = 'polls/customsurveys/aldp-360-degree-feedback-survey.html'
 		survey.numViews +=1
 		survey.save()
 		return [template_name]
