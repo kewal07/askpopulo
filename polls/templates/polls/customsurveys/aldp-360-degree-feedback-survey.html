@@ -507,7 +507,11 @@
 		{% endif %}
 
 		$(document).ready(function()
-		{	
+		{
+			$('.userBrief-center').css('display','none');
+			$('.userBrief').css('display','none');
+			$('.mainPoll').css('margin-top','5rem');
+			$('#vote81').css('display','none');	
 			var sectionToHide = 0;
 			$('#next-section---1').click(function(event){
 				if($('#choiceText4767').val() === '484832b6'){
@@ -547,6 +551,24 @@
 	            } else if($('#choiceText4767').val() === '48484a3a'){
 					sectionToHide = 19;
 	            }
+
+			if(sectionToHide === 0){
+				alert("Invalid Code");
+			} else {
+				$('#choiceText4767').attr('disabled','disabled');
+				var elementId = $(this).attr("id").split("---")[1];
+				$(this).hide();
+				if(elementId === (sectionToHide - 1) + ""){
+                                        $(this).parent().next().next().css('display','block');
+                                        newElem = elementId + 1;
+                                } else {
+                                        $(this).parent().next().css('display','block');
+                                        var newElem = (parseInt(elementId)+1).toString();
+                                }
+				$('html, body').animate({
+                                	scrollTop: $("#section---"+newElem).offset().top-200
+                       	 	}, 1000);
+			}
 			});
 
 			$(".choice-text").click(function(event){
@@ -575,14 +597,22 @@
 
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
-				$(this).hide();
-
-				if(elementId === sectionToHide){
+				if(!elementId === "1"){
+					$(this).hide();
+				}
+				if(elementId === "1"){
+					return;
+				} else if(elementId === "18" && sectionToHide === 19){
+					$('#vote81').css('display','block');
+				} else if(elementId === (sectionToHide - 1) + ""){
 					$(this).parent().next().next().css('display','block');
 					newElem = elementId + 1;
 				} else {
 					$(this).parent().next().css('display','block');
 					var newElem = (parseInt(elementId)+1).toString();
+				}
+				if(newElem === 19){
+					$('#vote81').css('display','block');
 				}
 				$('html, body').animate({
 		        	scrollTop: $("#section---"+newElem).offset().top-200
