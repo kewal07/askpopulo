@@ -1294,6 +1294,9 @@
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
 				console.log(elementId, typeof elementId);
+				if(elementId === '1' && ((!$('#choice9973').is(':checked')) && (!$('#choice9974').is(':checked')) && (!$('#choice9975').is(':checked')))){
+                                        return;
+                                }
 				if(elementId === '1' && $('#choice9973').is(':checked')){
 					$('#section---3').css('display','block');
 					$('#next-section---1').css('display','none');

@@ -23,6 +23,9 @@ import hashlib
 import base64
 import time
 from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 from collections import OrderedDict
 from PIL import Image,ImageChops
 from django.utils import timezone
@@ -1785,6 +1788,8 @@ class SurveyVoteView(BaseViewDetail):
 			template_name = 'polls/customsurveys/demonetisation-effect.html'
 		elif survey.id == 81:
 			template_name = 'polls/customsurveys/aldp-360-degree-feedback-survey.html'
+		elif survey.id == 104:
+			template_name = 'polls/customsurveys/b2b-portal-requirement-analysis.html'
 		survey.numViews +=1
 		survey.save()
 		return [template_name]
@@ -1969,8 +1974,9 @@ class SurveyVoteView(BaseViewDetail):
 							choices.append(choiceId)
 							columns.append(columnId)
 						else:
-							errors[question_id_str] = "All Rows Are Mandatory"
-							break
+							if not survey.id == 81:
+								errors[question_id_str] = "All Rows Are Mandatory"
+								break
 				elif question_type == "rank":
 					for qchoice in question.choice_set.all():
 						choice = post_data.get(str(qchoice.id),[])

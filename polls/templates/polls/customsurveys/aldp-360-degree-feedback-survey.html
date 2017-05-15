@@ -113,7 +113,7 @@
 	<section id="content">
 		<div class="questions">
 			<div class="questionContent">
-				<p style="margin-bottom:1rem;" class="que_text que_text_header">{{ survey.survey_name }}</p>
+				<p style="margin-bottom:1rem;" class="que_text que_text_header">ALDP 360 Degrees Feedback</p>
 				{% if survey.has_image %}
 					<img src="{{ survey.get_featured_image_url }}" class="survey-featured" alt="{{ survey.survey_name }}">
 				{% else %}
@@ -142,7 +142,7 @@
 					</div>
 				</div>
 				<div class="mainPoll">
-					<p class="que_text special-case" id="survey-title">{{ survey.survey_name }}
+					<p class="que_text special-case" id="survey-title">ALDP 360 Degrees Feedback
 						{% if user.is_authenticated %}
 							{% if user == survey.user or user.is_superuser %}
 							{% if survey.surveyvoted_set.count < 1 or user.is_superuser %}
@@ -162,7 +162,7 @@
 
 					<p class="question_description" style="font-size:1rem !important; text-align:justify;">
 						<b> Note to the respondents: </b> <br><br>
-						• Thank you for sparing a few minutes of your time. We value and appreciate this.<br><br>
+						• Thank you for sparing your time to provide feedback to your ALDP colleagues, to aid their development.<br><br>
 						• You are requested to score all the parameters for each of your 17 ALDP colleagues.<br><br>
 						• It is suggested that you take the Survey in block of 15 minutes at a time.<br><br>
 						• If taking the survey from a mobile device, scroll each table left or right to choose appropriate option.<br><br>
@@ -509,8 +509,9 @@
 		$(document).ready(function()
 		{
 			$('.userBrief-center').css('display','none');
-			$('.userBrief').css('display','none');
-			$('.mainPoll').css('margin-top','5rem');
+			$('.userBrief').css('margin-top','5rem');
+			$('.userBrief-right').css('margin-top','5rem');
+			$('.mainPoll').css('margin-top','0rem');
 			$('#vote81').css('display','none');	
 			var sectionToHide = 0;
 			$('#next-section---1').click(function(event){
@@ -555,12 +556,11 @@
 			if(sectionToHide === 0){
 				alert("Invalid Code");
 			} else {
-				$('#choiceText4767').attr('disabled','disabled');
 				var elementId = $(this).attr("id").split("---")[1];
 				$(this).hide();
 				if(elementId === (sectionToHide - 1) + ""){
                                         $(this).parent().next().next().css('display','block');
-                                        newElem = elementId + 1;
+                                        newElem = elementId + "1";
                                 } else {
                                         $(this).parent().next().css('display','block');
                                         var newElem = (parseInt(elementId)+1).toString();
@@ -597,7 +597,7 @@
 
 			$(".next-section").click(function(event){
 				var elementId = $(this).attr("id").split("---")[1];
-				if(!elementId === "1"){
+				if(!(elementId === "1")){
 					$(this).hide();
 				}
 				if(elementId === "1"){
@@ -607,11 +607,12 @@
 				} else if(elementId === (sectionToHide - 1) + ""){
 					$(this).parent().next().next().css('display','block');
 					newElem = elementId + 1;
+					console.log(newElem);
 				} else {
 					$(this).parent().next().css('display','block');
 					var newElem = (parseInt(elementId)+1).toString();
 				}
-				if(newElem === 19){
+				if(newElem == "19" || newElem == "171"){
 					$('#vote81').css('display','block');
 				}
 				$('html, body').animate({
@@ -641,7 +642,7 @@
 					url:'',
 					async: true,
 					data:form_data,
-					success:function(response)
+					/*success:function(response)
 					{
 						if("success" in response){
 							var thankyou_url = "/thankyou";
@@ -665,8 +666,9 @@
 						}
 						subButElem.removeAttr("disabled");
 						$('#overlay-inAbox8').css('display','none');
-					}
+					}*/
 				});
+				confirm_redirect_only('#overlay-inAbox6','Survey is Submitted','/thankyou');
 			});
 		});
 	</script>

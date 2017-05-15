@@ -5,6 +5,80 @@ import datetime
 from django.core.mail import EmailMessage
 import askpopulo.settings
 import sys
+import csv
+
+def aldpSurvey():
+	try:
+		db_dict = askpopulo.settings.DATABASES.get('default')
+		db_host = db_dict.get('HOST')
+		db_user = db_dict.get('USER')
+		db_pass = db_dict.get('PASSWORD')
+		db_name = db_dict.get('NAME')
+		conn = pymysql.connect(host=db_host, port=3306, user=db_user, passwd=db_pass, db=db_name)
+		
+		opFile = open('aldp.csv','wt')
+		aldpwriter = csv.writer(opFile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		surveyQuestionsCur = conn.cursor()
+		questionChoiceCur = conn.cursor()
+		uniquekeysCur = conn.cursor()
+
+		surveyQuestionsCur.execute("select polls_question.id, polls_question.question_text from polls_question inner join polls_survey_question on polls_question.id = polls_survey_question.question_id where polls_survey_question.survey_id = 81")
+		
+		uniquekeysCur.execute("select distinct unique_key from polls_voteapi where question_id = 4767")		
+		quesList = []
+		uk = []
+
+		for row in surveyQuestionsCur:
+			qList = list(row)
+			quesList.append(qList)
+		
+		for row in uniquekeysCur:
+			temp = list(row)
+			uk.append(temp[0])
+		temprow = [""]
+		for r in uk:
+			temprow.append(r)
+		aldpwriter.writerow(temprow)
+		temprow = []
+
+		for qId, qText in quesList:
+			questionChoiceCur = conn.cursor()
+			questionChoiceCur.execute("select id, choice_text from polls_choice where question_id="+str(qId))
+			tempRow = [qText]
+			if questionChoiceCur.rowcount > 0:
+				aldpwriter.writerow(tempRow)
+				tempRow = []
+				for choice in questionChoiceCur:
+					tempRow.append(choice[1])
+					for uqk in uk:
+						answerColumnCur = conn.cursor()
+						answerColumnCur.execute("select votecolumn_id from polls_voteapi where unique_key ="+str(uqk)+"and question_id = "+str(qId)+" and choice_id="+str(choice[0]))
+						columnLabelCur = conn.cursor()
+						colId = []
+						for row in answerColumnCur:
+							colId = list(row)
+
+						if colId:
+							columnLabelCur.execute("select columnlabel from polls_matrixratingcolumnlabels where id ="+str(colId[0]))
+							for row in columnLabelCur:
+								colLabel = list(row)
+							tempRow.append(colLabel[0])
+						else:
+							tempRow.append('NA')
+					aldpwriter.writerow(tempRow)
+					tempRow = []
+			else:
+				for uqk in uk:
+					answerTextCur = conn.cursor()
+					answerTextCur.execute("select answer_text from polls_voteapi where unique_key ="+str(uqk)+" and question_id ="+str(qId))
+					for ans in answerTextCur:
+						ansVal = list(ans)
+					tempRow.append(ansVal[0])
+				aldpwriter.writerow(tempRow)
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		err = ' Exception occured in function %s() at line number %d of %s,\n%s:%s ' % (exc_tb.tb_frame.f_code.co_name, exc_tb.tb_lineno, __file__, exc_type.__name__, exc_obj)
+		print(err)
 
 def sendFeed():
 	try:
@@ -137,3 +211,5 @@ def sendFeed():
 	userIdCur.close()
 	catCur.close()
 	conn.close()
+
+aldpSurvey()
