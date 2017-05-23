@@ -393,7 +393,8 @@ p.special-userBrief-center{
 	}
 	#survey-64 .optionsForm input[type=radio] {
 	    border: 0px;
-	   	height: 12px;
+	   	height: 20px;
+		width: 20px;
 	   	vertical-align: middle;
 	}
 	#survey-64 .optionsForm p.horizontal-options{
