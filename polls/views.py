@@ -66,7 +66,7 @@ class WebRtcView(BaseViewList):
 		return {}
 
 class ThankYouView(BaseViewList):
-	template_name = 'polls/thankyou.html'
+	template_name = 'polls/symphonyThankyou.html'
 	def get_queryset(self):
 		return {}
 
